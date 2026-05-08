@@ -35,10 +35,10 @@ Browser-based version of the Battlegorithms AP CSA lab.
 
 ## Main Project Docs
 
-- [GameSpecification.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/GameSpecification.md)
-- [DevelopmentPhases.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/DevelopmentPhases.md)
-- [DevelopmentLog.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/DevelopmentLog.md)
-- [ARCHITECTURE.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/ARCHITECTURE.md)
-- [TESTING.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/TESTING.md)
-- [StudentGuide.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/StudentGuide.md)
-- [TeacherGuide.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/TeacherGuide.md)
+- [GameSpecification.md](./docs/GameSpecification.md)
+- [DevelopmentPhases.md](./docs/DevelopmentPhases.md)
+- [DevelopmentLog.md](./docs/DevelopmentLog.md)
+- [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
+- [TESTING.md](./docs/TESTING.md)
+- [StudentGuide.md](./docs/StudentGuide.md)
+- [TeacherGuide.md](./docs/TeacherGuide.md)

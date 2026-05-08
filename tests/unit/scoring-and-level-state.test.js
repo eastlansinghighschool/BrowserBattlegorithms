@@ -21,7 +21,7 @@ import {
 import { createApp } from "../../src/core/state.js";
 import { registerBattleBlocklyBlocks } from "../../src/ai/blockly/blocks.js";
 import { loadWorkspaceXml } from "../../src/ai/blockly/workspace.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { buildSolutionXml } from "./fixtures/guidedReferenceSolutions.js";
 
 test("flag pickup and scoring update team score", () => {

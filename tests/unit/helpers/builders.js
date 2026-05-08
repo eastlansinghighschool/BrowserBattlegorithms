@@ -1,6 +1,6 @@
-import { createApp } from "../core/state.js";
-import { initializeMatch } from "../core/setup.js";
-import { createRandomizedFreePlayTeamSetup } from "../core/teams.js";
+import { createApp } from "../../../src/core/state.js";
+import { initializeMatch } from "../../../src/core/setup.js";
+import { createRandomizedFreePlayTeamSetup } from "../../../src/core/teams.js";
 
 export function buildMatch(options = {}) {
   const app = createApp();

@@ -33,7 +33,7 @@ Free play also now randomizes which team attacks left-to-right versus right-to-l
 
 ## 2026-03-31 - Current Project State Assessment
 
-The project is now in a playable **Phase 7 expansion** state. Relative to the goals in [GameSpecification.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/GameSpecification.md), the game now includes not only the core sandbox match loop, but also a guided-first learning flow with twenty authored guided levels, level pass/fail evaluation, level unlock progression, Blockly toolbox restriction by challenge, and a first-pass onboarding/tutorial system aimed at beginners.
+The project is now in a playable **Phase 7 expansion** state. Relative to the goals in [GameSpecification.md](./GameSpecification.md), the game now includes not only the core sandbox match loop, but also a guided-first learning flow with twenty authored guided levels, level pass/fail evaluation, level unlock progression, Blockly toolbox restriction by challenge, and a first-pass onboarding/tutorial system aimed at beginners.
 
 The project has also advanced beyond its earlier monolithic prototype structure. It now has a modular `src/` architecture, a Vite-based build workflow, command-line Node tests for core rules, and Playwright browser smoke tests. That means the project has moved out of the earlier late **Phase 5 / early Phase 6** prototype state and into the first meaningful **Phase 7** learning-product milestone, with additional Phase 7 content and Phase 8 features still ahead.
 
@@ -63,12 +63,10 @@ The project has also advanced beyond its earlier monolithic prototype structure.
 
 ### Engineering and Tooling State
 
-- The runtime now boots through [src/main.js](D:/ai/Codex/BrowserBattlegorithms_CODEX/src/main.js).
+- The runtime now boots through [src/main.js](../src/main.js).
 - Responsibilities are split across `src/config`, `src/core`, `src/entities`, `src/ai`, `src/render`, and `src/ui`.
-- The build pipeline is defined in [package.json](D:/ai/Codex/BrowserBattlegorithms_CODEX/package.json) and [vite.config.js](D:/ai/Codex/BrowserBattlegorithms_CODEX/vite.config.js).
+- The build pipeline is defined in [package.json](../package.json) and [vite.config.js](../vite.config.js).
 - Runtime libraries are now managed through npm, with p5 pinned to the current 1.x line and Blockly imported as ES modules.
-- Core regression tests are in [tests/unit/core.test.js](D:/ai/Codex/BrowserBattlegorithms_CODEX/tests/unit/core.test.js).
-- Browser smoke tests are in [tests/browser/smoke.spec.js](D:/ai/Codex/BrowserBattlegorithms_CODEX/tests/browser/smoke.spec.js).
 
 ## Additional Gameplay Rules Update
 
@@ -77,7 +75,7 @@ The project has also advanced beyond its earlier monolithic prototype structure.
 
 ## Phase Assessment
 
-Based on [DevelopmentPhases.md](D:/ai/Codex/BrowserBattlegorithms_CODEX/DevelopmentPhases.md), the project appears to have:
+Based on [DevelopmentPhases.md](./DevelopmentPhases.md), the project appears to have:
 
 - Fully or mostly completed **Phase 2**, **Phase 3**, **Phase 4**, and much of **Phase 5**
 - Entered **Phase 6** with both game modes and NPC foundations in place

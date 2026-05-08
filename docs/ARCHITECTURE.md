@@ -12,7 +12,7 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 - `src/ai/`: Blockly setup/interpreter and NPC behavior
 - `src/render/`: p5 bootstrapping, board/entity drawing, effects, animation helpers
 - `src/ui/`: score display, DOM controls, setup/run UI state
-- `src/testSupport/`: small builders and fixtures for Node/browser tests
+- `tests/unit/helpers/`: small builders and fixtures for Node/browser tests
 - `tests/`: command-line and Playwright tests
 
 ## Data Flow

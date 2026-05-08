@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { FREE_PLAY_MODES, GAME_MODES } from "../../src/config/constants.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { resetRound } from "../../src/core/setup.js";
 import { checkInvariants } from "../../src/core/invariants.js";
 import { calculateNpcType1Action } from "../../src/ai/npc/npcType1.js";

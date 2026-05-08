@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AI_ACTION_TYPES, MOVE_TOWARD_TARGETS, MAIN_GAME_STATES } from "../../src/config/constants.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { checkInvariants } from "../../src/core/invariants.js";
 import {
   isCellBlockedByImpassables,
