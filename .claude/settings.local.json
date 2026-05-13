@@ -9,7 +9,8 @@
       "Bash(grep -v \"^$\")",
       "Bash(node --test --test-isolation=none tests/unit/guided-level-contracts.test.js)",
       "Bash(npx playwright *)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(ls /c/Users/orion/.claude/projects/C--Codex-BrowserBattlegorithms-CODEX/memory/)"
     ]
   }
 }

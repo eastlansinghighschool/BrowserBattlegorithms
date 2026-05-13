@@ -56,7 +56,7 @@ Extra blocks in a Blockly program are ignored, not bounced. The engine only read
 Collision resolution is determined by three factors: map side, flag-carrying state, and grace period.
 Source: `src/core/collisions.js`.
 
-The map-side defender team is determined by the x coordinate of the collision cell: Team 1 is assigned the left half (`x < COLS / 2`), Team 2 the right half. This assignment is hardcoded in `src/core/collisions.js` by team number, not read from the runtime team config's `homeSide` field. For guided levels this is always correct (Team 1 plays left-to-right). In Free Play, where team orientation is randomized per session, a team's actual `homeSide` may differ from this hardcoded mapping; this discrepancy is recorded in the Plan 17 progress report.
+The map-side defender for a collision cell is the team whose `homeSide` (from the runtime team config) covers that half of the map. `src/core/collisions.js` resolves this by looking up each team's `homeSide` rather than comparing literal team numbers, so the rule is orientation-agnostic and correct in both guided levels (Team 1 always on the left) and Free Play (orientation randomized per match).
 
 **Priority order (first matching rule wins):**
 

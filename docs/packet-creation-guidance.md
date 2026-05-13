@@ -60,9 +60,10 @@ Common Browser Battlegorithms references:
   - `playwright.config.js`
   - `src/`
   - `tests/`
-- Current phase tracking:
-  - `docs/history/DevelopmentPhases.md`
-  - `docs/history/DevelopmentLog.md`
+- Subsystem runtime contracts:
+  - `docs/subsystems/` — each note is the authoritative source of truth for the runtime contract it covers. Code, tests, and other docs that disagree with a subsystem note are bugs.
+- Current packet tracking:
+  - `docs/development/README.md`
 
 Also list decisions the packet must not redefine. Project-level decisions:
 
@@ -128,6 +129,8 @@ Include pedagogy checks when UI, feedback, levels, copy, Blockly, or visible gam
 - Is it usable on classroom projectors, student laptops, and narrow screens?
 - Are keyboard, color contrast, sound, motion, and screen reader basics preserved?
 
+If the packet changes runtime behavior covered by a subsystem note (`docs/subsystems/`), it must either include the matching note update in the same patch, or stop and surface the conflict for owner review. Silent divergence from a subsystem note is not allowed.
+
 ## Model-Specific Instructions
 
 When targeting a lower-cost model:
@@ -170,6 +173,7 @@ Every packet should include a checklist. Use relevant items:
 - [ ] Accessibility expectations are covered or documented.
 - [ ] Static Vite build behavior is preserved.
 - [ ] No unrelated files were changed.
+- [ ] If the packet changed behavior described in a subsystem note, the note still reads true post-change (or the conflict was surfaced and approved).
 - [ ] Final report lists commands run and any remaining risks.
 
 ## Stop Conditions
@@ -184,3 +188,4 @@ Packets should tell the implementing agent to stop and ask for review if:
 - a dependency, workflow, or deployment choice has meaningful tradeoffs not covered by the packet
 - a UI or Blockly change could mislead students about game rules or boolean semantics
 - production deployment or repository settings changes are needed
+- the packet change invalidates a statement in a `docs/subsystems/*.md` note and the corrected wording requires pedagogy, architecture, or contract judgment beyond the packet scope

@@ -21,6 +21,7 @@ Before the first packet assignment:
    - `docs/GameSpecification.md`
    - `docs/ARCHITECTURE.md`
    - `docs/GUIDED_LEVEL_CONCEPT_MATRIX.md`
+   - `docs/subsystems/` — runtime-contract reference notes; skim the index in `docs/ARCHITECTURE.md` so you know which note covers which subsystem
 2. Be ready to read the assigned packet and its required references once the integration owner names it.
 3. Do not make repository changes until a packet or concrete follow-up task is assigned.
 
@@ -28,6 +29,7 @@ When a packet or follow-up task is assigned:
 
 1. Read the packet fully.
 2. Read required references named by the packet.
+   - Before changing code in an area covered by a subsystem note (Blockly workspace, UI mode contract, turn engine, file pipelines, usage/admin, NPC/CPU, p5 surface), read the matching `docs/subsystems/*.md` note for the current contract. If your change will make that note untrue, plan to update the note in the same patch or surface the conflict before editing.
 3. Also read recent related packets or reports when the task clearly depends on them.
 4. Summarize your understanding before editing:
    - current task

@@ -26,6 +26,7 @@ Before making recommendations, skim these files enough to understand the project
 - `docs/GUIDED_LEVEL_CONCEPT_MATRIX.md`
 - `docs/TeacherGuide.md`
 - `docs/StudentGuide.md`
+- `docs/subsystems/` — runtime-contract reference notes; know which note covers which subsystem so you can cite the right one when scoping packets and reviewing reports
 
 Then inspect any packet, report, or source area the integration owner names.
 
@@ -63,6 +64,7 @@ When reviewing another model's work:
 - Treat passing tests as useful evidence, not proof that the learning design is right.
 - Ask whether the proposed behavior will make sense to a student seeing the UI for the first time.
 - Prefer a short list of actionable recommendations over a broad rewrite.
+- Verify any subsystem note touched by the work still reads true post-change; the Plan 17 collision-tail incident is the canonical example of why this matters.
 
 ## Packet Creation Rules
 
@@ -74,6 +76,7 @@ When creating or revising packets:
 - Give lower-cost models bounded scope, explicit required reading, exact expected artifacts, validation commands, and stop conditions.
 - Include approval gates when the task involves pedagogy, architecture, broad UI behavior, testing strategy, deployment, or source-of-truth decisions.
 - Make downstream contracts explicit so later packets do not reinvent earlier decisions.
+- When a proposed packet would change behavior described in a `docs/subsystems/*.md` note, name the relevant note in the packet's required reading and include the doc-tail expectation per `docs/packet-creation-guidance.md`. Do not let an implementation packet land that silently invalidates a subsystem note.
 
 ## Project-Specific Contracts
 
