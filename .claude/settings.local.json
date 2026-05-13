@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(npm pack *)",
+      "Bash(npm view *)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const p=JSON.parse\\(d\\); console.log\\('version:', p.version, '\\\\nchangelog:', \\(p.description||''\\).slice\\(0,120\\)\\)\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(node --test --test-isolation=none tests/unit/guided-level-contracts.test.js)",
+      "Bash(npx playwright *)"
+    ]
+  }
+}

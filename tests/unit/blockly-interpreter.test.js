@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AI_ACTION_TYPES, BLOCK_TYPES, MOVE_TOWARD_TARGETS } from "../../src/config/constants.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { getFirstRunnableAction, updateBlocklyExecutionHints } from "../../src/ai/blockly/workspace.js";
 import { translateActionDecision } from "../../src/core/movement.js";
 import { buildBlocklyAppWithXml } from "./helpers/testHarness.js";

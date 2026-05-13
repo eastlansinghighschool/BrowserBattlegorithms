@@ -35,6 +35,21 @@ export async function dismissTutorial(page) {
   }
 }
 
+export async function unlockGuidedLevels(page) {
+  await dismissTutorial(page);
+  const unlockButton = page.locator("#devUnlockLevelsButton");
+  await expect(unlockButton).toBeVisible({ timeout: 10000 });
+  await unlockButton.click();
+  await page.waitForFunction(
+    () => {
+      const progress = window.__BBA_TEST_HOOKS__?.getState?.()?.levelProgress || {};
+      return Object.values(progress).every((status) => status !== "LOCKED");
+    },
+    null,
+    { timeout: 10000 }
+  );
+}
+
 export async function loadWorkspaceXml(page, xmlText) {
   await page.evaluate((xml) => window.__BBA_TEST_HOOKS__.loadWorkspaceXml(xml), xmlText);
 }

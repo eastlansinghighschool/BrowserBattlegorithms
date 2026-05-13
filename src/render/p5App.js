@@ -3,7 +3,7 @@ import { CELL_SIZE, COLS, FPS, MAIN_GAME_STATES, ROWS, TURN_STATES } from "../co
 import { processTurnActions } from "../core/turnEngine.js";
 import { getLevelGoalCell } from "../core/levels.js";
 import { drawGrid, drawMapElements } from "./drawBoard.js";
-import { drawBarriers, drawFlags, drawGameOverOverlay, drawRunners } from "./drawEntities.js";
+import { drawBarriers, drawFlags, drawGameOverOverlay, drawHumanPlayerLabels, drawRunners } from "./drawEntities.js";
 import { drawActiveRunnerGlow } from "./effects.js";
 import { handleKeyInput } from "../ui/controls.js";
 
@@ -55,6 +55,7 @@ export function initializeP5App(app) {
       drawFlags(p, app.state);
       drawBarriers(p, app.state);
       drawRunners(p, app.state);
+      drawHumanPlayerLabels(p, app.state);
       drawGameOverOverlay(p, app.state);
     };
 

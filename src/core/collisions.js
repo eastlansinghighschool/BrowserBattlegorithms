@@ -1,7 +1,18 @@
 import { COLS, FROZEN_DURATION_TURNS } from "../config/constants.js";
+import { getTeamConfig } from "./teams.js";
+
+function getMapSideDefenderTeam(state, collisionX) {
+  const cellSide = collisionX < COLS / 2 ? "left" : "right";
+  for (const teamId of [1, 2]) {
+    if (getTeamConfig(state, teamId)?.homeSide === cellSide) {
+      return teamId;
+    }
+  }
+  return null;
+}
 
 export function resolveCollision(state, attacker, defenderInCell, collisionX, collisionY, attackerOriginCell) {
-  const mapSideDefenderTeam = collisionX < COLS / 2 ? 1 : 2;
+  const mapSideDefenderTeam = getMapSideDefenderTeam(state, collisionX);
   let winner;
   let loser;
 

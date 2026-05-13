@@ -8,15 +8,17 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "npm run test:unit",
-    "test:unit": "node --test --test-isolation=none tests/unit/teams-and-setup.test.js tests/unit/movement-and-collisions.test.js tests/unit/scoring-and-level-state.test.js tests/unit/conditions.test.js tests/unit/blockly-interpreter.test.js tests/unit/guided-level-contracts.test.js tests/unit/guided-reference-solutions.test.js tests/unit/free-play-contracts.test.js tests/unit/display-and-controls.test.js",
-    "test:browser": "playwright test"
+    "test:unit": "node --test --test-isolation=none tests/unit/teams-and-setup.test.js tests/unit/movement-and-collisions.test.js tests/unit/scoring-and-level-state.test.js tests/unit/conditions.test.js tests/unit/blockly-interpreter.test.js tests/unit/guided-level-contracts.test.js tests/unit/guided-reference-solutions.test.js tests/unit/guided-project-solutions.test.js tests/unit/free-play-contracts.test.js tests/unit/display-and-controls.test.js tests/unit/usage-file.test.js tests/unit/private-program-file.test.js tests/unit/usage-analyzer-browser.test.js",
+    "test:browser": "playwright test",
+    "analyze:usage": "node scripts/analyze-usage-files.js",
+    "test:regression": "npx playwright test --config=tests/regression/playwright.config.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
     "vite": "^7.1.5"
   },
   "dependencies": {
-    "blockly": "^12.3.0",
+    "blockly": "^12.5.1",
     "p5": "^1.11.10"
   }
 }

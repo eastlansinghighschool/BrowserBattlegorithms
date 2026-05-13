@@ -5,15 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browser Battlegorithms</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./src/assets/styles/style.css">
   </head>
   <body>
     <header class="app-header">
       <div class="app-header-inner">
         <h1>Browser Battlegorithms</h1>
-        <a id="helpLink" class="app-help-link" href="./help.html" target="_blank" rel="noopener" aria-label="Open Help">
-          ?
-        </a>
+        <div class="app-header-actions">
+          <button
+            id="exportUsageButton"
+            class="app-header-icon-button"
+            type="button"
+            aria-label="Export usage file: download a local evidence file with summary, code snapshots, and integrity hash."
+            title="Export usage file: download a local evidence file with summary, code snapshots, and integrity hash."
+          >
+            <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <path d="M7 10l5 5 5-5" />
+              <path d="M12 15V3" />
+            </svg>
+            <svg class="app-header-icon app-header-icon-chart" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19h16" />
+              <path d="m5 16 4-4 4 3 6-8" />
+            </svg>
+          </button>
+          <a id="helpLink" class="app-help-link" href="./help.html" target="_blank" rel="noopener" aria-label="Open Help">
+            ?
+          </a>
+        </div>
       </div>
     </header>
     <div id="tutorial-overlay" aria-live="polite"></div>
@@ -50,16 +69,108 @@
         <div id="blockly-program-tabs"></div>
         <div id="blockly-program-summary"></div>
         <p id="workspace-import-status" class="workspace-import-status" hidden></p>
+        <p id="usage-export-status" class="workspace-import-status" hidden></p>
         <div id="blockly-toolbar">
+          <div id="blockly-history-controls" aria-label="Blockly edit history">
+            <button
+              id="undoWorkspaceButton"
+              type="button"
+              data-blockly-history-action="undo"
+              aria-label="Undo the last Blockly edit"
+              title="Undo the last Blockly edit"
+            >
+              <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7v6h6"/>
+                <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6.28 2.53L3 13"/>
+              </svg>
+            </button>
+            <button
+              id="redoWorkspaceButton"
+              type="button"
+              data-blockly-history-action="redo"
+              aria-label="Redo the last Blockly edit"
+              title="Redo the last Blockly edit"
+            >
+              <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 7v6h-6"/>
+                <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6.28 2.53L21 13"/>
+              </svg>
+            </button>
+          </div>
           <div id="blockly-size-controls" aria-label="Program workspace size">
             <button type="button" data-blockly-size="compact">Compact</button>
             <button type="button" data-blockly-size="standard">Standard</button>
             <button type="button" data-blockly-size="tall">Tall</button>
           </div>
-          <button id="exportWorkspaceButton" type="button">Export XML</button>
-          <button id="importWorkspaceButton" type="button">Import XML</button>
+          <div id="program-file-controls" class="program-file-controls">
+            <button
+              id="exportWorkspaceButton"
+              type="button"
+              aria-label="Export program file"
+              title="Export program file"
+            >
+              <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="M7 10l5 5 5-5" />
+                <path d="M12 15V3" />
+              </svg>
+            </button>
+            <button
+              id="importWorkspaceButton"
+              type="button"
+              aria-label="Import program file"
+              title="Import program file"
+            >
+              <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <path d="M7 14l5-5 5 5" />
+                <path d="M12 19V9" />
+              </svg>
+            </button>
+          </div>
           <button id="soundToggleButton" type="button">Sound: On</button>
-          <input id="importWorkspaceInput" type="file" accept=".xml,text/xml" hidden>
+          <input id="importWorkspaceInput" type="file" accept=".xml,.json,text/xml,application/json" hidden>
+        </div>
+        <div id="programExportModal" class="program-modal" hidden aria-hidden="true">
+          <div class="program-modal-backdrop" data-program-modal-action="cancel"></div>
+          <div class="program-modal-card" role="dialog" aria-modal="true" aria-labelledby="programExportModalTitle">
+            <h3 id="programExportModalTitle">Export program file</h3>
+            <p class="program-modal-copy">Choose a normal XML file or a private file for local hot-seat play.</p>
+            <label class="program-modal-check">
+              <input id="privateExportCheckbox" type="checkbox">
+              Private export
+            </label>
+            <div id="privateExportFields" class="program-modal-fields" hidden>
+              <label>Password or PIN
+                <input id="privateExportPassword" type="password" autocomplete="new-password">
+              </label>
+              <label>Confirm password or PIN
+                <input id="privateExportConfirm" type="password" autocomplete="new-password">
+              </label>
+              <p class="program-modal-note">Private files keep your program from being casually read during local play. They are not a security system against someone inspecting the browser.</p>
+            </div>
+            <p id="programExportModalMessage" class="program-modal-message" hidden></p>
+            <div class="program-modal-actions">
+              <button type="button" data-program-modal-action="cancel">Cancel</button>
+              <button type="button" data-program-modal-action="confirm">Export File</button>
+            </div>
+          </div>
+        </div>
+        <div id="privateImportModal" class="program-modal" hidden aria-hidden="true">
+          <div class="program-modal-backdrop" data-private-import-action="cancel"></div>
+          <div class="program-modal-card" role="dialog" aria-modal="true" aria-labelledby="privateImportModalTitle">
+            <h3 id="privateImportModalTitle">Import private program</h3>
+            <p id="privateImportModalSummary" class="program-modal-copy"></p>
+            <label>Password or PIN
+              <input id="privateImportPassword" type="password" autocomplete="current-password">
+            </label>
+            <p class="program-modal-note">Private files keep your program from being casually read during local play. They are not a security system against someone inspecting the browser.</p>
+            <p id="privateImportModalMessage" class="program-modal-message" hidden></p>
+            <div class="program-modal-actions">
+              <button type="button" data-private-import-action="cancel">Cancel</button>
+              <button type="button" data-private-import-action="confirm">Import File</button>
+            </div>
+          </div>
         </div>
         <div id="blockly-workspace-shell">
           <div id="blockly-loading-placeholder" class="panel-loading-card panel-loading-card-program">

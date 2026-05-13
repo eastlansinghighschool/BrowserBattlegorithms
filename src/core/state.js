@@ -48,6 +48,7 @@ export function createInitialState() {
     currentLevelStatus: LEVEL_STATUS.LOCKED,
     activeLevelResult: LEVEL_RESULT.NONE,
     levelAttemptCount: 0,
+    currentLevelStartTurnNumber: null,
     lastLevelResultReason: null,
     currentToolboxBlockTypes: [],
     currentSensorObjectTypes: [],
@@ -70,6 +71,8 @@ export function createInitialState() {
     editorLoadError: null,
     boardLoadError: null,
     workspaceImportStatus: null,
+    usageExportStatus: null,
+    usageTrackerReady: false,
     randomFn: Math.random,
     runnerActionHistory: {}
   };

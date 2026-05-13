@@ -16,6 +16,12 @@ import {
 } from "../ai/blockly/blocks.js";
 import { renderControlRows } from "./keycaps.js";
 import {
+  renderProjectBadge,
+  renderProjectIndicator,
+  renderProjectStartLessonCallout,
+  renderProjectStateNote
+} from "./projectSignifiers.js";
+import {
   configureFreePlay,
   enterFreePlay,
   enterGuidedMode,
@@ -98,6 +104,52 @@ function getLevelStatusLabel(status) {
   return "Available";
 }
 
+function isChallengeLevel(level) {
+  return level?.levelKind === "challenge";
+}
+
+function renderChallengeBadge(level) {
+  if (!isChallengeLevel(level)) {
+    return "";
+  }
+
+  return '<span class="level-kind-badge" aria-label="Challenge">Challenge</span>';
+}
+
+function renderChallengeCallout(level) {
+  if (!isChallengeLevel(level)) {
+    return "";
+  }
+
+  return `
+    <div class="lesson-challenge-callout">
+      <p class="lesson-challenge-callout-label">Challenge Level</p>
+      <p class="lesson-challenge-callout-body">No new blocks here. Use tools you already know to build a complete strategy.</p>
+    </div>
+  `;
+}
+
+function renderTargetSquareIcon() {
+  return `
+    <svg class="lesson-target-icon" aria-hidden="true" viewBox="0 0 48 48" fill="none">
+      <rect x="6" y="6" width="36" height="36" rx="7" ry="7"></rect>
+      <circle cx="24" cy="24" r="10"></circle>
+    </svg>
+  `;
+}
+
+function renderLegendMarker(item) {
+  const label = `${item?.label || ""}`.toLowerCase();
+  if (label.includes("target")) {
+    return renderTargetSquareIcon();
+  }
+  return `<span class="lesson-legend-emoji" aria-hidden="true">${escapeHtml(item?.emoji || "")}</span>`;
+}
+
+function renderLevelSignifiers(level) {
+  return `${renderProjectBadge(level)}${renderChallengeBadge(level)}`;
+}
+
 function getResultStateLabel(app) {
   if (app.state.activeLevelResult === LEVEL_RESULT.PASSED) {
     return "Passed";
@@ -122,7 +174,7 @@ function renderLegendItems(level) {
       <div class="lesson-legend-grid">
         ${level.legendItems.map((item) => `
           <div class="lesson-legend-item">
-            <span class="lesson-legend-emoji" aria-hidden="true">${escapeHtml(item.emoji || "")}</span>
+            ${renderLegendMarker(item)}
             <div>
               <span class="lesson-legend-label">${escapeHtml(item.label)}</span>
               <span class="lesson-legend-description">${escapeHtml(item.description)}</span>
@@ -194,7 +246,7 @@ function renderLevelPickerItems(app) {
       return `
         <button class="level-picker-item${currentClass}" data-level-id="${level.id}" ${disabled}>
           <span class="level-picker-item-title">${escapeHtml(level.title)}</span>
-          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""}</span>
+          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""}${renderLevelSignifiers(level)}</span>
           <span class="level-picker-item-description">${escapeHtml(level.description)}</span>
         </button>
       `;
@@ -259,14 +311,14 @@ function renderFreePlayOptions(app) {
       <summary>Controls</summary>
       <div class="lesson-disclosure-content">
         <p class="lesson-support-note">Two-player free play uses one keyboard. Each team has its own movement and ability keys.</p>
-        <p><strong>Team 1 Human</strong></p>
+        <p><strong>Player 1</strong></p>
         ${renderControlRows([
           { label: "Move", keys: ["W", "A", "S", "D"], description: "move on the board" },
           { label: "Jump", keys: ["F"], description: "jump forward" },
           { label: "Barrier", keys: ["B"], description: "place a barrier" },
           { label: "Stay", keys: ["X"], description: "stay still" }
         ])}
-        <p><strong>Team 2 Human</strong></p>
+        <p><strong>Player 2</strong></p>
         ${renderControlRows([
           { label: "Move", keys: ["O", "K", "L", ";"], description: "move on the board" },
           { label: "Jump", keys: ["M"], description: "jump forward" },
@@ -414,7 +466,7 @@ export function renderLevelPanel(app) {
       <div class="level-picker">
         <button class="level-picker-trigger" data-action="toggle-level-picker" aria-expanded="${pickerOpen ? "true" : "false"}">
           <span class="level-picker-trigger-label">${escapeHtml(currentLevel.title)}</span>
-          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))}</span>
+          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))}${renderLevelSignifiers(currentLevel)}</span>
         </button>
         ${pickerOpen ? `<div class="level-picker-popover">${renderLevelPickerItems(app)}</div>` : ""}
       </div>
@@ -422,12 +474,17 @@ export function renderLevelPanel(app) {
         <div class="student-lesson-topline">
           <span class="lesson-status-pill">${escapeHtml(getResultStateLabel(app))}</span>
           ${app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT ? '<span class="lesson-mode-pill">Keyboard practice level</span>' : ""}
+          ${renderProjectBadge(currentLevel)}
         </div>
         <div>
           <h3 class="student-lesson-title">${escapeHtml(currentLevel.title)}</h3>
           <p class="student-lesson-goal">${escapeHtml(currentLevel.description)}</p>
         </div>
+        ${renderProjectIndicator(currentLevel)}
         ${currentLevel.introText ? `<p class="level-intro">${escapeHtml(currentLevel.introText)}</p>` : ""}
+        ${renderProjectStartLessonCallout(currentLevel)}
+        ${renderProjectStateNote(currentLevel)}
+        ${renderChallengeCallout(currentLevel)}
         ${renderLegendItems(currentLevel)}
         ${app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT ? `
           <div class="lesson-alert">

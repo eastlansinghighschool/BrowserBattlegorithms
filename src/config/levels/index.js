@@ -1,0 +1,35 @@
+import foundations from "./phases/foundations/index.js";
+import sensing from "./phases/sensing/index.js";
+import movementHelpers from "./phases/movement-helpers/index.js";
+import resourcesAndTerritory from "./phases/resources-and-territory/index.js";
+import advancedLogic from "./phases/advanced-logic/index.js";
+import advancedTeamplay from "./phases/advanced-teamplay/index.js";
+import optional from "./phases/optional/index.js";
+import { normalizeLegacyLevelSetup } from "./shared/normalizeSetup.js";
+
+const RAW_LEVEL_DEFINITIONS = [
+  ...foundations,
+  ...sensing,
+  ...movementHelpers,
+  ...resourcesAndTerritory,
+  ...advancedLogic,
+  ...advancedTeamplay,
+  ...optional
+];
+
+export function getLevelDefinitions() {
+  return RAW_LEVEL_DEFINITIONS.map((level) => ({
+    ...level,
+    toolboxBlockTypes: [...level.toolboxBlockTypes],
+    sensorObjectTypes: [...(level.sensorObjectTypes || [])],
+    sensorRelationTypes: [...(level.sensorRelationTypes || [])],
+    moveTowardTargetTypes: [...(level.moveTowardTargetTypes || [])],
+    tips: [...(level.tips || [])],
+    legendItems: structuredClone(level.legendItems || []),
+    tutorialSteps: structuredClone(level.tutorialSteps || []),
+    project: level.project ? structuredClone(level.project) : null,
+    winCondition: { ...level.winCondition },
+    failureCondition: level.failureCondition ? { ...level.failureCondition } : null,
+    setup: normalizeLegacyLevelSetup(level.setup || level.setupOverrides)
+  }));
+}

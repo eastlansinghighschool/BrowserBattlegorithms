@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { chooseGuided, clearStorageBeforeEach, dismissTutorial, waitForHeavyReady } from "./helpers.js";
+import { chooseGuided, clearStorageBeforeEach, dismissTutorial, unlockGuidedLevels, waitForHeavyReady } from "./helpers.js";
 
 clearStorageBeforeEach(test);
 
@@ -12,6 +12,61 @@ test("guided instructions are visible after dismissing the first tutorial", asyn
   await expect(page.locator("#level-panel")).toContainText("What you are looking at");
   await expect(page.locator("#level-panel")).toContainText("Ally runner");
   await expect(page.locator("#showTutorialButton")).toBeVisible();
+  await expect(page.locator("#program-file-controls")).toBeHidden();
+  await expect(page.locator("#exportWorkspaceButton")).toBeHidden();
+  await expect(page.locator("#importWorkspaceButton")).toBeHidden();
+});
+
+test("Blockly execution hints dismiss once a block becomes valid", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("sensor-barrier-branch");
+    window.__BBA_TEST_HOOKS__.loadWorkspaceXml(`
+      <xml xmlns="https://developers.google.com/blockly/xml">
+        <block type="battlegorithms_on_each_turn" x="24" y="24">
+          <next>
+            <block type="battlegorithms_if_sensor_matches">
+              <field name="OBJECT">ENEMY_RUNNER</field>
+              <field name="RELATION">DIRECTLY_IN_FRONT</field>
+            </block>
+          </next>
+        </block>
+      </xml>
+    `);
+  });
+
+  const warningIcon = page.locator(".blocklyWarningIcon");
+  await expect(warningIcon).toBeVisible();
+  await expect.poll(async () => page.evaluate(() => {
+    const block = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace().getBlocksByType("battlegorithms_if_sensor_matches", false)[0];
+    return block.getIcons().some((icon) => icon.getType()?.toString?.() === "warning");
+  })).toBeTruthy();
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.loadWorkspaceXml(`
+      <xml xmlns="https://developers.google.com/blockly/xml">
+        <block type="battlegorithms_on_each_turn" x="24" y="24">
+          <next>
+            <block type="battlegorithms_if_sensor_matches">
+              <field name="OBJECT">ENEMY_RUNNER</field>
+              <field name="RELATION">DIRECTLY_IN_FRONT</field>
+              <statement name="DO">
+                <block type="battlegorithms_move_down_screen"></block>
+              </statement>
+            </block>
+          </next>
+        </block>
+      </xml>
+    `);
+  });
+
+  await expect(page.locator(".blocklyWarningIcon")).toHaveCount(0);
+  await expect.poll(async () => page.evaluate(() => {
+    const block = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace().getBlocksByType("battlegorithms_if_sensor_matches", false)[0];
+    return block.getIcons().some((icon) => icon.getType()?.toString?.() === "warning");
+  })).toBeFalsy();
 });
 
 test("guided level picker shows the current level and lets the learner browse ahead", async ({ page }) => {
@@ -24,6 +79,77 @@ test("guided level picker shows the current level and lets the learner browse ah
   await expect(page.locator(".level-picker-popover")).toBeVisible();
   await expect(page.locator(".level-picker-popover")).toContainText("Level 2: Reach Enemy Flag");
   await expect(page.locator(".level-picker-popover")).toContainText("Level 3: Score a Point");
+});
+
+test("challenge levels show a badge in the picker and a challenge callout in the lesson panel", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.startLevel("show-what-you-know");
+  });
+
+  await expect(page.locator(".level-picker-trigger")).toContainText("Challenge");
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Show What You Know" })).toContainText("Challenge");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" })).not.toContainText("Challenge");
+  await expect(page.locator("#level-panel")).toContainText("Challenge Level");
+  await expect(page.locator("#level-panel")).toContainText("No new blocks here. Use tools you already know to build a complete strategy.");
+
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" }).click();
+  await expect(page.locator(".level-picker-trigger")).not.toContainText("Challenge");
+  await expect(page.locator("#level-panel")).not.toContainText("Challenge Level");
+});
+
+test("project levels show a project badge, project start callout, and persistent project indicator", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await unlockGuidedLevels(page);
+
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" })).toContainText("Project");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" })).not.toContainText("Project");
+
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
+  await dismissTutorial(page);
+
+  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
+  await expect(page.locator("#level-panel")).toContainText("Shared code across this project.");
+  await expect(page.locator("#blockly-region")).toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+
+  await page.locator('#blockly-region [data-project-callout-action="dismiss"]').click();
+  await expect(page.locator("#blockly-region")).not.toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+
+  await page.reload();
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.locator(".level-picker-trigger").click();
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
+  await dismissTutorial(page);
+  await expect(page.locator("#blockly-region")).not.toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+});
+
+test("project capstones show both project and challenge framing, and escort the carrier notes the starting flag state", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("full-team-tactics");
+  });
+
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Project");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Challenge");
+  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
+  await expect(page.locator("#level-panel")).toContainText("Challenge Level");
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("escort-the-carrier");
+  });
+  await expect(page.locator("#level-panel")).toContainText("The lead ally starts with the flag already");
 });
 
 test("the guided workspace starts with a visible starter program and becomes read-only during play", async ({

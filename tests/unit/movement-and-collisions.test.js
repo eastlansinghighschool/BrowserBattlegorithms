@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { AI_ACTION_TYPES, MOVE_TOWARD_TARGETS, MAIN_GAME_STATES } from "../../src/config/constants.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { checkInvariants } from "../../src/core/invariants.js";
 import {
   isCellBlockedByImpassables,
@@ -63,6 +63,42 @@ test("collision resolves in favor of defender side", () => {
   assert.equal(outcome.winner.id, defender.id);
   assert.equal(outcome.loser.id, attacker.id);
   assert.deepEqual(outcome.loserCell, { x: 8, y: 3 });
+});
+
+test("collision defender is determined by team home side, not literal team number", () => {
+  // Randomized Free Play orientation: Team 1 (player) plays right-to-left,
+  // so Team 1.homeSide = "right" and Team 2.homeSide = "left".
+  const app = buildMatch({ randomFn: () => 0.9 });
+  assert.equal(app.state.teams[1].homeSide, "right");
+  assert.equal(app.state.teams[2].homeSide, "left");
+
+  const team1Runner = app.state.allRunners.find((runner) => runner.team === 1);
+  const team2Runner = app.state.allRunners.find((runner) => runner.team === 2);
+
+  // Collision on the right half: Team 1 owns this side, so Team 1 should win
+  // even when Team 2 is the in-cell defender being attacked.
+  const rightHalfOutcome = resolveCollision(
+    app.state,
+    team1Runner,
+    team2Runner,
+    10,
+    3,
+    { x: 9, y: 3 }
+  );
+  assert.equal(rightHalfOutcome.winner.team, 1);
+  assert.equal(rightHalfOutcome.loser.team, 2);
+
+  // Collision on the left half: Team 2 owns this side under this orientation.
+  const leftHalfOutcome = resolveCollision(
+    app.state,
+    team1Runner,
+    team2Runner,
+    2,
+    3,
+    { x: 3, y: 3 }
+  );
+  assert.equal(leftHalfOutcome.winner.team, 2);
+  assert.equal(leftHalfOutcome.loser.team, 1);
 });
 
 test("collision processing leaves one runner on the collision cell and freezes the loser on the origin cell", () => {

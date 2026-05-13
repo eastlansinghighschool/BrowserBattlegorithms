@@ -11,7 +11,7 @@ import {
 import { createApp } from "../../src/core/state.js";
 import { enterFreePlay, initializeLevelState } from "../../src/core/levels.js";
 import { getToolboxBlockTypesForMode } from "../../src/ai/blockly/blocks.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { resetRound } from "../../src/core/setup.js";
 import { translateActionDecision } from "../../src/core/movement.js";
 import { processTurnActions } from "../../src/core/turnEngine.js";

@@ -5,7 +5,7 @@ import {
   SENSOR_OBJECT_TYPES,
   SENSOR_RELATION_TYPES
 } from "../../src/config/constants.js";
-import { buildMatch } from "../../src/testSupport/builders.js";
+import { buildMatch } from "./helpers/builders.js";
 import { evaluateCondition, evaluateSensorCondition } from "../../src/core/conditions.js";
 
 test("condition helpers detect barrier, enemy, and carried-flag state", () => {

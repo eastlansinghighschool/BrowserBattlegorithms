@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage File Analyzer – Browser Battlegorithms</title>
+    <link rel="stylesheet" href="./src/admin/adminStyle.css">
+  </head>
+  <body>
+    <header class="adm-header">
+      <div class="adm-header-inner">
+        <div>
+          <h1 class="adm-title">Usage File Analyzer</h1>
+          <p class="adm-local-note">Local development tool — not included in the published app.</p>
+        </div>
+        <a href="/" class="adm-back-link">← Game</a>
+      </div>
+    </header>
+    <main class="adm-main">
+      <section
+        class="adm-drop-zone"
+        id="dropZone"
+        aria-label="Drop usage files here or use the button below"
+      >
+        <p class="adm-drop-prompt">
+          Drop student usage <code>.json</code> files here
+        </p>
+        <div class="adm-drop-actions">
+          <button class="adm-btn" type="button" id="filePickerButton">Choose Files…</button>
+          <button class="adm-btn adm-btn-secondary" type="button" id="clearButton" hidden>Clear All</button>
+          <input type="file" id="fileInput" accept=".json,application/json" multiple hidden>
+        </div>
+        <p class="adm-file-count" id="fileCount" aria-live="polite"></p>
+      </section>
+
+      <ul class="adm-error-list" id="errorList" role="list" aria-label="File load errors" hidden></ul>
+
+      <section id="flagsSection" hidden>
+        <h2 class="adm-section-title">Class Flags</h2>
+        <ul class="adm-flags-list" id="flagsList" role="list"></ul>
+      </section>
+
+      <section id="tableSection" hidden>
+        <h2 class="adm-section-title">Class Summary</h2>
+        <div class="adm-table-wrap">
+          <table class="adm-table" id="classTable">
+            <thead>
+              <tr>
+                <th scope="col">Student</th>
+                <th scope="col">Session</th>
+                <th scope="col">Exported</th>
+                <th scope="col">Integrity</th>
+                <th scope="col">Guided passed/of</th>
+                <th scope="col">Challenges</th>
+                <th scope="col">Free play W/L</th>
+                <th scope="col">Time (min)</th>
+                <th scope="col">Events</th>
+                <th scope="col">Snapshots</th>
+                <th scope="col">Flags</th>
+              </tr>
+            </thead>
+            <tbody id="classTableBody"></tbody>
+          </table>
+        </div>
+        <p class="adm-table-hint">Click a row to view student detail.</p>
+      </section>
+
+      <section id="detailSection" class="adm-detail" hidden aria-label="Student detail">
+        <div class="adm-detail-header">
+          <h2 class="adm-section-title" id="detailHeading">Student Detail</h2>
+          <button class="adm-btn adm-btn-secondary adm-btn-sm" type="button" id="closeDetailButton">Close</button>
+        </div>
+        <div id="detailContent"></div>
+      </section>
+    </main>
+    <script type="module" src="./src/admin/adminApp.js"></script>
+  </body>
+</html>

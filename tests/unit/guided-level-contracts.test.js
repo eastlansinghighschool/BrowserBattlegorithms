@@ -14,40 +14,78 @@ import {
 import { getLevelDefinitions } from "../../src/config/levels.js";
 import { getToolboxBlockTypesForMode } from "../../src/ai/blockly/blocks.js";
 import { createApp } from "../../src/core/state.js";
-import { evaluateLevelProgress, getLevelStateSnapshot, initializeLevelState, startLevel } from "../../src/core/levels.js";
+import { completeLevel, evaluateLevelProgress, getLevelStateSnapshot, initializeLevelState, startLevel } from "../../src/core/levels.js";
 import { buildSolutionXml, GUIDED_LEVEL_REFERENCE_SOLUTIONS } from "./fixtures/guidedReferenceSolutions.js";
 import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
 
 test("level definitions load with the expected starter and advanced level order", () => {
   const levels = getLevelDefinitions();
-  assert.equal(levels.length, 36);
+  assert.equal(levels.length, 38);
   assert.deepEqual(
     levels.map((level) => level.id),
     [
-      "move-to-target", "reach-enemy-flag", "score-a-point", "barrier-detour", "mirror-forward",
-      "sensor-barrier-branch", "watch-the-wall", "find-the-human", "find-the-enemy-flag", "human-runner-practice",
-      "move-toward-flag", "bring-it-home", "enemy-nearby", "jump-the-gap", "jump-if-ready",
-      "build-the-barrier", "stay-still-can-do-something", "relay-race", "my-side-their-side", "freeze-the-lane",
-      "closest-threat", "how-far-away", "two-conditions-at-once", "this-or-that", "flip-the-answer",
-      "enemy-side-decision-making", "one-program-two-allies", "index-jobs", "first-two-defend", "escort-the-carrier",
-      "closest-enemy-defender", "freeze-support", "barrier-specialist", "jump-team", "advanced-scrimmage",
+      "move-to-target",
+      "reach-enemy-flag",
+      "score-a-point",
+      "barrier-detour",
+      "mirror-forward",
+      "sensor-barrier-branch",
+      "watch-the-wall",
+      "find-the-human",
+      "find-the-enemy-flag",
+      "human-runner-practice",
+      "move-toward-flag",
+      "bring-it-home",
+      "enemy-nearby",
+      "jump-the-gap",
+      "dodge-and-deliver",
+      "jump-if-ready",
+      "build-the-barrier",
+      "stay-still-can-do-something",
+      "relay-race",
+      "my-side-their-side",
+      "freeze-the-lane",
+      "show-what-you-know",
+      "closest-threat",
+      "how-far-away",
+      "two-conditions-at-once",
+      "this-or-that",
+      "flip-the-answer",
+      "full-team-tactics",
+      "one-program-two-allies",
+      "index-jobs",
+      "first-two-defend",
+      "escort-the-carrier",
+      "closest-enemy-defender",
+      "freeze-support",
+      "barrier-specialist",
+      "jump-team",
+      "advanced-scrimmage",
       "optional-random-lab"
     ]
   );
+
+  assert.ok(levels[14].title.startsWith("Challenge 15"));
+  assert.ok(levels[21].title.startsWith("Challenge 22"));
+  assert.ok(levels[27].title.startsWith("Challenge 28"));
+  assert.equal(levels.at(-1).id, "optional-random-lab");
 });
 
-test("guided mode initializes with all levels available during testing", () => {
+test("guided mode cold start: level 1 available, all others locked", () => {
   const app = createApp();
   initializeLevelState(app);
   const snapshot = getLevelStateSnapshot(app);
   assert.equal(snapshot.currentModeView, GAME_VIEW_MODES.GUIDED_LEVELS);
   assert.equal(snapshot.currentLevelId, "move-to-target");
   assert.equal(snapshot.levelProgress["move-to-target"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["reach-enemy-flag"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["score-a-point"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["barrier-detour"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["mirror-forward"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["freeze-the-lane"], LEVEL_STATUS.AVAILABLE);
+  const allLevels = getLevelDefinitions();
+  for (const level of allLevels.slice(1)) {
+    assert.equal(
+      snapshot.levelProgress[level.id],
+      LEVEL_STATUS.LOCKED,
+      `${level.id} should start LOCKED on cold init`
+    );
+  }
   assert.equal(snapshot.humanTurnBehavior, HUMAN_TURN_BEHAVIORS.AUTO_SKIP);
 });
 
@@ -67,11 +105,19 @@ test("advanced campaign authored levels enforce their intended mechanic family",
 });
 
 test("advanced campaign contract exposes capstone and optional lab tools as authored", () => {
+  const fullTeamTactics = getLevelDefinitions().find((entry) => entry.id === "full-team-tactics");
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.VALUE_DISTANCE_TO_TARGET));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.LOGIC_AND));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_HAVE_ENEMY_FLAG));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_BARRIER_IN_FRONT));
+
   const advancedScrimmage = getLevelDefinitions().find((entry) => entry.id === "advanced-scrimmage");
+  assert.ok(advancedScrimmage.title.startsWith("Challenge 37"));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.MOVE_RANDOMLY));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.PLACE_BARRIER));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.JUMP_FORWARD));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.FREEZE_OPPONENTS));
+  assert.deepEqual(advancedScrimmage.winCondition, { type: "team_scores_point", teamId: 1 });
   assert.equal(advancedScrimmage.setup.teams.opponent.runners.every((runner) => !runner.isFrozen), true);
 
   const optionalRandomLab = getLevelDefinitions().find((entry) => entry.id === "optional-random-lab");
@@ -111,8 +157,8 @@ test("guided toolbox restriction reflects the curriculum unlock path", () => {
   }
 
   const sensingLevel = app.state.levels.find((level) => level.id === "sensor-barrier-branch");
-  assert.deepEqual(sensingLevel.sensorObjectTypes, [SENSOR_OBJECT_TYPES.BARRIER]);
-  assert.deepEqual(sensingLevel.sensorRelationTypes, [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT]);
+  assert.deepEqual(sensingLevel.sensorObjectTypes, [SENSOR_OBJECT_TYPES.ENEMY_RUNNER]);
+  assert.ok(sensingLevel.sensorRelationTypes.includes(SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT));
 });
 
 test("guided sensing unlocks progress in authored stages", () => {
@@ -171,6 +217,12 @@ test("guided tutorial and authored board contracts remain consistent", () => {
 
   const moveTowardLevel = getLevelDefinitions().find((level) => level.id === "move-toward-flag");
   assert.deepEqual(moveTowardLevel.setupOverrides.flagOverrides[2], { gridX: 11, gridY: 3 });
+
+  const howFarAway = getLevelDefinitions().find((level) => level.id === "how-far-away");
+  assert.equal(howFarAway.mapKey, "simpleAisle");
+  assert.equal(howFarAway.failureCondition.maxTurns, 17);
+  assert.deepEqual(howFarAway.setupOverrides.barriers, [{ gridX: 4, gridY: 4, ownerRunnerId: "strategy_brain_distance_barrier" }]);
+  assert.deepEqual(howFarAway.setupOverrides.teams.opponent.runners[0], { slot: "npc1", gridX: 6, gridY: 4 });
 });
 
 test("level 12 reference route requires both horizontal and vertical movement", () => {
@@ -201,7 +253,13 @@ test("generic sensing authored levels keep their support targets open", () => {
   assert.equal(humanSetup.gridX, 6);
   assert.equal(humanSetup.gridY, 2);
   assert.ok(findTheHuman.setup.barriers.some((barrier) => barrier.gridX === 7 && barrier.gridY === 2));
-  assert.ok(findTheHuman.tutorialSteps.some((step) => step.demoBlocklyXml?.includes("ANYWHERE_FORWARD")));
+
+  // Anti-spoiler demo strategy: demo exists but doesn't solve the level
+  assert.ok(findTheHuman.sensorRelationTypes.includes("ANYWHERE_FORWARD"), "Level should expose directional relations");
+  const demoStep = findTheHuman.tutorialSteps.find((step) => step.demoBlocklyXml);
+  assert.ok(demoStep, "find-the-human should have a demo step");
+  assert.ok(!demoStep.demoBlocklyXml.includes("HUMAN_RUNNER"), "Demo should not reveal the target object");
+  assert.match(demoStep.demoCaption || "", /example|different object/i);
 
   const relayRace = getLevelDefinitions().find((entry) => entry.id === "relay-race");
   assert.deepEqual(relayRace.winCondition.targetCell, { x: 6, y: 3 });
@@ -210,34 +268,107 @@ test("generic sensing authored levels keep their support targets open", () => {
   assert.equal(relayHuman.gridY, 2);
 });
 
-test("generic sensing authored levels unlock sequentially and preserve open target cells at runtime", () => {
+test("guided levels unlock sequentially when completed", () => {
   const app = createApp();
   initializeLevelState(app);
+
+  // Manually advance progress so sensor-barrier-branch is the next unlocked level
   app.state.levelProgress["move-to-target"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["reach-enemy-flag"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["score-a-point"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["barrier-detour"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["mirror-forward"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["sensor-barrier-branch"] = LEVEL_STATUS.AVAILABLE;
+
   startLevel(app, "sensor-barrier-branch");
-  let actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
-  actor.gridX = 6;
-  actor.gridY = 4;
-  evaluateLevelProgress(app);
-  assert.equal(app.state.levelProgress["watch-the-wall"], LEVEL_STATUS.AVAILABLE);
+  completeLevel(app, LEVEL_RESULT.PASSED, "win_condition_met");
+  assert.equal(app.state.levelProgress["watch-the-wall"], LEVEL_STATUS.AVAILABLE, "completing sensor-barrier-branch should unlock watch-the-wall");
 
-  app.state.levelProgress["watch-the-wall"] = LEVEL_STATUS.AVAILABLE;
   startLevel(app, "watch-the-wall");
-  actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
-  actor.gridX = 5;
-  actor.gridY = 5;
-  evaluateLevelProgress(app);
-  assert.equal(app.state.levelProgress["find-the-human"], LEVEL_STATUS.AVAILABLE);
+  completeLevel(app, LEVEL_RESULT.PASSED, "win_condition_met");
+  assert.equal(app.state.levelProgress["find-the-human"], LEVEL_STATUS.AVAILABLE, "completing watch-the-wall should unlock find-the-human");
+});
 
+test("generic sensing authored levels place target cells with no runner blocking them at runtime", () => {
+  const app = createApp();
+  initializeLevelState(app);
+
+  // Advance progress enough to reach find-the-human and relay-race
+  Object.keys(app.state.levelProgress).forEach((id) => {
+    app.state.levelProgress[id] = LEVEL_STATUS.PASSED;
+  });
   app.state.levelProgress["find-the-human"] = LEVEL_STATUS.AVAILABLE;
+
   startLevel(app, "find-the-human");
-  assert.equal(app.state.allRunners.find((runner) => runner.gridX === 5 && runner.gridY === 2), undefined);
+  assert.equal(
+    app.state.allRunners.find((runner) => runner.gridX === 5 && runner.gridY === 2),
+    undefined,
+    "find-the-human target cell (5,2) must not be occupied by a runner at level start"
+  );
 
   startLevel(app, "relay-race");
-  assert.equal(app.state.allRunners.find((runner) => runner.gridX === 6 && runner.gridY === 3), undefined);
+  assert.equal(
+    app.state.allRunners.find((runner) => runner.gridX === 6 && runner.gridY === 3),
+    undefined,
+    "relay-race target cell (6,3) must not be occupied by a runner at level start"
+  );
+});
+
+test("guided level manifest provides a lightweight sanity check of the campaign", async () => {
+  const { GUIDED_LEVEL_MANIFEST } = await import("../../src/config/levels/manifest.js");
+  const levels = getLevelDefinitions();
+
+  assert.equal(GUIDED_LEVEL_MANIFEST.length, levels.length);
+  assert.equal(GUIDED_LEVEL_MANIFEST[0].id, "move-to-target");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-random-lab");
+  assert.ok(GUIDED_LEVEL_MANIFEST[14].title.startsWith("Challenge 15"));
+});
+
+test("challenge metadata is preserved on the authored synthesis levels and surfaced in the manifest", async () => {
+  const levels = getLevelDefinitions();
+  const { GUIDED_LEVEL_MANIFEST } = await import("../../src/config/levels/manifest.js");
+
+  for (const levelId of ["dodge-and-deliver", "show-what-you-know", "full-team-tactics", "advanced-scrimmage"]) {
+    const level = levels.find((entry) => entry.id === levelId);
+    const manifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === levelId);
+    assert.equal(level.levelKind, "challenge", `${levelId} should be marked as a challenge level`);
+    assert.equal(manifestEntry.levelKind, "challenge", `${levelId} should expose challenge metadata in the manifest`);
+  }
+
+  const ordinaryLevel = levels.find((entry) => entry.id === "move-to-target");
+  const ordinaryManifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === "move-to-target");
+  assert.notEqual(ordinaryLevel.levelKind, "challenge");
+  assert.notEqual(ordinaryManifestEntry.levelKind, "challenge");
+});
+
+test("project metadata is preserved on the authored project levels and surfaced in the manifest", async () => {
+  const levels = getLevelDefinitions();
+  const { GUIDED_LEVEL_MANIFEST } = await import("../../src/config/levels/manifest.js");
+
+  const strategyBrainIds = ["closest-threat", "how-far-away", "two-conditions-at-once", "this-or-that", "flip-the-answer", "full-team-tactics"];
+  strategyBrainIds.forEach((levelId, index) => {
+    const level = levels.find((entry) => entry.id === levelId);
+    const manifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === levelId);
+    assert.equal(level.project.id, "strategy-brain", `${levelId} should belong to Strategy Brain`);
+    assert.equal(level.project.step, index + 1, `${levelId} should have the expected project step`);
+    assert.equal(manifestEntry.project.id, "strategy-brain", `${levelId} should expose Strategy Brain metadata in the manifest`);
+  });
+  assert.equal(levels.find((entry) => entry.id === "closest-threat").project.isStart, true);
+  assert.equal(levels.find((entry) => entry.id === "full-team-tactics").project.isCapstone, true);
+
+  const teamStrategyIds = ["one-program-two-allies", "index-jobs", "first-two-defend", "escort-the-carrier", "closest-enemy-defender", "freeze-support", "barrier-specialist", "jump-team", "advanced-scrimmage"];
+  teamStrategyIds.forEach((levelId, index) => {
+    const level = levels.find((entry) => entry.id === levelId);
+    const manifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === levelId);
+    assert.equal(level.project.id, "team-strategy-script", `${levelId} should belong to Team Strategy Script`);
+    assert.equal(level.project.step, index + 1, `${levelId} should have the expected project step`);
+    assert.equal(manifestEntry.project.id, "team-strategy-script", `${levelId} should expose Team Strategy Script metadata in the manifest`);
+  });
+  assert.equal(levels.find((entry) => entry.id === "one-program-two-allies").project.isStart, true);
+  assert.equal(levels.find((entry) => entry.id === "advanced-scrimmage").project.isCapstone, true);
+  assert.equal(levels.find((entry) => entry.id === "barrier-specialist").failureCondition.maxTurns, 10);
+  assert.equal(levels.find((entry) => entry.id === "jump-team").failureCondition.maxTurns, 15);
+
+  assert.equal(levels.find((entry) => entry.id === "show-what-you-know").project, null);
+  assert.equal(GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === "show-what-you-know").project, null);
 });
