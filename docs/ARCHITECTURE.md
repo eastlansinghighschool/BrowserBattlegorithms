@@ -11,7 +11,11 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 - `src/entities/`: `Runner`, `Flag`, `Barrier`
 - `src/ai/`: Blockly setup/interpreter and NPC behavior
 - `src/render/`: p5 bootstrapping, board/entity drawing, effects, animation helpers
-- `src/ui/`: score display, DOM controls, setup/run UI state
+- `src/ui/`: score display, DOM controls, setup/run UI state, overlays, sound
+- `src/usage/`: usage event tracking and export pipeline
+- `src/admin/`: local-only admin page for teacher usage-file review (excluded from GitHub Pages build)
+- `src/crypto/`: Web Crypto helpers for private Free Play program file encryption
+- `src/startup/`: async loading coordination for the Blockly editor and board renderer
 - `tests/unit/helpers/`: small builders and fixtures for Node/browser tests
 - `tests/`: command-line and Playwright tests
 
@@ -43,40 +47,19 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 4. Guided level extras such as carried-flag starts, frozen teaching props, and barriers are applied from the active setup data.
 5. Downstream systems such as scoring, sensing, NPC logic, and visual effects read active team state instead of global static team defaults.
 
-## Phase 8 Additions
+## Subsystem Map
 
-- Blockly now has two layers:
-  - beginner statement blocks for Levels 1-20
-  - advanced boolean/value blocks for Levels 21-35 and free play
-- Advanced Blockly evaluation still ends in a single action per ally turn, but now supports:
-  - boolean-producing sensor/resource/territory checks
-  - `AND`, `OR`, `NOT`
-  - numeric literals, comparisons, runner index, distance-to-target, random roll, and playDirection values
-- One workspace can now drive multiple allied runners. Each Blockly-controlled ally receives a stable `allyIndex` within its team.
-- Guided and free-play Blockly workspaces now persist through `src/ai/blockly/workspace.js` using:
-  - one Local Storage key per guided level
-  - one Local Storage key for free play
-  - XML import/export helpers layered on top of the same workspace serialization path
-- Sound feedback is centralized in `src/ui/sound.js`, keeping audio triggers out of rendering code and letting the core engine emit semantic events such as freeze, flag pickup, score, and level pass/fail.
+Each subsystem note is the single authoritative doc for its runtime contract. ARCHITECTURE links to them; it does not restate them.
 
-## Phase 9 Free Play Productization
-
-- Free play now has its own configuration state, separate from guided levels:
-  - free-play mode (`PvP`, `PvCPU Easy`, `PvCPU Tactical`)
-  - team size (`2-6` total runners per side)
-  - map key
-  - active Blockly team tab for PvP
-- Free-play runtime team generation is now parameterized instead of assuming one fixed runner layout.
-  - PvP builds one human plus N-1 Blockly allies on each side.
-  - PvCPU builds one human plus N-1 Blockly allies for the player and N CPU runners for the opponent.
-- Free-play CPU strategies are separated from the guided NPC teaching behaviors:
-  - easy sandbox CPU
-  - tactical attacker CPU
-  - tactical defender CPU
-- Blockly persistence now has distinct free-play contexts:
-  - one player-team program for PvCPU
-  - one Team 1 program and one Team 2 program for PvP
-- The visible Blockly editor remains a single panel, but PvP switches the loaded XML by active team tab while the turn engine can still resolve the correct program for off-screen teams.
+| Note | Scope |
+|---|---|
+| [blockly-workspace](./subsystems/blockly-workspace.md) | Workspace lifecycle, storage key map, ignored vs disabled blocks, warning and execution-hint lifecycle, project-shared workspaces, undo/redo wrapping. |
+| [ui-mode-contract](./subsystems/ui-mode-contract.md) | `currentModeView` vs `freePlayMode` vs `activeBlocklyTeamTab`, which controls are visible in which mode, mode-aware scoreboard and button text, tutorial-overlay gating. |
+| [turn-engine](./subsystems/turn-engine.md) | Runtime order of a turn, bounce vs illegal vs skipped action, scoring vs level completion vs round reset, collision rule tree with real exceptions. |
+| [file-pipelines](./subsystems/file-pipelines.md) | The three file flows (workspace XML, private encrypted JSON, usage evidence JSON), which mode shows which control, integrity model contrast. |
+| [usage-and-admin](./subsystems/usage-and-admin.md) | Event taxonomy, tracker → IndexedDB → export ladder, analyzer signal-vs-noise philosophy, admin app surface, regression artifacts are generated not committed. |
+| [npc-and-cpu](./subsystems/npc-and-cpu.md) | Teaching NPC vs free-play CPU split, what is deterministic, where randomness is allowed, shared pathing helper, `state.randomFn` test hook. |
+| [p5-surface-map](./subsystems/p5-surface-map.md) | `draw()` is part tick part paint, canvas-adjacent DOM overlays are not p5 features, who owns the canvas surface vs DOM layout. |
 
 ## Boundaries
 

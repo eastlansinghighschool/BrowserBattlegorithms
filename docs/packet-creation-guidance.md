@@ -61,8 +61,8 @@ Common Browser Battlegorithms references:
   - `src/`
   - `tests/`
 - Current phase tracking:
-  - `docs/DevelopmentPhases.md`
-  - `docs/DevelopmentLog.md`
+  - `docs/history/DevelopmentPhases.md`
+  - `docs/history/DevelopmentLog.md`
 
 Also list decisions the packet must not redefine. Project-level decisions:
 

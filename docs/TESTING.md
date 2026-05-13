@@ -33,6 +33,12 @@ Playwright tests cover:
 - Local Storage persistence across reload for guided and free-play programs
 - sound preference persistence and malformed XML import feedback
 - help-link behavior and standalone help-page navigation
+- usage export flow, admin page file review, and integrity verification
+- dev-only unlock-all-levels toggle behavior and production bundle exclusion
+
+## Regression Harness
+
+`tests/regression/` contains an end-to-end usage-pipeline harness. It simulates student profiles, exports usage files, post-processes timestamps, runs the CLI analyzer, and uploads results to `admin.html`. Output files under `tests/regression/output/` and `tests/regression/screenshots/` are generated artifacts — not committed source fixtures. See [`docs/subsystems/usage-and-admin.md`](./subsystems/usage-and-admin.md).
 
 ## Notes
 

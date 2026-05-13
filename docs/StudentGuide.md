@@ -23,7 +23,7 @@
 
 ### PvP Controls
 
-- **Team 1 Human:** `W A S D` move, `J` or `F` jump, `B` barrier, `X` stay still
+- **Team 1 Human:** `W A S D` move, `F` jump, `B` barrier, `X` stay still
 - **Team 2 Human:** `O K L ;` move, `M` jump, `I` barrier, `.` stay still
 
 ### PvP Blockly Programs
@@ -50,3 +50,5 @@
 - Free play saves separately from guided mode.
 - Use **Export XML** to download your current program.
 - Use **Import XML** to load a saved program back into the current context.
+- In Free Play, use the **Private Export** option to save your program as a password-protected file — useful for hot-seat play so your opponent cannot read your code.
+- Use the **Export Usage** button to save your session record for your teacher to review.

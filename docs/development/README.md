@@ -26,7 +26,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 14](plan-14-project-version-history-design.md) | complete | Design a future project version-history interface for recovering earlier shared-code states. |
 | [Plan 15](plan-15-pilot-readiness.md) | ready | Pre-pilot fixes: disable all-levels-unlocked, expand help page with Projects and Usage Export sections, expand advanced block descriptions, verify L28 badge interaction. |
 | [Plan 16](plan-16-usage-pipeline-regression.md) | ready | End-to-end Playwright regression: 5 parallel student profiles play the campaign, export usage, verify CLI analyzer, upload to admin page, capture screenshots. |
-| [Plan 17](plan-17-doc-cleanup.md) | ready | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
+| [Plan 17](plan-17-doc-cleanup.md) | complete | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
 
 
 ## Backlog Triage After Plan 02

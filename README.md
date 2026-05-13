@@ -1,56 +1,33 @@
-# BrowserBattlegorithms_CODEX
+# Browser Battlegorithms
 
-Browser-based version of the Battlegorithms AP CSA lab.
+Browser-based capture-the-flag programming game where students write Blockly strategies for allied runners, then watch them play out turn-by-turn against opponents.
 
-## Current State
+The app runs entirely in the browser with no server. Thirty-seven scaffolded guided levels teach Blockly fundamentals through multi-ally coordination. Free play supports Player vs Player and Player vs CPU sandbox matches with configurable team size and map.
 
-- Playable **Phase 8 expansion** build with guided-first level flow
-- Thirty-seven numbered guided levels plus an optional lab, with pass/fail evaluation and sequential unlock progression
-- Guided onboarding now includes a first-run mode chooser, spotlight tutorials, and explanatory level tips
-- Blockly now includes a beginner track plus an advanced boolean/value layer with logic operators, comparisons, typed number inputs, runner index, and distance-to-target values
-- Guided Phase 8 now introduces multi-ally shared-program strategy levels where Blockly-controlled allies can branch on stable runner indices
-- Free play now supports `Player vs Player`, `Player vs CPU (Easy)`, and `Player vs CPU (Tactical)` sandbox matches
-- Free play now includes a setup panel for mode, team size (`2-6` runners per side), and map selection across multiple wall layouts
-- PvP free play now supports separate Team 1 / Team 2 Blockly programs through one shared editor with team tabs, independent Local Storage, and independent XML import/export
-- Free play now includes the broader sandbox block set, including `Move Randomly`, jump/barrier readiness checks, teammate/territory checks, `Freeze Opponents`, and advanced value blocks such as random roll and playDirection
-- Match setup is now team-first: active teams own direction, base side, flag home, and visual identity, while runners inherit `playDirection` from their team
-- Free play now randomizes which team attacks left-to-right versus right-to-left each time it is loaded while enforcing one `1` and one `-1` direction
-- Blockly workspaces now persist per guided level and for free play via Local Storage, with XML export/import controls in the Blockly panel
-- First-pass sound feedback is now available for freeze, flag pickup, scoring, and level pass/fail, with a persisted sound toggle
-- Ignored/unattached early-phase blocks are visually marked for beginners
-- Level-based Blockly toolbox restriction plus free-play sandbox mode
-- Guided level navigation now uses a custom picker popover instead of a growing row of buttons
-- Modular ES-module codebase under `src/`
-- Vite-based dev/build workflow
-- Command-line rule tests and Playwright browser smoke tests in place
-- Static Vite build is ready for deployment to static hosting, with CI configured to require tests plus production build
+## Commands
 
-## Key Commands
+```
+npm install
+npm run dev          # dev server at http://127.0.0.1:4173 by default
+npm run build
+npm test
+npm run test:browser
+```
 
-- `npm install`
-- `npm run dev`
-- `npm run build`
-- `npm test`
-- `npm run test:browser`
+## Dev Server Port
 
-## Dev Server
-
-Start: `npm run dev` — serves the app at `http://127.0.0.1:4173` by default.
-
-Stop: `Ctrl+C` in the terminal running the dev server.
-
-The port is configured via the `DEV_PORT` variable in `.env`. To use a different port locally without affecting other contributors, create a `.env.local` file (gitignored) and set `DEV_PORT` there:
+Configured via `DEV_PORT` in `.env`. Override locally without affecting other contributors by creating a `.env.local` file (gitignored):
 
 ```
 DEV_PORT=3000
 ```
 
-## Main Project Docs
+## Docs
 
-- [GameSpecification.md](./docs/GameSpecification.md)
-- [DevelopmentPhases.md](./docs/DevelopmentPhases.md)
-- [DevelopmentLog.md](./docs/DevelopmentLog.md)
-- [ARCHITECTURE.md](./docs/ARCHITECTURE.md)
-- [TESTING.md](./docs/TESTING.md)
-- [StudentGuide.md](./docs/StudentGuide.md)
-- [TeacherGuide.md](./docs/TeacherGuide.md)
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Game Specification](./docs/GameSpecification.md)
+- [Student Guide](./docs/StudentGuide.md)
+- [Teacher Guide](./docs/TeacherGuide.md)
+- [Testing](./docs/TESTING.md)
+- [Fresh Clone Setup](./docs/FRESH_SETUP.md)
+- [Development Packet Index](./docs/development/README.md)

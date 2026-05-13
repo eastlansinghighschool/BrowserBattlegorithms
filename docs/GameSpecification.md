@@ -1,6 +1,6 @@
 # **Browser Battlegorithms \- Game Specification V1.1**
 
-**Implementation Status Note (2026-04-04):** The live codebase is currently a Phase 8 expansion build with a modular ES-module architecture, Vite-based build workflow, command-line rule tests, and Playwright browser smoke tests. The implemented project now includes guided onboarding, spotlight tutorials, a required Blockly `On Each Turn` event block, beginner and advanced Blockly layers, a generic sensing family with object/relation dropdowns, a parameterized `Move Toward [target]` helper block, multi-ally shared-program guided levels, Local Storage workspace persistence, XML export/import, a sound toggle, and first-pass event sounds. This specification still describes the broader target product vision; not every later-phase feature below is implemented yet.
+For implementation contracts and subsystem details, see [`docs/subsystems/`](./subsystems/). This specification describes the intended game design; the subsystem notes are the authoritative source for runtime behavior.
 
 ## **1\. Introduction & Educational Goals**
 
@@ -59,13 +59,8 @@ The game proceeds in turns.
    * (If Player vs. NPC) The NPC team's AI logic determines their intended actions.  
    * All these intended actions are collected by the game engine.  
 2. **Action Resolution Phase (Sequential & Animated):**  
-   * The game engine processes the collected actions one runner at a time.  
-   * To introduce an element of unpredictability and visual interest, the order of execution for individual runners within a turn is determined as follows:  
-     * One runner from Team 1 is chosen (e.g., randomly, or cycling through Human then Allies).  
-     * One runner from Team 2 is chosen (similarly).  
-     * These two runners' actions are resolved (including visual animation of movement).  
-     * This alternates until all active runners from both teams who planned an action have had their action resolved. The exact order within a team can be randomized each turn.  
-   * Movement, action execution, collisions, and status updates are applied immediately as each runner's action is resolved. Visuals (including movement animations) reflect these immediate outcomes.  
+   * The game engine advances through runners in a deterministic active-runner sequence. Each runner's action is fully resolved — including movement, collision, flag pickup, and scoring checks — before the next runner acts. Visuals (including movement animations) reflect each outcome immediately.  
+   * For the full per-runner resolution order, see [`docs/subsystems/turn-engine.md`](./subsystems/turn-engine.md).  
 3. **End of Turn Phase:**  
    * Check for win/scoring conditions. If a point is scored, proceed to round reset.  
    * Update any turn-based effects (e.g., decrement frozenTurnsRemaining).  
@@ -209,23 +204,23 @@ As each runner's action is processed in the alternating sequence described in 2.
      * Flag's x,y updates to the carrier's x,y.  
 7. **Animation:** All successful movements should be visually animated (e.g., using an easing function over a short duration) before the next runner's action is processed. "Bounce back" animations should also occur for failed moves due to teammate occupancy or invalid targets.
 
-## **5\. Collision Resolution (Simplified & Immediate)**
+## **5\. Collision Resolution**
 
 When an active runner attempts to move into a cell occupied by an active opposing runner (as determined in Action Resolution Step 4c):
 
-1. **Determine Defender:** The team whose side of the map the collision occurs on is the "defender." (e.g., if collision at X \< mapWidth/2, Team 1 is defender; if X \>= mapWidth/2, Team 2 is defender, assuming Team 1 starts left).  
-2. **Collision Outcome:**  
-   * If one runner isFrozen and the other is not, the frozen runner automatically loses (this check is more for completeness, as frozen runners shouldn't be initiating moves that cause collisions).  
-   * If a runner is carrying the enemy flag and is *not* the defender in the collision cell, they automatically lose.  
-   * Otherwise, the **defender always wins** the collision.  
-3. **Consequences (applied immediately):**  
-   * **Loser:**  
-     * Becomes isFrozen \= true.  
-     * frozenTurnsRemaining is set (e.g., to 2 turns).  
-     * If carrying a flag, the flag is immediately returned to its team's starting base location and its carriedByRunnerId is set to null.  
-     * The collision resolves to **one occupied cell only**. The winner ends on the collision cell. The loser is frozen and moved to the attacker's origin cell, so the board never shows stacked runners on the same square.  
-   * **Winner:** Remains on the collision cell (their move to it was successful).  
-4. **Frozen Opponents Still Block Space:** Active runners cannot move into or through cells occupied by frozen opposing runners. The frozen runner remains in place until they thaw.
+For the full collision rule tree, including flag-carrying and grace-period exceptions, see [`docs/subsystems/turn-engine.md`](./subsystems/turn-engine.md).
+
+**Summary:**
+
+1. **Determine map-side owner:** The team assigned to the map half where the collision occurs is the default "defender." In standard guided-level orientation, Team 1 owns the left half and Team 2 owns the right half.
+2. **Flag-carrying overrides the default:** A runner carrying the enemy flag while on the *enemy's* map half loses the collision, regardless of which team is the map-side owner. This takes priority over the default defender rule.
+3. **Default:** The map-side owner wins.
+4. **Consequences (applied immediately):**
+   * **Loser:** frozen for `FROZEN_DURATION_TURNS` turns (unless in grace period, in which case no freeze is applied). If carrying a flag, it drops and resets to its team's initial position. Loser moves to the attacker's origin cell.
+   * **Winner:** remains on the collision cell.
+5. **Frozen runners still block space:** Active runners cannot move into cells occupied by frozen opponents.
+
+Note: the "defender always wins" shorthand from earlier versions of this spec is incomplete. Flag-carrying state takes priority over map-side ownership.
 
 ## **6\. Blockly Interface & Blocks**
 
@@ -316,9 +311,7 @@ When an active runner attempts to move into a cell occupied by an active opposin
 * **UI Structure:** HTML, CSS (Flexbox/Grid).  
 * **Build Tooling:** Vite-based local development and production build pipeline.  
 * **Deployment:** Static web hosting.  
-* **Saving/Loading Student Work:**  
-  * V1: Browser Local Storage for current workspace.  
-  * V1: "Export AI Program (XML)" and "Import AI Program (XML)" for portability.
+* **Saving/Loading Student Work:** Three separate file pipelines exist — workspace XML (program portability), private encrypted program files (Free Play hot-seat privacy), and usage evidence JSON (classroom evidence for teacher review). See [`docs/subsystems/file-pipelines.md`](./subsystems/file-pipelines.md) for the full contrast.
 * **Testing Strategy:**  
   * Command-line JavaScript tests should validate pure rule behavior such as setup, movement, collisions, scoring, round reset, and NPC action legality.  
   * Browser tests should validate app boot, mode selection, tutorial overlays, Blockly visibility, play/reset flow, keyboard interactions, level navigation UI, and representative UI/gameplay states.  
