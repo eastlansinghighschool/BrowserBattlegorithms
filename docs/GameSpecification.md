@@ -208,19 +208,19 @@ As each runner's action is processed in the alternating sequence described in 2.
 
 When an active runner attempts to move into a cell occupied by an active opposing runner (as determined in Action Resolution Step 4c):
 
-For the full collision rule tree, including flag-carrying and grace-period exceptions, see [`docs/subsystems/turn-engine.md`](./subsystems/turn-engine.md).
-
-**Summary:**
-
-1. **Determine map-side owner:** The team assigned to the map half where the collision occurs is the default "defender." In standard guided-level orientation, Team 1 owns the left half and Team 2 owns the right half.
-2. **Flag-carrying overrides the default:** A runner carrying the enemy flag while on the *enemy's* map half loses the collision, regardless of which team is the map-side owner. This takes priority over the default defender rule.
-3. **Default:** The map-side owner wins.
-4. **Consequences (applied immediately):**
-   * **Loser:** frozen for `FROZEN_DURATION_TURNS` turns (unless in grace period, in which case no freeze is applied). If carrying a flag, it drops and resets to its team's initial position. Loser moves to the attacker's origin cell.
-   * **Winner:** remains on the collision cell.
-5. **Frozen runners still block space:** Active runners cannot move into cells occupied by frozen opponents.
-
-Note: the "defender always wins" shorthand from earlier versions of this spec is incomplete. Flag-carrying state takes priority over map-side ownership.
+1. **Determine Defender:** The team whose home side contains the collision cell is the "defender." The map is split at X \= mapWidth/2; whichever team's `homeSide` (from the active team configuration) covers that half owns it. This is orientation-agnostic: in Free Play the orientation is randomized at match start, so the defender of the left or right half is whichever team was assigned to it, not a fixed team number.  
+2. **Collision Outcome:**  
+   * If one runner isFrozen and the other is not, the frozen runner automatically loses (this check is more for completeness, as frozen runners shouldn't be initiating moves that cause collisions).  
+   * If a runner is carrying the enemy flag and is *not* the defender in the collision cell, they automatically lose.  
+   * Otherwise, the **defender always wins** the collision.  
+3. **Consequences (applied immediately):**  
+   * **Loser:**  
+     * Becomes isFrozen \= true.  
+     * frozenTurnsRemaining is set (e.g., to 2 turns).  
+     * If carrying a flag, the flag is immediately returned to its team's starting base location and its carriedByRunnerId is set to null.  
+     * The collision resolves to **one occupied cell only**. The winner ends on the collision cell. The loser is frozen and moved to the attacker's origin cell, so the board never shows stacked runners on the same square.  
+   * **Winner:** Remains on the collision cell (their move to it was successful).  
+4. **Frozen Opponents Still Block Space:** Active runners cannot move into or through cells occupied by frozen opposing runners. The frozen runner remains in place until they thaw.
 
 ## **6\. Blockly Interface & Blocks**
 
