@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { ADVANCED_ALL_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -12,11 +12,11 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(TEAM_STRATEGY_SCRIPT_PROJECT, 1, { isStart: true }),
-  toolboxBlockTypes: [...ADVANCED_ALL_BLOCKS, ...MOVE_TOWARD_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 16 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
   tutorialSteps: [
     { id: "level-27-shared-program", title: "One Workspace, Two Allies", body: "Both allies run the same blocks every turn. The first ally has index 0 and the second has index 1. A check like \"if runner index equals 0\" means only the first ally follows that branch — the second skips it and does something else instead.", targetSelector: "#blockly-region" },
     { id: "level-27-index", title: "Index 0 And Index 1", body: "Only one ally should take the scoring job here. The other ally needs to stay clear of the lane so the shared script stays readable.", targetSelector: "#canvas-container" }

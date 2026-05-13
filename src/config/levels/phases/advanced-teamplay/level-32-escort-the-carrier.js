@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { ADVANCED_ALL_BLOCKS, MOVE_TOWARD_BLOCKS, TEAMMATE_FLAG_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -12,11 +12,11 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(TEAM_STRATEGY_SCRIPT_PROJECT, 4),
-  toolboxBlockTypes: [...ADVANCED_ALL_BLOCKS, ...MOVE_TOWARD_BLOCKS, ...TEAMMATE_FLAG_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.MY_BASE, MOVE_TOWARD_TARGETS.HUMAN_RUNNER],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_2", targetCell: { x: 5, y: 5 } },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
   tutorialSteps: [
     { id: "level-30-teammate", title: "One Ally Has The Flag", body: "The lead ally begins as the carrier. Use teammate-has-flag plus index to send the second ally into position.", targetSelector: "#blockly-region" },
     { id: "level-30-support", title: "Escort The Return", body: "This challenge is about support movement, not chasing a new flag. The same script should protect the carrier and keep the lane open.", targetSelector: "#canvas-container" }

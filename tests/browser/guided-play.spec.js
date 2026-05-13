@@ -113,7 +113,7 @@ test("guided keyboard-practice level responds to actual Team 1 key presses", asy
     return human && !human.isMoving && !human.isBouncing;
   });
 
-  await page.evaluate(() => window.__BBA_TEST_HOOKS__.sendKey("d"));
+  await page.keyboard.press("d");
   const queuedAction = await page.waitForFunction(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
     const queued = hooks.app.state.queuedActionForCurrentRunner;

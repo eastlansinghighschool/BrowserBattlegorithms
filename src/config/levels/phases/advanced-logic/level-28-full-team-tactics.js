@@ -18,13 +18,7 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(STRATEGY_BRAIN_PROJECT, 6, { isCapstone: true }),
-  toolboxBlockTypes: [
-    BLOCK_TYPES.IF_HAVE_ENEMY_FLAG,
-    BLOCK_TYPES.IF_HAVE_ENEMY_FLAG_ELSE,
-    BLOCK_TYPES.IF_BARRIER_IN_FRONT,
-    BLOCK_TYPES.IF_BARRIER_IN_FRONT_ELSE,
-    ...ADVANCED_CAPSTONE_BLOCKS
-  ],
+  toolboxBlockTypes: [...ADVANCED_CAPSTONE_BLOCKS],
   sensorObjectTypes: [
     SENSOR_OBJECT_TYPES.ENEMY_RUNNER,
     SENSOR_OBJECT_TYPES.BARRIER,

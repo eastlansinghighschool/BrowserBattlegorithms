@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { ADVANCED_ALL_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -12,10 +12,10 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(TEAM_STRATEGY_SCRIPT_PROJECT, 3),
-  toolboxBlockTypes: [...ADVANCED_ALL_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_3", targetCell: { x: 4, y: 4 } },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
   tutorialSteps: [
     { id: "level-29-range", title: "Index Ranges Create Teams", body: "Index < 2 can group the first two allies together while index 2 takes a separate job. That keeps the shared script simple and readable.", targetSelector: "#blockly-region" },
     { id: "level-29-three-allies", title: "Three Allies, One Program", body: "Two allies need to clear space so the third runner can finish the puzzle.", targetSelector: "#canvas-container" }

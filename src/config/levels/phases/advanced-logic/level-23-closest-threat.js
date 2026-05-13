@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+import { STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -12,11 +12,11 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(STRATEGY_BRAIN_PROJECT, 1, { isStart: true }),
-  toolboxBlockTypes: [...MOVE_TOWARD_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  toolboxBlockTypes: [...STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.CLOSEST_ENEMY],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 3 } },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 8 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
   tutorialSteps: [
     {
       id: "level-21-advanced-layer",

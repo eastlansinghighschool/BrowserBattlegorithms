@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { ADVANCED_CAPSTONE_BLOCKS } from "../../shared/toolboxes.js";
+import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -13,11 +13,11 @@ export default {
   mapKey: "wideScrimmage",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(TEAM_STRATEGY_SCRIPT_PROJECT, 9, { isCapstone: true }),
-  toolboxBlockTypes: [...ADVANCED_CAPSTONE_BLOCKS],
+  toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG, MOVE_TOWARD_TARGETS.CLOSEST_ENEMY, MOVE_TOWARD_TARGETS.MY_BASE],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1 },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 40 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 55 },
   tutorialSteps: [
     { id: "level-35-capstone", title: "A Full Team Script", body: "This final level is a real scrimmage. One shared program has to divide attacking, defending, and support work across the team.", targetSelector: "#blockly-region" },
     { id: "level-35-real-score", title: "Score For Real", body: "The capstone only passes when your team actually scores a point in live play. Any ally can bring the point home, so focus on the role the script has assigned.", targetSelector: "#canvas-container" }

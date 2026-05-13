@@ -1,6 +1,6 @@
 import { GAME_MODES, HUMAN_TURN_BEHAVIORS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
-import { ADVANCED_ALL_BLOCKS, JUMP_CONDITION_BLOCKS, JUMP_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projectToolboxes.js";
 import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../shared/project.js";
 
 export default {
@@ -12,10 +12,10 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   project: createProjectMetadata(TEAM_STRATEGY_SCRIPT_PROJECT, 8),
-  toolboxBlockTypes: [...ADVANCED_ALL_BLOCKS, ...JUMP_CONDITION_BLOCKS, ...JUMP_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 4 } },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
   tutorialSteps: [
     { id: "level-34-jump-role", title: "Give The Jump To One Ally", body: "Index can decide which ally gets the jump job and which ally avoids the obstacle.", targetSelector: "#blockly-region" },
     { id: "level-34-wall", title: "One Dramatic Leap", body: "Only one ally should take the jump route. The second ally needs a different role, so the script stays decentralized.", targetSelector: "#canvas-container" }

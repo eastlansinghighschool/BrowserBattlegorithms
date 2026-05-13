@@ -217,7 +217,7 @@ test("guided tutorial and authored board contracts remain consistent", () => {
 
   const howFarAway = getLevelDefinitions().find((level) => level.id === "how-far-away");
   assert.equal(howFarAway.mapKey, "simpleAisle");
-  assert.equal(howFarAway.failureCondition.maxTurns, 8);
+  assert.equal(howFarAway.failureCondition.maxTurns, 17);
   assert.deepEqual(howFarAway.setupOverrides.barriers, [{ gridX: 4, gridY: 4, ownerRunnerId: "strategy_brain_distance_barrier" }]);
   assert.deepEqual(howFarAway.setupOverrides.teams.opponent.runners[0], { slot: "npc1", gridX: 6, gridY: 4 });
 });
@@ -350,7 +350,7 @@ test("project metadata is preserved on the authored project levels and surfaced 
   assert.equal(levels.find((entry) => entry.id === "one-program-two-allies").project.isStart, true);
   assert.equal(levels.find((entry) => entry.id === "advanced-scrimmage").project.isCapstone, true);
   assert.equal(levels.find((entry) => entry.id === "barrier-specialist").failureCondition.maxTurns, 10);
-  assert.equal(levels.find((entry) => entry.id === "jump-team").failureCondition.maxTurns, 10);
+  assert.equal(levels.find((entry) => entry.id === "jump-team").failureCondition.maxTurns, 15);
 
   assert.equal(levels.find((entry) => entry.id === "show-what-you-know").project, null);
   assert.equal(GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === "show-what-you-know").project, null);

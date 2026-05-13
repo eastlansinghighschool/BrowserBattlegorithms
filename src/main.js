@@ -267,3 +267,18 @@ window.__BBA_TEST_HOOKS__ = {
   },
   app
 };
+
+if (import.meta.env.DEV) {
+  const adminLink = document.createElement("a");
+  adminLink.href = "./admin.html";
+  adminLink.className = "app-help-link";
+  adminLink.setAttribute("aria-label", "Open usage file analyzer (local dev only)");
+  adminLink.setAttribute("title", "Usage File Analyzer (local dev only)");
+  adminLink.innerHTML = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:0 0 auto">
+    <rect x="8" y="2" width="8" height="4" rx="1"/>
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <path d="M12 11h4"/><path d="M12 16h4"/>
+    <path d="M8 11h.01"/><path d="M8 16h.01"/>
+  </svg>`;
+  document.querySelector(".app-header-actions")?.prepend(adminLink);
+}
