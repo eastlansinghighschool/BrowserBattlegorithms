@@ -102,11 +102,19 @@ test("advanced campaign authored levels enforce their intended mechanic family",
 });
 
 test("advanced campaign contract exposes capstone and optional lab tools as authored", () => {
+  const fullTeamTactics = getLevelDefinitions().find((entry) => entry.id === "full-team-tactics");
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.VALUE_DISTANCE_TO_TARGET));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.LOGIC_AND));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_HAVE_ENEMY_FLAG));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_BARRIER_IN_FRONT));
+
   const advancedScrimmage = getLevelDefinitions().find((entry) => entry.id === "advanced-scrimmage");
+  assert.ok(advancedScrimmage.title.startsWith("Challenge 37"));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.MOVE_RANDOMLY));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.PLACE_BARRIER));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.JUMP_FORWARD));
   assert.ok(advancedScrimmage.toolboxBlockTypes.includes(BLOCK_TYPES.FREEZE_OPPONENTS));
+  assert.deepEqual(advancedScrimmage.winCondition, { type: "team_scores_point", teamId: 1 });
   assert.equal(advancedScrimmage.setup.teams.opponent.runners.every((runner) => !runner.isFrozen), true);
 
   const optionalRandomLab = getLevelDefinitions().find((entry) => entry.id === "optional-random-lab");
@@ -206,6 +214,12 @@ test("guided tutorial and authored board contracts remain consistent", () => {
 
   const moveTowardLevel = getLevelDefinitions().find((level) => level.id === "move-toward-flag");
   assert.deepEqual(moveTowardLevel.setupOverrides.flagOverrides[2], { gridX: 11, gridY: 3 });
+
+  const howFarAway = getLevelDefinitions().find((level) => level.id === "how-far-away");
+  assert.equal(howFarAway.mapKey, "simpleAisle");
+  assert.equal(howFarAway.failureCondition.maxTurns, 8);
+  assert.deepEqual(howFarAway.setupOverrides.barriers, [{ gridX: 4, gridY: 4, ownerRunnerId: "strategy_brain_distance_barrier" }]);
+  assert.deepEqual(howFarAway.setupOverrides.teams.opponent.runners[0], { slot: "npc1", gridX: 6, gridY: 4 });
 });
 
 test("level 12 reference route requires both horizontal and vertical movement", () => {
@@ -335,6 +349,8 @@ test("project metadata is preserved on the authored project levels and surfaced 
   });
   assert.equal(levels.find((entry) => entry.id === "one-program-two-allies").project.isStart, true);
   assert.equal(levels.find((entry) => entry.id === "advanced-scrimmage").project.isCapstone, true);
+  assert.equal(levels.find((entry) => entry.id === "barrier-specialist").failureCondition.maxTurns, 10);
+  assert.equal(levels.find((entry) => entry.id === "jump-team").failureCondition.maxTurns, 10);
 
   assert.equal(levels.find((entry) => entry.id === "show-what-you-know").project, null);
   assert.equal(GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === "show-what-you-know").project, null);

@@ -7,7 +7,7 @@ export default {
   id: "escort-the-carrier",
   title: "Level 32: Escort The Carrier",
   description: "Combine teammate-has-flag with runner index to send one ally home and another into support mode.",
-  introText: "Once a teammate has the flag, different allies can take different jobs in the same turn cycle.",
+  introText: "The lead ally starts with the flag already, so the shared script has to recognize carrier state immediately and assign support from the same program.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -19,7 +19,7 @@ export default {
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
     { id: "level-30-teammate", title: "One Ally Has The Flag", body: "The lead ally begins as the carrier. Use teammate-has-flag plus index to send the second ally into position.", targetSelector: "#blockly-region" },
-    { id: "level-30-support", title: "Escort The Return", body: "This challenge is about support movement, not chasing a new flag.", targetSelector: "#canvas-container" }
+    { id: "level-30-support", title: "Escort The Return", body: "This challenge is about support movement, not chasing a new flag. The same script should protect the carrier and keep the lane open.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

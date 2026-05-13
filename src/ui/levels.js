@@ -16,6 +16,12 @@ import {
 } from "../ai/blockly/blocks.js";
 import { renderControlRows } from "./keycaps.js";
 import {
+  renderProjectBadge,
+  renderProjectIndicator,
+  renderProjectStartLessonCallout,
+  renderProjectStateNote
+} from "./projectSignifiers.js";
+import {
   configureFreePlay,
   enterFreePlay,
   enterGuidedMode,
@@ -123,6 +129,10 @@ function renderChallengeCallout(level) {
   `;
 }
 
+function renderLevelSignifiers(level) {
+  return `${renderProjectBadge(level)}${renderChallengeBadge(level)}`;
+}
+
 function getResultStateLabel(app) {
   if (app.state.activeLevelResult === LEVEL_RESULT.PASSED) {
     return "Passed";
@@ -219,7 +229,7 @@ function renderLevelPickerItems(app) {
       return `
         <button class="level-picker-item${currentClass}" data-level-id="${level.id}" ${disabled}>
           <span class="level-picker-item-title">${escapeHtml(level.title)}</span>
-          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""}${renderChallengeBadge(level)}</span>
+          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""}${renderLevelSignifiers(level)}</span>
           <span class="level-picker-item-description">${escapeHtml(level.description)}</span>
         </button>
       `;
@@ -439,7 +449,7 @@ export function renderLevelPanel(app) {
       <div class="level-picker">
         <button class="level-picker-trigger" data-action="toggle-level-picker" aria-expanded="${pickerOpen ? "true" : "false"}">
           <span class="level-picker-trigger-label">${escapeHtml(currentLevel.title)}</span>
-          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))}${renderChallengeBadge(currentLevel)}</span>
+          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))}${renderLevelSignifiers(currentLevel)}</span>
         </button>
         ${pickerOpen ? `<div class="level-picker-popover">${renderLevelPickerItems(app)}</div>` : ""}
       </div>
@@ -447,12 +457,16 @@ export function renderLevelPanel(app) {
         <div class="student-lesson-topline">
           <span class="lesson-status-pill">${escapeHtml(getResultStateLabel(app))}</span>
           ${app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT ? '<span class="lesson-mode-pill">Keyboard practice level</span>' : ""}
+          ${renderProjectBadge(currentLevel)}
         </div>
         <div>
           <h3 class="student-lesson-title">${escapeHtml(currentLevel.title)}</h3>
           <p class="student-lesson-goal">${escapeHtml(currentLevel.description)}</p>
         </div>
+        ${renderProjectIndicator(currentLevel)}
         ${currentLevel.introText ? `<p class="level-intro">${escapeHtml(currentLevel.introText)}</p>` : ""}
+        ${renderProjectStartLessonCallout(currentLevel)}
+        ${renderProjectStateNote(currentLevel)}
         ${renderChallengeCallout(currentLevel)}
         ${renderLegendItems(currentLevel)}
         ${app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT ? `

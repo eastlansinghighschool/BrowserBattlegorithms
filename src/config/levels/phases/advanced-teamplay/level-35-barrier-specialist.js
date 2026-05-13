@@ -7,7 +7,7 @@ export default {
   id: "barrier-specialist",
   title: "Level 35: Barrier Specialist",
   description: "One ally places the team barrier while the other keeps moving.",
-  introText: "Barrier placement becomes more strategic when only one ally on the team is responsible for it. The attacker still has to keep moving on the same short clock.",
+  introText: "Barrier placement becomes more strategic when only one ally on the team is responsible for it. The attacker still has to keep moving on the same shared clock.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -15,9 +15,9 @@ export default {
   toolboxBlockTypes: [...ADVANCED_ALL_BLOCKS, ...BARRIER_PLACEMENT_BLOCKS, ...BARRIER_READY_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 4 } },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 8 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-33-index-barrier", title: "Only One Ally Should Place", body: "Use runner index together with barrier readiness so one ally becomes the barrier specialist while the attacker keeps advancing.", targetSelector: "#blockly-region" },
+    { id: "level-33-index-barrier", title: "Only One Ally Should Place", body: "Use runner index together with barrier readiness so one ally becomes the barrier specialist while the attacker keeps advancing. The shared script should keep that role assignment clear.", targetSelector: "#blockly-region" },
     { id: "level-33-cell", title: "Build The Support Wall", body: "The support barrier matters here only if it helps the tracked attacker finish on time.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {

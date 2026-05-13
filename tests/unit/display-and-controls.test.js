@@ -8,8 +8,16 @@ import {
 } from "../../src/config/constants.js";
 import { Runner } from "../../src/entities/Runner.js";
 import { createApp } from "../../src/core/state.js";
+import { getLevelDefinitions } from "../../src/config/levels.js";
 import { initializeLevelState, startLevel } from "../../src/core/levels.js";
 import { handleKeyInput } from "../../src/ui/controls.js";
+import {
+  getProjectDisplayName,
+  getProjectStartCalloutStorageKey,
+  isProjectLevel,
+  isProjectStartLevel,
+  renderProjectBadge
+} from "../../src/ui/projectSignifiers.js";
 
 test("human practice level accepts F as the Team 1 jump key", () => {
   const app = createApp();
@@ -44,4 +52,21 @@ test("runner display emoji follows current playDirection for active and frozen s
   human.playDirection = -1;
   assert.equal(human.getDisplayEmoji(), "🏃🏾‍♀️");
   assert.equal(human.shouldMirrorEmojiDisplay(), false);
+});
+
+test("project signifiers identify the project arc and render a distinct badge", () => {
+  const levels = getLevelDefinitions();
+  const strategyStart = levels.find((level) => level.id === "closest-threat");
+  const strategyCapstone = levels.find((level) => level.id === "full-team-tactics");
+  const ordinaryLevel = levels.find((level) => level.id === "move-to-target");
+
+  assert.equal(isProjectLevel(strategyStart), true);
+  assert.equal(isProjectStartLevel(strategyStart), true);
+  assert.equal(getProjectDisplayName(strategyStart), "Strategy Brain");
+  assert.equal(getProjectStartCalloutStorageKey(strategyStart), "bba:project-start-callout-seen:strategy-brain");
+  assert.match(renderProjectBadge(strategyStart), /Project/);
+  assert.equal(isProjectLevel(strategyCapstone), true);
+  assert.equal(isProjectStartLevel(strategyCapstone), false);
+  assert.equal(isProjectLevel(ordinaryLevel), false);
+  assert.equal(renderProjectBadge(ordinaryLevel), "");
 });

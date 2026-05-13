@@ -7,11 +7,12 @@ import {
   P1_KEY_BINDINGS,
   P2_KEY_BINDINGS
 } from "../config/constants.js";
-import { enterFreePlay, goToNextLevel, startLevel, resetCurrentLevel } from "../core/levels.js";
+import { enterFreePlay, goToNextLevel, startLevel, resetCurrentLevel, getCurrentLevel } from "../core/levels.js";
 import { resetGameToSetup, startGame } from "../core/setup.js";
 import { handlePlayerInput } from "../core/turnEngine.js";
 import { playSound, setSoundEnabled } from "./sound.js";
 import { setBlocklyPanelSize } from "./blocklyLayout.js";
+import { dismissProjectStartCallout } from "./projectSignifiers.js";
 import {
   decryptPrivateProgramXml,
   encryptPrivateProgramXml,
@@ -81,11 +82,11 @@ export function bindControls(app) {
   const privateImportModal = document.getElementById("privateImportModal");
   const privateImportModalSummary = document.getElementById("privateImportModalSummary");
   const privateImportPassword = document.getElementById("privateImportPassword");
-  const allowEditingAfterImportCheckbox = document.getElementById("allowEditingAfterImportCheckbox");
   const privateImportModalMessage = document.getElementById("privateImportModalMessage");
   const soundToggleButton = document.getElementById("soundToggleButton");
   const blocklyProgramTabs = document.getElementById("blockly-program-tabs");
   const blocklySizeControls = document.getElementById("blockly-size-controls");
+  const blocklyRegion = document.getElementById("blockly-region");
   const boardRetryButton = document.getElementById("board-loading-retry");
   const blocklyRetryButton = document.getElementById("blockly-loading-retry");
   let pendingPrivateImportPayload = null;
@@ -153,9 +154,6 @@ export function bindControls(app) {
     }
     if (privateImportPassword) {
       privateImportPassword.value = "";
-    }
-    if (allowEditingAfterImportCheckbox) {
-      allowEditingAfterImportCheckbox.checked = true;
     }
     setModalMessage(privateImportModalMessage, "error", "");
     privateImportModal.hidden = false;
@@ -236,13 +234,9 @@ export function bindControls(app) {
         setModalMessage(privateImportModalMessage, "error", `Import failed. ${result?.error || "Please check the XML and try again."}`);
         return;
       }
-      const allowEditing = Boolean(allowEditingAfterImportCheckbox?.checked);
-      app.hooks.setBlocklyEditable?.(allowEditing);
       app.state.workspaceImportStatus = {
         tone: "success",
-        message: allowEditing
-          ? "Private program imported and left editable."
-          : "Private program imported read-only."
+        message: "Private program imported."
       };
       closePrivateImportModal();
       app.syncUi();
@@ -455,12 +449,6 @@ export function bindControls(app) {
     });
   }
 
-  if (allowEditingAfterImportCheckbox) {
-    allowEditingAfterImportCheckbox.addEventListener("change", () => {
-      setModalMessage(privateImportModalMessage, "error", "");
-    });
-  }
-
   if (blocklyProgramTabs) {
     blocklyProgramTabs.addEventListener("click", (event) => {
       const target = event.target.closest("button[data-blockly-team-tab]");
@@ -469,6 +457,19 @@ export function bindControls(app) {
       }
       app.hooks.switchActiveBlocklyTeamTab?.(Number(target.dataset.blocklyTeamTab));
       app.syncUi();
+    });
+  }
+
+  if (blocklyRegion) {
+    blocklyRegion.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-project-callout-action]");
+      if (!target) {
+        return;
+      }
+      if (target.dataset.projectCalloutAction === "dismiss") {
+        dismissProjectStartCallout(getCurrentLevel(app));
+        app.syncUi();
+      }
     });
   }
 

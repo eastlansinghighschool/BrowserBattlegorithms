@@ -4,7 +4,7 @@
 
 - Packet id: plan-14
 - Packet title: Project Version History Design
-- Status: blocked by Plans 09-13
+- Status: complete
 - Owner/model: orchestration model with optional implementation scout
 - Date: 2026-05-12
 - Packet type: design / possible future implementation planning

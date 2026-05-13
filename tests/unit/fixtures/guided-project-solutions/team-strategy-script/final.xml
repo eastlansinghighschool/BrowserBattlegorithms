@@ -1,0 +1,21 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn" x="24" y="24">
+    <next>
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_boolean_have_enemy_flag"></block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_move_toward">
+            <field name="TARGET">MY_BASE</field>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_toward">
+            <field name="TARGET">ENEMY_FLAG</field>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>

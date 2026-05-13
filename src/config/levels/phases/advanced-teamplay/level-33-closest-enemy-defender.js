@@ -7,7 +7,7 @@ export default {
   id: "closest-enemy-defender",
   title: "Level 33: Closest Enemy Defender",
   description: "One ally attacks while another uses closest-enemy targeting as a defender.",
-  introText: "This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side.",
+  introText: "This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side. The shared script is starting to split attack and defense work.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,7 +18,7 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 14 },
   tutorialSteps: [
-    { id: "level-31-split", title: "Split The Team Jobs", body: "Use runner index to make the first ally attack and the second react to the closest enemy.", targetSelector: "#blockly-region" },
+    { id: "level-31-split", title: "Split The Team Jobs", body: "Use runner index to make the first ally attack and the second react to the closest enemy. Each ally is still running the same code, just with a different role.", targetSelector: "#blockly-region" },
     { id: "level-31-pressure", title: "Defend Your Side First", body: "The defender’s job starts on your side of the field while the attacker keeps advancing.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {

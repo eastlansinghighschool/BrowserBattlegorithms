@@ -13,6 +13,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 02](plan-02-guided-test-contract-repair.md) | complete | Repair stale guided unit-test contracts and canonical guided reference solutions. |
 | [Plan 03](plan-03-challenge-badge-and-synthesis-framing.md) | ready | Make synthesis/challenge levels visibly distinct in the level picker and lesson panel. |
 | [Plan 04](plan-04-saveable-usage-file.md) | ready | Add local student usage export and a teacher-side analyzer for learning evidence, performance evidence, duplicate checks, and modest tamper detection. |
+| [Plan 04b](plan-04b-local-usage-admin-report-page.md) | ready | Add a local-only browser admin page for drag-and-drop usage-file analysis, class tables, and per-student detail views without shipping it to GitHub Pages. |
 | [Plan 05](plan-05-undo-redo-blockly.md) | ready | Add Blockly undo/redo controls and shortcuts, preferring Blockly-native history. |
 | [Plan 06](plan-06-guided-playtest-triage.md) | ready | Browser-playtest the guided campaign one level at a time and produce a triage table before classroom rollout. |
 | [Plan 07](plan-07-private-free-play-program-files.md) | ready | Add optional password-encrypted Free Play program files for local hot-seat code privacy, and remove import/export from guided levels. |
@@ -22,7 +23,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 11](plan-11-strategy-brain-project-revision.md) | ready after Plans 09-10 | Revise L23-L28 into the Strategy Brain shared-code project, including L24 repair and L28 capstone revision. |
 | [Plan 12](plan-12-team-strategy-script-project-revision.md) | ready after Plans 09-10 | Revise L29-L37 into the Team Strategy Script shared-code project, including L37 capstone repair. |
 | [Plan 13](plan-13-project-reference-solutions-and-test-harness-repair.md) | blocked by Plans 09-12 | Repair canonical solution fixtures and tests for one-off and project guided levels. |
-| [Plan 14](plan-14-project-version-history-design.md) | blocked by Plans 09-13 | Design a future project version-history interface for recovering earlier shared-code states. |
+| [Plan 14](plan-14-project-version-history-design.md) | complete | Design a future project version-history interface for recovering earlier shared-code states. |
 
 
 ## Backlog Triage After Plan 02
@@ -54,6 +55,7 @@ Create these as numbered `plan-XX-*.md` packet files when they are ready to hand
 | --- | --- | --- |
 | `plan-03-challenge-badge-and-synthesis-framing.md` | P1 | Ready packet. Make synthesis/challenge levels visibly distinct in the level picker and lesson panel so students understand "no new tools" moments. |
 | `plan-04-saveable-usage-file.md` | P1 | Ready packet. Add a local student usage export and teacher analyzer that summarize learning evidence, performance evidence, code snapshots, completion, duplicate/reuse signals, and SHA-256 integrity checks for modest tamper detection. No server components. |
+| `plan-04b-local-usage-admin-report-page.md` | P1 | Ready packet. Add a local-only browser admin page where the teacher can drop usage files, see a class table, inspect one student at a time, and keep the admin page/link out of the GitHub Pages build. |
 | `plan-05-undo-redo-blockly.md` | P1 | Ready packet. Add Blockly undo/redo controls and keyboard shortcuts, preferring Blockly-native history before considering any custom sessionStorage or IndexedDB stack. |
 | `plan-06-guided-playtest-triage.md` | P1 | Ready packet. Use a browser-capable agent or human playtester in small guided batches to attempt each guided level like a student and produce a triage table before classroom rollout. |
 | `plan-07-private-free-play-program-files.md` | P2 | Ready packet. Add optional password/PIN-encrypted Free Play program files using browser Web Crypto for hot-seat code privacy, preserve normal Free Play import/export, and remove import/export controls from guided levels. |
@@ -63,7 +65,7 @@ Create these as numbered `plan-XX-*.md` packet files when they are ready to hand
 | `plan-11-strategy-brain-project-revision.md` | P1 | Ready after Plans 09-10. Revise L23-L28 into a coherent shared-code Strategy Brain project, including a load-bearing L24 and a true L28 capstone. |
 | `plan-12-team-strategy-script-project-revision.md` | P1 | Ready after Plans 09-10. Revise L29-L37 into a coherent shared-code Team Strategy Script project, keeping L34-L36 separate and repairing L37. |
 | `plan-13-project-reference-solutions-and-test-harness-repair.md` | P1 | Blocked by Plans 09-12. Repair canonical fixtures and tests so one-off and project guided levels both have clear validation. |
-| `plan-14-project-version-history-design.md` | P2 | Blocked by Plans 09-13. Design, but do not yet implement, a project version-history interface for recovering earlier shared-code states. |
+| `plan-14-project-version-history-design.md` | P2 | Complete. Design, but do not yet implement, a project version-history interface for recovering earlier shared-code states. |
 | `plan-15-advanced-ai-opponents.md` | P2 | Add more challenging Free Play AI opponents with distinct playstyles and optional guided showcase/counterplay levels. |
 | `plan-16-build-size-and-blockly-loading-review.md` | P3 | Investigate Vite build chunk warnings and whether Blockly/p5 loading can be split without hurting classroom reliability. |
 | `plan-17-game-history-and-replays.md` | P2 | Add local game history and replay export/import, separate from Plan 04 usage evidence. |

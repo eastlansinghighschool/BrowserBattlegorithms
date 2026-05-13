@@ -7,7 +7,7 @@ export default {
   id: "index-jobs",
   title: "Level 30: Index Jobs",
   description: "Use runner index comparisons so one ally attacks and the other patrols upward.",
-  introText: "This level still has one real goal. Runner index decides which ally is the attacker and which ally should peel upward instead of stealing the job.",
+  introText: "The shared script is getting a job system. Runner index decides which ally attacks and which ally should peel upward instead of stealing the job.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,7 +18,7 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-28-index-compare", title: "Compare The Index", body: "You can compare runner index to a number to choose different branches for different allies.", targetSelector: "#blockly-region" },
+    { id: "level-28-index-compare", title: "Compare The Index", body: "You can compare runner index to a number to choose different branches for different allies. That is how the shared script starts assigning jobs.", targetSelector: "#blockly-region" },
     { id: "level-28-jobs", title: "Attacker And Patrol", body: "Each index value can be assigned a different role. Think about which ally is better positioned for the scoring job, and what the other should do to stay out of the way.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {

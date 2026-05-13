@@ -50,6 +50,55 @@ test("challenge levels show a badge in the picker and a challenge callout in the
   await expect(page.locator("#level-panel")).not.toContainText("Challenge Level");
 });
 
+test("project levels show a project badge, project start callout, and persistent project indicator", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" })).toContainText("Project");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" })).not.toContainText("Project");
+
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
+  await dismissTutorial(page);
+
+  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
+  await expect(page.locator("#level-panel")).toContainText("Shared code across this project.");
+  await expect(page.locator("#blockly-region")).toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+
+  await page.locator('#blockly-region [data-project-callout-action="dismiss"]').click();
+  await expect(page.locator("#blockly-region")).not.toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+
+  await page.reload();
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.locator(".level-picker-trigger").click();
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
+  await dismissTutorial(page);
+  await expect(page.locator("#blockly-region")).not.toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+});
+
+test("project capstones show both project and challenge framing, and escort the carrier notes the starting flag state", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("full-team-tactics");
+  });
+
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Project");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Challenge");
+  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
+  await expect(page.locator("#level-panel")).toContainText("Challenge Level");
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("escort-the-carrier");
+  });
+  await expect(page.locator("#level-panel")).toContainText("The lead ally starts with the flag already");
+});
+
 test("the guided workspace starts with a visible starter program and becomes read-only during play", async ({
   page
 }) => {

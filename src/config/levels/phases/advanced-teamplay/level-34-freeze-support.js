@@ -7,7 +7,7 @@ export default {
   id: "freeze-support",
   title: "Level 34: Freeze Support",
   description: "One ally spends the freeze while another keeps advancing.",
-  introText: "The strongest team plays are role-based. In this level, one ally is the freezer and one is the runner.",
+  introText: "The strongest team plays are role-based. In this level, one ally is the freezer and one is the runner, both driven by the same shared script.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,7 +18,7 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-32-role", title: "A Team Freeze Specialist", body: "Use runner index so only one ally spends the team freeze while the other keeps advancing.", targetSelector: "#blockly-region" },
+    { id: "level-32-role", title: "A Team Freeze Specialist", body: "Use runner index so only one ally spends the team freeze while the other keeps advancing. The freeze role should stay local and simple.", targetSelector: "#blockly-region" },
     { id: "level-32-timing", title: "Support The Run", body: "The freezer should act early enough to open the lane for the attacker.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {

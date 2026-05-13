@@ -6,9 +6,9 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "advanced-scrimmage",
   levelKind: "challenge",
-  title: "Level 37: Advanced Scrimmage",
+  title: "Challenge 37: Advanced Scrimmage",
   description: "Use one shared program for three allies in a real capture-the-flag scrimmage.",
-  introText: "This capstone brings together indexing, comparisons, movement helpers, and team strategy in one bigger match.",
+  introText: "This capstone brings together indexing, comparisons, movement helpers, and team strategy in one bigger match. It is the final test of the same shared program you have been improving all project long.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "wideScrimmage",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -16,11 +16,11 @@ export default {
   toolboxBlockTypes: [...ADVANCED_CAPSTONE_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG, MOVE_TOWARD_TARGETS.CLOSEST_ENEMY, MOVE_TOWARD_TARGETS.MY_BASE],
   initialBlocklyXml: STARTER_EVENT_XML,
-  winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
+  winCondition: { type: "team_scores_point", teamId: 1 },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 40 },
   tutorialSteps: [
     { id: "level-35-capstone", title: "A Full Team Script", body: "This final level is a real scrimmage. One shared program has to divide attacking, defending, and support work across the team.", targetSelector: "#blockly-region" },
-    { id: "level-35-real-score", title: "Score For Real", body: "The capstone only passes when your team actually scores a point in live play.", targetSelector: "#canvas-container" }
+    { id: "level-35-real-score", title: "Score For Real", body: "The capstone only passes when your team actually scores a point in live play. Any ally can bring the point home, so focus on the role the script has assigned.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

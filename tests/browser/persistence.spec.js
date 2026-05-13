@@ -92,6 +92,16 @@ test("guided project workspaces share latest code, reset preserves it, and free 
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");
 
   await loadWorkspaceXml(page, buildSolutionXml(`<block type="battlegorithms_stay_still"></block>`));
+  await page.locator(".level-picker-trigger").click();
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
+  await dismissTutorial(page);
+  await expect(page.locator("#blockly-region")).toContainText("Stay Still");
+
+  await page.locator(".level-picker-trigger").click();
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "How Far Away?" }).click();
+  await dismissTutorial(page);
+  await expect(page.locator("#blockly-region")).toContainText("Stay Still");
+
   await page.locator("#playResetButton").click();
   await expect(page.locator("#playResetButton")).toContainText("Reset Level");
   await page.locator("#playResetButton").click();
@@ -235,7 +245,6 @@ test("Free Play supports private program export and import with password protect
   });
   await expect(page.locator("#privateImportModal")).toBeVisible();
   await page.locator("#privateImportPassword").fill("pass1234");
-  await page.locator("#allowEditingAfterImportCheckbox").check();
 
   await page.getByRole("button", { name: "Import File" }).click();
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");

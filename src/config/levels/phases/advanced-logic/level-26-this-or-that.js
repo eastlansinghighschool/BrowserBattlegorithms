@@ -7,7 +7,7 @@ export default {
   id: "this-or-that",
   title: "Level 26: This Or That",
   description: "Use OR to react when either danger condition becomes true.",
-  introText: "OR lets a single branch respond to more than one warning sign.",
+  introText: "The Strategy Brain can now react to either warning sign. OR lets one branch cover more than one kind of danger.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "midfieldPressure",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -17,8 +17,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 6, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
   tutorialSteps: [
-    { id: "level-24-or", title: "Either Warning Works", body: "OR is true when either of its inputs is true. That makes one branch react to two different kinds of danger.", targetSelector: "#blockly-region" },
-    { id: "level-24-path", title: "Cross Then Turn", body: "Look at where the ally needs to go and what stands in the way. Think about when OR might let a single branch handle more than one kind of situation at the same time.", targetSelector: "#canvas-container" }
+    { id: "level-24-or", title: "Either Warning Works", body: "OR is true when either of its inputs is true. That makes one branch react to two different kinds of danger without rewriting the whole program.", targetSelector: "#blockly-region" },
+    { id: "level-24-path", title: "Cross Then Turn", body: "Look at where the ally needs to go and what stands in the way. Think about when OR lets the Strategy Brain keep one rule for two situations.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

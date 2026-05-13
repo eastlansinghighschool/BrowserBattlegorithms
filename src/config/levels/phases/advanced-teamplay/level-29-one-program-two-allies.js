@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "one-program-two-allies",
   title: "Level 29: One Program, Two Allies",
-  description: "Two allies now share one workspace. Use runner index so one moves and the other waits.",
-  introText: "This is the beginning of team programming. The lower ally is closer to the flag, so runner index has to tell only the top ally to go.",
+  description: "Two allies now share one workspace. Use runner index so one ally attacks and the other supports.",
+  introText: "This is the beginning of Team Strategy Script. The same program runs on both allies, so runner index has to decide which one takes the scoring job.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -19,7 +19,7 @@ export default {
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 16 },
   tutorialSteps: [
     { id: "level-27-shared-program", title: "One Workspace, Two Allies", body: "Both allies run the same blocks every turn. The first ally has index 0 and the second has index 1. A check like \"if runner index equals 0\" means only the first ally follows that branch — the second skips it and does something else instead.", targetSelector: "#blockly-region" },
-    { id: "level-27-index", title: "Index 0 And Index 1", body: "Only one ally should take the scoring job here. The other ally needs to stay clear of the lane.", targetSelector: "#canvas-container" }
+    { id: "level-27-index", title: "Index 0 And Index 1", body: "Only one ally should take the scoring job here. The other ally needs to stay clear of the lane so the shared script stays readable.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

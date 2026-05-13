@@ -22,7 +22,7 @@ function buildSolutionXml(innerBlockXml) {
 const solutionsDir = path.join(__dirname, 'guided-reference-solutions');
 const GUIDED_LEVEL_REFERENCE_SOLUTIONS = {};
 const expectedSolutionIds = getLevelDefinitions()
-  .filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT)
+  .filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project)
   .map((level) => level.id);
 
 if (fs.existsSync(solutionsDir)) {

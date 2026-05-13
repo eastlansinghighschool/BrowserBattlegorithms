@@ -26,12 +26,12 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 20 | My side, their side | field halves (my side introduced) | territory conditions (my-side variants only) | board orientation |
 | 21 | Freeze the lane | team freeze power | freeze readiness + helper return | prior resources |
 | **Challenge 22** | **Show What You Know** | **live scrimmage; open goal** | **none — synthesis only** | Levels 1-21 |
-| 23 | Closest threat | intercepting an enemy | `Move Toward closest enemy` | helper target idea |
-| 24 | How far away? | distance as numeric value; enemy blocks forward path | numeric compare | Level 13 distance idea |
-| 25 | Two conditions at once | two truths required | `AND` | advanced value blocks |
+| 23 | Closest threat | Strategy Brain start; intercept the nearest enemy | `Move Toward closest enemy` | helper target idea |
+| 24 | How far away? | distance as numeric value; barrier and enemy force a detour | numeric compare | Level 13 distance idea |
+| 25 | Two conditions at once | two truths required for the same strategy | `AND` | advanced value blocks |
 | 26 | This or that | either warning matters | `OR` | advanced value blocks |
 | 27 | Flip the answer | opposite condition | `NOT` | advanced value blocks |
-| **Challenge 28** | **Full Team Tactics** | **live defenders; full single-ally toolkit** | **none — synthesis only** | Levels 1-27 |
+| **Challenge 28** | **Full Team Tactics** | **Strategy Brain capstone; live defenders and full single-ally toolbox** | **none — synthesis only** | Levels 1-27 |
 | 29 | One program, two allies | shared program for allies | runner index | advanced value blocks |
 | 30 | Index jobs | different ally roles | index comparison | Level 29 |
 | 31 | First two defend | grouping allies by range | index `< 2` | Levels 29-30 |
@@ -40,7 +40,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 34 | Freeze support | shared team resource by role | index + freeze readiness | Levels 21, 29-33 |
 | 35 | Barrier specialist | support wall for teammate | index + barrier readiness | Levels 17, 29-34 |
 | 36 | Jump team | role-based jump route | index + jump resource | Levels 16, 29-35 |
-| 37 | Advanced scrimmage | live team scrimmage | combined capstone | Levels 23-36 |
+| **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | Levels 23-36 |
 | Optional lab | Move randomly | randomness in action choice | `Move Randomly` | movement basics |
 
 ## Copy Guidelines

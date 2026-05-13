@@ -153,6 +153,21 @@ function handleFrozenRunnerTurn(app, runner) {
   handleActionCompletion(app, runner);
 }
 
+function recordFreePlayGameOver(app) {
+  const { state } = app;
+  if (state.currentModeView !== GAME_VIEW_MODES.FREE_PLAY) return;
+  const team1Won = (state.teamScores[1] ?? 0) >= state.pointsToWin;
+  const team2Won = (state.teamScores[2] ?? 0) >= state.pointsToWin;
+  app.usageTracker?.recordFreePlaySummary?.({
+    turns: state.currentTurnNumber,
+    teamScores: state.teamScores,
+    wins: team1Won ? 1 : 0,
+    losses: team2Won ? 1 : 0,
+    modeView: state.currentModeView,
+    mapKey: state.activeMapKey
+  });
+}
+
 function handleActionCompletion(app, completedRunner) {
   const { state } = app;
   const carriedFlagBefore = completedRunner.hasEnemyFlag;
@@ -203,6 +218,7 @@ function handleActionCompletion(app, completedRunner) {
       }
       if (state.currentTurnState === TURN_STATES.GAME_OVER) {
         state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
+        recordFreePlayGameOver(app);
         sync(app);
         return;
       }
@@ -214,6 +230,7 @@ function handleActionCompletion(app, completedRunner) {
 
   if (state.currentTurnState === TURN_STATES.GAME_OVER) {
     state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
+    recordFreePlayGameOver(app);
     sync(app);
     return;
   }

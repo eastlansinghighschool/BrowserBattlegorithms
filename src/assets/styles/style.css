@@ -232,7 +232,7 @@ button:disabled {
 }
 
 #blockly-history-controls button {
-  min-width: 62px;
+  min-width: 34px;
   background: transparent;
   color: #24404a;
   border: 1px solid transparent;
@@ -651,12 +651,117 @@ button:disabled {
   letter-spacing: 0;
 }
 
+.level-kind-badge-project {
+  border-color: rgba(61, 108, 156, 0.3);
+  background: rgba(213, 231, 246, 0.95);
+  color: #244c70;
+}
+
 .lesson-challenge-callout {
   padding: 10px 12px;
   border-radius: 12px;
   background: linear-gradient(180deg, rgba(250, 236, 193, 0.95), rgba(244, 228, 171, 0.92));
   border: 1px solid rgba(173, 124, 13, 0.24);
   color: #5d480f;
+}
+
+.lesson-project-indicator,
+.lesson-project-start-callout,
+.lesson-project-state-note {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 108, 156, 0.18);
+  background: rgba(232, 242, 250, 0.82);
+  color: #24404a;
+}
+
+.lesson-project-indicator-label,
+.lesson-project-indicator-body,
+.lesson-project-start-callout-label,
+.lesson-project-start-callout-body,
+.lesson-project-state-note-label,
+.lesson-project-state-note-body {
+  margin: 0;
+}
+
+.lesson-project-indicator-label,
+.lesson-project-start-callout-label,
+.lesson-project-state-note-label {
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #214b6c;
+}
+
+.lesson-project-start-callout {
+  background: linear-gradient(180deg, rgba(241, 248, 254, 0.98), rgba(223, 237, 249, 0.94));
+}
+
+.lesson-project-state-note {
+  border-color: rgba(184, 95, 60, 0.18);
+  background: rgba(253, 239, 225, 0.78);
+  color: #63311d;
+}
+
+.lesson-project-state-note-label {
+  color: #8c3d22;
+}
+
+.blockly-program-summary-project {
+  display: grid;
+  gap: 10px;
+}
+
+.blockly-project-callout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 108, 156, 0.18);
+  background: linear-gradient(180deg, rgba(243, 248, 253, 0.98), rgba(229, 239, 248, 0.95));
+  color: #24404a;
+}
+
+.blockly-project-callout-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.blockly-project-callout-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(213, 231, 246, 0.95);
+  color: #244c70;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.blockly-project-callout-body {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.blockly-project-callout-dismiss {
+  flex: 0 0 auto;
+  align-self: start;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 999px;
+  background: #3b6f90;
+  color: white;
+  cursor: pointer;
+}
+
+.blockly-project-callout-dismiss:hover {
+  background: #2f5c79;
 }
 
 .lesson-challenge-callout-label,

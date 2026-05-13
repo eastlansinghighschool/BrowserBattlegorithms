@@ -1,6 +1,10 @@
 import { FREE_PLAY_MODES, GAME_VIEW_MODES } from "../config/constants.js";
 import { getActiveProgramLabel } from "./programContext.js";
 import { renderControlRows } from "./keycaps.js";
+import {
+  isProjectLevel,
+  renderProjectStartWorkspaceCallout
+} from "./projectSignifiers.js";
 
 function escapeHtml(value) {
   return `${value || ""}`
@@ -120,8 +124,11 @@ export function renderBlocklyPanel(app) {
   if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
     title.textContent = "AI Ally Program";
     tabs.innerHTML = "";
-    summary.innerHTML = app.state.humanTurnBehavior === "WAIT_FOR_INPUT"
-      ? `
+    const currentLevel = app.state.levels.find((level) => level.id === app.state.currentLevelId);
+    const projectStartCallout = renderProjectStartWorkspaceCallout(currentLevel);
+    summary.innerHTML = `
+      ${projectStartCallout}
+      ${app.state.humanTurnBehavior === "WAIT_FOR_INPUT" ? `
         <p><strong>Keyboard practice:</strong> Use these keys when it is the human runner's turn.</p>
         ${renderControlRows([
           { label: "Move", keys: ["W", "A", "S", "D"], description: "move on the board" },
@@ -129,8 +136,13 @@ export function renderBlocklyPanel(app) {
           { label: "Barrier", keys: ["B"], description: "place a barrier" },
           { label: "Stay", keys: ["X"], description: "stay still" }
         ])}
-      `
-      : "";
+      ` : ""}
+    `;
+    if (isProjectLevel(currentLevel)) {
+      summary.classList.add("blockly-program-summary-project");
+    } else {
+      summary.classList.remove("blockly-program-summary-project");
+    }
     return;
   }
 

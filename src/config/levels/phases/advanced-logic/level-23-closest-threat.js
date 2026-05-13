@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "closest-threat",
   title: "Level 23: Closest Threat",
-  description: "Use Move Toward closest enemy to intercept a nearby defender.",
-  introText: "Closest enemy is a different kind of target. This board is arranged so the ally has to bend upward before the intercept works.",
+  description: "Start the Strategy Brain by using Move Toward on the closest enemy.",
+  introText: "This is the first step of your shared Strategy Brain. It learns to track the closest threat and begin a project-sized response.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -21,11 +21,11 @@ export default {
     {
       id: "level-21-advanced-layer",
       title: "A New Set Of Tools",
-      body: "This level introduces an expanded toolbox. The new blocks let your program work with numbers, compare values, and combine conditions. You will learn each of these in the coming levels — for now, focus on the Move Toward block.",
+      body: "This first project level introduces the Strategy Brain. The toolbox is broader now because later steps will add numbers and boolean choices; for the moment, focus on how Move Toward can track the nearest threat.",
       targetSelector: "#blockly-region"
     },
-    { id: "level-21-target", title: "A New Move Toward Target", body: "Closest enemy picks the nearest active opponent and steps toward them.", targetSelector: "#blockly-region" },
-    { id: "level-21-board", title: "Intercept The Runner", body: "This challenge is about chasing a threat, not chasing a flag. Watch how the target sits off the main lane.", targetSelector: "#canvas-container" }
+    { id: "level-21-target", title: "A New Move Toward Target", body: "Closest enemy picks the nearest active opponent and steps toward them. Your shared program starts by deciding who matters most.", targetSelector: "#blockly-region" },
+    { id: "level-21-board", title: "Intercept The Runner", body: "This step is about tracking a threat, not chasing a flag. Watch how the target sits off the main lane and ask where the strategy should bend.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,
