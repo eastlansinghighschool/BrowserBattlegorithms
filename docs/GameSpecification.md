@@ -213,7 +213,7 @@ As each runner's action is processed in the alternating sequence described in 2.
 
 When an active runner attempts to move into a cell occupied by an active opposing runner (as determined in Action Resolution Step 4c):
 
-1. **Determine Defender:** The team whose side of the map the collision occurs on is the "defender." (e.g., if collision at X \< mapWidth/2, Team 1 is defender; if X \>= mapWidth/2, Team 2 is defender, assuming Team 1 starts left).  
+1. **Determine Defender:** The team whose home side contains the collision cell is the "defender." The map is split at X \= mapWidth/2; whichever team's `homeSide` (from the active team configuration) covers that half owns it. This is orientation-agnostic: in Free Play the orientation is randomized at match start, so the defender of the left or right half is whichever team was assigned to it, not a fixed team number.  
 2. **Collision Outcome:**  
    * If one runner isFrozen and the other is not, the frozen runner automatically loses (this check is more for completeness, as frozen runners shouldn't be initiating moves that cause collisions).  
    * If a runner is carrying the enemy flag and is *not* the defender in the collision cell, they automatically lose.  

@@ -7,7 +7,8 @@ export function buildMatch(options = {}) {
   if (options.currentGameMode) {
     app.state.currentGameMode = options.currentGameMode;
   }
-  app.state.activeTeamSetup = createRandomizedFreePlayTeamSetup(app.state.currentGameMode, () => 0);
+  const randomFn = typeof options.randomFn === "function" ? options.randomFn : () => 0;
+  app.state.activeTeamSetup = createRandomizedFreePlayTeamSetup(app.state.currentGameMode, randomFn);
   initializeMatch(app);
   return app;
 }
