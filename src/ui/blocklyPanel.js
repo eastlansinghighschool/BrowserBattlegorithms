@@ -24,12 +24,27 @@ function getFreePlayModeLabel(mode) {
   return mode;
 }
 
+function isBlocklyWorkspaceEditable(workspace) {
+  if (!workspace) {
+    return false;
+  }
+  if (typeof workspace.isReadOnly === "function") {
+    return !workspace.isReadOnly();
+  }
+  return !workspace.readOnly;
+}
+
 export function renderBlocklyPanel(app) {
   const title = document.getElementById("blocklyPanelTitle");
   const tabs = document.getElementById("blockly-program-tabs");
   const summary = document.getElementById("blockly-program-summary");
   const importStatus = document.getElementById("workspace-import-status");
+  const usageExportStatus = document.getElementById("usage-export-status");
+  const undoButton = document.getElementById("undoWorkspaceButton");
+  const redoButton = document.getElementById("redoWorkspaceButton");
+  const programFileControls = document.getElementById("program-file-controls");
   const exportWorkspaceButton = document.getElementById("exportWorkspaceButton");
+  const exportUsageButton = document.getElementById("exportUsageButton");
   const importWorkspaceButton = document.getElementById("importWorkspaceButton");
   const blocklyToolbar = document.getElementById("blockly-toolbar");
   const programShell = document.getElementById("blockly-workspace-shell");
@@ -48,13 +63,43 @@ export function renderBlocklyPanel(app) {
       : "workspace-import-status";
     importStatus.hidden = !app.state.workspaceImportStatus;
   }
+  if (usageExportStatus) {
+    usageExportStatus.textContent = app.state.usageExportStatus?.message || "";
+    usageExportStatus.className = app.state.usageExportStatus
+      ? `workspace-import-status workspace-import-status-${app.state.usageExportStatus.tone}`
+      : "workspace-import-status";
+    usageExportStatus.hidden = !app.state.usageExportStatus;
+  }
 
   const editorReady = Boolean(app.state.editorReady);
+  const usageReady = Boolean(app.state.usageTrackerReady);
   if (exportWorkspaceButton) {
     exportWorkspaceButton.disabled = !editorReady;
   }
+  if (exportUsageButton) {
+    exportUsageButton.disabled = !usageReady;
+  }
   if (importWorkspaceButton) {
     importWorkspaceButton.disabled = !editorReady;
+  }
+  const freePlayFileControlsVisible = app.state.currentModeView === GAME_VIEW_MODES.FREE_PLAY;
+  if (programFileControls) {
+    programFileControls.hidden = !freePlayFileControlsVisible;
+  }
+  if (exportWorkspaceButton) {
+    exportWorkspaceButton.hidden = !freePlayFileControlsVisible;
+  }
+  if (importWorkspaceButton) {
+    importWorkspaceButton.hidden = !freePlayFileControlsVisible;
+  }
+  const workspaceEditable = isBlocklyWorkspaceEditable(app.blocklyWorkspace);
+  const canUndo = Boolean(workspaceEditable && app.hooks.canUndoBlocklyWorkspace?.());
+  const canRedo = Boolean(workspaceEditable && app.hooks.canRedoBlocklyWorkspace?.());
+  if (undoButton) {
+    undoButton.disabled = !canUndo;
+  }
+  if (redoButton) {
+    redoButton.disabled = !canRedo;
   }
   if (blocklyToolbar) {
     blocklyToolbar.classList.toggle("blockly-toolbar-disabled", !editorReady);

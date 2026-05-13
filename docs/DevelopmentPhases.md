@@ -2,7 +2,7 @@
 
 **Current Implementation Status (2026-04-04)**
 
-* The project now includes a playable **Phase 8 expansion** guided flow with thirty-five scaffolded levels, pass/fail evaluation, level unlock progression, and Blockly toolbox restriction by challenge.
+* The project now includes a playable **Phase 8 expansion** guided flow with thirty-seven scaffolded levels plus an optional lab, pass/fail evaluation, level unlock progression, and Blockly toolbox restriction by challenge.
 * The codebase now also has a modular `src/` architecture, Vite-based build workflow, command-line rule tests, and Playwright browser smoke tests.
 * Core gameplay, Blockly integration, NPC foundations, and the guided learning layer are in place, including a first-run mode chooser, spotlight tutorials, a required `On Each Turn` event block, beginner conditional blocks, a custom level picker popover, and a new **team-first runtime setup pipeline**.
 * Team identity is now a first-class architectural concern: active matches build explicit team state first, runners inherit `playDirection` from their team, and free play randomizes which team attacks left-to-right versus right-to-left on each load.
@@ -129,7 +129,7 @@
 * **Objective:** Expand the strategic possibilities with more advanced Blockly blocks, create more diverse levels, implement save/load functionality, and add initial "fun factor" elements.
 * **Key Tasks:**
   * Add advanced Blockly blocks: shared-program boolean wrappers, logic operators (`AND`, `OR`, `NOT`), typed number fields, comparisons, `runner index`, `distance to [target]`, `random roll (1-6)`, and free-play `playDirection value`.
-  * Expand the guided campaign from 20 to 35 levels, including an advanced arc for richer sensing and multi-ally team strategy.
+  * Expand the guided campaign from 20 to 37 levels plus an optional lab, including an advanced arc for richer sensing and multi-ally team strategy.
   * Expand the runtime so one Blockly workspace can drive multiple allied runners with stable indices.
   * Create additional maps sized for Phase 8 team tactics.
   * Implement robust Local Storage for saving/loading the current Blockly workspace.

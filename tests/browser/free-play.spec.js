@@ -16,13 +16,13 @@ test("free play shows Team 2 controls with a semicolon keycap in the options pan
   await page.goto("/");
   await chooseFreePlay(page);
 
-  await expect(page.locator("#level-panel")).toContainText("Team 2 Human");
+  await expect(page.locator("#level-panel")).toContainText("Player 2");
   const team2MoveRow = page.locator("#level-panel .control-chip-row").filter({ hasText: "Move" }).nth(1);
   await expect(team2MoveRow).toContainText("O");
   await expect(team2MoveRow).toContainText("K");
   await expect(team2MoveRow).toContainText("L");
   await expect(team2MoveRow).toContainText(";");
-  await expect(page.locator("#blockly-region")).not.toContainText("Team 2 Human");
+  await expect(page.locator("#blockly-region")).not.toContainText("Player 2");
 });
 
 test("free play PvP uses separate program tabs that preserve different team programs", async ({ page }) => {
@@ -38,6 +38,54 @@ test("free play PvP uses separate program tabs that preserve different team prog
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");
   await page.getByRole("button", { name: "Team 2 Program" }).click();
   await expect(page.locator("#blockly-region")).toContainText("Stay Still");
+});
+
+test("free play PvP keeps undo history isolated between team tabs", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+  await page.locator('select[data-action="free-play-mode"]').selectOption("PVP");
+
+  await loadWorkspaceXml(
+    page,
+    buildSolutionXml(`
+      <block type="battlegorithms_move_toward">
+        <field name="TARGET">MY_BASE</field>
+      </block>
+    `)
+  );
+
+  await page.getByRole("button", { name: "Team 2 Program" }).click();
+  await loadWorkspaceXml(
+    page,
+    buildSolutionXml(`
+      <block type="battlegorithms_move_toward">
+        <field name="TARGET">ENEMY_FLAG</field>
+      </block>
+    `)
+  );
+
+  await page.evaluate(() => {
+    const workspace = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace();
+    const block = workspace.getBlocksByType("battlegorithms_move_toward", false)[0];
+    block.setFieldValue("CLOSEST_ENEMY", "TARGET");
+  });
+
+  await page.getByRole("button", { name: "Undo" }).click();
+
+  const team2Target = await page.evaluate(() => {
+    const workspace = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace();
+    const block = workspace.getBlocksByType("battlegorithms_move_toward", false)[0];
+    return block.getFieldValue("TARGET");
+  });
+  expect(team2Target).toBe("ENEMY_FLAG");
+
+  await page.getByRole("button", { name: "Team 1 Program" }).click();
+  const team1Target = await page.evaluate(() => {
+    const workspace = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace();
+    const block = workspace.getBlocksByType("battlegorithms_move_toward", false)[0];
+    return block.getFieldValue("TARGET");
+  });
+  expect(team1Target).toBe("MY_BASE");
 });
 
 test("free play selectors update the visible setup summary and rebuild the match", async ({ page }) => {

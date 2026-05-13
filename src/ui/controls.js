@@ -12,6 +12,12 @@ import { resetGameToSetup, startGame } from "../core/setup.js";
 import { handlePlayerInput } from "../core/turnEngine.js";
 import { playSound, setSoundEnabled } from "./sound.js";
 import { setBlocklyPanelSize } from "./blocklyLayout.js";
+import {
+  decryptPrivateProgramXml,
+  encryptPrivateProgramXml,
+  parsePrivateProgramFileText,
+  serializePrivateProgramFile
+} from "../crypto/privateProgramFile.js";
 
 export function getAnimationSpeedFactorFromSliderValue(sliderValue) {
   const numericValue = Number.parseInt(sliderValue, 10);
@@ -20,19 +26,70 @@ export function getAnimationSpeedFactorFromSliderValue(sliderValue) {
   return Number.isFinite(speed) ? speed : 1.0;
 }
 
+function getCurrentProgramFileBaseName(app) {
+  if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
+    return app.state.currentLevelId || "guided-level";
+  }
+  if (app.state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER) {
+    return `free-play-team-${app.state.activeBlocklyTeamTab || 1}`;
+  }
+  return "free-play-player-team";
+}
+
+function downloadTextFile(filename, mimeType, content) {
+  const blob = new Blob([content], { type: mimeType });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function setModalMessage(element, tone, message) {
+  if (!element) {
+    return;
+  }
+  element.textContent = message || "";
+  element.hidden = !message;
+  element.className = message ? `program-modal-message program-modal-message-${tone}` : "program-modal-message";
+}
+
+function setExportModalPrivateFieldsVisibility(fieldsElement, checkboxElement) {
+  if (!fieldsElement || !checkboxElement) {
+    return;
+  }
+  fieldsElement.hidden = !checkboxElement.checked;
+}
+
 export function bindControls(app) {
   const speedSlider = document.getElementById("speedSlider");
   const speedValueDisplay = document.getElementById("speedValue");
   const controlsPanel = document.getElementById("game-controls");
   const instructionsPanel = document.getElementById("instructions");
   const exportWorkspaceButton = document.getElementById("exportWorkspaceButton");
+  const exportUsageButton = document.getElementById("exportUsageButton");
   const importWorkspaceButton = document.getElementById("importWorkspaceButton");
   const importWorkspaceInput = document.getElementById("importWorkspaceInput");
+  const undoWorkspaceButton = document.getElementById("undoWorkspaceButton");
+  const redoWorkspaceButton = document.getElementById("redoWorkspaceButton");
+  const programExportModal = document.getElementById("programExportModal");
+  const privateExportCheckbox = document.getElementById("privateExportCheckbox");
+  const privateExportFields = document.getElementById("privateExportFields");
+  const privateExportPassword = document.getElementById("privateExportPassword");
+  const privateExportConfirm = document.getElementById("privateExportConfirm");
+  const programExportModalMessage = document.getElementById("programExportModalMessage");
+  const privateImportModal = document.getElementById("privateImportModal");
+  const privateImportModalSummary = document.getElementById("privateImportModalSummary");
+  const privateImportPassword = document.getElementById("privateImportPassword");
+  const allowEditingAfterImportCheckbox = document.getElementById("allowEditingAfterImportCheckbox");
+  const privateImportModalMessage = document.getElementById("privateImportModalMessage");
   const soundToggleButton = document.getElementById("soundToggleButton");
   const blocklyProgramTabs = document.getElementById("blockly-program-tabs");
   const blocklySizeControls = document.getElementById("blockly-size-controls");
   const boardRetryButton = document.getElementById("board-loading-retry");
   const blocklyRetryButton = document.getElementById("blockly-loading-retry");
+  let pendingPrivateImportPayload = null;
+  let pendingPrivateImportFileName = "";
   if (speedSlider && speedValueDisplay) {
     const updateSpeed = () => {
       app.state.animationSpeedFactor = getAnimationSpeedFactorFromSliderValue(speedSlider.value);
@@ -42,6 +99,161 @@ export function bindControls(app) {
     speedSlider.addEventListener("input", updateSpeed);
     updateSpeed();
   }
+
+  const closeProgramExportModal = () => {
+    if (!programExportModal) {
+      return;
+    }
+    programExportModal.hidden = true;
+    programExportModal.setAttribute("aria-hidden", "true");
+    setModalMessage(programExportModalMessage, "error", "");
+  };
+
+  const openProgramExportModal = () => {
+    if (!programExportModal) {
+      return;
+    }
+    programExportModal.hidden = false;
+    programExportModal.setAttribute("aria-hidden", "false");
+    if (privateExportCheckbox) {
+      privateExportCheckbox.checked = false;
+    }
+    if (privateExportFields) {
+      privateExportFields.hidden = true;
+    }
+    if (privateExportPassword) {
+      privateExportPassword.value = "";
+    }
+    if (privateExportConfirm) {
+      privateExportConfirm.value = "";
+    }
+    setModalMessage(programExportModalMessage, "error", "");
+    privateExportCheckbox?.focus();
+  };
+
+  const closePrivateImportModal = () => {
+    if (!privateImportModal) {
+      return;
+    }
+    privateImportModal.hidden = true;
+    privateImportModal.setAttribute("aria-hidden", "true");
+    pendingPrivateImportPayload = null;
+    pendingPrivateImportFileName = "";
+    setModalMessage(privateImportModalMessage, "error", "");
+  };
+
+  const openPrivateImportModal = ({ fileName, payload }) => {
+    if (!privateImportModal) {
+      return;
+    }
+    pendingPrivateImportPayload = payload;
+    pendingPrivateImportFileName = fileName || "private-program.json";
+    if (privateImportModalSummary) {
+      privateImportModalSummary.textContent = `File: ${pendingPrivateImportFileName}`;
+    }
+    if (privateImportPassword) {
+      privateImportPassword.value = "";
+    }
+    if (allowEditingAfterImportCheckbox) {
+      allowEditingAfterImportCheckbox.checked = true;
+    }
+    setModalMessage(privateImportModalMessage, "error", "");
+    privateImportModal.hidden = false;
+    privateImportModal.setAttribute("aria-hidden", "false");
+    privateImportPassword?.focus();
+  };
+
+  const exportReadableWorkspaceXml = () => {
+    const xmlText = app.hooks.getWorkspaceXmlText?.() || "";
+    app.usageTracker?.recordWorkspaceExported?.({
+      modeView: app.state.currentModeView,
+      levelId: app.state.currentLevelId,
+      mapKey: app.state.currentMapKey,
+      xmlLength: xmlText.length
+    });
+    const modeLabel = getCurrentProgramFileBaseName(app);
+    downloadTextFile(`${modeLabel}.xml`, "text/xml;charset=utf-8", xmlText);
+    app.state.workspaceImportStatus = {
+      tone: "success",
+      message: "Program XML saved locally."
+    };
+    app.syncUi();
+  };
+
+  const exportPrivateWorkspaceFile = async () => {
+    const password = `${privateExportPassword?.value || ""}`.trim();
+    const confirmPassword = `${privateExportConfirm?.value || ""}`.trim();
+    if (!password) {
+      setModalMessage(programExportModalMessage, "error", "Enter a password or PIN to make a private file.");
+      return;
+    }
+    if (password.length < 4) {
+      setModalMessage(programExportModalMessage, "error", "Use at least 4 characters so the password is not too easy to guess.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setModalMessage(programExportModalMessage, "error", "Password and confirmation do not match.");
+      return;
+    }
+
+    const xmlText = app.hooks.getWorkspaceXmlText?.() || "";
+    const payload = await encryptPrivateProgramXml({
+      xmlText,
+      password,
+      programLabel: app.hooks.getActiveProgramLabel?.() || "Free Play",
+      teamNumber: app.state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER ? app.state.activeBlocklyTeamTab : null
+    });
+    const modeLabel = getCurrentProgramFileBaseName(app);
+    downloadTextFile(
+      `${modeLabel}.private.json`,
+      "application/json;charset=utf-8",
+      serializePrivateProgramFile(payload)
+    );
+    app.state.workspaceImportStatus = {
+      tone: "success",
+      message: "Private program file saved locally."
+    };
+    app.syncUi();
+  };
+
+  const importNormalWorkspaceXml = async (xmlText) => {
+    const result = app.hooks.importWorkspaceXml?.(xmlText);
+    app.state.workspaceImportStatus = result?.ok
+      ? { tone: "success", message: "Program imported successfully." }
+      : { tone: "error", message: `Import failed. ${result?.error || "Please check the XML and try again."}` };
+    app.syncUi();
+  };
+
+  const importPrivateWorkspaceFile = async () => {
+    if (!pendingPrivateImportPayload) {
+      return;
+    }
+    const password = `${privateImportPassword?.value || ""}`;
+    try {
+      const xmlText = await decryptPrivateProgramXml(pendingPrivateImportPayload, password);
+      const result = app.hooks.importWorkspaceXml?.(xmlText);
+      if (!result?.ok) {
+        setModalMessage(privateImportModalMessage, "error", `Import failed. ${result?.error || "Please check the XML and try again."}`);
+        return;
+      }
+      const allowEditing = Boolean(allowEditingAfterImportCheckbox?.checked);
+      app.hooks.setBlocklyEditable?.(allowEditing);
+      app.state.workspaceImportStatus = {
+        tone: "success",
+        message: allowEditing
+          ? "Private program imported and left editable."
+          : "Private program imported read-only."
+      };
+      closePrivateImportModal();
+      app.syncUi();
+    } catch (error) {
+      setModalMessage(
+        privateImportModalMessage,
+        "error",
+        `Import failed. ${error instanceof Error ? error.message : "Please check the password or file and try again."}`
+      );
+    }
+  };
 
   app.hooks.updateControlsVisibility = () => {
     if (instructionsPanel) {
@@ -97,18 +309,66 @@ export function bindControls(app) {
 
   if (exportWorkspaceButton) {
     exportWorkspaceButton.addEventListener("click", () => {
-      const xmlText = app.hooks.getWorkspaceXmlText?.() || "";
-      const blob = new Blob([xmlText], { type: "text/xml;charset=utf-8" });
+      openProgramExportModal();
+    });
+  }
+
+  if (undoWorkspaceButton) {
+    undoWorkspaceButton.addEventListener("click", () => {
+      if (app.hooks.undoBlocklyWorkspace?.()) {
+        app.syncUi();
+      }
+    });
+  }
+
+  if (redoWorkspaceButton) {
+    redoWorkspaceButton.addEventListener("click", () => {
+      if (app.hooks.redoBlocklyWorkspace?.()) {
+        app.syncUi();
+      }
+    });
+  }
+
+  if (exportUsageButton) {
+    exportUsageButton.addEventListener("click", async () => {
+      const studentName = window.prompt("Enter the student name for this usage file:", "");
+      if (studentName === null) {
+        app.state.usageExportStatus = {
+          tone: "error",
+          message: "Usage export cancelled."
+        };
+        app.syncUi();
+        return;
+      }
+
+      app.state.usageExportStatus = {
+        tone: "success",
+        message: "Preparing usage file..."
+      };
+      app.syncUi();
+
+      const result = await app.usageTracker?.exportUsageFile?.(studentName);
+      if (!result?.ok) {
+        app.state.usageExportStatus = {
+          tone: "error",
+          message: `Usage export failed. ${result?.error || "Please try again."}`
+        };
+        app.syncUi();
+        return;
+      }
+
+      const blob = new Blob([JSON.stringify(result.payload, null, 2)], { type: "application/json;charset=utf-8" });
       const link = document.createElement("a");
-      const modeLabel = app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS
-        ? app.state.currentLevelId || "guided-level"
-        : app.state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER
-          ? `free-play-${(app.hooks.getActiveProgramLabel?.() || "player-team").toLowerCase().replace(/\s+/g, "-")}`
-          : "free-play-player-team";
       link.href = URL.createObjectURL(blob);
-      link.download = `${modeLabel}.xml`;
+      link.download = result.filename || "usage.json";
       link.click();
       URL.revokeObjectURL(link.href);
+
+      app.state.usageExportStatus = {
+        tone: "success",
+        message: "Usage file saved locally. Share it with your teacher."
+      };
+      app.syncUi();
     });
   }
 
@@ -121,13 +381,83 @@ export function bindControls(app) {
       if (!file) {
         return;
       }
-      const xmlText = await file.text();
-      const result = app.hooks.importWorkspaceXml?.(xmlText);
-      app.state.workspaceImportStatus = result?.ok
-        ? { tone: "success", message: "Program imported successfully." }
-        : { tone: "error", message: `Import failed. ${result?.error || "Please check the XML and try again."}` };
-      app.syncUi();
+      const fileText = await file.text();
+      const trimmedText = fileText.trimStart();
+      if (trimmedText.startsWith("<")) {
+        await importNormalWorkspaceXml(fileText);
+        importWorkspaceInput.value = "";
+        return;
+      }
+
+      try {
+        const payload = parsePrivateProgramFileText(fileText);
+        openPrivateImportModal({ fileName: file.name, payload });
+      } catch (error) {
+        app.state.workspaceImportStatus = {
+          tone: "error",
+          message: `Import failed. ${error instanceof Error ? error.message : "Please check the file and try again."}`
+        };
+        app.syncUi();
+      }
       importWorkspaceInput.value = "";
+    });
+  }
+
+  if (privateExportCheckbox && privateExportFields) {
+    privateExportCheckbox.addEventListener("change", () => {
+      setExportModalPrivateFieldsVisibility(privateExportFields, privateExportCheckbox);
+      setModalMessage(programExportModalMessage, "error", "");
+    });
+  }
+
+  if (programExportModal) {
+    programExportModal.addEventListener("click", async (event) => {
+      const action = event.target.closest("[data-program-modal-action]")?.dataset.programModalAction;
+      if (!action) {
+        return;
+      }
+      if (action === "cancel") {
+        closeProgramExportModal();
+        return;
+      }
+      if (action === "confirm") {
+        try {
+          if (privateExportCheckbox?.checked) {
+            await exportPrivateWorkspaceFile();
+          } else {
+            exportReadableWorkspaceXml();
+          }
+          closeProgramExportModal();
+        } catch (error) {
+          setModalMessage(
+            programExportModalMessage,
+            "error",
+            `Export failed. ${error instanceof Error ? error.message : "Please try again."}`
+          );
+        }
+      }
+    });
+  }
+
+  if (privateImportModal) {
+    privateImportModal.addEventListener("click", async (event) => {
+      const action = event.target.closest("[data-private-import-action]")?.dataset.privateImportAction;
+      if (!action) {
+        return;
+      }
+      if (action === "cancel") {
+        closePrivateImportModal();
+        return;
+      }
+      if (action === "confirm") {
+        await importPrivateWorkspaceFile();
+      }
+    });
+  }
+
+  if (allowEditingAfterImportCheckbox) {
+    allowEditingAfterImportCheckbox.addEventListener("change", () => {
+      setModalMessage(privateImportModalMessage, "error", "");
     });
   }
 

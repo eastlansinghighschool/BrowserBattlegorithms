@@ -18,6 +18,7 @@ import {
 import { bindLevelPanel, renderLevelPanel } from "./ui/levels.js";
 import { renderBlocklyPanel } from "./ui/blocklyPanel.js";
 import { processTurnActions } from "./core/turnEngine.js";
+import { initializeUsageTracking } from "./usage/usageTracker.js";
 import {
   bindTutorialOverlay,
   closeTutorial,
@@ -30,6 +31,11 @@ import {
 import { startHeavyBoot, retryBoardLoad, retryEditorLoad, whenHeavySystemsReady } from "./startup/loaders.js";
 
 const app = createApp();
+initializeUsageTracking(app);
+app.usageTracker?.ready?.then(() => {
+  app.state.usageTrackerReady = true;
+  app.syncUi();
+}).catch(() => {});
 app.ui.isLevelPickerOpen = false;
 initializeSoundState(app.state);
 
@@ -134,6 +140,11 @@ app.hooks.startCurrentLevelTutorial = (force = false) => {
   if (!app.state.boardReady || !app.state.editorReady) {
     return;
   }
+  app.usageTracker?.recordTutorialReplay?.({
+    forced: force,
+    levelId: app.state.currentLevelId,
+    modeView: app.state.currentModeView
+  });
   startCurrentLevelTutorial(app, force);
 };
 
@@ -194,6 +205,7 @@ startHeavyBoot(app);
 window.__BBA_TEST_HOOKS__ = {
   getState: () => app.state,
   getLevelState: () => getLevelStateSnapshot(app),
+  getUsageTrackerState: () => app.usageTracker?.getDebugSnapshot?.() || null,
   getBlocklyWorkspace: () => app.blocklyWorkspace,
   getAvailableToolboxBlockTypes: () => app.hooks.getAvailableToolboxBlockTypes?.() || [],
   getAvailableToolboxBlockLabels: () => app.hooks.getAvailableToolboxBlockLabels?.() || [],
@@ -202,6 +214,10 @@ window.__BBA_TEST_HOOKS__ = {
   getSensorRelationLabels: () => app.hooks.getSensorRelationLabels?.() || [],
   loadWorkspaceXml: (xmlText) => app.hooks.importWorkspaceXml?.(xmlText),
   getWorkspaceXmlText: () => app.hooks.getWorkspaceXmlText?.() || "",
+  canUndoBlocklyWorkspace: () => app.hooks.canUndoBlocklyWorkspace?.() || false,
+  canRedoBlocklyWorkspace: () => app.hooks.canRedoBlocklyWorkspace?.() || false,
+  undoBlocklyWorkspace: () => app.hooks.undoBlocklyWorkspace?.() || false,
+  redoBlocklyWorkspace: () => app.hooks.redoBlocklyWorkspace?.() || false,
   getAIAllyAction: (runnerOverride = null) => app.hooks.getAIAllyAction?.(runnerOverride),
   isEditorReady: () => Boolean(app.state.editorReady),
   isBoardReady: () => Boolean(app.state.boardReady),

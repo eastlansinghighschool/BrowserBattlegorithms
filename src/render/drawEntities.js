@@ -1,4 +1,4 @@
-import { CELL_SIZE, GAME_VIEW_MODES, POINTS_TO_WIN } from "../config/constants.js";
+import { CELL_SIZE, GAME_MODES, GAME_VIEW_MODES, POINTS_TO_WIN, TEAM_GLOW_COLORS } from "../config/constants.js";
 
 export function drawFlags(p, state) {
   for (const teamId of Object.keys(state.gameFlags)) {
@@ -32,6 +32,27 @@ export function drawRunners(p, state) {
 
   for (const runner of runnersToDisplay) {
     runner.display(p);
+  }
+}
+
+export function drawHumanPlayerLabels(p, state) {
+  if (state.currentGameMode !== GAME_MODES.PLAYER_VS_PLAYER) {
+    return;
+  }
+  for (const runner of state.allRunners) {
+    if (!runner.isHumanControlled) {
+      continue;
+    }
+    const label = runner.team === 1 ? "P1" : "P2";
+    const color = TEAM_GLOW_COLORS[runner.team].stroke;
+    p.push();
+    p.fill(color[0], color[1], color[2]);
+    p.noStroke();
+    p.textAlign(p.LEFT, p.TOP);
+    p.textSize(11);
+    p.textStyle(p.BOLD);
+    p.text(label, runner.pixelX + 2, runner.pixelY + 2);
+    p.pop();
   }
 }
 

@@ -80,12 +80,83 @@ function getActiveFreePlayProgramKey(app) {
   return "player";
 }
 
+function buildUsageWorkspaceCapture(app, reason) {
+  if (!app.blocklyWorkspace) {
+    return null;
+  }
+  const blockCounts = app.blocklyWorkspace.getAllBlocks(false).reduce((counts, block) => {
+    counts[block.type] = (counts[block.type] || 0) + 1;
+    return counts;
+  }, {});
+
+  return {
+    reason,
+    xmlText: getWorkspaceXmlText(app),
+    blockCounts,
+    modeView: app.state.currentModeView,
+    levelId: app.state.currentLevelId,
+    mapKey: app.state.currentMapKey,
+    freePlayMode: app.state.freePlayMode,
+    freePlayTeamSize: app.state.freePlayTeamSize,
+    activeBlocklyTeamTab: app.state.activeBlocklyTeamTab,
+    turnNumber: app.state.currentTurnNumber
+  };
+}
+
+function isWorkspaceEditable(workspace) {
+  if (!workspace) {
+    return false;
+  }
+  if (typeof workspace.isReadOnly === "function") {
+    return !workspace.isReadOnly();
+  }
+  return !workspace.readOnly;
+}
+
+function clearWorkspaceUndoHistory(workspace) {
+  workspace?.clearUndo?.();
+}
+
+export function canUndoBlocklyWorkspace(app) {
+  const workspace = app.blocklyWorkspace;
+  return Boolean(isWorkspaceEditable(workspace) && workspace?.getUndoStack?.().length > 0);
+}
+
+export function canRedoBlocklyWorkspace(app) {
+  const workspace = app.blocklyWorkspace;
+  return Boolean(isWorkspaceEditable(workspace) && workspace?.getRedoStack?.().length > 0);
+}
+
+export function undoBlocklyWorkspace(app) {
+  const workspace = app.blocklyWorkspace;
+  if (!canUndoBlocklyWorkspace(app)) {
+    return false;
+  }
+  workspace?.hideChaff?.();
+  workspace?.undo?.(false);
+  return true;
+}
+
+export function redoBlocklyWorkspace(app) {
+  const workspace = app.blocklyWorkspace;
+  if (!canRedoBlocklyWorkspace(app)) {
+    return false;
+  }
+  workspace?.hideChaff?.();
+  workspace?.undo?.(true);
+  return true;
+}
+
 export function getActiveBlocklyProgramLabel(app) {
   return getActiveProgramLabel(app.state);
 }
 
 function getWorkspaceStorageKey(app, overrideTeamId = null) {
   if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
+    const currentLevel = getCurrentLevel(app);
+    if (currentLevel?.project?.id) {
+      return `bba:guided-project-workspace:${currentLevel.project.id}`;
+    }
     return `${GUIDED_WORKSPACE_STORAGE_PREFIX}${app.state.currentLevelId || "unknown"}`;
   }
   if (app.state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER) {
@@ -485,9 +556,25 @@ export function initBlockly(app) {
   });
   applyBlocklyPanelSize(app);
   loadWorkspaceXml(app, "");
-  app.blocklyWorkspace.addChangeListener(() => {
+  app.usageTracker?.recordWorkspaceSnapshot?.("editor_initialized", buildUsageWorkspaceCapture(app, "editor_initialized"));
+  app.blocklyWorkspace.addChangeListener((event) => {
     updateBlocklyExecutionHints(app);
+    if (app.blocklyWorkspace.__bbaSuppressUsageCapture) {
+      return;
+    }
+    if (event?.type) {
+      app.usageTracker?.recordWorkspaceChange?.({
+        reason: event.type,
+        modeView: app.state.currentModeView,
+        levelId: app.state.currentLevelId,
+        mapKey: app.state.currentMapKey,
+        activeBlocklyTeamTab: app.state.activeBlocklyTeamTab,
+        turnNumber: app.state.currentTurnNumber
+      });
+      app.usageTracker?.queueWorkspaceSnapshot?.(app, event.type);
+    }
     saveWorkspaceToLocalStorage(app);
+    app.syncUi?.();
   });
 }
 
@@ -516,12 +603,19 @@ export function loadWorkspaceXml(app, xmlText) {
   if (!app.blocklyWorkspace) {
     return;
   }
-  app.blocklyWorkspace.clear();
-  const workspaceXml = xmlText || buildDefaultWorkspaceXml();
-  const xml = Blockly.utils.xml.textToDom(workspaceXml);
-  Blockly.Xml.domToWorkspace(xml, app.blocklyWorkspace);
-  ensureEventBlock(app);
-  updateBlocklyExecutionHints(app);
+  app.blocklyWorkspace.__bbaSuppressUsageCapture = true;
+  try {
+    app.blocklyWorkspace.clear();
+    const workspaceXml = xmlText || buildDefaultWorkspaceXml();
+    const xml = Blockly.utils.xml.textToDom(workspaceXml);
+    Blockly.Xml.domToWorkspace(xml, app.blocklyWorkspace);
+    ensureEventBlock(app);
+    updateBlocklyExecutionHints(app);
+    clearWorkspaceUndoHistory(app.blocklyWorkspace);
+  } finally {
+    app.blocklyWorkspace.__bbaSuppressUsageCapture = false;
+  }
+  app.syncUi?.();
 }
 
 export function getWorkspaceXmlText(app) {
@@ -607,6 +701,7 @@ export function loadWorkspaceFromLocalStorage(app, fallbackXml = "", overrideTea
   const xmlToLoad = getStoredWorkspaceXmlText(app, overrideTeamId, fallbackXml);
   loadWorkspaceXml(app, xmlToLoad);
   cacheWorkspaceXml(app, xmlToLoad, overrideTeamId);
+  app.usageTracker?.recordWorkspaceSnapshot?.("workspace_loaded", buildUsageWorkspaceCapture(app, "workspace_loaded"));
   return xmlToLoad;
 }
 
@@ -618,6 +713,13 @@ export function importWorkspaceXml(app, xmlText) {
   try {
     loadWorkspaceXml(app, xmlText);
     saveWorkspaceToLocalStorage(app);
+    app.usageTracker?.recordWorkspaceImported?.({
+      modeView: app.state.currentModeView,
+      levelId: app.state.currentLevelId,
+      mapKey: app.state.currentMapKey,
+      turnNumber: app.state.currentTurnNumber
+    });
+    app.usageTracker?.recordWorkspaceSnapshot?.("workspace_imported", buildUsageWorkspaceCapture(app, "workspace_imported"));
     return { ok: true };
   } catch (error) {
     loadWorkspaceXml(app, previousXml);

@@ -51,6 +51,7 @@ export function initializeLevelState(app) {
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
   state.activeLevelResult = LEVEL_RESULT.NONE;
   state.levelAttemptCount = 0;
+  state.currentLevelStartTurnNumber = null;
   state.lastLevelResultReason = null;
   state.currentToolboxBlockTypes = [];
   state.humanTurnBehavior = HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
@@ -99,7 +100,12 @@ export function enterGuidedMode(app) {
   state.activeLevelResult = LEVEL_RESULT.NONE;
   state.lastLevelResultReason = null;
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
+  state.currentLevelStartTurnNumber = null;
   state.humanTurnBehavior = currentLevel?.humanTurnBehavior || HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
+  app.usageTracker?.recordModeEntered?.(state.currentModeView, {
+    levelId: state.currentLevelId,
+    mapKey: state.currentMapKey
+  });
   if (typeof app.hooks.onGuidedLevelSelected === "function" && currentLevel) {
     app.hooks.onGuidedLevelSelected(currentLevel);
   }
@@ -123,7 +129,14 @@ export function enterFreePlay(app) {
   state.humanTurnBehavior = HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT;
   state.activeLevelResult = LEVEL_RESULT.NONE;
   state.lastLevelResultReason = null;
+  state.currentLevelStartTurnNumber = null;
   initializeDisplayState(app);
+  app.usageTracker?.recordModeEntered?.(state.currentModeView, {
+    freePlayMode: state.freePlayMode,
+    freePlayTeamSize: state.freePlayTeamSize,
+    mapKey: state.currentMapKey,
+    activeBlocklyTeamTab: state.activeBlocklyTeamTab
+  });
   if (typeof app.hooks.onFreePlayEntered === "function") {
     app.hooks.onFreePlayEntered();
   }
@@ -148,6 +161,11 @@ export function startLevel(app, levelId = app.state.currentLevelId) {
   initializeMatch(app);
   syncHumanTurnBehaviorVisuals(state);
   state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  state.currentLevelStartTurnNumber = state.currentTurnNumber;
+  app.usageTracker?.recordLevelStarted?.(level, {
+    modeView: state.currentModeView,
+    mapKey: state.currentMapKey
+  });
   if (typeof app.hooks.onLevelStarted === "function") {
     app.hooks.onLevelStarted(level);
   }
@@ -196,6 +214,12 @@ export function completeLevel(app, result, reason) {
   }
 
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
+  app.usageTracker?.recordLevelEnded?.(getCurrentLevel(app), result, reason, {
+    modeView: state.currentModeView,
+    turnNumber: state.currentTurnNumber,
+    startTurnNumber: state.currentLevelStartTurnNumber
+  });
+  state.currentLevelStartTurnNumber = null;
   if (typeof app.hooks.onLevelEnded === "function") {
     app.hooks.onLevelEnded(result, reason);
   }
@@ -221,7 +245,15 @@ export function configureFreePlay(app, updates = {}) {
   state.humanTurnBehavior = HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT;
   state.activeLevelResult = LEVEL_RESULT.NONE;
   state.lastLevelResultReason = null;
+  state.currentLevelStartTurnNumber = null;
   initializeDisplayState(app);
+  app.usageTracker?.recordFreePlayConfigured?.({
+    modeView: state.currentModeView,
+    freePlayMode: state.freePlayMode,
+    freePlayTeamSize: state.freePlayTeamSize,
+    mapKey: state.currentMapKey,
+    activeBlocklyTeamTab: state.activeBlocklyTeamTab
+  });
   if (typeof app.hooks.onFreePlayEntered === "function") {
     app.hooks.onFreePlayEntered();
   }

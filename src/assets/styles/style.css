@@ -50,6 +50,12 @@ body {
   gap: 12px;
 }
 
+.app-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .app-header h1 {
   margin: 0;
   font-size: clamp(1rem, 1.2vw, 1.2rem);
@@ -73,6 +79,36 @@ body {
 
 .app-help-link:hover {
   background: rgba(255, 255, 255, 0.16);
+}
+
+.app-header-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 54px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+}
+
+.app-header-icon-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.app-header-icon {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+}
+
+.app-header-icon-chart {
+  width: 14px;
+  height: 14px;
 }
 
 #game-container {
@@ -186,6 +222,28 @@ button:disabled {
   opacity: 0.55;
 }
 
+#blockly-history-controls {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+}
+
+#blockly-history-controls button {
+  min-width: 62px;
+  background: transparent;
+  color: #24404a;
+  border: 1px solid transparent;
+}
+
+#blockly-history-controls button:disabled {
+  opacity: 1;
+  background: #3b6f90;
+  color: white;
+}
+
 #blockly-toolbar button {
   padding: 7px 12px;
   border: none;
@@ -193,6 +251,148 @@ button:disabled {
   cursor: pointer;
   background: #3b6f90;
   color: white;
+}
+
+.program-file-controls {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+}
+
+.program-file-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  color: #24404a;
+  border: 1px solid transparent;
+}
+
+.program-file-controls button:hover {
+  background: rgba(59, 111, 144, 0.12);
+}
+
+.program-file-controls .app-header-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.program-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+
+.program-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 28, 34, 0.42);
+}
+
+.program-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  background: #ffffff;
+  color: #1e2b33;
+  border-radius: 12px;
+  border: 1px solid rgba(36, 64, 74, 0.18);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.program-modal-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.program-modal-copy,
+.program-modal-note,
+.program-modal-message {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.program-modal-note {
+  color: #5b4b15;
+}
+
+.program-modal-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.program-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.program-modal-fields label,
+.program-modal-card > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.94rem;
+}
+
+.program-modal-fields input,
+.program-modal-card input {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid rgba(36, 64, 74, 0.24);
+  border-radius: 10px;
+}
+
+.program-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.program-modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 999px;
+  background: #3b6f90;
+  color: white;
+  cursor: pointer;
+}
+
+.program-modal-actions button:hover {
+  background: #2f5c79;
+}
+
+.program-modal-message {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #eef4fa;
+}
+
+.program-modal-message-success {
+  background: #e9f5ec;
+  color: #1f5d34;
+}
+
+.program-modal-message-error {
+  background: #fdecec;
+  color: #842029;
 }
 
 #blockly-size-controls {
@@ -397,6 +597,11 @@ button:disabled {
 }
 
 .level-picker-item-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
   font-size: 0.9rem;
   opacity: 0.9;
 }
@@ -420,6 +625,48 @@ button:disabled {
   padding: 10px 12px;
   border-radius: 10px;
   background: rgba(58, 125, 99, 0.1);
+}
+
+.level-picker-trigger-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.level-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(173, 124, 13, 0.3);
+  background: rgba(247, 225, 176, 0.9);
+  color: #6c4c08;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.lesson-challenge-callout {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(250, 236, 193, 0.95), rgba(244, 228, 171, 0.92));
+  border: 1px solid rgba(173, 124, 13, 0.24);
+  color: #5d480f;
+}
+
+.lesson-challenge-callout-label,
+.lesson-challenge-callout-body {
+  margin: 0;
+}
+
+.lesson-challenge-callout-label {
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 
 .student-lesson-card {

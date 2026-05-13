@@ -8,7 +8,10 @@ export function updateScoreDisplay(app) {
     return;
   }
   const { currentTurnNumber, teamScores, pointsToWin, currentModeView, activeLevelResult, currentLevelId, levels } = app.state;
-  let prefix = `Turn: ${currentTurnNumber} | Scores: Team 1: ${teamScores[1]} - Team 2: ${teamScores[2]} (Win at ${pointsToWin})`;
+  const isPvP = app.state.freePlayMode === "PVP";
+  const label1 = isPvP ? "P1" : "Team 1";
+  const label2 = isPvP ? "P2" : "Team 2";
+  let prefix = `Turn: ${currentTurnNumber} | Scores: ${label1}: ${teamScores[1]} - ${label2}: ${teamScores[2]} (Win at ${pointsToWin})`;
   if (currentModeView === "GUIDED_LEVELS") {
     const statusText = activeLevelResult === "IN_PROGRESS" ? "Level in progress" : activeLevelResult === "PASSED" ? "Level passed" : activeLevelResult === "FAILED" ? "Level failed" : "Level ready";
     const currentLevel = (levels || []).find((level) => level.id === currentLevelId);

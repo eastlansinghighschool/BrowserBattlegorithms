@@ -1,0 +1,36 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+      <block type="battlegorithms_on_each_turn" x="24" y="24">
+        <next>
+          
+    <block type="battlegorithms_if_boolean_else">
+      <value name="BOOL">
+        <block type="battlegorithms_value_compare">
+          <value name="LEFT">
+            <block type="battlegorithms_value_runner_index"></block>
+          </value>
+          <field name="OPERATOR">EQ</field>
+          <value name="RIGHT">
+            <block type="battlegorithms_value_number">
+              <field name="VALUE">1</field>
+            </block>
+          </value>
+        </block>
+      </value>
+      <statement name="DO">
+        <block type="battlegorithms_if_can_place_barrier_else">
+          <statement name="DO">
+            <block type="battlegorithms_place_barrier"></block>
+          </statement>
+          <statement name="ELSE">
+            <block type="battlegorithms_stay_still"></block>
+          </statement>
+        </block>
+      </statement>
+      <statement name="ELSE">
+        <block type="battlegorithms_move_forward"></block>
+      </statement>
+    </block>
+  
+        </next>
+      </block>
+    </xml>

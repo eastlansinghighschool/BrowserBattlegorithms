@@ -5,7 +5,7 @@ Browser-based version of the Battlegorithms AP CSA lab.
 ## Current State
 
 - Playable **Phase 8 expansion** build with guided-first level flow
-- Thirty-five guided levels with pass/fail evaluation and sequential unlock progression
+- Thirty-seven numbered guided levels plus an optional lab, with pass/fail evaluation and sequential unlock progression
 - Guided onboarding now includes a first-run mode chooser, spotlight tutorials, and explanatory level tips
 - Blockly now includes a beginner track plus an advanced boolean/value layer with logic operators, comparisons, typed number inputs, runner index, and distance-to-target values
 - Guided Phase 8 now introduces multi-ally shared-program strategy levels where Blockly-controlled allies can branch on stable runner indices
@@ -32,6 +32,18 @@ Browser-based version of the Battlegorithms AP CSA lab.
 - `npm run build`
 - `npm test`
 - `npm run test:browser`
+
+## Dev Server
+
+Start: `npm run dev` — serves the app at `http://127.0.0.1:4173` by default.
+
+Stop: `Ctrl+C` in the terminal running the dev server.
+
+The port is configured via the `DEV_PORT` variable in `.env`. To use a different port locally without affecting other contributors, create a `.env.local` file (gitignored) and set `DEV_PORT` there:
+
+```
+DEV_PORT=3000
+```
 
 ## Main Project Docs
 

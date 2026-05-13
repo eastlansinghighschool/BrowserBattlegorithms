@@ -111,10 +111,10 @@ function planActionForActiveRunner(app, runner) {
     const decision = runner.cpuBehavior
       ? calculateFreePlayCpuAction(runner, state)
       : (
-          ACTIVE_TEAM2_NPC_BEHAVIOR === NPC_BEHAVIORS.SIMPLE_TARGET
-            ? calculateNpcType1Action(runner, state)
-            : calculateNpcType2Action(runner, state)
-        );
+        ACTIVE_TEAM2_NPC_BEHAVIOR === NPC_BEHAVIORS.SIMPLE_TARGET
+          ? calculateNpcType1Action(runner, state)
+          : calculateNpcType2Action(runner, state)
+      );
     state.queuedActionForCurrentRunner = translateActionDecision(runner, decision, state);
     state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
     return;
@@ -156,6 +156,15 @@ function handleFrozenRunnerTurn(app, runner) {
 function handleActionCompletion(app, completedRunner) {
   const { state } = app;
   const carriedFlagBefore = completedRunner.hasEnemyFlag;
+  const lastActionType = state.runnerActionHistory?.[completedRunner.id]?.at(-1) || null;
+  app.usageTracker?.recordTurnActionCompleted?.({
+    runnerId: completedRunner.id,
+    teamId: completedRunner.team,
+    actionType: lastActionType,
+    turnNumber: state.currentTurnNumber,
+    modeView: state.currentModeView,
+    levelId: state.currentLevelId
+  });
   if (completedRunner.isGracePeriod) {
     completedRunner.isGracePeriod = false;
   }
@@ -173,6 +182,13 @@ function handleActionCompletion(app, completedRunner) {
 
     if (completedRunner.hasEnemyFlag && checkForScoring(state, completedRunner)) {
       playSound(state, "score");
+      app.usageTracker?.recordScorePoint?.({
+        runnerId: completedRunner.id,
+        teamId: completedRunner.team,
+        turnNumber: state.currentTurnNumber,
+        modeView: state.currentModeView,
+        teamScores: state.teamScores
+      });
       if (state.currentModeView === GAME_VIEW_MODES.FREE_PLAY) {
         triggerGoalBurst(
           state,

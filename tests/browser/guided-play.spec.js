@@ -107,8 +107,13 @@ test("guided keyboard-practice level responds to actual Team 1 key presses", asy
     return { x: human.gridX, y: human.gridY };
   });
 
-  await page.locator("#canvas-container canvas").click();
-  await page.keyboard.press("d");
+  await page.waitForFunction(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return human && !human.isMoving && !human.isBouncing;
+  });
+
+  await page.evaluate(() => window.__BBA_TEST_HOOKS__.sendKey("d"));
   const queuedAction = await page.waitForFunction(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
     const queued = hooks.app.state.queuedActionForCurrentRunner;

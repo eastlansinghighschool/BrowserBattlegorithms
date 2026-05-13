@@ -12,6 +12,9 @@ test("guided instructions are visible after dismissing the first tutorial", asyn
   await expect(page.locator("#level-panel")).toContainText("What you are looking at");
   await expect(page.locator("#level-panel")).toContainText("Ally runner");
   await expect(page.locator("#showTutorialButton")).toBeVisible();
+  await expect(page.locator("#program-file-controls")).toBeHidden();
+  await expect(page.locator("#exportWorkspaceButton")).toBeHidden();
+  await expect(page.locator("#importWorkspaceButton")).toBeHidden();
 });
 
 test("guided level picker shows the current level and lets the learner browse ahead", async ({ page }) => {
@@ -24,6 +27,27 @@ test("guided level picker shows the current level and lets the learner browse ah
   await expect(page.locator(".level-picker-popover")).toBeVisible();
   await expect(page.locator(".level-picker-popover")).toContainText("Level 2: Reach Enemy Flag");
   await expect(page.locator(".level-picker-popover")).toContainText("Level 3: Score a Point");
+});
+
+test("challenge levels show a badge in the picker and a challenge callout in the lesson panel", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.startLevel("show-what-you-know");
+  });
+
+  await expect(page.locator(".level-picker-trigger")).toContainText("Challenge");
+  await page.locator(".level-picker-trigger").click();
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Show What You Know" })).toContainText("Challenge");
+  await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" })).not.toContainText("Challenge");
+  await expect(page.locator("#level-panel")).toContainText("Challenge Level");
+  await expect(page.locator("#level-panel")).toContainText("No new blocks here. Use tools you already know to build a complete strategy.");
+
+  await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" }).click();
+  await expect(page.locator(".level-picker-trigger")).not.toContainText("Challenge");
+  await expect(page.locator("#level-panel")).not.toContainText("Challenge Level");
 });
 
 test("the guided workspace starts with a visible starter program and becomes read-only during play", async ({

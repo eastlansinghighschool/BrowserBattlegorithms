@@ -1,0 +1,56 @@
+import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
+import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
+import { MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
+
+export default {
+  id: "move-toward-flag",
+  title: "Level 11: Shortcut Block - Move Toward the Flag",
+  description: "Use the Move Toward helper block to take one smart step toward the enemy flag.",
+  introText: "Move Toward is a shortcut block. It chooses one step toward a target, but it does not magically find a full path.",
+  tips: [
+    "This helper chooses one move each turn, not a whole route.",
+    "It works best on open maps and simple corridors.",
+    "You can still compare it with the regular movement blocks."
+  ],
+  mode: GAME_MODES.PLAYER_VS_NPC,
+  mapKey: "simpleAisle",
+  humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
+  toolboxBlockTypes: [...MOVE_TOWARD_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
+  moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG],
+  initialBlocklyXml: STARTER_EVENT_XML,
+  winCondition: {
+    type: "runner_reaches_enemy_flag",
+    runnerId: "runner_1_AI_AllyP1"
+  },
+  failureCondition: {
+    type: "turn_limit_exceeded",
+    maxTurns: 14
+  },
+  tutorialSteps: [
+    {
+      id: "level-11-helper",
+      title: "Meet Move Toward",
+      body: "This block takes one step toward the target you choose. Here the only target is the enemy flag.",
+      targetSelector: "#blockly-region"
+    },
+    {
+      id: "level-11-not-pathfinding",
+      title: "It Is A Helper, Not Magic",
+      body: "Move Toward is useful on open maps like this one. Later you will learn when helper moves work well and when you need more detailed logic.",
+      targetSelector: "#canvas-container"
+    }
+  ],
+  setupOverrides: {
+    autoStayHumanRunnerIds: ["runner_1_HumanP1"],
+    pointsToWin: 1,
+    runnerOverrides: {
+      runner_1_HumanP1: { gridX: 1, gridY: 1 },
+      runner_1_AI_AllyP1: { gridX: 1, gridY: 6 },
+      runner_2_Npc1: { gridX: 10, gridY: 1, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
+    },
+    flagOverrides: {
+      2: { gridX: 11, gridY: 3 }
+    }
+  }
+};
