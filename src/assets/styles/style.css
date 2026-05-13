@@ -843,6 +843,27 @@ button:disabled {
   line-height: 1;
 }
 
+.lesson-target-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: #008cff;
+  flex: 0 0 auto;
+}
+
+.lesson-target-icon rect,
+.lesson-target-icon circle {
+  stroke: currentColor;
+  stroke-width: 3.5;
+}
+
+.lesson-target-icon rect {
+  fill: rgba(0, 140, 255, 0.08);
+}
+
+.lesson-target-icon circle {
+  fill: transparent;
+}
+
 .lesson-legend-label {
   font-weight: 700;
 }

@@ -235,6 +235,41 @@ test("guided levels fail when the turn limit is exceeded", () => {
   assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
 });
 
+test("guided progression persists unlocked levels across a stored browser session", () => {
+  const previousWindow = globalThis.window;
+  const storage = new Map();
+  globalThis.window = {
+    localStorage: {
+      getItem(key) {
+        return storage.has(key) ? storage.get(key) : null;
+      },
+      setItem(key, value) {
+        storage.set(key, `${value}`);
+      },
+      removeItem(key) {
+        storage.delete(key);
+      }
+    }
+  };
+
+  try {
+    const firstApp = createApp();
+    initializeLevelState(firstApp);
+    startLevel(firstApp, "move-to-target");
+    const actor = firstApp.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+    actor.gridX = 4;
+    actor.gridY = 4;
+    evaluateLevelProgress(firstApp);
+
+    const secondApp = createApp();
+    initializeLevelState(secondApp);
+    assert.equal(secondApp.state.levelProgress["move-to-target"], LEVEL_STATUS.PASSED);
+    assert.equal(secondApp.state.levelProgress["reach-enemy-flag"], LEVEL_STATUS.AVAILABLE);
+  } finally {
+    globalThis.window = previousWindow;
+  }
+});
+
 test("resetting a guided level preserves workspace code and restores the ready state", () => {
   registerBattleBlocklyBlocks();
   const app = createApp();

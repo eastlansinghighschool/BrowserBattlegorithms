@@ -3,6 +3,8 @@ dist/
 .npm-cache/
 test-results/
 playwright-report/
+tests/regression/output/
+tests/regression/screenshots/
 .env.local
 
 *.log

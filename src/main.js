@@ -13,7 +13,9 @@ import {
   getCurrentLevel,
   getLevelStateSnapshot,
   initializeLevelState,
-  startLevel
+  restoreProgressionState,
+  startLevel,
+  unlockAllGuidedLevels
 } from "./core/levels.js";
 import { bindLevelPanel, renderLevelPanel } from "./ui/levels.js";
 import { renderBlocklyPanel } from "./ui/blocklyPanel.js";
@@ -281,4 +283,39 @@ if (import.meta.env.DEV) {
     <path d="M8 11h.01"/><path d="M8 16h.01"/>
   </svg>`;
   document.querySelector(".app-header-actions")?.prepend(adminLink);
+
+  // Dev-only: unlock all guided levels toggle (teacher/developer convenience).
+  // Persists in sessionStorage for the current browser tab; never reaches production builds.
+  const DEV_UNLOCK_KEY = "bba:dev-unlock-all-levels";
+  let devUnlocked = sessionStorage.getItem(DEV_UNLOCK_KEY) === "true";
+
+  const unlockBtn = document.createElement("button");
+  unlockBtn.type = "button";
+  unlockBtn.id = "devUnlockLevelsButton";
+  unlockBtn.className = "app-header-icon-button";
+  unlockBtn.setAttribute("title", "Dev only: temporarily unlock all guided levels");
+
+  function applyDevUnlockState() {
+    if (devUnlocked) {
+      unlockAllGuidedLevels(app);
+      unlockBtn.textContent = "Lock levels";
+      unlockBtn.setAttribute("aria-label", "Dev: restore normal guided level progression");
+      unlockBtn.style.opacity = "1";
+    } else {
+      restoreProgressionState(app);
+      unlockBtn.textContent = "Unlock levels";
+      unlockBtn.setAttribute("aria-label", "Dev: unlock all guided levels for testing");
+      unlockBtn.style.opacity = "0.65";
+    }
+    app.syncUi();
+  }
+
+  unlockBtn.addEventListener("click", () => {
+    devUnlocked = !devUnlocked;
+    sessionStorage.setItem(DEV_UNLOCK_KEY, String(devUnlocked));
+    applyDevUnlockState();
+  });
+
+  document.querySelector(".app-header-actions")?.prepend(unlockBtn);
+  applyDevUnlockState();
 }

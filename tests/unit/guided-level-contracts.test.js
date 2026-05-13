@@ -14,7 +14,7 @@ import {
 import { getLevelDefinitions } from "../../src/config/levels.js";
 import { getToolboxBlockTypesForMode } from "../../src/ai/blockly/blocks.js";
 import { createApp } from "../../src/core/state.js";
-import { evaluateLevelProgress, getLevelStateSnapshot, initializeLevelState, startLevel } from "../../src/core/levels.js";
+import { completeLevel, evaluateLevelProgress, getLevelStateSnapshot, initializeLevelState, startLevel } from "../../src/core/levels.js";
 import { buildSolutionXml, GUIDED_LEVEL_REFERENCE_SOLUTIONS } from "./fixtures/guidedReferenceSolutions.js";
 import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
 
@@ -71,18 +71,21 @@ test("level definitions load with the expected starter and advanced level order"
   assert.equal(levels.at(-1).id, "optional-random-lab");
 });
 
-test("guided mode initializes with all levels available during testing", () => {
+test("guided mode cold start: level 1 available, all others locked", () => {
   const app = createApp();
   initializeLevelState(app);
   const snapshot = getLevelStateSnapshot(app);
   assert.equal(snapshot.currentModeView, GAME_VIEW_MODES.GUIDED_LEVELS);
   assert.equal(snapshot.currentLevelId, "move-to-target");
   assert.equal(snapshot.levelProgress["move-to-target"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["reach-enemy-flag"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["score-a-point"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["barrier-detour"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["mirror-forward"], LEVEL_STATUS.AVAILABLE);
-  assert.equal(snapshot.levelProgress["freeze-the-lane"], LEVEL_STATUS.AVAILABLE);
+  const allLevels = getLevelDefinitions();
+  for (const level of allLevels.slice(1)) {
+    assert.equal(
+      snapshot.levelProgress[level.id],
+      LEVEL_STATUS.LOCKED,
+      `${level.id} should start LOCKED on cold init`
+    );
+  }
   assert.equal(snapshot.humanTurnBehavior, HUMAN_TURN_BEHAVIORS.AUTO_SKIP);
 });
 
@@ -265,36 +268,50 @@ test("generic sensing authored levels keep their support targets open", () => {
   assert.equal(relayHuman.gridY, 2);
 });
 
-test("generic sensing authored levels unlock sequentially and preserve open target cells at runtime", () => {
+test("guided levels unlock sequentially when completed", () => {
   const app = createApp();
   initializeLevelState(app);
+
+  // Manually advance progress so sensor-barrier-branch is the next unlocked level
   app.state.levelProgress["move-to-target"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["reach-enemy-flag"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["score-a-point"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["barrier-detour"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["mirror-forward"] = LEVEL_STATUS.PASSED;
   app.state.levelProgress["sensor-barrier-branch"] = LEVEL_STATUS.AVAILABLE;
+
   startLevel(app, "sensor-barrier-branch");
-  let actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
-  actor.gridX = 6;
-  actor.gridY = 4;
-  evaluateLevelProgress(app);
-  assert.equal(app.state.levelProgress["watch-the-wall"], LEVEL_STATUS.AVAILABLE);
+  completeLevel(app, LEVEL_RESULT.PASSED, "win_condition_met");
+  assert.equal(app.state.levelProgress["watch-the-wall"], LEVEL_STATUS.AVAILABLE, "completing sensor-barrier-branch should unlock watch-the-wall");
 
-  app.state.levelProgress["watch-the-wall"] = LEVEL_STATUS.AVAILABLE;
   startLevel(app, "watch-the-wall");
-  actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
-  actor.gridX = 5;
-  actor.gridY = 5;
-  evaluateLevelProgress(app);
-  assert.equal(app.state.levelProgress["find-the-human"], LEVEL_STATUS.AVAILABLE);
+  completeLevel(app, LEVEL_RESULT.PASSED, "win_condition_met");
+  assert.equal(app.state.levelProgress["find-the-human"], LEVEL_STATUS.AVAILABLE, "completing watch-the-wall should unlock find-the-human");
+});
 
+test("generic sensing authored levels place target cells with no runner blocking them at runtime", () => {
+  const app = createApp();
+  initializeLevelState(app);
+
+  // Advance progress enough to reach find-the-human and relay-race
+  Object.keys(app.state.levelProgress).forEach((id) => {
+    app.state.levelProgress[id] = LEVEL_STATUS.PASSED;
+  });
   app.state.levelProgress["find-the-human"] = LEVEL_STATUS.AVAILABLE;
+
   startLevel(app, "find-the-human");
-  assert.equal(app.state.allRunners.find((runner) => runner.gridX === 5 && runner.gridY === 2), undefined);
+  assert.equal(
+    app.state.allRunners.find((runner) => runner.gridX === 5 && runner.gridY === 2),
+    undefined,
+    "find-the-human target cell (5,2) must not be occupied by a runner at level start"
+  );
 
   startLevel(app, "relay-race");
-  assert.equal(app.state.allRunners.find((runner) => runner.gridX === 6 && runner.gridY === 3), undefined);
+  assert.equal(
+    app.state.allRunners.find((runner) => runner.gridX === 6 && runner.gridY === 3),
+    undefined,
+    "relay-race target cell (6,3) must not be occupied by a runner at level start"
+  );
 });
 
 test("guided level manifest provides a lightweight sanity check of the campaign", async () => {

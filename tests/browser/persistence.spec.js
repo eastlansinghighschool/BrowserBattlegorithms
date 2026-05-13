@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { test, expect } from "@playwright/test";
-import { buildSolutionXml, chooseFreePlay, chooseGuided, clearStorageBeforeEach, dismissTutorial, loadWorkspaceXml } from "./helpers.js";
+import { buildSolutionXml, chooseFreePlay, chooseGuided, clearStorageBeforeEach, dismissTutorial, loadWorkspaceXml, unlockGuidedLevels } from "./helpers.js";
 
 clearStorageBeforeEach(test);
 
@@ -15,6 +15,29 @@ test("guided programs restore across a page reload", async ({ page }) => {
   await dismissTutorial(page);
 
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");
+});
+
+test("guided level progress restores across a page reload", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.startLevel("move-to-target");
+    const actor = hooks.app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+    actor.gridX = 4;
+    actor.gridY = 4;
+    hooks.evaluateLevelProgress();
+  });
+
+  await page.reload();
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  const progress = await page.evaluate(() => window.__BBA_TEST_HOOKS__.getState().levelProgress);
+  expect(progress["move-to-target"]).toBe("PASSED");
+  expect(progress["reach-enemy-flag"]).toBe("AVAILABLE");
 });
 
 test("free-play player program restores across a page reload", async ({ page }) => {
@@ -80,6 +103,7 @@ test("guided project workspaces share latest code, reset preserves it, and free 
   await page.goto("/");
   await chooseGuided(page);
   await dismissTutorial(page);
+  await unlockGuidedLevels(page);
 
   await page.locator(".level-picker-trigger").click();
   await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
@@ -123,6 +147,7 @@ test("ordinary guided levels keep separate saved workspaces", async ({ page }) =
   await page.goto("/");
   await chooseGuided(page);
   await dismissTutorial(page);
+  await unlockGuidedLevels(page);
 
   await page.locator(".level-picker-trigger").click();
   await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Move to Target" }).click();

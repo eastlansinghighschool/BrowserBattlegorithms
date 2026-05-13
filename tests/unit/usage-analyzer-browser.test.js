@@ -2,7 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   appendUsageEvent,
-  createUsageSession
+  createUsageSession,
+  getUsageEventFingerprint
 } from "../../src/usage/usageFormat.js";
 import { buildUsageExportWithIntegrity } from "../../src/usage/usageAnalyzer.js";
 import {
@@ -112,6 +113,33 @@ test("compareUsageSummaries detects similar event sequences under different name
   assert.equal(similarSequencesDifferentNames.length, 1);
   assert.ok(similarSequencesDifferentNames[0].labels.includes("Alice"));
   assert.ok(similarSequencesDifferentNames[0].labels.includes("Bob"));
+});
+
+test("getUsageEventFingerprint ignores workspace churn but preserves meaningful attempt differences", async () => {
+  const sessionA = createUsageSession({ sessionId: "session-noise-a", startedAt: "2026-05-13T10:00:00.000Z", updatedAt: "2026-05-13T10:10:00.000Z" });
+  appendUsageEvent(sessionA, "mode_entered", { modeView: "GUIDED_LEVELS", levelId: "move-to-target", mapKey: "wideAisle" }, "2026-05-13T10:00:01.000Z");
+  appendUsageEvent(sessionA, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
+  appendUsageEvent(sessionA, "workspace_changed", { levelId: "move-to-target", modeView: "GUIDED_LEVELS", xmlText: "<xml><block/></xml>" }, "2026-05-13T10:00:03.000Z");
+  appendUsageEvent(sessionA, "workspace_snapshot", { levelId: "move-to-target", modeView: "GUIDED_LEVELS", xmlText: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>", blockCounts: { "battlegorithms_move_forward": 1 } }, "2026-05-13T10:00:04.000Z");
+  appendUsageEvent(sessionA, "level_completed", { levelId: "move-to-target", levelKind: "guided", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
+
+  const sessionB = createUsageSession({ sessionId: "session-noise-b", startedAt: "2026-05-13T10:00:00.000Z", updatedAt: "2026-05-13T10:10:00.000Z" });
+  appendUsageEvent(sessionB, "mode_entered", { modeView: "GUIDED_LEVELS", levelId: "move-to-target", mapKey: "wideAisle" }, "2026-05-13T10:00:01.000Z");
+  appendUsageEvent(sessionB, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
+  appendUsageEvent(sessionB, "workspace_changed", { levelId: "move-to-target", modeView: "GUIDED_LEVELS", xmlText: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>" }, "2026-05-13T10:00:03.000Z");
+  appendUsageEvent(sessionB, "workspace_snapshot", { levelId: "move-to-target", modeView: "GUIDED_LEVELS", xmlText: "<xml><block type=\"battlegorithms_move_toward\"></block></xml>", blockCounts: { "battlegorithms_move_toward": 1 } }, "2026-05-13T10:00:04.000Z");
+  appendUsageEvent(sessionB, "level_completed", { levelId: "move-to-target", levelKind: "guided", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
+
+  const sessionC = createUsageSession({ sessionId: "session-meaningful-c", startedAt: "2026-05-13T10:00:00.000Z", updatedAt: "2026-05-13T10:10:00.000Z" });
+  appendUsageEvent(sessionC, "mode_entered", { modeView: "GUIDED_LEVELS", levelId: "how-far-away", mapKey: "simpleAisle" }, "2026-05-13T10:00:01.000Z");
+  appendUsageEvent(sessionC, "level_started", { levelId: "how-far-away", levelKind: "project", modeView: "GUIDED_LEVELS", mapKey: "simpleAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
+  appendUsageEvent(sessionC, "level_completed", { levelId: "how-far-away", levelKind: "project", result: "FAILED", modeView: "GUIDED_LEVELS", mapKey: "simpleAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
+
+  const fingerprintA = getUsageEventFingerprint(sessionA.events);
+  const fingerprintB = getUsageEventFingerprint(sessionB.events);
+  const fingerprintC = getUsageEventFingerprint(sessionC.events);
+  assert.equal(fingerprintA, fingerprintB);
+  assert.notEqual(fingerprintA, fingerprintC);
 });
 
 test("admin build guard: admin.html is absent from vite.config.js rollupOptions.input", async () => {

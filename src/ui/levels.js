@@ -129,6 +129,23 @@ function renderChallengeCallout(level) {
   `;
 }
 
+function renderTargetSquareIcon() {
+  return `
+    <svg class="lesson-target-icon" aria-hidden="true" viewBox="0 0 48 48" fill="none">
+      <rect x="6" y="6" width="36" height="36" rx="7" ry="7"></rect>
+      <circle cx="24" cy="24" r="10"></circle>
+    </svg>
+  `;
+}
+
+function renderLegendMarker(item) {
+  const label = `${item?.label || ""}`.toLowerCase();
+  if (label.includes("target")) {
+    return renderTargetSquareIcon();
+  }
+  return `<span class="lesson-legend-emoji" aria-hidden="true">${escapeHtml(item?.emoji || "")}</span>`;
+}
+
 function renderLevelSignifiers(level) {
   return `${renderProjectBadge(level)}${renderChallengeBadge(level)}`;
 }
@@ -157,7 +174,7 @@ function renderLegendItems(level) {
       <div class="lesson-legend-grid">
         ${level.legendItems.map((item) => `
           <div class="lesson-legend-item">
-            <span class="lesson-legend-emoji" aria-hidden="true">${escapeHtml(item.emoji || "")}</span>
+            ${renderLegendMarker(item)}
             <div>
               <span class="lesson-legend-label">${escapeHtml(item.label)}</span>
               <span class="lesson-legend-description">${escapeHtml(item.description)}</span>

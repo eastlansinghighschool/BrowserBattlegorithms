@@ -24,6 +24,9 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 12](plan-12-team-strategy-script-project-revision.md) | ready after Plans 09-10 | Revise L29-L37 into the Team Strategy Script shared-code project, including L37 capstone repair. |
 | [Plan 13](plan-13-project-reference-solutions-and-test-harness-repair.md) | blocked by Plans 09-12 | Repair canonical solution fixtures and tests for one-off and project guided levels. |
 | [Plan 14](plan-14-project-version-history-design.md) | complete | Design a future project version-history interface for recovering earlier shared-code states. |
+| [Plan 15](plan-15-pilot-readiness.md) | ready | Pre-pilot fixes: disable all-levels-unlocked, expand help page with Projects and Usage Export sections, expand advanced block descriptions, verify L28 badge interaction. |
+| [Plan 16](plan-16-usage-pipeline-regression.md) | ready | End-to-end Playwright regression: 5 parallel student profiles play the campaign, export usage, verify CLI analyzer, upload to admin page, capture screenshots. |
+| [Plan 17](plan-17-doc-cleanup.md) | ready | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
 
 
 ## Backlog Triage After Plan 02
@@ -66,8 +69,11 @@ Create these as numbered `plan-XX-*.md` packet files when they are ready to hand
 | `plan-12-team-strategy-script-project-revision.md` | P1 | Ready after Plans 09-10. Revise L29-L37 into a coherent shared-code Team Strategy Script project, keeping L34-L36 separate and repairing L37. |
 | `plan-13-project-reference-solutions-and-test-harness-repair.md` | P1 | Blocked by Plans 09-12. Repair canonical fixtures and tests so one-off and project guided levels both have clear validation. |
 | `plan-14-project-version-history-design.md` | P2 | Complete. Design, but do not yet implement, a project version-history interface for recovering earlier shared-code states. |
-| `plan-15-advanced-ai-opponents.md` | P2 | Add more challenging Free Play AI opponents with distinct playstyles and optional guided showcase/counterplay levels. |
-| `plan-16-build-size-and-blockly-loading-review.md` | P3 | Investigate Vite build chunk warnings and whether Blockly/p5 loading can be split without hurting classroom reliability. |
+| `plan-15-pilot-readiness.md` | P1 | Ready. Pre-pilot fixes: disable all-levels-unlocked flag, expand help page, verify L28 badge interaction. |
+| `plan-16-usage-pipeline-regression.md` | P1 | Ready. End-to-end Playwright regression with 5 parallel student profiles, usage export, CLI analyzer, admin page upload, and screenshots. |
+| `plan-17-doc-cleanup.md` | P1 | Ready. Phased docs refresh and subsystem note authoring, using the `reports/development/doc-cleanup/` reports as source material. |
+| `plan-20-advanced-ai-opponents.md` | P2 | Add more challenging Free Play AI opponents with distinct playstyles and optional guided showcase/counterplay levels. |
+| `plan-21-build-size-and-blockly-loading-review.md` | P3 | Investigate Vite build chunk warnings and whether Blockly/p5 loading can be split without hurting classroom reliability. |
 | `plan-17-game-history-and-replays.md` | P2 | Add local game history and replay export/import, separate from Plan 04 usage evidence. |
 | `plan-18-advanced-multi-ally-coordination-levels.md` | P3 | Design and implement additional challenging multi-ally coordination levels after the project arcs are settled. |
 | `plan-19-automated-barrier-path-counting.md` | P3 | Create a visual analytics tool that counts possible paths and flags overly broad level path spaces. |

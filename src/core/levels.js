@@ -18,6 +18,69 @@ import { initializeDisplayState, initializeMatch, syncHumanTurnBehaviorVisuals }
 import { createRandomizedFreePlayTeamSetup, getGameModeForFreePlayMode, getTeamFlagHome } from "./teams.js";
 import { playSound } from "../ui/sound.js";
 
+const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
+
+function hasBrowserLocalStorage() {
+  return typeof window !== "undefined" && Boolean(window.localStorage);
+}
+
+function loadPersistedGuidedProgression() {
+  if (!hasBrowserLocalStorage()) {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(GUIDED_PROGRESS_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed = JSON.parse(raw);
+    const passedLevelIds = Array.isArray(parsed?.passedLevelIds)
+      ? parsed.passedLevelIds.filter((levelId) => typeof levelId === "string" && levelId.length > 0)
+      : [];
+    return {
+      schemaVersion: 1,
+      passedLevelIds
+    };
+  } catch {
+    return null;
+  }
+}
+
+function savePersistedGuidedProgression(state) {
+  if (!hasBrowserLocalStorage()) {
+    return;
+  }
+
+  try {
+    const passedLevelIds = state.levels
+      .filter((level) => state.levelProgress[level.id] === LEVEL_STATUS.PASSED)
+      .map((level) => level.id);
+    window.localStorage.setItem(GUIDED_PROGRESS_STORAGE_KEY, JSON.stringify({
+      schemaVersion: 1,
+      updatedAt: new Date().toISOString(),
+      passedLevelIds
+    }));
+  } catch {
+    // Progression persistence is best-effort.
+  }
+}
+
+function applyPersistedGuidedProgression(state) {
+  const persisted = loadPersistedGuidedProgression();
+  if (!persisted) {
+    return;
+  }
+
+  for (const levelId of persisted.passedLevelIds) {
+    if (state.levelProgress[levelId]) {
+      state.levelProgress[levelId] = LEVEL_STATUS.PASSED;
+    }
+  }
+  restoreProgressionState({ state });
+  savePersistedGuidedProgression(state);
+}
+
 function findCurrentLevel(state) {
   return state.levels.find((level) => level.id === state.currentLevelId) || null;
 }
@@ -47,6 +110,7 @@ export function initializeLevelState(app) {
   state.currentModeView = GAME_VIEW_MODES.GUIDED_LEVELS;
   state.levels = getLevelDefinitions();
   state.levelProgress = createInitialLevelProgress();
+  applyPersistedGuidedProgression(state);
   state.currentLevelId = state.levels[0].id;
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
   state.activeLevelResult = LEVEL_RESULT.NONE;
@@ -211,6 +275,7 @@ export function completeLevel(app, result, reason) {
     if (nextLevelId && state.levelProgress[nextLevelId] === LEVEL_STATUS.LOCKED) {
       state.levelProgress[nextLevelId] = LEVEL_STATUS.AVAILABLE;
     }
+    savePersistedGuidedProgression(state);
   }
 
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
@@ -340,6 +405,43 @@ export function getNextAvailableLevelId(app) {
     return null;
   }
   return app.state.levelProgress[nextLevelId] === LEVEL_STATUS.LOCKED ? null : nextLevelId;
+}
+
+export function unlockAllGuidedLevels(app) {
+  const { state } = app;
+  for (const level of state.levels) {
+    if (state.levelProgress[level.id] === LEVEL_STATUS.LOCKED) {
+      state.levelProgress[level.id] = LEVEL_STATUS.AVAILABLE;
+    }
+  }
+}
+
+export function restoreProgressionState(app) {
+  const { state } = app;
+  // Find the last consecutively-passed level index
+  let lastPassedIndex = -1;
+  for (let i = 0; i < state.levels.length; i++) {
+    if (state.levelProgress[state.levels[i].id] === LEVEL_STATUS.PASSED) {
+      lastPassedIndex = i;
+    }
+  }
+  // Reset everything that isn't PASSED to LOCKED first
+  for (const level of state.levels) {
+    if (state.levelProgress[level.id] !== LEVEL_STATUS.PASSED) {
+      state.levelProgress[level.id] = LEVEL_STATUS.LOCKED;
+    }
+  }
+  // Level 1 is always at least AVAILABLE
+  if (state.levelProgress[state.levels[0].id] !== LEVEL_STATUS.PASSED) {
+    state.levelProgress[state.levels[0].id] = LEVEL_STATUS.AVAILABLE;
+  }
+  // The level immediately after the last PASSED level is AVAILABLE
+  if (lastPassedIndex >= 0 && lastPassedIndex + 1 < state.levels.length) {
+    const nextId = state.levels[lastPassedIndex + 1].id;
+    if (state.levelProgress[nextId] !== LEVEL_STATUS.PASSED) {
+      state.levelProgress[nextId] = LEVEL_STATUS.AVAILABLE;
+    }
+  }
 }
 
 export function evaluateLevelProgress(app) {

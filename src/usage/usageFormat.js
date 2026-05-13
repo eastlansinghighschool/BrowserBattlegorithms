@@ -158,22 +158,31 @@ function getEventPayload(event) {
   if (!event || typeof event !== "object") {
     return {};
   }
-  if (isPlainObject(event.data)) {
-    return event.data;
-  }
-  const payload = { ...event };
+  const payload = isPlainObject(event.data) ? { ...event.data } : { ...event };
   delete payload.id;
   delete payload.type;
   delete payload.at;
+  if (event.type === "export_requested" || event.type === "export_completed") {
+    delete payload.studentName;
+    delete payload.filename;
+  }
   return payload;
 }
 
+const FINGERPRINT_IGNORED_EVENT_TYPES = new Set([
+  // Workspace churn is noisy and should not dominate similarity checks.
+  "workspace_changed",
+  "workspace_snapshot"
+]);
+
 export function getUsageEventFingerprint(events = []) {
   return canonicalJsonStringify(
-    events.map((event) => ({
+    events
+      .filter((event) => !FINGERPRINT_IGNORED_EVENT_TYPES.has(event?.type))
+      .map((event) => ({
       type: event.type || "unknown",
       payload: getEventPayload(event)
-    }))
+      }))
   );
 }
 

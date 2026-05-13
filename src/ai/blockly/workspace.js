@@ -437,11 +437,16 @@ function collectStaticallyReachableBlocks(block, reachableIds) {
 function clearBlocklyWarningsAndIgnoreState(block) {
   block.setDisabledReason(false, IGNORED_BLOCK_REASON);
   block.setWarningText(null);
+  if (block.__bbaExecutionHintWarningActive) {
+    block.__bbaExecutionHintWarningActive = false;
+    Blockly.hideChaff?.();
+  }
 }
 
 function applyIgnoredState(block, message) {
   block.setDisabledReason(true, IGNORED_BLOCK_REASON);
   block.setWarningText(message);
+  block.__bbaExecutionHintWarningActive = true;
 }
 
 export function updateBlocklyExecutionHints(app) {
@@ -482,7 +487,8 @@ export function updateBlocklyExecutionHints(app) {
       !getConditionChildBlock(currentBlock) &&
       !getElseChildBlock(currentBlock)
     ) {
-      currentBlock.setWarningText("Add a move inside this block so it can do something.");
+      currentBlock.setWarningText("Add a move or action inside this block so it can do something.");
+      currentBlock.__bbaExecutionHintWarningActive = true;
     }
   }
 }
