@@ -9,3 +9,4 @@ tests/regression/screenshots/
 
 *.log
 *.err.log
+.claude/
