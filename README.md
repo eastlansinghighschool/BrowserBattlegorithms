@@ -16,6 +16,8 @@ npm run test:browser
 
 ## Dev Server Port
 
+On a fresh clone, copy `.env.example` to `.env` to set the default dev server port.
+
 Configured via `DEV_PORT` in `.env`. Override locally without affecting other contributors by creating a `.env.local` file (gitignored):
 
 ```

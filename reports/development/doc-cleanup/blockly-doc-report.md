@@ -67,7 +67,7 @@ If we want future agents to move faster, I’d add a short Blockly map to the re
 The earlier report was right about the warning lifecycle and toolbox policy, but the orchestration layer now has a few more app-specific rules that are easy to miss if an agent only reads Blockly docs:
 
 1. **Ignored blocks are not the same thing as disabled blocks.**
-   - In [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js), ignored blocks are marked with an app-specific disabled reason and warning text.
+   - In [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js), ignored blocks are marked with an app-specific disabled reason and warning text.
    - The event block itself is always kept alive as the program anchor.
    - A block can be reachable, unreachable, or attached-but-unreachable, and those states get different warning copy.
    - This is app policy layered on top of Blockly, not a Blockly concept the docs explain for us.
@@ -95,8 +95,8 @@ The earlier report was right about the warning lifecycle and toolbox policy, but
    - `bba:dev-unlock-all-levels` and `bba:guided-level-progress` live in the broader app, but they are not Blockly workspace keys.
 
 5. **Project chrome is a Blockly-adjacent surface, not just level-panel copy.**
-   - [src/ui/projectSignifiers.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/projectSignifiers.js) owns the project badge, persistent indicator, project-start callout, and L32 carrier note.
-   - [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js) decides when the project-start workspace callout appears near the editor.
+   - [src/ui/projectSignifiers.js](../../../src/ui/projectSignifiers.js) owns the project badge, persistent indicator, project-start callout, and L32 carrier note.
+   - [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js) decides when the project-start workspace callout appears near the editor.
    - These signals are part of the Blockly user experience, but they are driven by project metadata and local storage, not by Blockly itself.
 
 6. **Undo/redo fits the same orchestration map.**

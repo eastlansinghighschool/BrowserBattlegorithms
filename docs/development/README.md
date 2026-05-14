@@ -28,6 +28,8 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 17](plan-17-doc-cleanup.md) | complete | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
 | [Plan 18](plan-18-subsystem-doc-workflow.md) | complete | Wire `docs/subsystems/` notes into the packet workflow. Promote them to authoritative status in packet-creation-guidance and route both the mini-packet and orchestrator starting prompts to read the matching note when scoping or implementing covered behavior. |
 | [Plan 19](plan-19-guided-playtest-harness-and-gemini-scaffolding.md) | ready | Add a local-dev-only guided-level deep link and Plan 06 Gemini scaffolding so guided playtest triage can run level-by-level with small reusable context. |
+| [Plan 20](plan-20-gitignore-and-untracking.md) | complete | Repo hygiene: untrack `.claude/settings.local.json`, `.env`, `local/`, and any tracked `scratch/` files; add `.env.example`; expand `.gitignore` with OS/editor cruft and standard env-file patterns. |
+| [Plan 21](plan-21-absolute-path-sweep-in-reports.md) | complete | Replace hardcoded `C:/Codex/BrowserBattlegorithms_CODEX/` absolute paths in twelve tracked `reports/*.md` files with relative links so they work for anyone cloning the repo. |
 
 
 ## Future Directions

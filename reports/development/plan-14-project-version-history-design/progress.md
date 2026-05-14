@@ -13,7 +13,7 @@ The report recommends **not** implementing project version history before classr
 
 ## Artifacts
 
-- [version-history-design.md](C:/Codex/BrowserBattlegorithms_CODEX/reports/development/plan-14-project-version-history-design/version-history-design.md)
+- [version-history-design.md](../../../reports/development/plan-14-project-version-history-design/version-history-design.md)
 
 ## Notes
 

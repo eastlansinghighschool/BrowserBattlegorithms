@@ -25,7 +25,7 @@ So the broad purpose is documented: students export usage evidence, and teachers
 
 ### 1. Usage collection is event-driven and lives in memory first
 
-The main capture layer is [src/usage/usageTracker.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageTracker.js).
+The main capture layer is [src/usage/usageTracker.js](../../../src/usage/usageTracker.js).
 
 The tracker:
 - starts a local session with a generated session id
@@ -71,7 +71,7 @@ That matters because a future agent looking only at the docs might think the exp
 
 This is one of the biggest “docs need help here” areas.
 
-In [src/usage/usageFormat.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageFormat.js):
+In [src/usage/usageFormat.js](../../../src/usage/usageFormat.js):
 
 - the summary tracks meaningful totals and last-known state
 - workspace snapshots are bounded
@@ -89,9 +89,9 @@ The docs say “similarity” and “duplicate checks,” but they do not clearl
 The export file gets a SHA-256 hash over the canonical JSON payload excluding the integrity field.
 
 That’s implemented in:
-- [src/usage/usageAnalyzer.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzer.js) for the Node path
-- [src/usage/usageTracker.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageTracker.js) for the browser export path
-- [src/usage/usageAnalyzerBrowser.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzerBrowser.js) for browser-side verification
+- [src/usage/usageAnalyzer.js](../../../src/usage/usageAnalyzer.js) for the Node path
+- [src/usage/usageTracker.js](../../../src/usage/usageTracker.js) for the browser export path
+- [src/usage/usageAnalyzerBrowser.js](../../../src/usage/usageAnalyzerBrowser.js) for browser-side verification
 
 This part is technically strong, but the docs don’t clearly distinguish:
 - the canonical JSON string
@@ -107,7 +107,7 @@ This is where the app-facing UX and the usage pipeline meet.
 
 ### In-app export button
 
-The export control lives in [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js).
+The export control lives in [src/ui/controls.js](../../../src/ui/controls.js).
 
 What it does:
 - prompts for the student name
@@ -136,7 +136,7 @@ That’s good UX, but the docs do not really tell a future agent where to look f
 The admin app is the teacher-side review tool, and it is much more than “just a file uploader.”
 
 Relevant file:
-- [src/admin/adminApp.js](C:/Codex/BrowserBattlegorithms_CODEX/src/admin/adminApp.js)
+- [src/admin/adminApp.js](../../../src/admin/adminApp.js)
 
 What the admin UI does:
 - accepts uploaded `.json` usage files via file picker or drag/drop
@@ -164,8 +164,8 @@ That’s a gap because the admin UI is the thing that makes the export file usef
 The analyzer is actually quite carefully designed.
 
 Relevant files:
-- [src/usage/usageAnalyzer.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzer.js)
-- [src/usage/usageAnalyzerBrowser.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzerBrowser.js)
+- [src/usage/usageAnalyzer.js](../../../src/usage/usageAnalyzer.js)
+- [src/usage/usageAnalyzerBrowser.js](../../../src/usage/usageAnalyzerBrowser.js)
 
 What it checks:
 - integrity hash
@@ -195,10 +195,10 @@ That wording matters because it keeps the system honest.
 The regression script is clever, but it is also the kind of thing that future agents will misunderstand if it isn’t documented well.
 
 Relevant files:
-- [tests/regression/usage-pipeline.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/usage-pipeline.spec.js)
-- [tests/regression/usage-pipeline-admin.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/usage-pipeline-admin.spec.js)
-- [tests/regression/student-profiles.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/student-profiles.js)
-- [tests/regression/timestamp-spreader.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/timestamp-spreader.js)
+- [tests/regression/usage-pipeline.spec.js](../../../tests/regression/usage-pipeline.spec.js)
+- [tests/regression/usage-pipeline-admin.spec.js](../../../tests/regression/usage-pipeline-admin.spec.js)
+- [tests/regression/student-profiles.js](../../../tests/regression/student-profiles.js)
+- [tests/regression/timestamp-spreader.js](../../../tests/regression/timestamp-spreader.js)
 
 What this harness does:
 - simulates a handful of student profiles
@@ -244,21 +244,21 @@ The usage tracker listens to:
 That means Blockly is not just a UI feature here; it is one of the main inputs to evidence generation.
 
 Relevant file:
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
 
 ### Guided and free-play mode changes
 The tracker records mode entries and free-play configuration changes. That makes the export useful for classroom behavior analysis, but it also means mode transitions are part of the evidence model.
 
 Relevant file:
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
 
 ### Level completion and scoring
 The usage pipeline relies on level completion and score events to reconstruct guided progress and free-play outcomes.
 
 Relevant files:
-- [src/core/levels.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/levels.js)
-- [src/core/scoring.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/scoring.js)
-- [src/core/turnEngine.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/turnEngine.js)
+- [src/core/levels.js](../../../src/core/levels.js)
+- [src/core/scoring.js](../../../src/core/scoring.js)
+- [src/core/turnEngine.js](../../../src/core/turnEngine.js)
 
 ### Browser vs Node analyzer paths
 There are two analysis consumers:
@@ -301,17 +301,17 @@ That would go a long way toward making this subsystem legible.
 
 ## Evidence I used
 
-- [src/usage/usageTracker.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageTracker.js)
-- [src/usage/usageFormat.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageFormat.js)
-- [src/usage/usageAnalyzer.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzer.js)
-- [src/usage/usageAnalyzerBrowser.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzerBrowser.js)
-- [src/admin/adminApp.js](C:/Codex/BrowserBattlegorithms_CODEX/src/admin/adminApp.js)
-- [tests/regression/student-profiles.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/student-profiles.js)
-- [tests/regression/usage-pipeline.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/usage-pipeline.spec.js)
-- [tests/regression/usage-pipeline-admin.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/usage-pipeline-admin.spec.js)
-- [tests/regression/timestamp-spreader.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/regression/timestamp-spreader.js)
-- [docs/development/plan-04-saveable-usage-file.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/plan-04-saveable-usage-file.md)
-- [docs/development/plan-16-usage-pipeline-regression.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/plan-16-usage-pipeline-regression.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/StudentGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/StudentGuide.md)
+- [src/usage/usageTracker.js](../../../src/usage/usageTracker.js)
+- [src/usage/usageFormat.js](../../../src/usage/usageFormat.js)
+- [src/usage/usageAnalyzer.js](../../../src/usage/usageAnalyzer.js)
+- [src/usage/usageAnalyzerBrowser.js](../../../src/usage/usageAnalyzerBrowser.js)
+- [src/admin/adminApp.js](../../../src/admin/adminApp.js)
+- [tests/regression/student-profiles.js](../../../tests/regression/student-profiles.js)
+- [tests/regression/usage-pipeline.spec.js](../../../tests/regression/usage-pipeline.spec.js)
+- [tests/regression/usage-pipeline-admin.spec.js](../../../tests/regression/usage-pipeline-admin.spec.js)
+- [tests/regression/timestamp-spreader.js](../../../tests/regression/timestamp-spreader.js)
+- [docs/development/plan-04-saveable-usage-file.md](../../../docs/development/plan-04-saveable-usage-file.md)
+- [docs/development/plan-16-usage-pipeline-regression.md](../../../docs/development/plan-16-usage-pipeline-regression.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/StudentGuide.md](../../../docs/StudentGuide.md)

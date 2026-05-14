@@ -16,15 +16,15 @@ The packet doc was updated to match the new one-modal / one-import-path UX.
 
 ## Files Changed
 
-- [docs/development/plan-07-private-free-play-program-files.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/plan-07-private-free-play-program-files.md)
-- [index.html](C:/Codex/BrowserBattlegorithms_CODEX/index.html)
-- [src/assets/styles/style.css](C:/Codex/BrowserBattlegorithms_CODEX/src/assets/styles/style.css)
-- [src/crypto/privateProgramFile.js](C:/Codex/BrowserBattlegorithms_CODEX/src/crypto/privateProgramFile.js)
-- [src/main.js](C:/Codex/BrowserBattlegorithms_CODEX/src/main.js)
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [tests/browser/guided-play.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/browser/guided-play.spec.js)
-- [tests/browser/persistence.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/browser/persistence.spec.js)
+- [docs/development/plan-07-private-free-play-program-files.md](../../../docs/development/plan-07-private-free-play-program-files.md)
+- [index.html](../../../index.html)
+- [src/assets/styles/style.css](../../../src/assets/styles/style.css)
+- [src/crypto/privateProgramFile.js](../../../src/crypto/privateProgramFile.js)
+- [src/main.js](../../../src/main.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [tests/browser/guided-play.spec.js](../../../tests/browser/guided-play.spec.js)
+- [tests/browser/persistence.spec.js](../../../tests/browser/persistence.spec.js)
 
 ## Artifacts
 

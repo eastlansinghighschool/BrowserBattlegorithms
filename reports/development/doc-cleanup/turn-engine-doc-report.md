@@ -72,7 +72,7 @@ That sequence is the real contract. The docs mostly describe the ingredients, no
 
 #### Movement
 
-The turn engine depends heavily on [src/core/movement.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/movement.js) for:
+The turn engine depends heavily on [src/core/movement.js](../../../src/core/movement.js) for:
 - target translation
 - board blocking checks
 - move-toward helper decisions
@@ -84,7 +84,7 @@ The docs explain the idea of movement, but they do not explain the runtime disti
 
 #### Conditions
 
-The execution model depends on [src/core/conditions.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/conditions.js) for:
+The execution model depends on [src/core/conditions.js](../../../src/core/conditions.js) for:
 - barrier sensing
 - flag possession
 - side-of-field checks
@@ -95,7 +95,7 @@ This is mostly absent from the general docs beyond a broad Blockly summary.
 
 #### Scoring
 
-[src/core/scoring.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/scoring.js) is where:
+[src/core/scoring.js](../../../src/core/scoring.js) is where:
 - flag pickup happens
 - score events happen
 - the game flips into `GAME_OVER` when a team reaches the win threshold
@@ -104,7 +104,7 @@ The docs need to state more clearly that scoring is not just “increment a numb
 
 #### Collision
 
-[src/core/collisions.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/collisions.js) handles:
+[src/core/collisions.js](../../../src/core/collisions.js) handles:
 - who wins
 - who loses
 - whether freeze applies
@@ -114,7 +114,7 @@ This is another place where the implementation is more nuanced than the prose.
 
 #### Invariants
 
-[src/core/invariants.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/invariants.js) acts as the safety net for:
+[src/core/invariants.js](../../../src/core/invariants.js) acts as the safety net for:
 - duplicate runner positions
 - invalid barrier ownership
 - illegal flag state
@@ -134,15 +134,15 @@ If we patch the docs, the highest-value additions would be:
 
 ### Evidence used
 
-- [src/core/turnEngine.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/turnEngine.js)
-- [src/core/actions.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/actions.js)
-- [src/core/conditions.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/conditions.js)
-- [src/core/movement.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/movement.js)
-- [src/core/scoring.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/scoring.js)
-- [src/core/collisions.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/collisions.js)
-- [src/core/invariants.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/invariants.js)
-- [docs/GameSpecification.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/GameSpecification.md)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/StudentGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/StudentGuide.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
+- [src/core/turnEngine.js](../../../src/core/turnEngine.js)
+- [src/core/actions.js](../../../src/core/actions.js)
+- [src/core/conditions.js](../../../src/core/conditions.js)
+- [src/core/movement.js](../../../src/core/movement.js)
+- [src/core/scoring.js](../../../src/core/scoring.js)
+- [src/core/collisions.js](../../../src/core/collisions.js)
+- [src/core/invariants.js](../../../src/core/invariants.js)
+- [docs/GameSpecification.md](../../../docs/GameSpecification.md)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/StudentGuide.md](../../../docs/StudentGuide.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
 

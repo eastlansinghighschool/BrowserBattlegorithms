@@ -171,13 +171,13 @@ That would give future agents a cleaner map for where to look when a feedback bu
 
 ## Evidence used
 
-- [src/ui/goalBurstOverlay.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/goalBurstOverlay.js)
-- [src/ui/tutorialOverlay.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/tutorialOverlay.js)
-- [src/ui/gameStateUI.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/gameStateUI.js)
-- [src/ui/sound.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/sound.js)
-- [src/ui/scoreboard.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/scoreboard.js)
-- [docs/GameSpecification.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/GameSpecification.md)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/StudentGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/StudentGuide.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
-- [docs/DevelopmentLog.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/DevelopmentLog.md)
+- [src/ui/goalBurstOverlay.js](../../../src/ui/goalBurstOverlay.js)
+- [src/ui/tutorialOverlay.js](../../../src/ui/tutorialOverlay.js)
+- [src/ui/gameStateUI.js](../../../src/ui/gameStateUI.js)
+- [src/ui/sound.js](../../../src/ui/sound.js)
+- [src/ui/scoreboard.js](../../../src/ui/scoreboard.js)
+- [docs/GameSpecification.md](../../../docs/GameSpecification.md)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/StudentGuide.md](../../../docs/StudentGuide.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
+- [docs/DevelopmentLog.md](../../../docs/DevelopmentLog.md)

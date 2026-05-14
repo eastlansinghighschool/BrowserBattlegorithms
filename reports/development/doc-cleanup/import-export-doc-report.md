@@ -18,8 +18,8 @@ The problem is that the code now has **three distinct file pipelines**, and the 
 This is the familiar student program flow.
 
 Code path:
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
 
 Behavior:
 - exports the current Blockly workspace as XML
@@ -35,9 +35,9 @@ Docs gap:
 This is a separate student-to-student / hot-seat privacy flow.
 
 Code path:
-- [src/crypto/privateProgramFile.js](C:/Codex/BrowserBattlegorithms_CODEX/src/crypto/privateProgramFile.js)
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
+- [src/crypto/privateProgramFile.js](../../../src/crypto/privateProgramFile.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
 
 Behavior:
 - Free Play export modal offers a private export option
@@ -57,11 +57,11 @@ Docs gap:
 This is the classroom evidence pipeline, and it is a completely different artifact.
 
 Code path:
-- [src/usage/usageTracker.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageTracker.js)
-- [src/usage/usageFormat.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageFormat.js)
-- [src/usage/usageAnalyzer.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzer.js)
-- [src/usage/usageAnalyzerBrowser.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageAnalyzerBrowser.js)
-- [src/admin/adminApp.js](C:/Codex/BrowserBattlegorithms_CODEX/src/admin/adminApp.js)
+- [src/usage/usageTracker.js](../../../src/usage/usageTracker.js)
+- [src/usage/usageFormat.js](../../../src/usage/usageFormat.js)
+- [src/usage/usageAnalyzer.js](../../../src/usage/usageAnalyzer.js)
+- [src/usage/usageAnalyzerBrowser.js](../../../src/usage/usageAnalyzerBrowser.js)
+- [src/admin/adminApp.js](../../../src/admin/adminApp.js)
 
 Behavior:
 - usage is captured in browser and persisted in IndexedDB
@@ -99,7 +99,7 @@ This area only makes sense if an agent sees the neighboring systems too.
 The Blockly workspace layer is where normal XML save/load actually happens.
 
 Relevant file:
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
 
 It handles:
 - localStorage workspace persistence
@@ -114,8 +114,8 @@ That means import/export is not just a button on top of Blockly. It is tied into
 This matters because the controls are mode-sensitive.
 
 Relevant files:
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
 
 Behavior:
 - Guided Levels hide program file controls
@@ -177,15 +177,15 @@ That would save a lot of confusion.
 
 ## Evidence I used
 
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/crypto/privateProgramFile.js](C:/Codex/BrowserBattlegorithms_CODEX/src/crypto/privateProgramFile.js)
-- [src/usage/usageTracker.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageTracker.js)
-- [src/usage/usageFormat.js](C:/Codex/BrowserBattlegorithms_CODEX/src/usage/usageFormat.js)
-- [src/admin/adminApp.js](C:/Codex/BrowserBattlegorithms_CODEX/src/admin/adminApp.js)
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/StudentGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/StudentGuide.md)
-- [docs/GameSpecification.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/GameSpecification.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
-- [docs/development/plan-04-saveable-usage-file.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/plan-04-saveable-usage-file.md)
-- [docs/development/plan-07-private-free-play-program-files.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/plan-07-private-free-play-program-files.md)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/crypto/privateProgramFile.js](../../../src/crypto/privateProgramFile.js)
+- [src/usage/usageTracker.js](../../../src/usage/usageTracker.js)
+- [src/usage/usageFormat.js](../../../src/usage/usageFormat.js)
+- [src/admin/adminApp.js](../../../src/admin/adminApp.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/StudentGuide.md](../../../docs/StudentGuide.md)
+- [docs/GameSpecification.md](../../../docs/GameSpecification.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
+- [docs/development/plan-04-saveable-usage-file.md](../../../docs/development/plan-04-saveable-usage-file.md)
+- [docs/development/plan-07-private-free-play-program-files.md](../../../docs/development/plan-07-private-free-play-program-files.md)

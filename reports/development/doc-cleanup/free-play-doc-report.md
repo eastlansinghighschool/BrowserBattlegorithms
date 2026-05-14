@@ -51,8 +51,8 @@ The docs do mention local storage in general, but they do not clearly explain:
 
 In code:
 
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js) hides guided program import/export controls from Guided Levels
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js) switches the panel between:
+- [src/ui/controls.js](../../../src/ui/controls.js) hides guided program import/export controls from Guided Levels
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js) switches the panel between:
   - guided level summary
   - PvP team tabs
   - PvCPU free-play summary
@@ -103,9 +103,9 @@ The Blockly layer is where Free Play becomes tangible:
 That boundary is not spelled out clearly enough in the docs.
 
 Useful code references:
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
 
 ### B. Guided-vs-Free-Play switching
 
@@ -182,18 +182,18 @@ That note would do for Free Play what the project-sequence docs did for the guid
 
 ## Evidence I used
 
-- [docs/ARCHITECTURE.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/ARCHITECTURE.md)
-- [docs/GameSpecification.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/GameSpecification.md)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
-- [docs/development/README.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/README.md)
-- [src/ui/controls.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/controls.js)
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
-- [src/ui/programContext.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/programContext.js)
-- [src/core/setup.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/setup.js)
-- [src/config/gameModes.js](C:/Codex/BrowserBattlegorithms_CODEX/src/config/gameModes.js)
-- [src/config/levels/shared/project.js](C:/Codex/BrowserBattlegorithms_CODEX/src/config/levels/shared/project.js)
-- [src/ai/blockly/workspace.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ai/blockly/workspace.js)
-- [tests/browser/free-play.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/browser/free-play.spec.js)
-- [tests/browser/persistence.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/browser/persistence.spec.js)
-- [tests/unit/free-play-contracts.test.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/unit/free-play-contracts.test.js)
+- [docs/ARCHITECTURE.md](../../../docs/ARCHITECTURE.md)
+- [docs/GameSpecification.md](../../../docs/GameSpecification.md)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
+- [docs/development/README.md](../../../docs/development/README.md)
+- [src/ui/controls.js](../../../src/ui/controls.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
+- [src/ui/programContext.js](../../../src/ui/programContext.js)
+- [src/core/setup.js](../../../src/core/setup.js)
+- [src/config/gameModes.js](../../../src/config/gameModes.js)
+- [src/config/levels/shared/project.js](../../../src/config/levels/shared/project.js)
+- [src/ai/blockly/workspace.js](../../../src/ai/blockly/workspace.js)
+- [tests/browser/free-play.spec.js](../../../tests/browser/free-play.spec.js)
+- [tests/browser/persistence.spec.js](../../../tests/browser/persistence.spec.js)
+- [tests/unit/free-play-contracts.test.js](../../../tests/unit/free-play-contracts.test.js)

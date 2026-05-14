@@ -109,8 +109,8 @@ Those behaviors are real and useful, but they’re not all described in the gene
 
 The strongest documentation for the current behavior is actually in the Plan 08 decision records:
 
-- [docs/development/project-sequence-decisions.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-sequence-decisions.md)
-- [docs/development/project-level-map.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-level-map.md)
+- [docs/development/project-sequence-decisions.md](../../../docs/development/project-sequence-decisions.md)
+- [docs/development/project-level-map.md](../../../docs/development/project-level-map.md)
 
 Those documents are authoritative for the project arc, but they’re buried under the development folder. A fresh agent starting from the general docs could miss them unless explicitly pointed there.
 
@@ -151,26 +151,26 @@ A short “guided progression model” note would help a lot. It should say:
 
 A really useful cross-reference would be added to the top-level docs pointing to:
 
-- [docs/development/project-sequence-decisions.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-sequence-decisions.md)
-- [docs/development/project-level-map.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-level-map.md)
+- [docs/development/project-sequence-decisions.md](../../../docs/development/project-sequence-decisions.md)
+- [docs/development/project-level-map.md](../../../docs/development/project-level-map.md)
 
 That would save future agents from having to rediscover the project/shared-workspace model from code and tests.
 
 ## Evidence I used
 
-- [docs/ARCHITECTURE.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/ARCHITECTURE.md)
-- [docs/GameSpecification.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/GameSpecification.md)
-- [docs/TeacherGuide.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TeacherGuide.md)
-- [docs/TESTING.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/TESTING.md)
-- [docs/development/project-sequence-decisions.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-sequence-decisions.md)
-- [docs/development/project-level-map.md](C:/Codex/BrowserBattlegorithms_CODEX/docs/development/project-level-map.md)
-- [src/core/levels.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/levels.js)
-- [src/core/setup.js](C:/Codex/BrowserBattlegorithms_CODEX/src/core/setup.js)
-- [src/config/levels/index.js](C:/Codex/BrowserBattlegorithms_CODEX/src/config/levels/index.js)
-- [src/config/levels/manifest.js](C:/Codex/BrowserBattlegorithms_CODEX/src/config/levels/manifest.js)
-- [src/ui/levels.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/levels.js)
-- [src/ui/blocklyPanel.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/blocklyPanel.js)
-- [src/ui/tutorialOverlay.js](C:/Codex/BrowserBattlegorithms_CODEX/src/ui/tutorialOverlay.js)
-- [src/main.js](C:/Codex/BrowserBattlegorithms_CODEX/src/main.js)
-- [tests/browser/persistence.spec.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/browser/persistence.spec.js)
-- [tests/unit/scoring-and-level-state.test.js](C:/Codex/BrowserBattlegorithms_CODEX/tests/unit/scoring-and-level-state.test.js)
+- [docs/ARCHITECTURE.md](../../../docs/ARCHITECTURE.md)
+- [docs/GameSpecification.md](../../../docs/GameSpecification.md)
+- [docs/TeacherGuide.md](../../../docs/TeacherGuide.md)
+- [docs/TESTING.md](../../../docs/TESTING.md)
+- [docs/development/project-sequence-decisions.md](../../../docs/development/project-sequence-decisions.md)
+- [docs/development/project-level-map.md](../../../docs/development/project-level-map.md)
+- [src/core/levels.js](../../../src/core/levels.js)
+- [src/core/setup.js](../../../src/core/setup.js)
+- [src/config/levels/index.js](../../../src/config/levels/index.js)
+- [src/config/levels/manifest.js](../../../src/config/levels/manifest.js)
+- [src/ui/levels.js](../../../src/ui/levels.js)
+- [src/ui/blocklyPanel.js](../../../src/ui/blocklyPanel.js)
+- [src/ui/tutorialOverlay.js](../../../src/ui/tutorialOverlay.js)
+- [src/main.js](../../../src/main.js)
+- [tests/browser/persistence.spec.js](../../../tests/browser/persistence.spec.js)
+- [tests/unit/scoring-and-level-state.test.js](../../../tests/unit/scoring-and-level-state.test.js)
