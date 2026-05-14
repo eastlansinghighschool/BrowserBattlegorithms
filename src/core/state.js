@@ -55,6 +55,8 @@ export function createInitialState() {
     currentSensorRelationTypes: [],
     currentMoveTowardTargetTypes: [],
     autoStayHumanRunnerIds: [],
+    guidedLevelDevAccessActive: false,
+    guidedLevelDevAccessLevelId: null,
     activeTeamSetup: null,
     activeFlagSetup: null,
     setupBarriers: [],

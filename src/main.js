@@ -195,6 +195,10 @@ app.syncUi = () => {
 };
 
 initializeLevelState(app);
+if (import.meta.env.DEV) {
+  const { applyDevGuidedLevelShortcut } = await import("./ui/devGuidedLevelLink.js");
+  applyDevGuidedLevelShortcut(app, { isDev: true });
+}
 initializeTutorialState(app);
 bindControls(app);
 bindGoalBurstOverlay(app);

@@ -68,6 +68,7 @@ Generated under `tests/regression/screenshots/`:
 - `detail-gabi-torres.png`
 - `detail-pat-chen.png`
 - `detail-sam-rivera.png`
+- `detail-taylor-reed-tampered.png`
 - `flags.png`
 
 ## Validation
@@ -90,6 +91,8 @@ Generated under `tests/regression/screenshots/`:
   - documented the intent in code
 - `tests/unit/usage-analyzer-browser.test.js`
   - added coverage for workspace-noise-ignored vs meaningful-sequence-different behavior
+- `tests/regression/usage-pipeline-admin.spec.js`
+  - adds a tampered usage-file copy so the admin page detail view can show the hash-mismatch state
 
 ## Notes For Review
 

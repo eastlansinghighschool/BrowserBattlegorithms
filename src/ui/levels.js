@@ -241,7 +241,8 @@ function renderLevelPickerItems(app) {
     .map((level) => {
       const status = app.state.levelProgress[level.id];
       const isCurrent = level.id === app.state.currentLevelId;
-      const disabled = status === LEVEL_STATUS.LOCKED ? "disabled" : "";
+      const devBypassCurrentLevel = app.state.guidedLevelDevAccessActive && app.state.guidedLevelDevAccessLevelId === level.id;
+      const disabled = status === LEVEL_STATUS.LOCKED && !devBypassCurrentLevel ? "disabled" : "";
       const currentClass = isCurrent ? " level-picker-item-current" : "";
       return `
         <button class="level-picker-item${currentClass}" data-level-id="${level.id}" ${disabled}>

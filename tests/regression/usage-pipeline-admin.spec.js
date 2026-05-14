@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -48,6 +48,24 @@ async function assertProfileFileSummary(filePath, profile) {
   expect(payload.summary.guided.levelIds).toEqual(expected.levelIds);
 }
 
+async function createTamperedCopy(sourcePath, tamperedPath) {
+  const payload = JSON.parse(await readFile(sourcePath, "utf8"));
+  payload.studentName = "Taylor Reed";
+  payload.sessionId = `${payload.sessionId || "session"}-tampered`;
+  if (Array.isArray(payload.events) && payload.events[0] && typeof payload.events[0] === "object") {
+    const firstEvent = payload.events[0];
+    payload.events[0] = {
+      ...firstEvent,
+      data: {
+        ...(firstEvent.data || {}),
+        tamperNote: "manual edit for regression screenshot"
+      }
+    };
+  }
+  await writeFile(tamperedPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  return tamperedPath;
+}
+
 function slugify(name) {
   return `${name}`.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -62,6 +80,10 @@ test.describe.serial("usage pipeline admin regression", () => {
       await rewriteUsageExportFile(filePath, profile);
       await assertProfileFileSummary(filePath, profile);
     }
+
+    const tamperedSourcePath = resolve(REGRESSION_OUTPUT_DIR, "Pat Chen.json");
+    const tamperedOutputPath = resolve(REGRESSION_OUTPUT_DIR, "Taylor Reed-tampered.json");
+    await createTamperedCopy(tamperedSourcePath, tamperedOutputPath);
 
     const analyzerOutput = await runAnalyzer(outputPaths);
     for (const profile of profiles) {
@@ -78,10 +100,12 @@ test.describe.serial("usage pipeline admin regression", () => {
     for (const filePath of outputPaths) {
       await page.locator("#fileInput").setInputFiles(filePath);
     }
+    await page.locator("#fileInput").setInputFiles(tamperedOutputPath);
 
     const rows = page.locator("#classTableBody tr");
-    await expect(rows).toHaveCount(profiles.length, { timeout: 30000 });
+    await expect(rows).toHaveCount(profiles.length + 1, { timeout: 30000 });
     await expect(page.locator("#classTableBody")).toContainText("✓ verified");
+    await expect(page.locator("#classTableBody")).toContainText("✗ mismatch");
     await expect(page.locator("#flagsSection")).toBeVisible();
     await expect(page.locator("#flagsList")).toContainText("Similarity flag");
     await expect(page.locator("#flagsList")).toContainText("Pat Chen");
@@ -97,6 +121,15 @@ test.describe.serial("usage pipeline admin regression", () => {
         path: resolve(REGRESSION_SCREENSHOT_DIR, `detail-${slugify(profile.studentName)}.png`)
       });
     }
+
+    const tamperedRow = page.locator("#classTableBody tr").filter({ hasText: "Taylor Reed" }).first();
+    await tamperedRow.click();
+    await expect(page.locator("#detailSection")).toBeVisible();
+    await expect(page.locator("#detailContent")).toContainText("Hash mismatch");
+    await expect(page.locator("#detailContent")).toContainText("integrity mismatch");
+    await page.locator("#detailSection").screenshot({
+      path: resolve(REGRESSION_SCREENSHOT_DIR, "detail-taylor-reed-tampered.png")
+    });
 
     await page.locator("#flagsSection").screenshot({ path: resolve(REGRESSION_SCREENSHOT_DIR, "flags.png") });
   });
