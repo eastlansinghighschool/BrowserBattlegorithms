@@ -69,6 +69,43 @@ test("Blockly execution hints dismiss once a block becomes valid", async ({ page
   })).toBeFalsy();
 });
 
+test("Blockly warning bubbles stay open while the user opens a toolbox category", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.startLevel("score-a-point");
+    hooks.loadWorkspaceXml(`
+      <xml xmlns="https://developers.google.com/blockly/xml">
+        <block type="battlegorithms_on_each_turn" x="24" y="24">
+          <next>
+            <block type="battlegorithms_if_have_enemy_flag_else"></block>
+          </next>
+        </block>
+      </xml>
+    `);
+  });
+
+  const warningIcon = page.locator(".blocklyWarningIcon");
+  await expect(warningIcon).toBeVisible();
+  await warningIcon.click();
+
+  await expect.poll(async () => page.evaluate(() => {
+    const block = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace().getBlocksByType("battlegorithms_if_have_enemy_flag_else", false)[0];
+    const warning = block.getIcons().find((icon) => icon.getType?.().toString?.() === "warning");
+    return warning?.bubbleIsVisible?.() ?? false;
+  })).toBeTruthy();
+
+  await page.getByRole("treeitem", { name: "Conditions" }).first().click();
+  await expect.poll(async () => page.evaluate(() => {
+    const block = window.__BBA_TEST_HOOKS__.getBlocklyWorkspace().getBlocksByType("battlegorithms_if_have_enemy_flag_else", false)[0];
+    const warning = block.getIcons().find((icon) => icon.getType?.().toString?.() === "warning");
+    return warning?.bubbleIsVisible?.() ?? false;
+  })).toBeTruthy();
+  await expect(page.locator(".blocklyToolboxFlyout")).toBeVisible();
+});
+
 test("guided level picker shows the current level and lets the learner browse ahead", async ({ page }) => {
   await page.goto("/");
   await chooseGuided(page);

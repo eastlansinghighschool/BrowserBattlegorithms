@@ -564,6 +564,9 @@ export function initBlockly(app) {
   loadWorkspaceXml(app, "");
   app.usageTracker?.recordWorkspaceSnapshot?.("editor_initialized", buildUsageWorkspaceCapture(app, "editor_initialized"));
   app.blocklyWorkspace.addChangeListener((event) => {
+    if (event?.isUiEvent) {
+      return;
+    }
     updateBlocklyExecutionHints(app);
     if (app.blocklyWorkspace.__bbaSuppressUsageCapture) {
       return;
