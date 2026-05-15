@@ -65,6 +65,26 @@ function buildDefaultWorkspaceXml() {
   `.trim();
 }
 
+function buildGuidedAssistStarterWorkspaceXml(xmlText, x = 520) {
+  if (!xmlText) {
+    return xmlText;
+  }
+
+  try {
+    const xml = Blockly.utils.xml.textToDom(xmlText);
+    const blocks = xml.getElementsByTagName?.("block") || [];
+    for (const block of blocks) {
+      if (block.getAttribute?.("type") === BLOCK_TYPES.ON_EACH_TURN) {
+        block.setAttribute("x", String(x));
+        break;
+      }
+    }
+    return Blockly.Xml.domToText(xml);
+  } catch {
+    return xmlText;
+  }
+}
+
 function getEventBlock(workspace) {
   return workspace.getBlocksByType(BLOCK_TYPES.ON_EACH_TURN, false)[0] || null;
 }
@@ -208,6 +228,69 @@ function ensureEventBlock(app) {
     eventBlock.setDisabledReason(false, IGNORED_BLOCK_REASON);
   }
   return eventBlock;
+}
+
+function applyGuidedDevBlocklyAssist(app) {
+  if (
+    app.state.currentModeView !== GAME_VIEW_MODES.GUIDED_LEVELS ||
+    !app.state.guidedLevelDevAccessActive ||
+    !app.state.guidedLevelBlocklyAssistActive ||
+    app.state.guidedLevelBlocklyAssistApplied ||
+    app.state.currentLevelId !== app.state.guidedLevelBlocklyAssistLevelId ||
+    !app.blocklyWorkspace
+  ) {
+    return false;
+  }
+
+  const toolbox = app.blocklyWorkspace.getToolbox?.();
+  const toolboxItems = toolbox?.getToolboxItems?.() || [];
+  if (!toolbox || toolboxItems.length === 0) {
+    console.warn("[BBA] Guided Blockly assist could not open the toolbox because no categories were available.");
+    return false;
+  }
+
+  toolbox.selectItemByPosition?.(0);
+  const flyout = toolbox.getFlyout?.();
+  flyout?.reflow?.();
+  const flyoutElement = document.querySelector(".blocklyToolboxFlyout");
+  const blocklyElement = document.getElementById("blocklyDiv");
+  const eventBlock = app.blocklyWorkspace.getBlocksByType(BLOCK_TYPES.ON_EACH_TURN, false)[0] || null;
+  const flyoutRect = flyoutElement?.getBoundingClientRect?.() || null;
+  const blocklyRect = blocklyElement?.getBoundingClientRect?.() || null;
+  const blockRect = eventBlock?.getSvgRoot?.()?.getBoundingClientRect?.() || null;
+  const revealStarterBlock = () => {
+    const liveFlyoutRect = document.querySelector(".blocklyToolboxFlyout")?.getBoundingClientRect?.() || flyoutRect;
+    const liveBlocklyRect = blocklyElement?.getBoundingClientRect?.() || blocklyRect;
+    const liveBlockRect = eventBlock?.getSvgRoot?.()?.getBoundingClientRect?.() || blockRect;
+    if (
+      !liveFlyoutRect ||
+      !liveBlocklyRect ||
+      !liveBlockRect ||
+      typeof app.blocklyWorkspace.scroll !== "function" ||
+      liveBlockRect.left > liveFlyoutRect.right + 8 &&
+      liveBlockRect.right <= liveBlocklyRect.right - 8
+    ) {
+      return;
+    }
+
+    const targetLeft = liveFlyoutRect.right + 24;
+    const maxLeft = liveBlocklyRect.right - 8 - liveBlockRect.width;
+    const desiredLeft = Math.min(targetLeft, maxLeft);
+    const deltaX = desiredLeft - liveBlockRect.left;
+    if (deltaX > 0) {
+      app.blocklyWorkspace.scroll(
+        (app.blocklyWorkspace.scrollX || 0) + deltaX,
+        app.blocklyWorkspace.scrollY || 0
+      );
+    }
+  };
+  if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(revealStarterBlock);
+  } else {
+    revealStarterBlock();
+  }
+  app.state.guidedLevelBlocklyAssistApplied = true;
+  return true;
 }
 
 function getConditionChildBlock(block) {
@@ -708,8 +791,20 @@ export function switchActiveBlocklyTeamTab(app, teamId) {
 
 export function loadWorkspaceFromLocalStorage(app, fallbackXml = "", overrideTeamId = null) {
   const xmlToLoad = getStoredWorkspaceXmlText(app, overrideTeamId, fallbackXml);
-  loadWorkspaceXml(app, xmlToLoad);
+  const shouldShiftStarterWorkspace = Boolean(
+    app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS &&
+    app.state.guidedLevelDevAccessActive &&
+    app.state.guidedLevelBlocklyAssistActive &&
+    !app.state.guidedLevelBlocklyAssistApplied &&
+    app.state.currentLevelId === app.state.guidedLevelBlocklyAssistLevelId &&
+    xmlToLoad === fallbackXml
+  );
+  const xmlForWorkspace = shouldShiftStarterWorkspace
+    ? buildGuidedAssistStarterWorkspaceXml(xmlToLoad)
+    : xmlToLoad;
+  loadWorkspaceXml(app, xmlForWorkspace);
   cacheWorkspaceXml(app, xmlToLoad, overrideTeamId);
+  applyGuidedDevBlocklyAssist(app);
   app.usageTracker?.recordWorkspaceSnapshot?.("workspace_loaded", buildUsageWorkspaceCapture(app, "workspace_loaded"));
   return xmlToLoad;
 }

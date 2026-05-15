@@ -51,6 +51,19 @@ function humanizeResultReason(reason) {
   return reason;
 }
 
+function shouldUseGuidedBlocklyAssistLayout(app) {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return (
+    window.innerWidth >= 1280 &&
+    app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS &&
+    app.state.guidedLevelDevAccessActive &&
+    app.state.guidedLevelBlocklyAssistActive
+  );
+}
+
 function describeGoal(level) {
   if (level.winCondition.type === "runner_reaches_cell") {
     return `Reach (${level.winCondition.targetCell.x}, ${level.winCondition.targetCell.y})`;
@@ -75,6 +88,9 @@ function shouldUseCollapsedLessonPanel(app) {
   if (typeof window === "undefined") {
     return false;
   }
+  if (shouldUseGuidedBlocklyAssistLayout(app)) {
+    return false;
+  }
   if (typeof app.ui.isLessonPanelCollapsed !== "boolean") {
     app.ui.isLessonPanelCollapsed = getStoredLessonPanelCollapsed();
   }
@@ -85,8 +101,10 @@ function syncLessonPanelShell(app) {
   const gameContainer = document.getElementById("game-container");
   const lessonRegion = document.getElementById("lesson-region");
   const collapsed = shouldUseCollapsedLessonPanel(app);
+  const guidedBlocklyAssistLayout = shouldUseGuidedBlocklyAssistLayout(app);
   if (gameContainer) {
     gameContainer.classList.toggle("lesson-panel-collapsed", collapsed);
+    gameContainer.classList.toggle("guided-dev-blockly-assist", guidedBlocklyAssistLayout);
   }
   if (lessonRegion) {
     lessonRegion.classList.toggle("lesson-region-collapsed", collapsed);

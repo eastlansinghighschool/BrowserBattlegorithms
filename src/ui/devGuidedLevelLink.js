@@ -45,6 +45,9 @@ export function applyDevGuidedLevelShortcut(app, { locationLike = globalThis.loc
   app.state.showModePicker = false;
   app.state.guidedLevelDevAccessActive = true;
   app.state.guidedLevelDevAccessLevelId = level.id;
+  app.state.guidedLevelBlocklyAssistActive = true;
+  app.state.guidedLevelBlocklyAssistApplied = false;
+  app.state.guidedLevelBlocklyAssistLevelId = level.id;
   app.state.currentLevelId = level.id;
   enterGuidedMode(app);
   if (app.state.levelProgress[level.id] === "LOCKED") {

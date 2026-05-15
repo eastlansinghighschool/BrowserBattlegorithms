@@ -1434,6 +1434,30 @@ button:disabled {
     border: none;
     background: transparent;
   }
+
+  #game-container.guided-dev-blockly-assist {
+    grid-template-columns: 600px 300px 760px;
+    width: max-content;
+    min-width: 100%;
+    justify-content: start;
+  }
+
+  #game-container.guided-dev-blockly-assist #simulation-region {
+    width: 600px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container,
+  #game-container.guided-dev-blockly-assist #instructions {
+    width: 600px;
+  }
+
+  #game-container.guided-dev-blockly-assist #lesson-region {
+    min-width: 300px;
+  }
+
+  #game-container.guided-dev-blockly-assist #blockly-region {
+    min-width: 760px;
+  }
 }
 
 @keyframes panel-shimmer {

@@ -28,7 +28,23 @@ test("dev guided level shortcut is ignored outside dev mode", () => {
   assert.equal(result, null);
   assert.equal(app.state.showModePicker, true);
   assert.equal(app.state.currentLevelId, "move-to-target");
+  assert.equal(app.state.guidedLevelBlocklyAssistActive, false);
   assert.equal(app.state.levelProgress["closest-threat"], LEVEL_STATUS.LOCKED);
+});
+
+test("dev guided level shortcut stays inactive when no level id is provided", () => {
+  const app = createApp();
+  initializeLevelState(app);
+
+  const result = applyDevGuidedLevelShortcut(app, {
+    isDev: true,
+    locationLike: { search: "", hash: "" }
+  });
+
+  assert.equal(result, null);
+  assert.equal(app.state.guidedLevelDevAccessActive, false);
+  assert.equal(app.state.guidedLevelBlocklyAssistActive, false);
+  assert.equal(app.state.currentLevelId, "move-to-target");
 });
 
 test("dev guided level shortcut unlocks and selects the requested level in dev mode", () => {
@@ -44,6 +60,9 @@ test("dev guided level shortcut unlocks and selects the requested level in dev m
   assert.equal(app.state.showModePicker, false);
   assert.equal(app.state.guidedLevelDevAccessActive, true);
   assert.equal(app.state.guidedLevelDevAccessLevelId, "closest-threat");
+  assert.equal(app.state.guidedLevelBlocklyAssistActive, true);
+  assert.equal(app.state.guidedLevelBlocklyAssistApplied, false);
+  assert.equal(app.state.guidedLevelBlocklyAssistLevelId, "closest-threat");
   assert.equal(app.state.currentModeView, GAME_VIEW_MODES.GUIDED_LEVELS);
   assert.equal(app.state.currentLevelId, "closest-threat");
   assert.equal(app.state.currentLevelStatus, LEVEL_STATUS.AVAILABLE);

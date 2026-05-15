@@ -8,6 +8,7 @@ test("guided instructions are visible after dismissing the first tutorial", asyn
   await chooseGuided(page);
   await dismissTutorial(page);
 
+  await expect(page.locator("#game-container")).not.toHaveClass(/guided-dev-blockly-assist/);
   await expect(page.locator("#level-panel")).toContainText("Level 1: Move to Target");
   await expect(page.locator("#level-panel")).toContainText("What you are looking at");
   await expect(page.locator("#level-panel")).toContainText("Ally runner");

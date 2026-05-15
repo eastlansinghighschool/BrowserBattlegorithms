@@ -2,15 +2,15 @@
 
 ## Status
 
-- Overall status: not started
-- Current run: awaiting first playtest report
-- Next missing report: the first unchecked item in the level checklist below
+- Overall status: in progress
+- Current run: Level 2 complete
+- Next missing report: 03 Level 3: Score a Point -> `levels/03-score-a-point.md`
 - Notes: keep playtest notes student-facing, bounded, and tied to the visible UI; do not inspect source before attempting a level unless blocked
 
 ## Ordered Level Checklist
 
-- [ ] 01 Level 1: Move to Target -> `levels/01-move-to-target.md`
-- [ ] 02 Level 2: Reach Enemy Flag -> `levels/02-reach-enemy-flag.md`
+- [x] 01 Level 1: Move to Target -> `levels/01-move-to-target.md`
+- [x] 02 Level 2: Reach Enemy Flag -> `levels/02-reach-enemy-flag.md`
 - [ ] 03 Level 3: Score a Point -> `levels/03-score-a-point.md`
 - [ ] 04 Level 4: Barrier Detour -> `levels/04-barrier-detour.md`
 - [ ] 05 Level 5: Forward Works Both Ways -> `levels/05-mirror-forward.md`

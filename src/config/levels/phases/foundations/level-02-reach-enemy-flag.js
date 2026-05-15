@@ -5,11 +5,11 @@ import { EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "reach-enemy-flag",
   title: "Level 2: Reach Enemy Flag",
-  description: "Reach the enemy flag on the far side of the board.",
-  introText: "The goal is different now. Instead of a practice target square, your ally is trying to reach the enemy flag.",
+  description: "Start thinking of the enemy flag as your goal.",
+  introText: "Your ally needs to reach the enemy flag, not just a target square.",
   tips: [
     "A flag marks each team’s side of the field.",
-    "Move Backward is available now if you want to correct a path.",
+    "Move Backward moves in the opposite direction of forward — that might be exactly what this board needs.",
     "You still only get one action from the program each ally turn."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
@@ -48,12 +48,12 @@ export default {
     pointsToWin: 1,
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
-      runner_1_AI_AllyP1: { gridX: 9, gridY: 4 },
+      runner_1_AI_AllyP1: { gridX: 11, gridY: 4 },
       runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     flagOverrides: {
-      2: { gridX: 7, gridY: 4 }
+      2: { gridX: 10, gridY: 4 }
     }
   }
 };
