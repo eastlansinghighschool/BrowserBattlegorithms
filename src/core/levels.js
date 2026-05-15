@@ -16,6 +16,7 @@ import {
 import { createInitialLevelProgress, getLevelDefinitions } from "../config/levels.js";
 import { initializeDisplayState, initializeMatch, syncHumanTurnBehaviorVisuals } from "./setup.js";
 import { createRandomizedFreePlayTeamSetup, getGameModeForFreePlayMode, getTeamFlagHome } from "./teams.js";
+import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
 
 const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
@@ -103,6 +104,68 @@ function applyLevelToState(state, level) {
   state.activeTeamSetup = structuredClone(levelSetup.teams || null);
   state.activeFlagSetup = structuredClone(levelSetup.flags || null);
   state.setupBarriers = levelSetup.barriers || [];
+  state.relayRaceProgress = level.id === "relay-race" ? { stagingReached: false } : null;
+}
+
+function getRelayRaceHuman(state, team = 1) {
+  return state.allRunners.find((runner) => runner.team === team && runner.isHumanControlled) || null;
+}
+
+function getRelayRaceSupportCell(app, actor) {
+  const human = getRelayRaceHuman(app.state, actor?.team || 1);
+  if (!human) {
+    return null;
+  }
+
+  const candidateCells = [
+    { x: human.gridX, y: human.gridY - 1 },
+    { x: human.gridX - human.playDirection, y: human.gridY },
+    { x: human.gridX, y: human.gridY + 1 },
+    { x: human.gridX + human.playDirection, y: human.gridY }
+  ];
+
+  for (const cell of candidateCells) {
+    if (!isCellBlockedForRunner(cell.x, cell.y, app.state.barriers, app.state.gameMap, app.state, actor) &&
+      !getRunnerAtCell(cell.x, cell.y, app.state.allRunners, actor?.id || null)) {
+      return cell;
+    }
+  }
+
+  return candidateCells[0];
+}
+
+function getRelayRaceCurrentGoalCell(app) {
+  const level = getCurrentLevel(app);
+  if (!level || level.winCondition.type !== "relay_support_after_teammate_has_flag") {
+    return null;
+  }
+
+  const stageCell = level.winCondition.stagingCell;
+  const actor = app.state.allRunners.find((runner) => runner.id === level.winCondition.runnerId) || null;
+  const relayProgress = app.state.relayRaceProgress || { stagingReached: false };
+  const human = getRelayRaceHuman(app.state, actor?.team || 1);
+
+  if (!relayProgress.stagingReached || !human?.hasEnemyFlag) {
+    return stageCell;
+  }
+
+  return getRelayRaceSupportCell(app, actor) || stageCell;
+}
+
+function updateRelayRaceProgress(state, level, actor) {
+  if (!level || level.winCondition.type !== "relay_support_after_teammate_has_flag") {
+    return;
+  }
+
+  const relayProgress = state.relayRaceProgress || (state.relayRaceProgress = { stagingReached: false });
+  const human = getRelayRaceHuman(state, actor.team);
+  if (!relayProgress.stagingReached &&
+    human &&
+    !human.hasEnemyFlag &&
+    actor.gridX === level.winCondition.stagingCell.x &&
+    actor.gridY === level.winCondition.stagingCell.y) {
+    relayProgress.stagingReached = true;
+  }
 }
 
 export function initializeLevelState(app) {
@@ -381,6 +444,12 @@ export function getLevelGoalCell(app) {
         targetY = enemyFlag.gridY;
       }
     }
+  } else if (level.winCondition.type === "relay_support_after_teammate_has_flag") {
+    const goalCell = getRelayRaceCurrentGoalCell(app);
+    if (goalCell) {
+      targetX = goalCell.x;
+      targetY = goalCell.y;
+    }
   }
 
   return targetX === null || targetY === null ? null : { x: targetX, y: targetY };
@@ -485,6 +554,18 @@ export function evaluateLevelProgress(app) {
       (barrier) =>
         barrier.gridX === level.winCondition.targetCell.x &&
         barrier.gridY === level.winCondition.targetCell.y
+    );
+  } else if (level.winCondition.type === "relay_support_after_teammate_has_flag") {
+    const relayProgress = state.relayRaceProgress || (state.relayRaceProgress = { stagingReached: false });
+    updateRelayRaceProgress(state, level, actor);
+    const human = getRelayRaceHuman(state, actor.team);
+    const supportCell = human?.hasEnemyFlag ? getRelayRaceSupportCell(app, actor) : null;
+    passed = Boolean(
+      relayProgress.stagingReached &&
+      human?.hasEnemyFlag &&
+      supportCell &&
+      actor.gridX === supportCell.x &&
+      actor.gridY === supportCell.y
     );
   }
 

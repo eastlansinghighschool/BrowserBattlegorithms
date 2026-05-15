@@ -63,6 +63,7 @@ export function createInitialState() {
     activeTeamSetup: null,
     activeFlagSetup: null,
     setupBarriers: [],
+    relayRaceProgress: null,
     humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
     tutorialSeen: {},
     activeTutorial: null,

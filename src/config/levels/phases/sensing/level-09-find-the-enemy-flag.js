@@ -56,7 +56,7 @@ export default {
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     flagOverrides: {
-      2: { gridX: 8, gridY: 3 }
+      2: { gridX: 10, gridY: 3 }
     }
   }
 };

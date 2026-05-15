@@ -22,7 +22,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 16 | Jump if ready | one-time jump resource | jump readiness condition | Level 14 |
 | 17 | Build the barrier | barrier placement target | place barrier + readiness | Level 4 barrier idea |
 | 18 | Stay still can do something | clearing a barrier | `Stay Still` as an action | barrier sensing |
-| 19 | Relay race | teammate carrier support | teammate-has-flag | scoring + helper targets |
+| 19 | Relay race | staged carrier support | teammate-has-flag | scoring + helper targets |
 | 20 | My side, their side | field halves (my side introduced) | territory conditions (my-side variants only) | board orientation |
 | 21 | Freeze the lane | team freeze power | freeze readiness + helper return | prior resources |
 | **Challenge 22** | **Show What You Know** | **live scrimmage; open goal** | **none — synthesis only** | Levels 1-21 |

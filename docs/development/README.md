@@ -31,6 +31,9 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 20](plan-20-gitignore-and-untracking.md) | complete | Repo hygiene: untrack `.claude/settings.local.json`, `.env`, `local/`, and any tracked `scratch/` files; add `.env.example`; expand `.gitignore` with OS/editor cruft and standard env-file patterns. |
 | [Plan 21](plan-21-absolute-path-sweep-in-reports.md) | complete | Replace hardcoded `C:/Codex/BrowserBattlegorithms_CODEX/` absolute paths in twelve tracked `reports/*.md` files with relative links so they work for anyone cloning the repo. |
 | [Plan 22](plan-22-dev-guided-blockly-assist.md) | complete | Add dev-guided Blockly assist for Plan 06 browser-agent runs: open the first toolbox category and place `On Each Turn` visibly to the right when `devGuidedLevel` is active. |
+| [Plan 23](plan-23-level-15-defender-and-wanderer.md) | complete | Revise Challenge 15 with a stationary active defender and movement-only wandering enemy so the synthesis challenge is more game-like without becoming random trial-and-error. |
+| [Plan 24](plan-24-level-19-relay-race-repair.md) | complete | Repair Level 19 so the human retrieves the flag and the ally must use teammate-has-flag to switch from defensive staging to carrier support. |
+| [Plan 25](plan-25-slow-speed-blockly-trace.md) | ready | Add configurable slow-speed Blockly pre-action tracing so students can see checked conditions, branch outcomes, and the selected action before the runner moves. |
 
 
 ## Future Directions

@@ -42,6 +42,7 @@ export default {
     SENSOR_RELATION_TYPES.WITHIN_2,
     SENSOR_RELATION_TYPES.WITHIN_3,
     SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
     SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
     SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
     SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
@@ -50,7 +51,7 @@ export default {
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG, MOVE_TOWARD_TARGETS.MY_BASE],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 24 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 36 },
   tutorialSteps: [
     {
       id: "show-what-you-know-challenge",
@@ -70,8 +71,8 @@ export default {
     autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     teams: {
       player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 1, gridY: 4 }] },
-      opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 11, gridY: 1 }, { slot: "npc2", gridX: 11, gridY: 6 }] }
+      opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 7, gridY: 0 }, { slot: "npc2", gridX: 8, gridY: 4 }] }
     },
-    flags: { opponent: { gridX: 9, gridY: 4 } }
+    flags: { opponent: { gridX: 11, gridY: 4 } }
   }
 };

@@ -59,6 +59,12 @@ These are two separate systems with different tuning goals. They share no code p
 - Uses `state.randomFn` if available (test hook), otherwise `Math.random`.
 - Intentionally low-skill and chaotic.
 
+**`GUIDED_STAY_STILL` / `GUIDED_RANDOM_MOVE_ONLY`:**
+- Used by authored guided challenge exceptions that need a stationary defender or a movement-only wandering enemy.
+- `GUIDED_STAY_STILL` always returns `STAY_STILL`.
+- `GUIDED_RANDOM_MOVE_ONLY` picks from legal cardinal movement actions only, using the same `state.randomFn` test hook and the same runner/blocker legality checks used elsewhere in movement translation.
+- These behaviors are narrow guided exceptions, not a change to Free Play Easy.
+
 **`FREE_PLAY_TACTICAL_ATTACKER`:**
 - Chases the enemy flag or returns home when carrying it.
 - Uses the shared `pathing.js` helper.
@@ -102,6 +108,7 @@ app.state.randomFn = () => 0; // always picks the first legal action
 ```
 
 This hook exists specifically because `FREE_PLAY_EASY` is designed to be random in production but must be testable. The guided NPC behaviors do not use it because they have no random branch.
+`GUIDED_RANDOM_MOVE_ONLY` also uses `state.randomFn` so tests can pin the wandering enemy to representative legal steps.
 
 ## Common traps
 
@@ -110,6 +117,7 @@ This hook exists specifically because `FREE_PLAY_EASY` is designed to be random 
 - **Assuming `FREE_PLAY_EASY` is deterministic.** It is intentionally random. Pin `state.randomFn` in tests.
 - **Expecting CPU role to be chosen per-turn.** Roles are assigned at setup time via team configuration.
 - **Adding randomness to guided NPC behaviors.** Guided NPCs are teaching aids; unpredictable behavior makes levels harder to reason about and harder to test.
+- **Confusing guided challenge exceptions with Free Play Easy.** `FREE_PLAY_EASY` still means broad random legal action choice in Free Play. Level-specific guided behaviors should be named and documented separately.
 
 ## Related
 

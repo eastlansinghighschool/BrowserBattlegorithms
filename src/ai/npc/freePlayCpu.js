@@ -29,19 +29,7 @@ function getRandomItem(items, randomFn) {
 
 function getLegalActionCandidates(runner, state) {
   const candidates = [];
-  const movementDecisions = [
-    { type: AI_ACTION_TYPES.MOVE_FORWARD },
-    { type: AI_ACTION_TYPES.MOVE_BACKWARD },
-    { type: AI_ACTION_TYPES.MOVE_UP_SCREEN },
-    { type: AI_ACTION_TYPES.MOVE_DOWN_SCREEN }
-  ];
-
-  for (const decision of movementDecisions) {
-    const translated = translateActionDecision(runner, decision, state);
-    if (!isCellBlockedForRunner(translated.targetGridX, translated.targetGridY, state.barriers, state.gameMap, state, runner)) {
-      candidates.push(decision);
-    }
-  }
+  candidates.push(...getLegalMovementCandidates(runner, state));
 
   if (runner.canJump) {
     const jumpCell = getForwardCell(runner, 2);
@@ -62,6 +50,25 @@ function getLegalActionCandidates(runner, state) {
   }
 
   candidates.push({ type: AI_ACTION_TYPES.STAY_STILL });
+  return candidates;
+}
+
+function getLegalMovementCandidates(runner, state) {
+  const candidates = [];
+  const movementDecisions = [
+    { type: AI_ACTION_TYPES.MOVE_FORWARD },
+    { type: AI_ACTION_TYPES.MOVE_BACKWARD },
+    { type: AI_ACTION_TYPES.MOVE_UP_SCREEN },
+    { type: AI_ACTION_TYPES.MOVE_DOWN_SCREEN }
+  ];
+
+  for (const decision of movementDecisions) {
+    const translated = translateActionDecision(runner, decision, state);
+    if (!isCellBlockedForRunner(translated.targetGridX, translated.targetGridY, state.barriers, state.gameMap, state, runner)) {
+      candidates.push(decision);
+    }
+  }
+
   return candidates;
 }
 
@@ -90,14 +97,8 @@ function getMidfieldDefenseCell(runner, state) {
 
 function getRandomLegalFallbackMove(runner, state, target) {
   const randomFn = getRandomFn(state);
-  const options = [
-    { type: AI_ACTION_TYPES.MOVE_FORWARD },
-    { type: AI_ACTION_TYPES.MOVE_BACKWARD },
-    { type: AI_ACTION_TYPES.MOVE_UP_SCREEN },
-    { type: AI_ACTION_TYPES.MOVE_DOWN_SCREEN }
-  ]
+  const options = getLegalMovementCandidates(runner, state)
     .map((decision) => translateActionDecision(runner, decision, state))
-    .filter((translated) => !isCellBlockedForRunner(translated.targetGridX, translated.targetGridY, state.barriers, state.gameMap, state, runner))
     .sort((left, right) => {
       if (!target) {
         return 0;
@@ -114,6 +115,12 @@ function getRandomLegalFallbackMove(runner, state, target) {
     ? options
     : options.filter((option) => Math.abs(target.x - option.targetGridX) + Math.abs(target.y - option.targetGridY) === bestDistance);
   return getRandomItem(shortlisted, randomFn) || { actionType: AI_ACTION_TYPES.STAY_STILL };
+}
+
+function getRandomLegalMovementDecision(runner, state) {
+  const randomFn = getRandomFn(state);
+  const candidates = getLegalMovementCandidates(runner, state);
+  return getRandomItem(candidates, randomFn) || { type: AI_ACTION_TYPES.STAY_STILL };
 }
 
 function getAttackerAction(runner, state) {
@@ -185,6 +192,14 @@ export function calculateFreePlayCpuAction(runner, state) {
     const randomFn = getRandomFn(state);
     const choice = getRandomItem(getLegalActionCandidates(runner, state), randomFn);
     return choice || { type: AI_ACTION_TYPES.STAY_STILL };
+  }
+
+  if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_STAY_STILL) {
+    return { actionType: AI_ACTION_TYPES.STAY_STILL };
+  }
+
+  if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY) {
+    return getRandomLegalMovementDecision(runner, state);
   }
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.FREE_PLAY_TACTICAL_ATTACKER) {

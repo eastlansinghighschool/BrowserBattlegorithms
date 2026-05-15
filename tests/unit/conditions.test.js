@@ -62,6 +62,11 @@ test("generic sensor evaluation supports barrier, edge or wall, enemy flag, and 
     evaluateSensorCondition(app.state, actor, SENSOR_OBJECT_TYPES.BARRIER, SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT),
     true
   );
+  app.state.barriers.push({ id: "barrier_behind_test", gridX: 0, gridY: 3, ownerRunnerId: "test" });
+  assert.equal(
+    evaluateSensorCondition(app.state, actor, SENSOR_OBJECT_TYPES.BARRIER, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND),
+    true
+  );
 
   actor.gridX = 11;
   actor.gridY = 3;

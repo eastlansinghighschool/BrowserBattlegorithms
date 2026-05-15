@@ -8,6 +8,6 @@
 - New concept: no new tools - synthesis only
 - Assumed prior concepts: Levels 1-14
 - Project: none.
-- What Gemini should watch for: Watch whether the challenge framing clearly says this is a synthesis moment.
+- What Gemini should watch for: Watch whether the challenge framing clearly says this is a synthesis moment. The live NPC now uses FREE_PLAY_EASY (random movement) rather than a deterministic patrol, so strategies that work on one attempt may not work the same way on the next — note whether students adapt or give up.
 - Canonical local-dev URL: http://localhost:5173/?devGuidedLevel=dodge-and-deliver
 - Expected report path: levels/15-dodge-and-deliver.md

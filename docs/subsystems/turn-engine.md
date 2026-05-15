@@ -83,6 +83,7 @@ These three events are related but distinct and can happen independently:
 - **Scoring** (`scoring.js`): a runner returns the enemy flag to their team's base. The team score increments. A round reset immediately follows: all runners return to their start positions, flags reset. The match continues.
 - **Game over**: when a team reaches the win threshold during a scoring check, `GAME_OVER` state is set. The match ends and the end-state overlay appears.
 - **Level completion** (guided mode only): after a scoring event, the engine evaluates whether the guided level's win condition is satisfied. A level may require scoring a specific number of points or other conditions. Level pass or fail triggers the level-result overlay and enables the Next Level button.
+- **Stateful guided goals**: a small number of guided levels may track an authored staging phase before a later support phase. Those levels still use the same turn pipeline; the win condition simply remembers which phase the player reached and evaluates the final support square after the teammate acquires the flag.
 - **Round reset ≠ level reset**: a round reset happens automatically after scoring and preserves workspace state. A level reset re-enters the current level from scratch using the persisted workspace.
 
 A single score event can trigger all three in sequence: increment score → evaluate game-over → if guided, evaluate level completion.

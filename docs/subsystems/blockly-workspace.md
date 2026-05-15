@@ -53,7 +53,7 @@ Three distinct operations exist; they are not interchangeable:
 
 **Project-shared workspaces**: Levels inside a project arc (`strategy-brain` L23-L28, `team-strategy-script` L29-L37) share one workspace key per project id. A save on any project level updates that shared key. Backward navigation within the arc loads the same shared latest XML.
 
-**Local-dev guided assist**: When the dev-only `devGuidedLevel` shortcut is active, the startup path applies a dev-only wide guided layout, opens the first toolbox category, and uses a one-shot clamped Blockly scroll to keep the starter `On Each Turn` block visible to the right of the open drawer. This assist is local-dev only, does not rewrite saved XML, and does not depend on a long delayed translation.
+**Local-dev guided assist**: When the dev-only `devGuidedLevel` shortcut is active, the startup path applies a dev-only viewport-fitting guided layout, scales the board visually so the canvas stays fully visible, opens the first toolbox category, and uses a one-shot clamped Blockly scroll to keep the starter `On Each Turn` block visible to the right of the open drawer. This assist is local-dev only, does not rewrite saved XML, and does not depend on a long delayed translation.
 
 ## Toolbox policy
 

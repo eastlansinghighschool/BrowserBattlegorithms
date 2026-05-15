@@ -8,6 +8,7 @@ import {
   LEVEL_RESULT,
   LEVEL_STATUS,
   MOVE_TOWARD_TARGETS,
+  NPC_BEHAVIORS,
   SENSOR_OBJECT_TYPES,
   SENSOR_RELATION_TYPES
 } from "../../src/config/constants.js";
@@ -135,6 +136,39 @@ test("starter levels include onboarding copy and tutorial steps", () => {
   assert.ok(thirdLevel.tutorialSteps.some((step) => step.body.includes("carry")));
 });
 
+test("dodge-and-deliver authors a stationary defender and a movement-only wanderer", () => {
+  const level = getLevelDefinitions().find((entry) => entry.id === "dodge-and-deliver");
+  const ally = level.setup.teams.player.runners.find((runner) => runner.slot === "ally");
+  const enemies = level.setup.teams.opponent.runners;
+  const stationaryDefender = enemies.find((runner) => runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_STAY_STILL);
+  const wanderingEnemy = enemies.find((runner) => runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY);
+  const enemyFlag = level.setup.flags.opponent;
+
+  assert.equal(enemies.length, 2);
+  assert.ok(stationaryDefender, "Level 15 should include an explicit stationary defender");
+  assert.ok(wanderingEnemy, "Level 15 should include an explicit movement-only wanderer");
+  assert.deepEqual(level.sensorRelationTypes, [
+    SENSOR_RELATION_TYPES.WITHIN_2,
+    SENSOR_RELATION_TYPES.WITHIN_3,
+    SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+    SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
+    SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
+    SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
+    SENSOR_RELATION_TYPES.ANYWHERE_BELOW
+  ]);
+  assert.equal(Boolean(stationaryDefender.isFrozen), false);
+  assert.equal(Boolean(wanderingEnemy.isFrozen), false);
+  assert.equal(stationaryDefender.gridX > ally.gridX, true);
+  assert.equal(stationaryDefender.gridX < enemyFlag.gridX, true);
+  assert.equal(stationaryDefender.gridY < enemyFlag.gridY, true);
+  assert.equal(Math.abs(stationaryDefender.gridY - enemyFlag.gridY) <= 1, true);
+  assert.equal(wanderingEnemy.gridX, 8);
+  assert.equal(wanderingEnemy.gridY, 6);
+  assert.match(level.description, /defender.*moving/i);
+  assert.match(level.introText, /holds the lane/i);
+});
+
 test("guided toolbox restriction reflects the curriculum unlock path", () => {
   const app = createApp();
   initializeLevelState(app);
@@ -158,14 +192,20 @@ test("guided toolbox restriction reflects the curriculum unlock path", () => {
 
   const sensingLevel = app.state.levels.find((level) => level.id === "sensor-barrier-branch");
   assert.deepEqual(sensingLevel.sensorObjectTypes, [SENSOR_OBJECT_TYPES.ENEMY_RUNNER]);
-  assert.ok(sensingLevel.sensorRelationTypes.includes(SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT));
+  assert.deepEqual(sensingLevel.sensorRelationTypes, [
+    SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND
+  ]);
 });
 
 test("guided sensing unlocks progress in authored stages", () => {
   const levels = getLevelDefinitions();
   const watchTheWall = levels.find((level) => level.id === "watch-the-wall");
   assert.deepEqual(watchTheWall.sensorObjectTypes, [SENSOR_OBJECT_TYPES.EDGE_OR_WALL]);
-  assert.deepEqual(watchTheWall.sensorRelationTypes, [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT]);
+  assert.deepEqual(watchTheWall.sensorRelationTypes, [
+    SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND
+  ]);
 
   const findTheHuman = levels.find((level) => level.id === "find-the-human");
   assert.deepEqual(findTheHuman.sensorObjectTypes, [SENSOR_OBJECT_TYPES.HUMAN_RUNNER]);
@@ -175,6 +215,59 @@ test("guided sensing unlocks progress in authored stages", () => {
     SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
     SENSOR_RELATION_TYPES.ANYWHERE_BELOW
   ]);
+});
+
+test("guided levels that use directly in front also expose directly behind", () => {
+  const levels = getLevelDefinitions();
+  const expectations = new Map([
+    ["sensor-barrier-branch", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
+    ["watch-the-wall", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
+    [
+      "dodge-and-deliver",
+      [
+        SENSOR_RELATION_TYPES.WITHIN_2,
+        SENSOR_RELATION_TYPES.WITHIN_3,
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
+        SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
+        SENSOR_RELATION_TYPES.ANYWHERE_BELOW
+      ]
+    ],
+    ["stay-still-can-do-something", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
+    [
+      "show-what-you-know",
+      [
+        SENSOR_RELATION_TYPES.WITHIN_2,
+        SENSOR_RELATION_TYPES.WITHIN_3,
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
+        SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
+        SENSOR_RELATION_TYPES.ANYWHERE_BELOW
+      ]
+    ],
+    [
+      "full-team-tactics",
+      [
+        SENSOR_RELATION_TYPES.WITHIN_2,
+        SENSOR_RELATION_TYPES.WITHIN_3,
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
+        SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
+        SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
+        SENSOR_RELATION_TYPES.ANYWHERE_BELOW
+      ]
+    ]
+  ]);
+
+  for (const [levelId, expectedRelations] of expectations) {
+    const level = levels.find((entry) => entry.id === levelId);
+    assert.deepEqual(level.sensorRelationTypes, expectedRelations, `${levelId} should expose directly behind alongside directly in front`);
+  }
 });
 
 test("guided Move Toward and human-input levels keep their authored restrictions and copy", () => {
@@ -262,10 +355,16 @@ test("generic sensing authored levels keep their support targets open", () => {
   assert.match(demoStep.demoCaption || "", /example|different object/i);
 
   const relayRace = getLevelDefinitions().find((entry) => entry.id === "relay-race");
-  assert.deepEqual(relayRace.winCondition.targetCell, { x: 6, y: 3 });
+  assert.equal(relayRace.humanTurnBehavior, HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT);
+  assert.equal(relayRace.winCondition.type, "relay_support_after_teammate_has_flag");
+  assert.deepEqual(relayRace.winCondition.stagingCell, { x: 4, y: 0 });
   const relayHuman = relayRace.setup.teams.player.runners.find((runner) => runner.slot === "human");
-  assert.equal(relayHuman.gridX, 6);
-  assert.equal(relayHuman.gridY, 2);
+  const relayAlly = relayRace.setup.teams.player.runners.find((runner) => runner.slot === "ally");
+  assert.equal(relayHuman.gridX, 1);
+  assert.equal(relayHuman.gridY, 4);
+  assert.equal(Boolean(relayHuman.hasEnemyFlag), false);
+  assert.equal(relayAlly.gridX, 4);
+  assert.equal(relayAlly.gridY, 5);
 });
 
 test("guided levels unlock sequentially when completed", () => {
@@ -308,9 +407,9 @@ test("generic sensing authored levels place target cells with no runner blocking
 
   startLevel(app, "relay-race");
   assert.equal(
-    app.state.allRunners.find((runner) => runner.gridX === 6 && runner.gridY === 3),
+    app.state.allRunners.find((runner) => runner.gridX === 4 && runner.gridY === 0),
     undefined,
-    "relay-race target cell (6,3) must not be occupied by a runner at level start"
+    "relay-race staging cell (4,0) must not be occupied by a runner at level start"
   );
 });
 

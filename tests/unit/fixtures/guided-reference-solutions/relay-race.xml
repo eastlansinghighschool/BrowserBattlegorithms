@@ -1,18 +1,16 @@
 <xml xmlns="https://developers.google.com/blockly/xml">
-      <block type="battlegorithms_on_each_turn" x="24" y="24">
-        <next>
-          
-    <block type="battlegorithms_if_teammate_has_flag_else">
-      <statement name="DO">
-        <block type="battlegorithms_move_toward">
-          <field name="TARGET">HUMAN_RUNNER</field>
-        </block>
-      </statement>
-      <statement name="ELSE">
-        <block type="battlegorithms_move_forward"></block>
-      </statement>
-    </block>
-  
-        </next>
+  <block type="battlegorithms_on_each_turn" x="24" y="24">
+    <next>
+      <block type="battlegorithms_if_teammate_has_flag_else">
+        <statement name="DO">
+          <block type="battlegorithms_move_toward">
+            <field name="TARGET">HUMAN_RUNNER</field>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_up_screen"></block>
+        </statement>
       </block>
-    </xml>
+    </next>
+  </block>
+</xml>

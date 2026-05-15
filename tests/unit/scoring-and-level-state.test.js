@@ -111,6 +111,35 @@ test("level 3 goal marker stays on the home flag after the point is scored", () 
   assert.deepEqual(getLevelGoalCell(app), { x: 1, y: 4 });
 });
 
+test("relay race goal marker stages first and then switches to carrier support", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  app.state.levelProgress["relay-race"] = LEVEL_STATUS.AVAILABLE;
+  startLevel(app, "relay-race");
+
+  const human = app.state.allRunners.find((runner) => runner.id === "runner_1_HumanP1");
+  const ally = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  const enemyFlag = app.state.gameFlags[2];
+
+  assert.deepEqual(getLevelGoalCell(app), { x: 4, y: 0 });
+
+  app.state.relayRaceProgress.stagingReached = true;
+  human.gridX = 7;
+  human.gridY = 4;
+  human.hasEnemyFlag = true;
+  enemyFlag.carriedByRunnerId = human.id;
+  enemyFlag.gridX = human.gridX;
+  enemyFlag.gridY = human.gridY;
+  enemyFlag.isAtBase = false;
+  ally.gridX = 4;
+  ally.gridY = 0;
+
+  const supportGoal = getLevelGoalCell(app);
+  assert.ok(supportGoal);
+  assert.notDeepEqual(supportGoal, { x: 4, y: 0 });
+  assert.equal(Math.abs(supportGoal.x - human.gridX) + Math.abs(supportGoal.y - human.gridY), 1);
+});
+
 test("level 3 turn limit allows the intended out-and-back route", () => {
   const app = createApp();
   initializeLevelState(app);

@@ -65,7 +65,7 @@ function buildDefaultWorkspaceXml() {
   `.trim();
 }
 
-function buildGuidedAssistStarterWorkspaceXml(xmlText, x = 520) {
+function buildGuidedAssistStarterWorkspaceXml(xmlText, x = 360) {
   if (!xmlText) {
     return xmlText;
   }

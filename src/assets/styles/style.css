@@ -1436,27 +1436,38 @@ button:disabled {
   }
 
   #game-container.guided-dev-blockly-assist {
-    grid-template-columns: 600px 300px 760px;
-    width: max-content;
-    min-width: 100%;
-    justify-content: start;
+    grid-template-columns: 450px 260px minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    justify-content: stretch;
   }
 
   #game-container.guided-dev-blockly-assist #simulation-region {
-    width: 600px;
+    width: 450px;
   }
 
   #game-container.guided-dev-blockly-assist #canvas-container,
   #game-container.guided-dev-blockly-assist #instructions {
-    width: 600px;
+    width: 450px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container {
+    min-height: 300px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container canvas {
+    width: 450px !important;
+    height: 300px !important;
+    display: block;
   }
 
   #game-container.guided-dev-blockly-assist #lesson-region {
-    min-width: 300px;
+    width: 260px;
+    min-width: 260px;
   }
 
   #game-container.guided-dev-blockly-assist #blockly-region {
-    min-width: 760px;
+    min-width: 0;
   }
 }
 

@@ -64,7 +64,7 @@ function shouldUseGuidedBlocklyAssistLayout(app) {
   );
 }
 
-function describeGoal(level) {
+function describeGoal(app, level) {
   if (level.winCondition.type === "runner_reaches_cell") {
     return `Reach (${level.winCondition.targetCell.x}, ${level.winCondition.targetCell.y})`;
   }
@@ -73,6 +73,12 @@ function describeGoal(level) {
   }
   if (level.winCondition.type === "team_scores_point") {
     return "Carry the enemy flag back home to score a point.";
+  }
+  if (level.winCondition.type === "relay_support_after_teammate_has_flag") {
+    const relayProgress = app.state.relayRaceProgress || {};
+    return relayProgress.stagingReached
+      ? "Support the carrier near the human runner after a teammate has the flag."
+      : "Stage on defense first, then support the carrier after the human picks up the flag.";
   }
   return "Complete the challenge.";
 }
@@ -236,7 +242,7 @@ function renderAvailableTools(level) {
 
 function renderLessonDetails(app, level) {
   const detailItems = [
-    `<li><strong>Goal:</strong> ${escapeHtml(describeGoal(level))}</li>`,
+    `<li><strong>Goal:</strong> ${escapeHtml(describeGoal(app, level))}</li>`,
     app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT
       ? "<li><strong>Human turns:</strong> This level waits for keyboard input from the human runner.</li>"
       : "<li><strong>Human turns:</strong> Human turns auto-skip so you can focus on the puzzle.</li>"

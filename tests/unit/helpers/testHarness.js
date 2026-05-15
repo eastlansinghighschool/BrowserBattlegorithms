@@ -2,7 +2,7 @@ import * as Blockly from "blockly";
 import { AI_ACTION_TYPES, LEVEL_RESULT } from "../../../src/config/constants.js";
 import { registerBattleBlocklyBlocks } from "../../../src/ai/blockly/blocks.js";
 import { getFirstRunnableAction, loadWorkspaceXml } from "../../../src/ai/blockly/workspace.js";
-import { processTurnActions } from "../../../src/core/turnEngine.js";
+import { handlePlayerInput, processTurnActions } from "../../../src/core/turnEngine.js";
 import { createApp } from "../../../src/core/state.js";
 import { initializeLevelState, startLevel } from "../../../src/core/levels.js";
 
@@ -24,7 +24,32 @@ export const TEST_P5 = {
   }
 };
 
-export function runGuidedLevelWithSolution(levelId, xmlText) {
+function normalizeHumanActionData(runner, actionData) {
+  if (!actionData || typeof actionData !== "object") {
+    return null;
+  }
+
+  if (actionData.dx !== undefined || actionData.dy !== undefined || actionData.type === AI_ACTION_TYPES.STAY_STILL) {
+    return actionData;
+  }
+
+  if (actionData.type === AI_ACTION_TYPES.MOVE_FORWARD) {
+    return { dx: runner.playDirection, dy: 0 };
+  }
+  if (actionData.type === AI_ACTION_TYPES.MOVE_BACKWARD) {
+    return { dx: -runner.playDirection, dy: 0 };
+  }
+  if (actionData.type === AI_ACTION_TYPES.MOVE_UP_SCREEN) {
+    return { dx: 0, dy: -1 };
+  }
+  if (actionData.type === AI_ACTION_TYPES.MOVE_DOWN_SCREEN) {
+    return { dx: 0, dy: 1 };
+  }
+
+  return actionData;
+}
+
+export function runGuidedLevelWithSolution(levelId, xmlText, options = {}) {
   registerBattleBlocklyBlocks();
   const app = createApp();
   app.blocklyWorkspace = new Blockly.Workspace();
@@ -32,7 +57,7 @@ export function runGuidedLevelWithSolution(levelId, xmlText) {
     const runner = runnerOverride || app.state.allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
     return getFirstRunnableAction(app, runner) || { type: AI_ACTION_TYPES.STAY_STILL };
   };
-  app.state.randomFn = () => 0;
+  app.state.randomFn = typeof options.randomFn === "function" ? options.randomFn : () => 0;
   initializeLevelState(app);
   startLevel(app, levelId);
   loadWorkspaceXml(app, xmlText);
@@ -40,6 +65,56 @@ export function runGuidedLevelWithSolution(levelId, xmlText) {
   const trace = [];
   for (let tick = 0; tick < 4000; tick += 1) {
     const activeRunner = app.state.allRunners[app.state.activeRunnerIndex];
+    trace.push({
+      tick,
+      turn: app.state.currentTurnNumber,
+      runner: activeRunner?.id || null,
+      state: app.state.currentTurnState,
+      result: app.state.activeLevelResult
+    });
+    if (app.state.activeLevelResult === LEVEL_RESULT.PASSED || app.state.activeLevelResult === LEVEL_RESULT.FAILED) {
+      break;
+    }
+    processTurnActions(app, TEST_P5);
+  }
+
+  return { app, trace };
+}
+
+export function runGuidedLevelWithHumanScript(levelId, xmlText, options = {}) {
+  registerBattleBlocklyBlocks();
+  const app = createApp();
+  app.blocklyWorkspace = new Blockly.Workspace();
+  app.hooks.getAIAllyAction = (runnerOverride = null) => {
+    const runner = runnerOverride || app.state.allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
+    return getFirstRunnableAction(app, runner) || { type: AI_ACTION_TYPES.STAY_STILL };
+  };
+  app.state.randomFn = typeof options.randomFn === "function" ? options.randomFn : () => 0;
+  initializeLevelState(app);
+  startLevel(app, levelId);
+  loadWorkspaceXml(app, xmlText);
+
+  const trace = [];
+  for (let tick = 0; tick < 4000; tick += 1) {
+    const activeRunner = app.state.allRunners[app.state.activeRunnerIndex];
+    if (
+      app.state.currentTurnState === "AWAITING_INPUT" &&
+      activeRunner?.isHumanControlled &&
+      typeof options.humanActionScript === "function" &&
+      !app.state.queuedActionForCurrentRunner
+    ) {
+      const actionData = options.humanActionScript({
+        app,
+        runner: activeRunner,
+        tick,
+        trace,
+        state: app.state
+      });
+      if (actionData) {
+        handlePlayerInput(app, activeRunner, normalizeHumanActionData(activeRunner, actionData));
+      }
+    }
+
     trace.push({
       tick,
       turn: app.state.currentTurnNumber,

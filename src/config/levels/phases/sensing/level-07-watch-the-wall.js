@@ -17,7 +17,7 @@ export default {
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   toolboxBlockTypes: [...GENERIC_SENSOR_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
   sensorObjectTypes: [SENSOR_OBJECT_TYPES.EDGE_OR_WALL],
-  sensorRelationTypes: [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT],
+  sensorRelationTypes: [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: {
     type: "runner_reaches_cell",

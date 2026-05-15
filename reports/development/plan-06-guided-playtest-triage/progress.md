@@ -3,15 +3,15 @@
 ## Status
 
 - Overall status: in progress
-- Current run: Level 2 complete
-- Next missing report: 03 Level 3: Score a Point -> `levels/03-score-a-point.md`
+- Current run: Level 3 blocked
+- Next missing report: 04 Level 4: Barrier Detour -> `levels/04-barrier-detour.md`
 - Notes: keep playtest notes student-facing, bounded, and tied to the visible UI; do not inspect source before attempting a level unless blocked
 
 ## Ordered Level Checklist
 
 - [x] 01 Level 1: Move to Target -> `levels/01-move-to-target.md`
 - [x] 02 Level 2: Reach Enemy Flag -> `levels/02-reach-enemy-flag.md`
-- [ ] 03 Level 3: Score a Point -> `levels/03-score-a-point.md`
+- [ ] 03 Level 3: Score a Point -> `levels/03-score-a-point.md` (blocked)
 - [ ] 04 Level 4: Barrier Detour -> `levels/04-barrier-detour.md`
 - [ ] 05 Level 5: Forward Works Both Ways -> `levels/05-mirror-forward.md`
 - [ ] 06 Level 6: Enemy Sensor Branch -> `levels/06-sensor-barrier-branch.md`

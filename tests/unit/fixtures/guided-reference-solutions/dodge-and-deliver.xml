@@ -14,12 +14,14 @@
             <statement name="DO">
               <block type="battlegorithms_if_sensor_matches_else">
                 <field name="OBJECT">ENEMY_RUNNER</field>
-                <field name="RELATION">ANYWHERE_FORWARD</field>
+                <field name="RELATION">DIRECTLY_IN_FRONT</field>
                 <statement name="DO">
                   <block type="battlegorithms_jump_forward"></block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="battlegorithms_move_backward"></block>
+                  <block type="battlegorithms_move_toward">
+                    <field name="TARGET">ENEMY_FLAG</field>
+                  </block>
                 </statement>
               </block>
             </statement>

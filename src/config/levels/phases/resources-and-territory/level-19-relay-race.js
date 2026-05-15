@@ -5,57 +5,54 @@ import { TEAMMATE_FLAG_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } fr
 export default {
   id: "relay-race",
   title: "Level 19: Relay Race",
-  description: "Use the teammate flag condition so the ally reacts when another runner on the team has the enemy flag.",
-  introText: "Programs can pay attention to teammates too. Here, the human runner already has the enemy flag, so the ally should switch into support mode and reach the marked support square next to the carrier.",
+  description: "Use the teammate flag condition so the ally stages on defense first, then supports the human carrier after the enemy flag is picked up.",
+  introText: "This relay uses both keyboard control and Blockly. Move the human runner to the enemy flag, and have the ally stage first before switching into carrier support.",
   tips: [
-    "The human runner starts this level already carrying the enemy flag.",
+    "The human runner starts without the enemy flag and has to pick it up first.",
+    "The ally should reach the staging square near the top before the human carries the flag.",
     "The teammate condition is true when another runner on your team has the flag.",
-    "Move Toward human runner is a helpful support action here.",
-    "The highlighted support square next to the human is the goal, not the occupied human cell."
+    "After the human becomes the carrier, the ally should switch from staging to carrier support.",
+    "The highlighted goal marker changes with the relay phase, so watch it after the flag pickup."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
-  humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
+  humanTurnBehavior: HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT,
   toolboxBlockTypes: [...TEAMMATE_FLAG_BLOCKS, ...MOVE_TOWARD_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.HUMAN_RUNNER],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: {
-    type: "runner_reaches_cell",
+    type: "relay_support_after_teammate_has_flag",
     runnerId: "runner_1_AI_AllyP1",
-    targetCell: { x: 6, y: 3 }
+    stagingCell: { x: 4, y: 0 }
   },
   failureCondition: {
     type: "turn_limit_exceeded",
-    maxTurns: 10
+    maxTurns: 20
   },
   tutorialSteps: [
     {
-      id: "level-18-teammate",
-      title: "A Teammate Already Has The Flag",
-      body: "The human runner begins with the enemy flag, so this level is about how the ally should react when someone else becomes the carrier. Guide the ally into the marked support square next to the human.",
+      id: "level-19-human-route",
+      title: "Move The Human Runner First",
+      body: "You control the human runner in this level. Get to the enemy flag first, then watch the ally switch from the top staging square to carrier support once a teammate has the flag.",
       targetSelector: "#canvas-container"
     },
     {
-      id: "level-18-support",
-      title: "Support Mode",
-      body: "Use the teammate flag condition to switch into a support move. The Move Toward human runner helper is one clean way to do that.",
+      id: "level-19-support",
+      title: "Stage, Then Support",
+      body: "Use the teammate flag condition to change the ally's job after the human becomes the carrier. The structure is a branch: one action before the flag, another after it.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: RELAY_RACE_DEMO_XML,
-      demoTitle: "Example support program",
-      demoCaption: "This example uses a different condition than the one available in this level. The structure — check a condition, then run different actions in each branch — is the same pattern you need here."
+      demoTitle: "Example branch pattern",
+      demoCaption: "This example uses a different condition than the one available in this level. The branch shape is the same: check a condition, then choose different actions before and after."
     }
   ],
   setupOverrides: {
-    autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     pointsToWin: 1,
     runnerOverrides: {
-      runner_1_HumanP1: { gridX: 6, gridY: 2, hasEnemyFlag: true },
-      runner_1_AI_AllyP1: { gridX: 1, gridY: 5 },
-      runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_1_HumanP1: { gridX: 1, gridY: 4 },
+      runner_1_AI_AllyP1: { gridX: 4, gridY: 5 },
+      runner_2_Npc1: { gridX: 10, gridY: 1, isFrozen: true, frozenTurnsRemaining: 999 },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
-    },
-    flagOverrides: {
-      2: { carriedByRunnerId: "runner_1_HumanP1", isAtBase: false }
     }
   }
 };

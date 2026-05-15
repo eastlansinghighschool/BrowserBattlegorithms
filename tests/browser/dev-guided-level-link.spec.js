@@ -56,17 +56,24 @@ test("assisted dev guided startup opens the first toolbox category and keeps the
     const toolboxItems = toolbox?.getToolboxItems?.() || [];
     const selectedLabel = toolbox?.getSelectedItem?.()?.getDiv?.()?.textContent?.trim() || "";
     const firstLabel = toolboxItems[0]?.getDiv?.()?.textContent?.trim() || "";
+    const gameRect = document.querySelector("#game-container")?.getBoundingClientRect?.() || null;
     const flyout = document.querySelector(".blocklyToolboxFlyout");
     const eventBlock = workspace?.getBlocksByType("battlegorithms_on_each_turn", false)?.[0] || null;
     const blocklyRect = document.querySelector("#blocklyDiv")?.getBoundingClientRect?.() || null;
     const canvas = document.querySelector("#canvas-container canvas");
     const canvasRect = canvas?.getBoundingClientRect?.() || null;
+    const lessonRect = document.querySelector("#lesson-region")?.getBoundingClientRect?.() || null;
     const canvasContainerRect = document.querySelector("#canvas-container")?.getBoundingClientRect?.() || null;
+    const blocklyRegionRect = document.querySelector("#blockly-region")?.getBoundingClientRect?.() || null;
     const flyoutRect = flyout?.getBoundingClientRect?.() || null;
     const blockRect = eventBlock?.getSvgRoot?.()?.getBoundingClientRect?.() || null;
     return {
       assistActive: hooks.getState().guidedLevelBlocklyAssistActive,
       assistApplied: hooks.getState().guidedLevelBlocklyAssistApplied,
+      documentWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+      gameLeft: gameRect?.left || 0,
+      gameRight: gameRect?.right || 0,
       selectedLabel,
       firstLabel,
       flyoutVisible: Boolean(flyout && flyoutRect && flyoutRect.width > 0 && flyoutRect.height > 0),
@@ -75,10 +82,14 @@ test("assisted dev guided startup opens the first toolbox category and keeps the
       blockRight: blockRect?.right || 0,
       flyoutRight: flyoutRect?.right || 0,
       blocklyRight: blocklyRect?.right || 0,
+      lessonLeft: lessonRect?.left || 0,
+      lessonRight: lessonRect?.right || 0,
       canvasLeft: canvasRect?.left || 0,
       canvasRight: canvasRect?.right || 0,
       canvasContainerLeft: canvasContainerRect?.left || 0,
-      canvasContainerRight: canvasContainerRect?.right || 0
+      canvasContainerRight: canvasContainerRect?.right || 0,
+      blocklyRegionLeft: blocklyRegionRect?.left || 0,
+      blocklyRegionRight: blocklyRegionRect?.right || 0
     };
   });
 
@@ -90,8 +101,15 @@ test("assisted dev guided startup opens the first toolbox category and keeps the
   });
 
   expect(assistState.selectedLabel).toBe(assistState.firstLabel);
+  expect(assistState.documentWidth).toBeLessThanOrEqual(assistState.viewportWidth);
+  expect(assistState.gameLeft).toBeGreaterThanOrEqual(0);
+  expect(assistState.gameRight).toBeLessThanOrEqual(assistState.viewportWidth);
   expect(assistState.blockLeft).toBeGreaterThan(assistState.flyoutRight + 8);
   expect(assistState.blockRight).toBeLessThanOrEqual(assistState.blocklyRight - 8);
+  expect(assistState.lessonLeft).toBeGreaterThanOrEqual(0);
+  expect(assistState.lessonRight).toBeLessThanOrEqual(assistState.viewportWidth);
   expect(assistState.canvasLeft).toBeGreaterThanOrEqual(assistState.canvasContainerLeft);
   expect(assistState.canvasRight).toBeLessThanOrEqual(assistState.canvasContainerRight);
+  expect(assistState.canvasContainerLeft).toBeGreaterThanOrEqual(0);
+  expect(assistState.blocklyRegionRight).toBeLessThanOrEqual(assistState.viewportWidth);
 });

@@ -39,3 +39,15 @@ test("level 20 reference solution uses freeze, passes, and never overlaps runner
   assert.ok(app.state.runnerActionHistory.runner_1_AI_AllyP1.includes(AI_ACTION_TYPES.FREEZE_OPPONENTS));
   assert.equal(checkInvariants(app.state), true);
 });
+
+test("level 15 reference solution passes across representative wandering rolls", () => {
+  const xmlText = GUIDED_LEVEL_REFERENCE_SOLUTIONS["dodge-and-deliver"];
+  for (const randomFn of [() => 0, () => 0.5, () => 0.99]) {
+    const { app, trace } = runGuidedLevelWithSolution("dodge-and-deliver", xmlText, { randomFn });
+    assert.equal(
+      app.state.activeLevelResult,
+      LEVEL_RESULT.PASSED,
+      `Level dodge-and-deliver did not pass under pinned randomFn. Final turn=${app.state.currentTurnNumber}, state=${app.state.currentTurnState}, lastReason=${app.state.lastLevelResultReason}, traceTail=${JSON.stringify(trace.slice(-8))}`
+    );
+  }
+});

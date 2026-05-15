@@ -2,19 +2,21 @@
 
 ## Summary
 
-Implemented the Plan 22 repair for local-dev guided deep links by adding a dev-only wide guided layout, opening the first toolbox category automatically, and using a one-shot clamped Blockly scroll so the starter `On Each Turn` block stays visible to the right of the drawer in a way that passes the actual `1280x720` browser geometry check.
+Implemented the final Plan 22 repair for local-dev guided deep links by switching the dev-only assist to a viewport-fitting layout, scaling the board visually, and keeping the starter `On Each Turn` block visible inside Blockly without causing page-wide horizontal overflow at `1280x720`.
 
 ### What changed
 
 - Added explicit dev-guided Blockly assist state to the app state and dev deep-link helper.
 - Tied the assist to valid local-dev `devGuidedLevel` activation only.
-- Applied a dev-only wide guided layout that keeps the lesson panel visible and expands the Blockly column in the assisted path.
+- Replaced the previous wide/max-content assist layout with a dev-only viewport-fitting grid.
+- Scaled the board visually inside the assisted path so the canvas and instructions remain fully visible without cropping.
+- Kept the lesson panel visible while giving Blockly the remaining width.
 - Opened the first toolbox category automatically during the assisted guided startup path.
-- Revealed the starter guided workspace block with a one-shot, clamped Blockly scroll after the wide layout settles.
+- Re-tuned the starter guided workspace x-position and kept a one-shot clamped Blockly scroll so `On Each Turn` clears the flyout while staying inside `#blocklyDiv`.
 - Kept saved workspace paths, guided progression, and production builds untouched.
-- Updated the Blockly workspace subsystem note to describe the new local-dev assist behavior.
+- Updated the Blockly workspace subsystem note to describe the new viewport-fitting local-dev assist behavior.
 - Added/updated focused unit coverage for dev-link gating and assist state.
-- Added/updated focused browser coverage for dev-link startup behavior.
+- Added/updated focused browser coverage for dev-link startup behavior and viewport containment.
 
 ### Validation
 
@@ -26,16 +28,18 @@ Implemented the Plan 22 repair for local-dev guided deep links by adding a dev-o
 
 ### Notes
 
-- Plan 06 Gemini prompt and level-context files did not need edits after review; there were no stale “open the toolbox first” directions to correct.
-- The Playwright browser test now asserts the real `blockRect.left > flyoutRect.right + 8` and `blockRect.right <= blocklyRect.right - 8` geometry promise at `1280x720`, plus the board container/canvas bounds.
-- The assist is one-shot, local-dev only, and does not mutate guided unlock progress or production output.
-- The wide-layout class reads true with `docs/subsystems/blockly-workspace.md`; the note was updated to reflect the clamped scroll-based assist instead of the older timeout-heavy nudge wording.
-- Post-fix geometry at `1280x720`:
-  - `#blocklyDiv`: left `752`, right `1512`, width `760`
-  - flyout: left `866`, right `1064.796875`, width `198.796875`
-  - `On Each Turn`: left `1088.796875`, right `1200.247802734375`, width `111.450927734375`
-  - `#canvas-container`: left `-203`, right `403`, width `606`
-  - canvas: left `-200`, right `400`, width `600`
+- The Playwright browser test now asserts the real geometry promise at `1280x720`: the page fits the viewport, the lesson panel remains visible, the canvas stays inside its container, and `On Each Turn` clears the flyout while staying inside Blockly.
+- Final measured geometry at `1280x720`:
+  - `documentElement.scrollWidth`: `1280`
+  - `window.innerWidth`: `1280`
+  - `#game-container`: left `0`, right `1280`, width `1280`
+  - `#canvas-container`: left `13`, right `469`, width `456`
+  - canvas: left `16`, right `466`, width `450`
+  - lesson panel: left `484`, right `746`, width `262`
+  - `#blockly-region`: left `762`, right `1280`, width `518`
+  - `#blocklyDiv`: left `778`, right `1264`, width `486`
+  - flyout: left `892`, right `1090.796875`, width `198.796875`
+  - `On Each Turn`: left `1114.796875`, right `1226.247802734375`, width `111.450927734375`
 - Normal Guided Levels and Free Play were rechecked by the full browser suite and continued to pass unchanged.
 
 ### Files changed
@@ -44,13 +48,13 @@ Implemented the Plan 22 repair for local-dev guided deep links by adding a dev-o
 - `src/ui/devGuidedLevelLink.js`
 - `src/ui/levels.js`
 - `src/ai/blockly/workspace.js`
+- `src/assets/styles/style.css`
 - `tests/unit/dev-guided-level-link.test.js`
 - `tests/browser/dev-guided-level-link.spec.js`
 - `tests/browser/guided-ui.spec.js`
-- `src/assets/styles/style.css`
 - `docs/subsystems/blockly-workspace.md`
 - `docs/development/README.md`
 
 ### Remaining risk
 
-- The assist still relies on Blockly scroll/layout settling once during startup, but the browser test now exercises the exact drawer-vs-block spacing requirement and the full browser suite passed.
+- The assist still relies on a single Blockly scroll after layout settles, but the browser test now exercises the exact drawer-vs-block spacing requirement and the full browser suite passed.
