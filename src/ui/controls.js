@@ -1,11 +1,13 @@
 import {
   AI_ACTION_TYPES,
+  BLOCKLY_TRACE_SPEED_THRESHOLD,
   FREE_PLAY_MODES,
   GAME_VIEW_MODES,
   LEVEL_RESULT,
   MAIN_GAME_STATES,
   P1_KEY_BINDINGS,
-  P2_KEY_BINDINGS
+  P2_KEY_BINDINGS,
+  TURN_STATES
 } from "../config/constants.js";
 import { enterFreePlay, goToNextLevel, startLevel, resetCurrentLevel, getCurrentLevel } from "../core/levels.js";
 import { resetGameToSetup, startGame } from "../core/setup.js";
@@ -93,9 +95,19 @@ export function bindControls(app) {
   let pendingPrivateImportFileName = "";
   if (speedSlider && speedValueDisplay) {
     const updateSpeed = () => {
+      const previousSpeed = Number(app.state.animationSpeedFactor);
       app.state.animationSpeedFactor = getAnimationSpeedFactorFromSliderValue(speedSlider.value);
       const value = Number.parseInt(speedSlider.value, 10);
       speedValueDisplay.textContent = value === 10 ? "Normal" : value < 10 ? "Slower" : "Faster";
+      if (
+        Number.isFinite(previousSpeed) &&
+        previousSpeed <= BLOCKLY_TRACE_SPEED_THRESHOLD &&
+        app.state.animationSpeedFactor > BLOCKLY_TRACE_SPEED_THRESHOLD &&
+        app.state.currentTurnState === TURN_STATES.TRACING_PRE_ACTION
+      ) {
+        app.hooks.clearBlocklyTracePlayback?.(app);
+        app.state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+      }
     };
     speedSlider.addEventListener("input", updateSpeed);
     updateSpeed();

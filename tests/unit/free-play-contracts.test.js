@@ -70,6 +70,36 @@ test("guided Level 15 CPU behaviors stay still or move only through legal cardin
   }
 });
 
+test("guided vertical patrol alternates up and down without using special actions", () => {
+  const app = buildMatch();
+  const actor = app.state.allRunners.find((runner) => runner.id.includes("Npc")) || app.state.allRunners.find((runner) => !runner.isHumanControlled);
+  actor.gridX = 5;
+  actor.gridY = 4;
+  actor.initialGridX = 5;
+  actor.initialGridY = 4;
+  actor.guidedVerticalPatrolDirection = null;
+  actor.cpuBehavior = NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL;
+
+  let decision = calculateFreePlayCpuAction(actor, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.MOVE_UP_SCREEN);
+
+  actor.gridY = 0;
+  actor.guidedVerticalPatrolDirection = -1;
+  decision = calculateFreePlayCpuAction(actor, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.MOVE_DOWN_SCREEN);
+
+  actor.gridY = 7;
+  actor.guidedVerticalPatrolDirection = 1;
+  decision = calculateFreePlayCpuAction(actor, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.MOVE_UP_SCREEN);
+
+  actor.gridY = 0;
+  actor.guidedVerticalPatrolDirection = -1;
+  app.state.barriers.push({ id: "top-block", ownerRunnerId: null, gridX: 5, gridY: 1 });
+  decision = calculateFreePlayCpuAction(actor, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.STAY_STILL);
+});
+
 test("area freeze freezes nearby enemies once per round and resets on round reset", () => {
   const app = buildMatch();
   const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");

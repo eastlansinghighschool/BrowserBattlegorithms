@@ -220,6 +220,7 @@ window.__BBA_TEST_HOOKS__ = {
   getSensorRelationLabels: () => app.hooks.getSensorRelationLabels?.() || [],
   loadWorkspaceXml: (xmlText) => app.hooks.importWorkspaceXml?.(xmlText),
   getWorkspaceXmlText: () => app.hooks.getWorkspaceXmlText?.() || "",
+  clearBlocklyTracePlayback: () => app.hooks.clearBlocklyTracePlayback?.(),
   canUndoBlocklyWorkspace: () => app.hooks.canUndoBlocklyWorkspace?.() || false,
   canRedoBlocklyWorkspace: () => app.hooks.canRedoBlocklyWorkspace?.() || false,
   undoBlocklyWorkspace: () => app.hooks.undoBlocklyWorkspace?.() || false,

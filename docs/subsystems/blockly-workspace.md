@@ -81,6 +81,18 @@ Ignored blocks and Blockly-disabled blocks are not the same thing.
 4. `hideChaff()` is a separate call that closes open tooltip bubbles, context menus, and dropdown selections. It is called on reset/load paths and before undo/redo actions, but it does not automatically accompany `setWarningText`.
 5. Warning icons and chaff cleanup are separate concerns: clearing a warning does not close an open warning bubble. Code that updates warning state should consider whether open UI should also be dismissed.
 
+## Trace collection
+
+Blockly trace collection is a passive, argument-threaded data path that records what the resolver actually evaluated during action selection. It does not mutate workspace XML, warning state, runner state, or any DOM surface in this packet.
+
+The collector is only attached on the visible-workspace path. The inactive PvP team's hidden-workspace branch stays trace-free.
+
+Plan 25b consumes the collected steps as a third, separate UI signal alongside Blockly's native disabled state and the app's ignored-block warning bubbles:
+- trace highlight uses `workspace.highlightBlock(...)` plus `bba-trace-*` CSS classes on the live workspace SVG;
+- it never calls `setWarningText(...)` or `setDisabledReason(...)`;
+- it cooperates with `hideChaff()` on trace start so open bubbles and menus do not co-render with the highlight;
+- the overflow badge and empty-program hint are part of the same trace UI surface and clear with the block highlights.
+
 ## Undo/redo wrapping
 
 Undo/redo uses Blockly-native history (`Workspace.undo(redo)`). The app wraps each undo/redo call to:

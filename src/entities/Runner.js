@@ -30,6 +30,7 @@ export class Runner {
     this.isNPC = isNPC;
     this.id = `runner_${team}_${idSuffix || Math.random().toString(16).slice(2, 8)}`;
     this.playDirection = 1;
+    this.guidedVerticalPatrolDirection = null;
     this.runnerRole = this.isHumanControlled ? "human" : (this.isNPC ? "npc" : "ally");
     this.allyIndex = null;
     this.carriedFlagEmoji = null;
@@ -124,6 +125,7 @@ export class Runner {
     this.isAutoSkipFrozen = false;
     this.canJump = true;
     this.canPlaceBarrier = true;
+    this.guidedVerticalPatrolDirection = null;
     this.activeBarrierId = null;
     this.isGracePeriod = false;
   }

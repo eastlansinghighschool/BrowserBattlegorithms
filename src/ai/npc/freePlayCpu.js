@@ -123,6 +123,23 @@ function getRandomLegalMovementDecision(runner, state) {
   return getRandomItem(candidates, randomFn) || { type: AI_ACTION_TYPES.STAY_STILL };
 }
 
+function getGuidedVerticalPatrolAction(runner, state) {
+  const preferredDirection = runner.guidedVerticalPatrolDirection === 1 ? 1 : -1;
+  const patrolDirections = [preferredDirection, -preferredDirection];
+
+  for (const direction of patrolDirections) {
+    const targetGridY = runner.gridY + direction;
+    if (!isCellBlockedForRunner(runner.gridX, targetGridY, state.barriers, state.gameMap, state, runner)) {
+      runner.guidedVerticalPatrolDirection = direction;
+      return {
+        actionType: direction < 0 ? AI_ACTION_TYPES.MOVE_UP_SCREEN : AI_ACTION_TYPES.MOVE_DOWN_SCREEN
+      };
+    }
+  }
+
+  return { actionType: AI_ACTION_TYPES.STAY_STILL };
+}
+
 function getAttackerAction(runner, state) {
   const moveTarget = runner.hasEnemyFlag
     ? resolveMoveTowardTarget(state, runner, MOVE_TOWARD_TARGETS.MY_BASE)
@@ -200,6 +217,10 @@ export function calculateFreePlayCpuAction(runner, state) {
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY) {
     return getRandomLegalMovementDecision(runner, state);
+  }
+
+  if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL) {
+    return getGuidedVerticalPatrolAction(runner, state);
   }
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.FREE_PLAY_TACTICAL_ATTACKER) {

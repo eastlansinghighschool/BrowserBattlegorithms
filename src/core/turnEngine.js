@@ -1,6 +1,10 @@
+import * as Blockly from "blockly";
 import {
   ACTIVE_TEAM2_NPC_BEHAVIOR,
   AI_ACTION_TYPES,
+  BLOCKLY_TRACE_MAX_DURATION_FRAMES,
+  BLOCKLY_TRACE_MAX_STEPS,
+  BLOCKLY_TRACE_SPEED_THRESHOLD,
   AREA_FREEZE_DURATION_TURNS,
   AREA_FREEZE_RADIUS,
   CELL_SIZE,
@@ -8,6 +12,7 @@ import {
   HUMAN_TURN_BEHAVIORS,
   MAIN_GAME_STATES,
   NPC_BEHAVIORS,
+  isBlocklyTraceCollectionActive,
   TURN_STATES
 } from "../config/constants.js";
 import { createQueuedHumanAction } from "./actions.js";
@@ -29,6 +34,9 @@ import { Barrier } from "../entities/Barrier.js";
 import { evaluateLevelProgress } from "./levels.js";
 import { triggerGoalBurst } from "./levels.js";
 import { playSound } from "../ui/sound.js";
+import { applyTraceStep, clearTraceStepCurrent, hideTraceEmptyHint, setTraceOverflowBadge, showTraceEmptyHint } from "../ai/blockly/traceRenderer.js";
+import { clearBlocklyTracePlayback, getFirstRunnableActionWithTrace } from "../ai/blockly/workspace.js";
+import { stashBlocklyTrace } from "../ai/blockly/interpreter.js";
 
 function sync(app) {
   if (typeof app.syncUi === "function") {
@@ -105,6 +113,72 @@ export function handlePlayerInput(app, runner, actionData) {
   state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
 }
 
+function getVisibleBlocklyTraceSteps(trace) {
+  if (!Array.isArray(trace) || trace.length === 0) {
+    return [];
+  }
+
+  if (trace.length <= BLOCKLY_TRACE_MAX_STEPS) {
+    return trace.map((step) => ({ ...step }));
+  }
+
+  return [
+    ...trace.slice(0, BLOCKLY_TRACE_MAX_STEPS - 1).map((step) => ({ ...step })),
+    { ...trace.at(-1) }
+  ];
+}
+
+export function getBlocklyTraceFrameBudgetPerStep(state) {
+  const animationSpeedFactor = Number(state?.animationSpeedFactor);
+  if (!Number.isFinite(animationSpeedFactor) || animationSpeedFactor <= 0) {
+    return BLOCKLY_TRACE_MAX_DURATION_FRAMES;
+  }
+
+  const baseFrameBudget = BLOCKLY_TRACE_MAX_DURATION_FRAMES / BLOCKLY_TRACE_MAX_STEPS;
+  const scaledBudget = baseFrameBudget * (BLOCKLY_TRACE_SPEED_THRESHOLD / animationSpeedFactor);
+  return Math.max(1, Math.round(scaledBudget));
+}
+
+function startBlocklyTracePlayback(app, runner, rawTrace) {
+  const { state } = app;
+  const traceSteps = getVisibleBlocklyTraceSteps(rawTrace);
+  clearBlocklyTracePlayback(app);
+
+  if (!traceSteps.length) {
+    state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+    return false;
+  }
+
+  state.activeBlocklyTrace = {
+    runnerId: runner?.id ?? null,
+    runnerTeam: runner?.team ?? null,
+    turnNumber: state.currentTurnNumber,
+    levelId: state.currentLevelId,
+    steps: Array.isArray(rawTrace) ? rawTrace.map((step) => ({ ...step })) : []
+  };
+  state.tracePlaybackSteps = traceSteps;
+  state.traceStepIndex = 0;
+  state.traceStepFrameCount = 0;
+  state.traceStepFrameBudget = getBlocklyTraceFrameBudgetPerStep(state);
+  state.traceCurrentBlockId = traceSteps[0]?.blockId || null;
+  state.traceOverflowBadgeVisible = Array.isArray(rawTrace) && rawTrace.length > BLOCKLY_TRACE_MAX_STEPS;
+
+  if (state.traceOverflowBadgeVisible) {
+    setTraceOverflowBadge(app.blocklyWorkspace, true);
+  }
+
+  app.blocklyWorkspace?.hideChaff?.();
+
+  state.currentTurnState = TURN_STATES.TRACING_PRE_ACTION;
+  applyTraceStep(app.blocklyWorkspace, traceSteps[0]);
+  if (traceSteps[0]?.kind === "empty") {
+    state.traceEmptyHintVisible = true;
+    showTraceEmptyHint(app.blocklyWorkspace);
+  }
+  stashBlocklyTrace(app, runner, state.activeBlocklyTrace.steps);
+  return true;
+}
+
 function planActionForActiveRunner(app, runner) {
   const { state } = app;
   if (runner.isNPC) {
@@ -114,13 +188,22 @@ function planActionForActiveRunner(app, runner) {
         ACTIVE_TEAM2_NPC_BEHAVIOR === NPC_BEHAVIORS.SIMPLE_TARGET
           ? calculateNpcType1Action(runner, state)
           : calculateNpcType2Action(runner, state)
-      );
+    );
     state.queuedActionForCurrentRunner = translateActionDecision(runner, decision, state);
     state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
-    return;
+    return false;
   }
 
-  let aiDecision = app.hooks.getAIAllyAction?.(runner) || { type: AI_ACTION_TYPES.STAY_STILL };
+  const shouldTraceBlockly = isBlocklyTraceCollectionActive(state);
+  let aiDecision = null;
+  let traceSteps = null;
+  if (shouldTraceBlockly) {
+    const traceResult = getFirstRunnableActionWithTrace(app, runner);
+    aiDecision = traceResult.action || { type: AI_ACTION_TYPES.STAY_STILL };
+    traceSteps = traceResult.trace;
+  } else {
+    aiDecision = app.hooks.getAIAllyAction?.(runner) || { type: AI_ACTION_TYPES.STAY_STILL };
+  }
 
   let queued = translateActionDecision(runner, aiDecision, state);
   if (queued.actionType === AI_ACTION_TYPES.JUMP_FORWARD && !runner.canJump) {
@@ -131,7 +214,11 @@ function planActionForActiveRunner(app, runner) {
   }
 
   state.queuedActionForCurrentRunner = queued;
+  if (shouldTraceBlockly && traceSteps && traceSteps.length > 0) {
+    return startBlocklyTracePlayback(app, runner, traceSteps);
+  }
   state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+  return false;
 }
 
 function advanceToNextRunner(state) {
@@ -191,6 +278,7 @@ function handleActionCompletion(app, completedRunner) {
     }
     const levelResult = evaluateLevelProgress(app);
     if (levelResult) {
+      clearBlocklyTracePlayback(app);
       sync(app);
       return;
     }
@@ -213,15 +301,18 @@ function handleActionCompletion(app, completedRunner) {
       }
       const postScoreLevelResult = evaluateLevelProgress(app);
       if (postScoreLevelResult) {
+        clearBlocklyTracePlayback(app);
         sync(app);
         return;
       }
       if (state.currentTurnState === TURN_STATES.GAME_OVER) {
         state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
         recordFreePlayGameOver(app);
+        clearBlocklyTracePlayback(app);
         sync(app);
         return;
       }
+      clearBlocklyTracePlayback(app);
       resetRound(state);
       sync(app);
       return;
@@ -231,19 +322,23 @@ function handleActionCompletion(app, completedRunner) {
   if (state.currentTurnState === TURN_STATES.GAME_OVER) {
     state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
     recordFreePlayGameOver(app);
+    clearBlocklyTracePlayback(app);
     sync(app);
     return;
   }
 
   const endOfTurnLevelResult = evaluateLevelProgress(app);
   if (endOfTurnLevelResult) {
+    clearBlocklyTracePlayback(app);
     sync(app);
     return;
   }
 
+  clearBlocklyTracePlayback(app);
   advanceToNextRunner(state);
   const advancedLevelResult = evaluateLevelProgress(app);
   if (advancedLevelResult) {
+    clearBlocklyTracePlayback(app);
     sync(app);
     return;
   }
@@ -406,7 +501,68 @@ export function processTurnActions(app, p) {
       return;
     }
 
-    planActionForActiveRunner(app, runner);
+    const startedTracePlayback = planActionForActiveRunner(app, runner);
+    if (startedTracePlayback) {
+      return;
+    }
+  }
+
+  if (state.currentTurnState === TURN_STATES.TRACING_PRE_ACTION) {
+    if (!state.activeBlocklyTrace || !Array.isArray(state.tracePlaybackSteps) || state.tracePlaybackSteps.length === 0) {
+      state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+      return;
+    }
+
+    if (!isBlocklyTraceCollectionActive(state)) {
+      clearBlocklyTracePlayback(app);
+      state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+      return;
+    }
+
+    const animationSpeedFactor = Number(state.animationSpeedFactor);
+    if (!Number.isFinite(animationSpeedFactor) || animationSpeedFactor <= 0) {
+      return;
+    }
+
+    state.traceStepFrameCount += 1;
+    if (state.traceStepFrameCount < state.traceStepFrameBudget) {
+      return;
+    }
+
+    const currentStep = state.tracePlaybackSteps[state.traceStepIndex] || null;
+    const nextStepIndex = state.traceStepIndex + 1;
+    const nextStep = state.tracePlaybackSteps[nextStepIndex] || null;
+    const sameBlock = Boolean(currentStep?.blockId && nextStep?.blockId && currentStep.blockId === nextStep.blockId);
+    const shouldKeepCurrentHighlight = sameBlock && nextStepIndex < state.tracePlaybackSteps.length;
+
+    if (!shouldKeepCurrentHighlight) {
+      clearTraceStepCurrent(app.blocklyWorkspace, currentStep);
+    }
+    if (currentStep?.kind === "empty") {
+      hideTraceEmptyHint(app.blocklyWorkspace);
+      state.traceEmptyHintVisible = false;
+    }
+
+    state.traceStepIndex = nextStepIndex;
+    if (state.traceStepIndex >= state.tracePlaybackSteps.length) {
+      state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
+      return;
+    }
+
+    const renderedStep = state.tracePlaybackSteps[state.traceStepIndex];
+    state.traceStepFrameCount = 0;
+    state.traceStepFrameBudget = getBlocklyTraceFrameBudgetPerStep(state);
+    if (sameBlock) {
+      state.traceCurrentBlockId = renderedStep?.blockId || null;
+      return;
+    }
+    state.traceCurrentBlockId = renderedStep?.blockId || null;
+    state.traceEmptyHintVisible = renderedStep?.kind === "empty";
+    applyTraceStep(app.blocklyWorkspace, renderedStep);
+    if (renderedStep?.kind === "empty") {
+      showTraceEmptyHint(app.blocklyWorkspace);
+    }
+    return;
   }
 
   if (state.currentTurnState === TURN_STATES.PROCESSING_ACTION && state.queuedActionForCurrentRunner) {

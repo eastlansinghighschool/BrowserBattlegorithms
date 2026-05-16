@@ -1,10 +1,12 @@
 # Plan 25: Slow-Speed Blockly Trace
 
+> **DEPRECATED 2026-05-15.** Superseded by [Plan 25a](plan-25a-blockly-trace-collection.md) (data-only collector) and [Plan 25b](plan-25b-blockly-trace-playback.md) (pre-action playback UI). The single-packet design conflated pure-function trace data with turn-engine state machine and Blockly visual work; the split lets the riskier UI/timing changes be reviewed on their own merits and unblocks Plan 06 diagnosis on the data side alone. Do not implement this packet. The text below is preserved for historical context only.
+
 ## Packet Metadata
 
 - Packet id: plan-25
 - Packet title: Slow-Speed Blockly Trace
-- Status: ready
+- Status: deprecated (superseded by Plan 25a + Plan 25b)
 - Owner/model: implementation agent
 - Date: 2026-05-15
 - Packet type: implementation / frontend / testing / docs

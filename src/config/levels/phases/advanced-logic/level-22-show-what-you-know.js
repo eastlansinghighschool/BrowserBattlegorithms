@@ -1,4 +1,4 @@
-import { BLOCK_TYPES, SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
+import { BLOCK_TYPES, SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS, NPC_BEHAVIORS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
 import { GENERIC_SENSOR_BLOCKS, MOVE_TOWARD_BLOCKS, JUMP_CONDITION_BLOCKS, JUMP_BLOCKS, BARRIER_PLACEMENT_BLOCKS, BARRIER_READY_BLOCKS, AREA_FREEZE_BLOCKS, TERRITORY_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
@@ -71,7 +71,14 @@ export default {
     autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     teams: {
       player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 1, gridY: 4 }] },
-      opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 7, gridY: 0 }, { slot: "npc2", gridX: 8, gridY: 4 }] }
+      opponent: {
+        playDirection: -1,
+        runners: [
+          { slot: "npc1", gridX: 7, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+          { slot: "npc2", gridX: 8, gridY: 5, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+          { slot: "npc3", gridX: 9, gridY: 7, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
+        ]
+      }
     },
     flags: { opponent: { gridX: 11, gridY: 4 } }
   }

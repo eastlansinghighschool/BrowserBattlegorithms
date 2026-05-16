@@ -27,6 +27,7 @@ import {
 import { setAllowedMoveTowardTargets, setAllowedSensorOptions } from "./blocks.js";
 import { applyBlocklyPanelSize } from "../../ui/blocklyLayout.js";
 import { getActiveProgramLabel } from "../../ui/programContext.js";
+import { clearAllTraceClasses } from "./traceRenderer.js";
 
 const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
@@ -121,6 +122,56 @@ function buildUsageWorkspaceCapture(app, reason) {
     activeBlocklyTeamTab: app.state.activeBlocklyTeamTab,
     turnNumber: app.state.currentTurnNumber
   };
+}
+
+function createBlocklyTraceCollector(runner) {
+  const steps = [];
+  const runnerId = runner?.id ?? null;
+  const runnerTeam = runner?.team ?? null;
+
+  return {
+    recordStep(step) {
+      if (!step || typeof step !== "object") {
+        return;
+      }
+      steps.push({
+        ...step,
+        runnerId,
+        runnerTeam
+      });
+    },
+    getSteps() {
+      return steps.map((step) => ({ ...step }));
+    }
+  };
+}
+
+export function clearBlocklyTracePlayback(app) {
+  if (!app?.state) {
+    return;
+  }
+
+  clearAllTraceClasses(app.blocklyWorkspace);
+  app.state.activeBlocklyTrace = null;
+  app.state.tracePlaybackSteps = [];
+  app.state.traceStepIndex = 0;
+  app.state.traceStepFrameCount = 0;
+  app.state.traceStepFrameBudget = 0;
+  app.state.traceCurrentBlockId = null;
+  app.state.traceOverflowBadgeVisible = false;
+  app.state.traceEmptyHintVisible = false;
+}
+
+function recordTraceStep(collector, block, kind, extra = {}) {
+  if (!collector || !block) {
+    return;
+  }
+  collector.recordStep({
+    blockId: block.id,
+    blockType: block.type,
+    kind,
+    ...extra
+  });
 }
 
 function isWorkspaceEditable(workspace) {
@@ -397,7 +448,7 @@ function resolveMoveTowardTargetCell(state, runner, targetType) {
   }
 }
 
-function evaluateBlocklyNumberValue(state, runner, block) {
+function evaluateBlocklyNumberValue(state, runner, block, collector = null) {
   if (!block) {
     return 0;
   }
@@ -421,7 +472,7 @@ function evaluateBlocklyNumberValue(state, runner, block) {
   }
 }
 
-function evaluateBlocklyBooleanValue(state, runner, block) {
+function evaluateBlocklyBooleanValue(state, runner, block, collector = null) {
   if (!block) {
     return false;
   }
@@ -436,43 +487,68 @@ function evaluateBlocklyBooleanValue(state, runner, block) {
     block.type === BLOCK_TYPES.BOOLEAN_ON_MY_SIDE ||
     block.type === BLOCK_TYPES.BOOLEAN_ON_ENEMY_SIDE
   ) {
-    return evaluateCondition(state, runner, getConditionDescriptor(block));
+    const result = evaluateCondition(state, runner, getConditionDescriptor(block));
+    recordTraceStep(collector, block, "condition", { result });
+    return result;
   }
 
   if (block.type === BLOCK_TYPES.LOGIC_AND) {
-    return (
-      evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "LEFT")) &&
-      evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "RIGHT"))
-    );
+    const left = evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "LEFT"), collector);
+    if (!left) {
+      recordTraceStep(collector, block, "boolean", { result: false });
+      return false;
+    }
+    const right = evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "RIGHT"), collector);
+    const result = left && right;
+    recordTraceStep(collector, block, "boolean", { result });
+    return result;
   }
   if (block.type === BLOCK_TYPES.LOGIC_OR) {
-    return (
-      evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "LEFT")) ||
-      evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "RIGHT"))
-    );
+    const left = evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "LEFT"), collector);
+    if (left) {
+      recordTraceStep(collector, block, "boolean", { result: true });
+      return true;
+    }
+    const right = evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "RIGHT"), collector);
+    const result = left || right;
+    recordTraceStep(collector, block, "boolean", { result });
+    return result;
   }
   if (block.type === BLOCK_TYPES.LOGIC_NOT) {
-    return !evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "VALUE"));
+    const value = evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(block, "VALUE"), collector);
+    const result = !value;
+    recordTraceStep(collector, block, "boolean", { result });
+    return result;
   }
   if (block.type === BLOCK_TYPES.VALUE_COMPARE) {
-    const left = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "LEFT"));
-    const right = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "RIGHT"));
+    const left = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "LEFT"), collector);
+    const right = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "RIGHT"), collector);
+    let result = false;
     switch (block.getFieldValue("OPERATOR")) {
       case ADVANCED_COMPARE_OPERATORS.EQ:
-        return left === right;
+        result = left === right;
+        break;
       case ADVANCED_COMPARE_OPERATORS.NEQ:
-        return left !== right;
+        result = left !== right;
+        break;
       case ADVANCED_COMPARE_OPERATORS.LT:
-        return left < right;
+        result = left < right;
+        break;
       case ADVANCED_COMPARE_OPERATORS.LTE:
-        return left <= right;
+        result = left <= right;
+        break;
       case ADVANCED_COMPARE_OPERATORS.GT:
-        return left > right;
+        result = left > right;
+        break;
       case ADVANCED_COMPARE_OPERATORS.GTE:
-        return left >= right;
+        result = left >= right;
+        break;
       default:
-        return false;
+        result = false;
+        break;
     }
+    recordTraceStep(collector, block, "comparison", { result, numericLeft: left, numericRight: right });
+    return result;
   }
 
   return false;
@@ -576,26 +652,28 @@ export function updateBlocklyExecutionHints(app) {
   }
 }
 
-function resolveFirstRunnableAction(state, runner, block) {
+function resolveFirstRunnableAction(state, runner, block, collector = null) {
   let current = block;
 
   while (current) {
     const actionDecision = getActionDecisionForBlock(current);
     if (actionDecision) {
+      recordTraceStep(collector, current, "action");
       return actionDecision;
     }
 
     if (isConditionBlockType(current.type)) {
       const conditionPassed = current.type === BLOCK_TYPES.IF_BOOLEAN || current.type === BLOCK_TYPES.IF_BOOLEAN_ELSE
-        ? evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(current, "BOOL"))
+        ? evaluateBlocklyBooleanValue(state, runner, getValueChildBlock(current, "BOOL"), collector)
         : evaluateCondition(state, runner, getConditionDescriptor(current));
+      recordTraceStep(collector, current, "condition", { result: conditionPassed });
       if (conditionPassed) {
-        const branchAction = resolveFirstRunnableAction(state, runner, getConditionChildBlock(current));
+        const branchAction = resolveFirstRunnableAction(state, runner, getConditionChildBlock(current), collector);
         if (branchAction) {
           return branchAction;
         }
       } else {
-        const elseAction = resolveFirstRunnableAction(state, runner, getElseChildBlock(current));
+        const elseAction = resolveFirstRunnableAction(state, runner, getElseChildBlock(current), collector);
         if (elseAction) {
           return elseAction;
         }
@@ -629,6 +707,39 @@ export function getFirstRunnableAction(app, runner) {
     Blockly.Xml.domToWorkspace(xml, workspace);
     const eventBlock = getEventBlock(workspace);
     return resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+  } finally {
+    workspace.dispose();
+  }
+}
+
+export function getFirstRunnableActionWithTrace(app, runner) {
+  if (!app.blocklyWorkspace) {
+    return { action: null, trace: null };
+  }
+
+  const shouldUseVisibleWorkspace =
+    app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS ||
+    app.state.freePlayMode !== FREE_PLAY_MODES.PLAYER_VS_PLAYER ||
+    Number(app.state.activeBlocklyTeamTab || 1) === Number(runner.team);
+
+  if (shouldUseVisibleWorkspace) {
+    const eventBlock = ensureEventBlock(app);
+    const collector = createBlocklyTraceCollector(runner);
+    const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null, collector);
+    if (!action && eventBlock) {
+      recordTraceStep(collector, eventBlock, "empty");
+    }
+    return { action, trace: collector.getSteps() };
+  }
+
+  const xmlText = getStoredWorkspaceXmlText(app, runner.team, buildDefaultWorkspaceXml());
+  const workspace = new Blockly.Workspace();
+  try {
+    const xml = Blockly.utils.xml.textToDom(xmlText || buildDefaultWorkspaceXml());
+    Blockly.Xml.domToWorkspace(xml, workspace);
+    const eventBlock = getEventBlock(workspace);
+    const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    return { action, trace: null };
   } finally {
     workspace.dispose();
   }
@@ -695,6 +806,7 @@ export function loadWorkspaceXml(app, xmlText) {
   if (!app.blocklyWorkspace) {
     return;
   }
+  clearBlocklyTracePlayback(app);
   app.blocklyWorkspace.__bbaSuppressUsageCapture = true;
   try {
     app.blocklyWorkspace.clear();
@@ -783,6 +895,7 @@ export function switchActiveBlocklyTeamTab(app, teamId) {
   if (app.state.currentModeView !== GAME_VIEW_MODES.FREE_PLAY || app.state.freePlayMode !== FREE_PLAY_MODES.PLAYER_VS_PLAYER) {
     return;
   }
+  clearBlocklyTracePlayback(app);
   saveWorkspaceToLocalStorage(app, app.state.activeBlocklyTeamTab || 1);
   app.state.activeBlocklyTeamTab = Number(teamId) === 2 ? 2 : 1;
   loadWorkspaceFromLocalStorage(app, "", app.state.activeBlocklyTeamTab);
@@ -790,6 +903,7 @@ export function switchActiveBlocklyTeamTab(app, teamId) {
 }
 
 export function loadWorkspaceFromLocalStorage(app, fallbackXml = "", overrideTeamId = null) {
+  clearBlocklyTracePlayback(app);
   const xmlToLoad = getStoredWorkspaceXmlText(app, overrideTeamId, fallbackXml);
   const shouldShiftStarterWorkspace = Boolean(
     app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS &&
@@ -815,6 +929,7 @@ export function importWorkspaceXml(app, xmlText) {
   }
   const previousXml = getWorkspaceXmlText(app);
   try {
+    clearBlocklyTracePlayback(app);
     loadWorkspaceXml(app, xmlText);
     saveWorkspaceToLocalStorage(app);
     app.usageTracker?.recordWorkspaceImported?.({

@@ -425,6 +425,85 @@ button:disabled {
   min-height: 320px;
 }
 
+#blockly-workspace-shell .bba-trace-empty-hint {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  max-width: min(330px, calc(100% - 20px));
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(36, 64, 74, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: #24404a;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+#blocklyDiv .bba-trace-current .blocklyPath {
+  stroke: #f59e0b !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.35));
+}
+
+#blocklyDiv .bba-trace-selected-action .blocklyPath {
+  stroke: #3b6f90 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(59, 111, 144, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-true .blocklyPath {
+  stroke: #1f7a4b !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(31, 122, 75, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-false .blocklyPath {
+  stroke: #b42318 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(180, 35, 24, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-true-bg,
+#blocklyDiv .bba-trace-result-false-bg,
+#blocklyDiv .bba-trace-overflow-badge-bg {
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.25px;
+}
+
+#blocklyDiv .bba-trace-result-true-bg {
+  fill: #1f7a4b;
+}
+
+#blocklyDiv .bba-trace-result-false-bg {
+  fill: #b42318;
+}
+
+#blocklyDiv .bba-trace-overflow-badge {
+  color: #f59e0b;
+}
+
+#blocklyDiv .bba-trace-overflow-badge-bg {
+  fill: #f59e0b;
+}
+
+#blocklyDiv .bba-trace-result-true-mark,
+#blocklyDiv .bba-trace-result-false-mark,
+#blocklyDiv .bba-trace-overflow-badge-mark {
+  fill: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+#blocklyDiv .bba-trace-overflow-badge-mark {
+  font-size: 16px;
+  letter-spacing: -0.04em;
+}
+
 .panel-loading-card {
   min-height: inherit;
   height: 100%;

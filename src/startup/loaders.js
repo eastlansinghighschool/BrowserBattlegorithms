@@ -11,6 +11,7 @@ function installEditorHooks(app, workspaceApi, interpreterApi) {
   app.hooks.loadWorkspaceFromLocalStorage = (fallbackXml = "", overrideTeamId = null) =>
     workspaceApi.loadWorkspaceFromLocalStorage(app, fallbackXml, overrideTeamId);
   app.hooks.switchActiveBlocklyTeamTab = (teamId) => workspaceApi.switchActiveBlocklyTeamTab(app, teamId);
+  app.hooks.clearBlocklyTracePlayback = () => workspaceApi.clearBlocklyTracePlayback(app);
   app.hooks.canUndoBlocklyWorkspace = () => workspaceApi.canUndoBlocklyWorkspace(app);
   app.hooks.canRedoBlocklyWorkspace = () => workspaceApi.canRedoBlocklyWorkspace(app);
   app.hooks.undoBlocklyWorkspace = () => workspaceApi.undoBlocklyWorkspace(app);

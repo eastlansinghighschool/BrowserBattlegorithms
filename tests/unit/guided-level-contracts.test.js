@@ -169,6 +169,23 @@ test("dodge-and-deliver authors a stationary defender and a movement-only wander
   assert.match(level.introText, /holds the lane/i);
 });
 
+test("challenge 22 authors guided vertical patrol defenders near the center lane", () => {
+  const level = getLevelDefinitions().find((entry) => entry.id === "show-what-you-know");
+  const enemies = level.setup.teams.opponent.runners;
+
+  assert.equal(enemies.length, 3);
+  assert.deepEqual(
+    enemies.map((runner) => ({ slot: runner.slot, gridX: runner.gridX, gridY: runner.gridY, cpuBehavior: runner.cpuBehavior })),
+    [
+      { slot: "npc1", gridX: 7, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+      { slot: "npc2", gridX: 8, gridY: 5, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+      { slot: "npc3", gridX: 9, gridY: 7, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
+    ]
+  );
+  assert.match(level.introText, /Two enemies are active/i);
+  assert.match(level.description, /live defenders/i);
+});
+
 test("guided toolbox restriction reflects the curriculum unlock path", () => {
   const app = createApp();
   initializeLevelState(app);

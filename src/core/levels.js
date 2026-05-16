@@ -218,6 +218,7 @@ export function getLevelStateSnapshot(app) {
 
 export function enterGuidedMode(app) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   state.currentModeView = GAME_VIEW_MODES.GUIDED_LEVELS;
   const currentLevel = getCurrentLevel(app);
   if (currentLevel) {
@@ -240,6 +241,7 @@ export function enterGuidedMode(app) {
 
 export function enterFreePlay(app) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   state.currentModeView = GAME_VIEW_MODES.FREE_PLAY;
   state.freePlayMode = state.freePlayMode || DEFAULT_FREE_PLAY_MODE;
   state.freePlayTeamSize = state.freePlayTeamSize || DEFAULT_FREE_PLAY_TEAM_SIZE;
@@ -271,6 +273,7 @@ export function enterFreePlay(app) {
 
 export function startLevel(app, levelId = app.state.currentLevelId) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   const level = state.levels.find((entry) => entry.id === levelId);
   if (!level) {
     return null;
@@ -301,6 +304,7 @@ export function startLevel(app, levelId = app.state.currentLevelId) {
 
 export function resetCurrentLevel(app, reason = "manual_reset") {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   const preservedWorkspaceXml = app.hooks.getWorkspaceXmlText?.() || "";
   state.lastLevelResultReason = reason;
   enterGuidedMode(app);
@@ -355,6 +359,7 @@ export function completeLevel(app, result, reason) {
 
 export function configureFreePlay(app, updates = {}) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   state.currentModeView = GAME_VIEW_MODES.FREE_PLAY;
   state.freePlayMode = updates.freePlayMode ?? state.freePlayMode ?? DEFAULT_FREE_PLAY_MODE;
   state.freePlayTeamSize = updates.freePlayTeamSize ?? state.freePlayTeamSize ?? DEFAULT_FREE_PLAY_TEAM_SIZE;
@@ -460,6 +465,7 @@ export function goToNextLevel(app) {
   if (!nextLevelId) {
     return null;
   }
+  app.hooks.clearBlocklyTracePlayback?.(app);
   app.state.currentLevelId = nextLevelId;
   app.state.currentLevelStatus = app.state.levelProgress[nextLevelId];
   app.state.activeLevelResult = LEVEL_RESULT.NONE;

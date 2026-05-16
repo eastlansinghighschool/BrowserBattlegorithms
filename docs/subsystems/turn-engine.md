@@ -31,15 +31,18 @@ Each runner's turn follows this sequence. Steps are not flat; each can branch or
 
 1. Runner becomes active.
 2. Human input may have queued an action, or AI/Blockly may choose one now.
-3. The turn engine resolves the queued action.
-4. Movement, collision, barrier, and freeze legality are checked.
-5. Runner finishes the action or bounces back to origin.
-6. Flag pickup is checked at the destination cell.
-7. Scoring is checked: if the runner returned the enemy flag to base, a point is scored.
-8. If guided mode, level-completion conditions may be evaluated.
-9. Engine either resets the round, ends the game, or advances to the next runner.
+3. If the runner is a Blockly-controlled, visible-workspace runner and `animationSpeedFactor` is at or below `BLOCKLY_TRACE_SPEED_THRESHOLD`, the engine enters `TRACING_PRE_ACTION` and renders the evaluation trace before resolving the queued action. The queued action is not re-evaluated.
+4. The turn engine resolves the queued action.
+5. Movement, collision, barrier, and freeze legality are checked.
+6. Runner finishes the action or bounces back to origin.
+7. Flag pickup is checked at the destination cell.
+8. Scoring is checked: if the runner returned the enemy flag to base, a point is scored.
+9. If guided mode, level-completion conditions may be evaluated.
+10. Engine either resets the round, ends the game, or advances to the next runner.
 
 Human input goes through the same engine pipeline as AI input. There is no parallel human-resolution path.
+
+The trace pause does not consume an extra turn, does not change collision/scoring/level-completion outcomes, and is cleared on reset, level switch, mode switch, workspace reload, game-over, threshold-crossing upward, and PvP team tab switch.
 
 ## Bounce vs illegal vs skipped
 

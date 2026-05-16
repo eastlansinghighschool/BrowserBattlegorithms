@@ -20,7 +20,7 @@ This note does NOT own:
 |---|---|
 | `src/ai/npc/npcType1.js` | Guided teaching NPC: axis-prioritized flag-chaser. Deterministic. |
 | `src/ai/npc/npcType2.js` | Guided teaching NPC: patrol/defender near flag home. Deterministic. |
-| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`. |
+| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies plus authored guided exceptions: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`, `GUIDED_STAY_STILL`, `GUIDED_RANDOM_MOVE_ONLY`, `GUIDED_VERTICAL_PATROL`. |
 | `src/ai/npc/pathing.js` | Shared deterministic one-step move-toward helper. Used by `npcType2.js` and the tactical free-play CPU. |
 | `src/core/teams.js` | Assigns `cpuBehavior` and `cpuRole` to CPU runner slots during team setup. |
 | `src/config/constants.js` | Defines CPU behavior constants referenced by both NPC and free-play CPU code. |
@@ -64,6 +64,12 @@ These are two separate systems with different tuning goals. They share no code p
 - `GUIDED_STAY_STILL` always returns `STAY_STILL`.
 - `GUIDED_RANDOM_MOVE_ONLY` picks from legal cardinal movement actions only, using the same `state.randomFn` test hook and the same runner/blocker legality checks used elsewhere in movement translation.
 - These behaviors are narrow guided exceptions, not a change to Free Play Easy.
+
+**`GUIDED_VERTICAL_PATROL`:**
+- Used by authored guided challenge exceptions that need a readable up/down defender lane without chase AI.
+- Patrol direction is stored on the runner itself as runner-local state and defaults to upward movement when unset.
+- The behavior moves vertically until blocked, then reverses, and stays still only when both vertical directions are blocked.
+- It is deterministic and not exposed through the Free Play UI.
 
 **`FREE_PLAY_TACTICAL_ATTACKER`:**
 - Chases the enemy flag or returns home when carrying it.

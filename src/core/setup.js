@@ -173,6 +173,7 @@ function applySetupBarriers(state) {
 
 export function initializeMatch(app) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   if (state.currentModeView === GAME_VIEW_MODES.FREE_PLAY) {
     state.currentGameMode = getGameModeForFreePlayMode(state.freePlayMode);
   }
@@ -194,6 +195,7 @@ export function initializeMatch(app) {
 
 export function initializeDisplayState(app) {
   const { state } = app;
+  app.hooks.clearBlocklyTracePlayback?.(app);
   if (state.currentModeView === GAME_VIEW_MODES.FREE_PLAY) {
     state.currentGameMode = getGameModeForFreePlayMode(state.freePlayMode);
   }

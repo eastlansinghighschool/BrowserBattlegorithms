@@ -25,10 +25,12 @@ test("resetRound restores runners and clears barriers", () => {
   const runner = app.state.allRunners[0];
   runner.gridX = 5;
   runner.isFrozen = true;
+  runner.guidedVerticalPatrolDirection = 1;
   app.state.barriers.push({ id: "b1", ownerRunnerId: runner.id, gridX: 4, gridY: 4 });
   resetRound(app.state);
   assert.equal(runner.gridX, runner.initialGridX);
   assert.equal(runner.isFrozen, false);
+  assert.equal(runner.guidedVerticalPatrolDirection, null);
   assert.equal(app.state.barriers.length, 0);
 });
 

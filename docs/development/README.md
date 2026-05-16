@@ -33,7 +33,10 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 22](plan-22-dev-guided-blockly-assist.md) | complete | Add dev-guided Blockly assist for Plan 06 browser-agent runs: open the first toolbox category and place `On Each Turn` visibly to the right when `devGuidedLevel` is active. |
 | [Plan 23](plan-23-level-15-defender-and-wanderer.md) | complete | Revise Challenge 15 with a stationary active defender and movement-only wandering enemy so the synthesis challenge is more game-like without becoming random trial-and-error. |
 | [Plan 24](plan-24-level-19-relay-race-repair.md) | complete | Repair Level 19 so the human retrieves the flag and the ally must use teammate-has-flag to switch from defensive staging to carrier support. |
-| [Plan 25](plan-25-slow-speed-blockly-trace.md) | ready | Add configurable slow-speed Blockly pre-action tracing so students can see checked conditions, branch outcomes, and the selected action before the runner moves. |
+| [Plan 25](plan-25-slow-speed-blockly-trace.md) | deprecated | Superseded by Plan 25a (data) + Plan 25b (UI). Original single-packet design conflated trace collection with pre-action playback; the split separates pure-function data work from turn-engine state machine and Blockly visual risk. |
+| [Plan 25a](plan-25a-blockly-trace-collection.md) | complete | Data-only Blockly evaluation trace collected during action resolution, with action-selection invariance, short-circuit honesty, PvP hidden-workspace skip, and dev-only inspection hook. No turn-engine or UI changes. |
+| [Plan 25b](plan-25b-blockly-trace-playback.md) | complete | Pre-action trace playback UI: new `TRACING_PRE_ACTION` turn state, per-frame block highlighting with outline + glyph + redundant color, 6-step cost cap with "…" overflow badge, low-speed empty-program hint. Depends on Plan 25a. |
+| [Plan 26](plan-26-challenge-22-guided-vertical-patrol.md) | complete | Add a deterministic guided vertical patrol NPC behavior and use it to make Challenge 22 live defenders more readable and less chase-brittle. |
 
 
 ## Future Directions
