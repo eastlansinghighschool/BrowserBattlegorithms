@@ -61,6 +61,65 @@ test("level 6 tutorial can open a read-only demo without replacing the learner w
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");
 });
 
+test("level 24 tutorial shows the piece-by-piece sensor selection demo", async ({ page }) => {
+  await page.goto("/");
+  await waitForHeavyReady(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
+    Object.assign(hooks.app.state.levelProgress, {
+      "move-to-target": "PASSED",
+      "reach-enemy-flag": "PASSED",
+      "score-a-point": "PASSED",
+      "barrier-detour": "PASSED",
+      "mirror-forward": "PASSED",
+      "sensor-barrier-branch": "PASSED",
+      "find-the-human": "PASSED",
+      "build-the-barrier": "PASSED",
+      "bring-it-home": "PASSED",
+      "jump-the-gap": "PASSED",
+      "jump-if-ready": "PASSED",
+      "stay-still-can-do-something": "PASSED",
+      "relay-race": "PASSED",
+      "freeze-the-lane": "PASSED",
+      "how-far-away": "AVAILABLE"
+    });
+    hooks.startLevel("how-far-away");
+    hooks.startCurrentLevelTutorial(true);
+  });
+
+  await expect(page.locator("#tutorial-overlay")).toContainText("Example piece-by-piece selection");
+  await expect(page.locator(".tutorial-demo-blockly")).toBeVisible();
+
+  await page.waitForFunction(() => {
+    const tutorialWorkspace = window.__BBA_TEST_HOOKS__?.app?.tutorialDemoWorkspace;
+    if (!tutorialWorkspace) {
+      return false;
+    }
+    const allTypes = tutorialWorkspace.getAllBlocks(false).map((block) => block.type);
+    return allTypes.includes("battlegorithms_on_each_turn") && allTypes.includes("battlegorithms_if_boolean_else");
+  });
+
+  const demoShape = await page.evaluate(() => {
+    const tutorialWorkspace = window.__BBA_TEST_HOOKS__?.app?.tutorialDemoWorkspace;
+    const allBlocks = tutorialWorkspace?.getAllBlocks(false) || [];
+    const ifBlock = allBlocks.find((block) => block.type === "battlegorithms_if_boolean_else");
+    const sensorBlock = ifBlock?.getInput("BOOL")?.connection?.targetBlock?.();
+    return {
+      allTypes: allBlocks.map((block) => block.type),
+      hasSensorBlock: Boolean(sensorBlock && sensorBlock.type === "battlegorithms_boolean_sensor_matches"),
+      sensorObject: sensorBlock?.getFieldValue("OBJECT") || null,
+      sensorRelation: sensorBlock?.getFieldValue("RELATION") || null
+    };
+  });
+
+  expect(demoShape.allTypes).toContain("battlegorithms_on_each_turn");
+  expect(demoShape.allTypes).toContain("battlegorithms_if_boolean_else");
+  expect(demoShape.hasSensorBlock).toBe(true);
+  expect(demoShape.sensorObject).toBe("BARRIER");
+  expect(demoShape.sensorRelation).toBe("DIRECTLY_IN_FRONT");
+});
+
 test("level 10 explains the special-action requirement and does not pass before it is used", async ({ page }) => {
   await page.goto("/");
   await waitForHeavyReady(page);
@@ -113,6 +172,8 @@ test("guided keyboard-practice level responds to actual Team 1 key presses", asy
     return human && !human.isMoving && !human.isBouncing;
   });
 
+  await page.evaluate(() => window.focus());
+  await page.locator("body").click({ position: { x: 5, y: 5 } });
   await page.keyboard.press("d");
   const queuedAction = await page.waitForFunction(() => {
     const hooks = window.__BBA_TEST_HOOKS__;

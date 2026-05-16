@@ -333,6 +333,11 @@ test("guided tutorial and authored board contracts remain consistent", () => {
   assert.equal(howFarAway.failureCondition.maxTurns, 17);
   assert.deepEqual(howFarAway.setupOverrides.barriers, [{ gridX: 4, gridY: 4, ownerRunnerId: "strategy_brain_distance_barrier" }]);
   assert.deepEqual(howFarAway.setupOverrides.teams.opponent.runners[0], { slot: "npc1", gridX: 6, gridY: 4 });
+  const howFarAwayDemoStep = howFarAway.tutorialSteps.find((step) => step.demoBlocklyXml);
+  assert.ok(howFarAwayDemoStep, "how-far-away should include a demo Blockly step");
+  assert.match(howFarAwayDemoStep.demoBlocklyXml, /battlegorithms_if_boolean_else/);
+  assert.match(howFarAwayDemoStep.demoBlocklyXml, /battlegorithms_boolean_sensor_matches/);
+  assert.match(howFarAwayDemoStep.demoCaption || "", /pieces|sensor/i);
 });
 
 test("level 12 reference route requires both horizontal and vertical movement", () => {

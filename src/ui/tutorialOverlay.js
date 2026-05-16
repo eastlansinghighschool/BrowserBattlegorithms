@@ -210,13 +210,27 @@ export function bindTutorialOverlay(app) {
     return;
   }
 
+  const updateModeChooserEmojis = () => {
+    const allyEmoji = app.ui.modeChooserEmojiFrame ? "🧎🏾‍♂️" : "🏃🏽‍♂️";
+    const enemyEmoji = app.ui.modeChooserEmojiFrame ? "🧎🏼" : "🏃🏼";
+    const allyNode = overlay.querySelector("[data-tutorial-mode-emoji='ally']");
+    const enemyNode = overlay.querySelector("[data-tutorial-mode-emoji='enemy']");
+    if (!allyNode || !enemyNode) {
+      renderTutorialOverlay(app);
+      return false;
+    }
+    allyNode.textContent = allyEmoji;
+    enemyNode.textContent = enemyEmoji;
+    return true;
+  };
+
   if (!app.ui.modeChooserEmojiInterval && typeof window !== "undefined") {
     app.ui.modeChooserEmojiInterval = window.setInterval(() => {
       if (!app.state.showModePicker) {
         return;
       }
       app.ui.modeChooserEmojiFrame = !app.ui.modeChooserEmojiFrame;
-      renderTutorialOverlay(app);
+      updateModeChooserEmojis();
     }, 1000);
   }
 
@@ -266,8 +280,8 @@ export function renderTutorialOverlay(app) {
         <p class="tutorial-step-count">Welcome</p>
         <p>Welcome to Battlegorithms, an Hour of Code experience where you learn to program teammates in a game of capture the flag.</p>
         <div class="tutorial-mode-chooser-strip" aria-hidden="true">
-          <span class="tutorial-mode-emoji tutorial-mode-emoji-runner">${allyEmoji}</span>
-          <span class="tutorial-mode-emoji tutorial-mode-emoji-runner">${enemyEmoji}</span>
+          <span class="tutorial-mode-emoji tutorial-mode-emoji-runner" data-tutorial-mode-emoji="ally">${allyEmoji}</span>
+          <span class="tutorial-mode-emoji tutorial-mode-emoji-runner" data-tutorial-mode-emoji="enemy">${enemyEmoji}</span>
           <span class="tutorial-mode-emoji">🚩</span>
           <span class="tutorial-mode-emoji">🚧</span>
         </div>

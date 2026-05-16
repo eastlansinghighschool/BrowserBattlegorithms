@@ -112,6 +112,29 @@ export const ENEMY_NEARBY_DEMO_XML = `
 </xml>
 `.trim();
 
+export const BOOLEAN_SENSOR_SELECTION_DEMO_XML = `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn" x="24" y="24">
+    <next>
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_boolean_sensor_matches">
+            <field name="OBJECT">BARRIER</field>
+            <field name="RELATION">DIRECTLY_IN_FRONT</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_move_up_screen"></block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_forward"></block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>
+`.trim();
+
 export const JUMP_THE_GAP_DEMO_XML = `
 <xml xmlns="https://developers.google.com/blockly/xml">
   <block type="battlegorithms_on_each_turn" x="24" y="24">

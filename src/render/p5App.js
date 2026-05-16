@@ -59,9 +59,13 @@ export function initializeP5App(app) {
       drawGameOverOverlay(p, app.state);
     };
 
-    p.keyPressed = () => {
-      handleKeyInput(app, p.key);
-      return false;
+    p.keyPressed = (event) => {
+      if (event && (event.ctrlKey || event.altKey || event.metaKey)) {
+        return undefined;
+      }
+
+      const handled = handleKeyInput(app, p.key);
+      return handled === true ? false : undefined;
     };
   });
 }
