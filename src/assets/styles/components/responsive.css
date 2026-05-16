@@ -1,0 +1,107 @@
+/* Responsive layout overrides and shared keyframes. */
+@media (max-width: 900px) {
+  #game-container {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 10px 16px 24px;
+  }
+
+  #lesson-region,
+  #blockly-region {
+    width: min(720px, 92%);
+  }
+
+  #simulation-region {
+    width: 100%;
+    align-items: center;
+  }
+
+  #instructions {
+    width: min(600px, 92vw);
+  }
+
+  #blocklyDiv {
+    min-height: 320px;
+    height: min(52vh, 460px);
+  }
+
+  .panel-loading-card-program {
+    min-height: min(52vh, 460px);
+  }
+
+  .tutorial-card,
+  .tutorial-card-with-demo {
+    right: 16px;
+    left: 16px;
+    bottom: 16px;
+    width: auto;
+  }
+
+  .tutorial-demo-blockly {
+    height: 180px;
+  }
+}
+
+@media (min-width: 1280px) {
+  #game-container {
+    grid-template-columns: minmax(580px, 1.45fr) minmax(290px, 0.74fr) minmax(420px, 1.18fr);
+  }
+
+  #game-container.lesson-panel-collapsed {
+    grid-template-columns: minmax(580px, 1.4fr) 56px minmax(520px, 1.5fr);
+  }
+
+  #game-container.lesson-panel-collapsed #blockly-region {
+    min-width: 520px;
+  }
+
+  #game-container.lesson-panel-collapsed #level-panel {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  #game-container.guided-dev-blockly-assist {
+    grid-template-columns: 450px 260px minmax(0, 1fr);
+    width: 100%;
+    min-width: 0;
+    justify-content: stretch;
+  }
+
+  #game-container.guided-dev-blockly-assist #simulation-region {
+    width: 450px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container,
+  #game-container.guided-dev-blockly-assist #instructions {
+    width: 450px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container {
+    min-height: 300px;
+  }
+
+  #game-container.guided-dev-blockly-assist #canvas-container canvas {
+    width: 450px !important;
+    height: 300px !important;
+    display: block;
+  }
+
+  #game-container.guided-dev-blockly-assist #lesson-region {
+    width: 260px;
+    min-width: 260px;
+  }
+
+  #game-container.guided-dev-blockly-assist #blockly-region {
+    min-width: 0;
+  }
+}
+
+@keyframes panel-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -4,39 +4,48 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 
 ## Packet Index
 
+### Active Packets
+
 | Packet | Status | Purpose |
 | --- | --- | --- |
 | [00 Mini Packet Agent Starting Prompt](00-mini-packet-agent-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
-| [Plan 01](plan-01-guided-level-source-split.md) | complete | Split large guided level source and reference solution fixture files into smaller modules without changing campaign behavior. |
-| [Plan 02](plan-02-guided-test-contract-repair.md) | complete | Repair stale guided unit-test contracts and canonical guided reference solutions. |
-| [Plan 03](plan-03-challenge-badge-and-synthesis-framing.md) | complete | Make synthesis/challenge levels visibly distinct in the level picker and lesson panel. |
-| [Plan 04](plan-04-saveable-usage-file.md) | complete | Add local student usage export and a teacher-side analyzer for learning evidence, performance evidence, duplicate checks, and modest tamper detection. |
-| [Plan 04b](plan-04b-local-usage-admin-report-page.md) | complete | Add a local-only browser admin page for drag-and-drop usage-file analysis, class tables, and per-student detail views without shipping it to GitHub Pages. |
-| [Plan 05](plan-05-undo-redo-blockly.md) | complete | Add Blockly undo/redo controls and shortcuts, preferring Blockly-native history. |
 | [Plan 06](plan-06-guided-playtest-triage.md) | in-progress | Playtest the revised guided campaign for pilot readiness, project carry-forward clarity, AP CSA transfer, usage/export smoke confidence, and tournament preparation. |
-| [Plan 07](plan-07-private-free-play-program-files.md) | complete | Add optional password-encrypted Free Play program files for local hot-seat code privacy, and remove import/export from guided levels. |
-| [Plan 08](plan-08-guided-project-sequence-design.md) | complete | Decided the two guided project arcs, their level membership, toolbox policy, shared-code semantics, and downstream contracts. |
-| [Plan 09](plan-09-project-metadata-and-workspace-architecture.md) | complete | Implement project metadata and shared latest workspace persistence for project levels. |
-| [Plan 10](plan-10-project-start-ui-and-level-picker-signifiers.md) | complete | Add project badges, project-start callouts, and shared-code explanations in the UI. |
-| [Plan 11](plan-11-strategy-brain-project-revision.md) | complete | Revise L23-L28 into the Strategy Brain shared-code project, including L24 repair and L28 capstone revision. |
-| [Plan 12](plan-12-team-strategy-script-project-revision.md) | complete | Revise L29-L37 into the Team Strategy Script shared-code project, including L37 capstone repair. |
-| [Plan 13](plan-13-project-reference-solutions-and-test-harness-repair.md) | complete | Repair canonical solution fixtures and tests for one-off and project guided levels. |
-| [Plan 14](plan-14-project-version-history-design.md) | complete | Design a future project version-history interface for recovering earlier shared-code states. |
-| [Plan 15](plan-15-pilot-readiness.md) | complete | Pre-pilot fixes: disable all-levels-unlocked, expand help page with Projects and Usage Export sections, expand advanced block descriptions, verify L28 badge interaction. |
-| [Plan 16](plan-16-usage-pipeline-regression.md) | complete | End-to-end Playwright regression: 5 parallel student profiles play the campaign, export usage, verify CLI analyzer, upload to admin page, capture screenshots. |
-| [Plan 17](plan-17-doc-cleanup.md) | complete | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
-| [Plan 18](plan-18-subsystem-doc-workflow.md) | complete | Wire `docs/subsystems/` notes into the packet workflow. Promote them to authoritative status in packet-creation-guidance and route both the mini-packet and orchestrator starting prompts to read the matching note when scoping or implementing covered behavior. |
-| [Plan 19](plan-19-guided-playtest-harness-and-gemini-scaffolding.md) | complete | Add a local-dev-only guided-level deep link and Plan 06 Gemini scaffolding so guided playtest triage can run level-by-level with small reusable context. |
-| [Plan 20](plan-20-gitignore-and-untracking.md) | complete | Repo hygiene: untrack `.claude/settings.local.json`, `.env`, `local/`, and any tracked `scratch/` files; add `.env.example`; expand `.gitignore` with OS/editor cruft and standard env-file patterns. |
-| [Plan 21](plan-21-absolute-path-sweep-in-reports.md) | complete | Replace hardcoded `C:/Codex/BrowserBattlegorithms_CODEX/` absolute paths in twelve tracked `reports/*.md` files with relative links so they work for anyone cloning the repo. |
-| [Plan 22](plan-22-dev-guided-blockly-assist.md) | complete | Add dev-guided Blockly assist for Plan 06 browser-agent runs: open the first toolbox category and place `On Each Turn` visibly to the right when `devGuidedLevel` is active. |
-| [Plan 23](plan-23-level-15-defender-and-wanderer.md) | complete | Revise Challenge 15 with a stationary active defender and movement-only wandering enemy so the synthesis challenge is more game-like without becoming random trial-and-error. |
-| [Plan 24](plan-24-level-19-relay-race-repair.md) | complete | Repair Level 19 so the human retrieves the flag and the ally must use teammate-has-flag to switch from defensive staging to carrier support. |
 | [Plan 25](plan-25-slow-speed-blockly-trace.md) | deprecated | Superseded by Plan 25a (data) + Plan 25b (UI). Original single-packet design conflated trace collection with pre-action playback; the split separates pure-function data work from turn-engine state machine and Blockly visual risk. |
-| [Plan 25a](plan-25a-blockly-trace-collection.md) | complete | Data-only Blockly evaluation trace collected during action resolution, with action-selection invariance, short-circuit honesty, PvP hidden-workspace skip, and dev-only inspection hook. No turn-engine or UI changes. |
-| [Plan 25b](plan-25b-blockly-trace-playback.md) | complete | Pre-action trace playback UI: new `TRACING_PRE_ACTION` turn state, per-frame block highlighting with outline + glyph + redundant color, 6-step cost cap with "…" overflow badge, low-speed empty-program hint. Depends on Plan 25a. |
-| [Plan 26](plan-26-challenge-22-guided-vertical-patrol.md) | complete | Add a deterministic guided vertical patrol NPC behavior and use it to make Challenge 22 live defenders more readable and less chase-brittle. |
+| [Plan 27](plan-27-completed-packet-archiving.md) | ready | Move complete packets into `docs/development/archive/`, split the packet index into active vs completed tables, and ship a reusable archival prompt at `docs/development/archive-packets-prompt.md` for future hygiene passes. |
+| [Plan 28](plan-28-style-css-component-split.md) | ready | Split the 1560-line `style.css` into 6-10 component partials under `src/assets/styles/components/`, keeping `style.css` as a small `@import` entry point. Cascade-preserving, no visual change, no rule rewrites. |
+
+### Completed Packets
+
+| Packet | Status | Purpose |
+| --- | --- | --- |
+| [Plan 01](archive/plan-01-guided-level-source-split.md) | complete | Split large guided level source and reference solution fixture files into smaller modules without changing campaign behavior. |
+| [Plan 02](archive/plan-02-guided-test-contract-repair.md) | complete | Repair stale guided unit-test contracts and canonical guided reference solutions. |
+| [Plan 03](archive/plan-03-challenge-badge-and-synthesis-framing.md) | complete | Make synthesis/challenge levels visibly distinct in the level picker and lesson panel. |
+| [Plan 04](archive/plan-04-saveable-usage-file.md) | complete | Add local student usage export and a teacher-side analyzer for learning evidence, performance evidence, duplicate checks, and modest tamper detection. |
+| [Plan 04b](archive/plan-04b-local-usage-admin-report-page.md) | complete | Add a local-only browser admin page for drag-and-drop usage-file analysis, class tables, and per-student detail views without shipping it to GitHub Pages. |
+| [Plan 05](archive/plan-05-undo-redo-blockly.md) | complete | Add Blockly undo/redo controls and shortcuts, preferring Blockly-native history. |
+| [Plan 07](archive/plan-07-private-free-play-program-files.md) | complete | Add optional password-encrypted Free Play program files for local hot-seat code privacy, and remove import/export from guided levels. |
+| [Plan 08](archive/plan-08-guided-project-sequence-design.md) | complete | Decided the two guided project arcs, their level membership, toolbox policy, shared-code semantics, and downstream contracts. |
+| [Plan 09](archive/plan-09-project-metadata-and-workspace-architecture.md) | complete | Implement project metadata and shared latest workspace persistence for project levels. |
+| [Plan 10](archive/plan-10-project-start-ui-and-level-picker-signifiers.md) | complete | Add project badges, project-start callouts, and shared-code explanations in the UI. |
+| [Plan 11](archive/plan-11-strategy-brain-project-revision.md) | complete | Revise L23-L28 into the Strategy Brain shared-code project, including L24 repair and L28 capstone revision. |
+| [Plan 12](archive/plan-12-team-strategy-script-project-revision.md) | complete | Revise L29-L37 into the Team Strategy Script shared-code project, including L37 capstone repair. |
+| [Plan 13](archive/plan-13-project-reference-solutions-and-test-harness-repair.md) | complete | Repair canonical solution fixtures and tests for one-off and project guided levels. |
+| [Plan 14](archive/plan-14-project-version-history-design.md) | complete | Design a future project version-history interface for recovering earlier shared-code states. |
+| [Plan 15](archive/plan-15-pilot-readiness.md) | complete | Pre-pilot fixes: disable all-levels-unlocked, expand help page with Projects and Usage Export sections, expand advanced block descriptions, verify L28 badge interaction. |
+| [Plan 16](archive/plan-16-usage-pipeline-regression.md) | complete | End-to-end Playwright regression: 5 parallel student profiles play the campaign, export usage, verify CLI analyzer, upload to admin page, capture screenshots. |
+| [Plan 17](archive/plan-17-doc-cleanup.md) | complete | Documentation cleanup. Refresh README/ARCHITECTURE, add focused subsystem notes under `docs/subsystems/`, correct stale rules in the spec, and retire obsolete phase-era docs. Sequenced and gated for mini-model phases. |
+| [Plan 18](archive/plan-18-subsystem-doc-workflow.md) | complete | Wire `docs/subsystems/` notes into the packet workflow. Promote them to authoritative status in packet-creation-guidance and route both the mini-packet and orchestrator starting prompts to read the matching note when scoping or implementing covered behavior. |
+| [Plan 19](archive/plan-19-guided-playtest-harness-and-gemini-scaffolding.md) | complete | Add a local-dev-only guided-level deep link and Plan 06 Gemini scaffolding so guided playtest triage can run level-by-level with small reusable context. |
+| [Plan 20](archive/plan-20-gitignore-and-untracking.md) | complete | Repo hygiene: untrack `.claude/settings.local.json`, `.env`, `local/`, and any tracked `scratch/` files; add `.env.example`; expand `.gitignore` with OS/editor cruft and standard env-file patterns. |
+| [Plan 21](archive/plan-21-absolute-path-sweep-in-reports.md) | complete | Replace hardcoded `C:/Codex/BrowserBattlegorithms_CODEX/` absolute paths in twelve tracked `reports/*.md` files with relative links so they work for anyone cloning the repo. |
+| [Plan 22](archive/plan-22-dev-guided-blockly-assist.md) | complete | Add dev-guided Blockly assist for Plan 06 browser-agent runs: open the first toolbox category and place `On Each Turn` visibly to the right when `devGuidedLevel` is active. |
+| [Plan 23](archive/plan-23-level-15-defender-and-wanderer.md) | complete | Revise Challenge 15 with a stationary active defender and movement-only wandering enemy so the synthesis challenge is more game-like without becoming random trial-and-error. |
+| [Plan 24](archive/plan-24-level-19-relay-race-repair.md) | complete | Repair Level 19 so the human retrieves the flag and the ally must use teammate-has-flag to switch from defensive staging to carrier support. |
+| [Plan 25a](archive/plan-25a-blockly-trace-collection.md) | complete | Data-only Blockly evaluation trace collected during action resolution, with action-selection invariance, short-circuit honesty, PvP hidden-workspace skip, and dev-only inspection hook. No turn-engine or UI changes. |
+| [Plan 25b](archive/plan-25b-blockly-trace-playback.md) | complete | Pre-action trace playback UI: new `TRACING_PRE_ACTION` turn state, per-frame block highlighting with outline + glyph + redundant color, 6-step cost cap with "…" overflow badge, low-speed empty-program hint. Depends on Plan 25a. |
+| [Plan 26](archive/plan-26-challenge-22-guided-vertical-patrol.md) | complete | Add a deterministic guided vertical patrol NPC behavior and use it to make Challenge 22 live defenders more readable and less chase-brittle. |
 
 
 ## Future Directions

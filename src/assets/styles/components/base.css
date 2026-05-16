@@ -1,0 +1,114 @@
+/* Base page shell and app header. */
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  margin: 0;
+  background:
+    radial-gradient(circle at top, #fff5d6 0%, #f4ecd7 35%, #d9e4ec 100%);
+  color: #1e2b33;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  --blockly-height: 420px;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.workspace-import-status {
+  margin: 0 0 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 12px;
+  font-size: 0.98rem;
+}
+
+.workspace-import-status-success {
+  background: #e9f5ec;
+  color: #1f5d34;
+}
+
+.workspace-import-status-error {
+  background: #fdecec;
+  color: #842029;
+}
+
+.app-header {
+  width: 100%;
+  background: rgba(24, 55, 68, 0.92);
+  color: white;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.app-header-inner {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  line-height: 1.15;
+}
+
+.app-help-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: white;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.app-help-link:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.app-header-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 54px;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+}
+
+.app-header-icon-button:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.app-header-icon {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+}
+
+.app-header-icon-chart {
+  width: 14px;
+  height: 14px;
+}
+

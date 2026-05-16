@@ -1,0 +1,451 @@
+/* Guided lesson panel, level cards, free-play summary, and read-only state. */
+#level-panel {
+  padding: 14px;
+  border-radius: 12px;
+  text-align: left;
+  background: linear-gradient(180deg, #fbf9ef, #eef6fa);
+  border: 1px solid rgba(36, 64, 74, 0.14);
+}
+
+.level-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.level-mode-toggle,
+.level-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.level-mode-toggle {
+  margin-bottom: 12px;
+}
+
+.level-picker {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.level-picker-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: #3b6f90;
+  text-align: left;
+}
+
+.level-picker-trigger-label,
+.level-picker-trigger-meta {
+  pointer-events: none;
+}
+
+.level-picker-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fffdf7;
+  border: 1px solid rgba(36, 64, 74, 0.18);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+}
+
+.level-picker-item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  align-items: start;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: #2f7a4d;
+  text-align: left;
+}
+
+.level-picker-item:last-child {
+  margin-bottom: 0;
+}
+
+.level-picker-item-current {
+  background: #b85f3c;
+}
+
+.level-picker-item-title {
+  font-weight: 700;
+}
+
+.level-picker-item-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.level-picker-item-description {
+  grid-column: 1 / -1;
+  font-size: 0.92rem;
+  opacity: 0.9;
+}
+
+.level-summary h3 {
+  margin: 0 0 8px;
+}
+
+.level-summary p {
+  margin: 6px 0;
+  line-height: 1.35;
+}
+
+.level-intro {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(58, 125, 99, 0.1);
+}
+
+.level-picker-trigger-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.level-kind-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(173, 124, 13, 0.3);
+  background: rgba(247, 225, 176, 0.9);
+  color: #6c4c08;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.level-kind-badge-project {
+  border-color: rgba(61, 108, 156, 0.3);
+  background: rgba(213, 231, 246, 0.95);
+  color: #244c70;
+}
+
+.lesson-challenge-callout {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(250, 236, 193, 0.95), rgba(244, 228, 171, 0.92));
+  border: 1px solid rgba(173, 124, 13, 0.24);
+  color: #5d480f;
+}
+
+.lesson-project-indicator,
+.lesson-project-start-callout,
+.lesson-project-state-note {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 108, 156, 0.18);
+  background: rgba(232, 242, 250, 0.82);
+  color: #24404a;
+}
+
+.lesson-project-indicator-label,
+.lesson-project-indicator-body,
+.lesson-project-start-callout-label,
+.lesson-project-start-callout-body,
+.lesson-project-state-note-label,
+.lesson-project-state-note-body {
+  margin: 0;
+}
+
+.lesson-project-indicator-label,
+.lesson-project-start-callout-label,
+.lesson-project-state-note-label {
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #214b6c;
+}
+
+.lesson-project-start-callout {
+  background: linear-gradient(180deg, rgba(241, 248, 254, 0.98), rgba(223, 237, 249, 0.94));
+}
+
+.lesson-project-state-note {
+  border-color: rgba(184, 95, 60, 0.18);
+  background: rgba(253, 239, 225, 0.78);
+  color: #63311d;
+}
+
+.lesson-project-state-note-label {
+  color: #8c3d22;
+}
+
+.blockly-program-summary-project {
+  display: grid;
+  gap: 10px;
+}
+
+.blockly-project-callout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 108, 156, 0.18);
+  background: linear-gradient(180deg, rgba(243, 248, 253, 0.98), rgba(229, 239, 248, 0.95));
+  color: #24404a;
+}
+
+.blockly-project-callout-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.blockly-project-callout-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(213, 231, 246, 0.95);
+  color: #244c70;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.blockly-project-callout-body {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.blockly-project-callout-dismiss {
+  flex: 0 0 auto;
+  align-self: start;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 999px;
+  background: #3b6f90;
+  color: white;
+  cursor: pointer;
+}
+
+.blockly-project-callout-dismiss:hover {
+  background: #2f5c79;
+}
+
+.lesson-challenge-callout-label,
+.lesson-challenge-callout-body {
+  margin: 0;
+}
+
+.lesson-challenge-callout-label {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.student-lesson-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-lesson-topline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lesson-status-pill,
+.lesson-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+  color: #24404a;
+  font-size: 0.9rem;
+}
+
+.student-lesson-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.student-lesson-goal {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.lesson-legend {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-legend-title {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #40515a;
+}
+
+.lesson-legend-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-legend-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(36, 64, 74, 0.1);
+}
+
+.lesson-legend-emoji {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.lesson-target-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+  color: #008cff;
+  flex: 0 0 auto;
+}
+
+.lesson-target-icon rect,
+.lesson-target-icon circle {
+  stroke: currentColor;
+  stroke-width: 3.5;
+}
+
+.lesson-target-icon rect {
+  fill: rgba(0, 140, 255, 0.08);
+}
+
+.lesson-target-icon circle {
+  fill: transparent;
+}
+
+.lesson-legend-label {
+  font-weight: 700;
+}
+
+.lesson-legend-description {
+  display: block;
+  margin-top: 2px;
+  color: #485963;
+  font-size: 0.93rem;
+}
+
+.lesson-alert {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(184, 95, 60, 0.09);
+  border: 1px solid rgba(184, 95, 60, 0.16);
+  color: #63311d;
+}
+
+.lesson-disclosure {
+  border-radius: 12px;
+  border: 1px solid rgba(36, 64, 74, 0.12);
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0 12px;
+}
+
+.lesson-disclosure summary {
+  cursor: pointer;
+  padding: 10px 0;
+  font-weight: 700;
+}
+
+.lesson-disclosure-content {
+  padding: 0 0 12px;
+}
+
+.lesson-inline-list {
+  margin: 0;
+  color: #40515a;
+}
+
+.lesson-inline-list strong {
+  color: #1e2b33;
+}
+
+.lesson-detail-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.lesson-detail-list li + li {
+  margin-top: 6px;
+}
+
+.lesson-support-note {
+  margin: 0;
+  color: #4c5a63;
+  font-size: 0.94rem;
+}
+
+.free-play-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.level-tips ul {
+  margin: 8px 0 0 18px;
+  padding: 0;
+}
+
+.human-turn-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.level-result {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.level-result.success {
+  background: rgba(47, 122, 77, 0.12);
+  color: #1e6b3d;
+}
+
+.level-result.failure {
+  background: rgba(184, 95, 60, 0.12);
+  color: #8c3d22;
+}
+
+.blockly-area-read-only {
+  opacity: 0.65;
+  transition: opacity 0.3s ease-in-out;
+}
+

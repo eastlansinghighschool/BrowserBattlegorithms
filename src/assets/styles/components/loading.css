@@ -1,0 +1,85 @@
+/* Loading skeletons for the board and Blockly panels. */
+.panel-loading-card {
+  min-height: inherit;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+  background:
+    linear-gradient(135deg, rgba(241, 247, 251, 0.95), rgba(255, 250, 239, 0.95));
+  color: #24404a;
+  text-align: center;
+}
+
+.panel-loading-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transform: translateX(-100%);
+  animation: panel-shimmer 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+#board-loading-placeholder,
+#blockly-loading-placeholder {
+  position: relative;
+}
+
+.panel-loading-card-program {
+  min-height: var(--blockly-height);
+  border-radius: 12px;
+  border: 1px solid rgba(36, 64, 74, 0.12);
+}
+
+.panel-loading-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.panel-loading-error {
+  margin: 0;
+  color: #8c3d22;
+  font-size: 0.93rem;
+}
+
+.panel-loading-grid {
+  width: 100%;
+  max-width: 520px;
+  height: 260px;
+  border-radius: 12px;
+  background:
+    linear-gradient(to right, rgba(36, 64, 74, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(36, 64, 74, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(151, 196, 224, 0.24), rgba(255, 203, 92, 0.18));
+  background-size: 50px 50px, 50px 50px, 100% 100%;
+  box-shadow: inset 0 0 0 1px rgba(36, 64, 74, 0.08);
+}
+
+.panel-loading-blocks {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 10px;
+}
+
+.panel-loading-block {
+  display: block;
+  height: 40px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(96, 124, 197, 0.72), rgba(135, 161, 221, 0.92));
+  box-shadow: 0 8px 18px rgba(58, 83, 132, 0.14);
+}
+
+.panel-loading-block-wide {
+  width: 76%;
+}
+
+.panel-loading-block-medium {
+  width: 62%;
+}
+

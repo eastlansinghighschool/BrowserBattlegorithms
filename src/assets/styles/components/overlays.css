@@ -1,0 +1,314 @@
+/* Tutorial overlay and goal burst overlays. */
+#tutorial-overlay {
+  display: none;
+}
+
+#goal-burst-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 85;
+  overflow: visible;
+}
+
+.goal-burst {
+  position: fixed;
+  left: var(--burst-x);
+  top: var(--burst-y);
+  width: 0;
+  height: 0;
+}
+
+.goal-burst-halo,
+.goal-burst-ring,
+.goal-burst-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.goal-burst-halo {
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.7) 0%,
+    rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.32) 32%,
+    rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0) 72%
+  );
+  animation: goal-burst-halo var(--burst-duration) ease-out forwards;
+}
+
+.goal-burst-ring {
+  border-radius: 999px;
+  border: 10px solid rgba(var(--burst-stroke-r), var(--burst-stroke-g), var(--burst-stroke-b), 0.95);
+  box-shadow: 0 0 36px rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.42);
+}
+
+.goal-burst-ring-inner {
+  width: 120px;
+  height: 120px;
+  animation: goal-burst-ring-inner var(--burst-duration) ease-out forwards;
+}
+
+.goal-burst-ring-mid {
+  width: 180px;
+  height: 180px;
+  animation: goal-burst-ring-mid var(--burst-duration) ease-out forwards;
+}
+
+.goal-burst-ring-outer {
+  width: 240px;
+  height: 240px;
+  animation: goal-burst-ring-outer var(--burst-duration) ease-out forwards;
+}
+
+.goal-burst-particle {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.96);
+  border: 5px solid rgba(var(--burst-stroke-r), var(--burst-stroke-g), var(--burst-stroke-b), 0.95);
+  box-shadow: 0 0 18px rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.65);
+  animation: goal-burst-particle var(--burst-duration) cubic-bezier(0.18, 0.8, 0.22, 1) forwards;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--particle-angle))
+    translateY(-12px);
+}
+
+@keyframes goal-burst-halo {
+  0% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(0.25);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.2);
+  }
+}
+
+@keyframes goal-burst-ring-inner {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.22);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.6);
+  }
+}
+
+@keyframes goal-burst-ring-mid {
+  0% {
+    opacity: 0.92;
+    transform: translate(-50%, -50%) scale(0.16);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.35);
+  }
+}
+
+@keyframes goal-burst-ring-outer {
+  0% {
+    opacity: 0.82;
+    transform: translate(-50%, -50%) scale(0.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.1);
+  }
+}
+
+@keyframes goal-burst-particle {
+  0% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--particle-angle))
+      translateY(-14px)
+      scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--particle-angle))
+      translateY(-220px)
+      scale(1.25);
+  }
+}
+
+#tutorial-overlay.tutorial-overlay-active {
+  display: block;
+}
+
+.tutorial-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(12, 20, 28, 0.64);
+  z-index: 1000;
+}
+
+.tutorial-spotlight {
+  position: fixed;
+  z-index: 1001;
+  border: 3px solid #ffe48c;
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(12, 20, 28, 0.28);
+  pointer-events: none;
+}
+
+.tutorial-card {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: min(380px, calc(100vw - 32px));
+  padding: 18px;
+  border-radius: 16px;
+  background: #fffdf7;
+  color: #1f2a30;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  z-index: 1002;
+}
+
+.tutorial-card-with-demo {
+  width: min(560px, calc(100vw - 32px));
+}
+
+.tutorial-card-centered {
+  right: auto;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+
+.tutorial-card h3 {
+  margin: 0 0 8px;
+}
+
+.tutorial-visuals {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tutorial-visual-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(247, 243, 230, 0.9);
+  border: 1px solid rgba(36, 64, 74, 0.1);
+}
+
+.tutorial-visual-emoji {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.tutorial-visual-label {
+  font-weight: 700;
+}
+
+.tutorial-visual-description {
+  display: block;
+  margin-top: 2px;
+  color: #4c5a63;
+  font-size: 0.92rem;
+}
+
+.tutorial-step-count {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: #51606b;
+}
+
+.tutorial-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.tutorial-demo {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f7f3e6;
+  border: 1px solid rgba(36, 64, 74, 0.14);
+}
+
+.tutorial-demo-title,
+.tutorial-demo-caption {
+  margin: 0;
+}
+
+.tutorial-demo-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.tutorial-demo-caption {
+  margin-top: 8px;
+  font-size: 0.92rem;
+  color: #4c5a63;
+}
+
+.tutorial-demo-blockly {
+  height: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.tutorial-actions-stacked {
+  justify-content: stretch;
+  flex-direction: column;
+}
+
+.tutorial-actions-stacked button {
+  width: 100%;
+}
+
+.tutorial-mode-chooser-note {
+  color: #4c5a63;
+}
+
+.tutorial-mode-chooser-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.tutorial-mode-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.tutorial-mode-emoji-runner {
+  width: 2.8rem;
+}
+
+.tutorial-demo-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #51606b;
+  font-weight: 600;
+}
+

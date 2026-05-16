@@ -1,0 +1,89 @@
+/* Top-level layout, board container, and shared button chrome. */
+#game-container {
+  display: grid;
+  grid-template-columns: minmax(560px, 1.4fr) minmax(300px, 0.9fr);
+  align-items: start;
+  gap: 18px;
+  padding: 10px 0 24px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#simulation-region {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#lesson-region {
+  min-width: 280px;
+}
+
+#lesson-region.lesson-region-collapsed {
+  min-width: 52px;
+}
+
+#canvas-container {
+  border: 3px solid #24404a;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: white;
+  width: calc(12 * 50px);
+  min-height: calc(8 * 50px);
+  position: relative;
+}
+
+#instructions,
+#lesson-region,
+#blockly-region {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(36, 64, 74, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+#instructions {
+  padding: 14px 16px;
+  text-align: center;
+  width: calc(12 * 50px);
+}
+
+#primary-level-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#instructions button,
+.level-panel-header button,
+.level-mode-toggle button,
+.level-list button,
+.level-actions button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #2f7a4d;
+  color: white;
+  transition: transform 0.16s ease, opacity 0.16s ease, background 0.16s ease;
+}
+
+#instructions button:hover,
+.level-panel-header button:hover,
+.level-mode-toggle button:hover,
+.level-list button:hover,
+.level-actions button:hover {
+  transform: translateY(-1px);
+  background: #25663f;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+

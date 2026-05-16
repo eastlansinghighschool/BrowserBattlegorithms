@@ -1,0 +1,97 @@
+/* Blockly program tabs, top-bar utilities, collapse shell, and free-play setup controls. */
+#blockly-program-tabs,
+#blockly-program-summary {
+  margin-bottom: 10px;
+}
+
+.app-keycaps {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  vertical-align: middle;
+}
+
+.app-keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.7em;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(36, 64, 74, 0.24);
+  background: linear-gradient(180deg, #ffffff, #edf3f6);
+  box-shadow: 0 2px 4px rgba(30, 43, 51, 0.1);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.control-chip-list {
+  display: grid;
+  gap: 8px;
+}
+
+.control-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.control-chip-label {
+  min-width: 7.2rem;
+  font-weight: 700;
+  color: #24404a;
+}
+
+.control-chip-description {
+  color: #40515a;
+}
+
+.lesson-panel-collapse-shell {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 140px;
+}
+
+.lesson-panel-collapse-button {
+  width: 38px;
+  min-height: 120px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #3b6f90;
+  color: white;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.lesson-panel-collapse-button:hover {
+  background: #315d79;
+}
+
+.blockly-program-tab-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.free-play-setup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.free-play-setup label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.free-play-setup select {
+  padding: 6px 8px;
+}

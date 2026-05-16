@@ -1,0 +1,305 @@
+/* Blockly workspace shell, toolbar, modals, trace highlight, and loading placeholders. */
+#blockly-region {
+  padding: 15px;
+  min-width: 300px;
+  margin-right: 0;
+}
+
+#blockly-region h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+#blockly-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+#blockly-toolbar.blockly-toolbar-disabled {
+  opacity: 0.55;
+}
+
+#blockly-history-controls {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+}
+
+#blockly-history-controls button {
+  min-width: 34px;
+  background: transparent;
+  color: #24404a;
+  border: 1px solid transparent;
+}
+
+#blockly-history-controls button:disabled {
+  opacity: 1;
+  background: #3b6f90;
+  color: white;
+}
+
+#blockly-toolbar button {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: #3b6f90;
+  color: white;
+}
+
+.program-file-controls {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+}
+
+.program-file-controls button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  color: #24404a;
+  border: 1px solid transparent;
+}
+
+.program-file-controls button:hover {
+  background: rgba(59, 111, 144, 0.12);
+}
+
+.program-file-controls .app-header-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.program-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+
+.program-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 28, 34, 0.42);
+}
+
+.program-modal-card {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  background: #ffffff;
+  color: #1e2b33;
+  border-radius: 12px;
+  border: 1px solid rgba(36, 64, 74, 0.18);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.program-modal-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.program-modal-copy,
+.program-modal-note,
+.program-modal-message {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.program-modal-note {
+  color: #5b4b15;
+}
+
+.program-modal-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.program-modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.program-modal-fields label,
+.program-modal-card > label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.94rem;
+}
+
+.program-modal-fields input,
+.program-modal-card input {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid rgba(36, 64, 74, 0.24);
+  border-radius: 10px;
+}
+
+.program-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.program-modal-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 999px;
+  background: #3b6f90;
+  color: white;
+  cursor: pointer;
+}
+
+.program-modal-actions button:hover {
+  background: #2f5c79;
+}
+
+.program-modal-message {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #eef4fa;
+}
+
+.program-modal-message-success {
+  background: #e9f5ec;
+  color: #1f5d34;
+}
+
+.program-modal-message-error {
+  background: #fdecec;
+  color: #842029;
+}
+
+#blockly-size-controls {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(59, 111, 144, 0.12);
+}
+
+#blockly-size-controls button {
+  background: transparent;
+  color: #24404a;
+  border: 1px solid transparent;
+}
+
+#blockly-size-controls button:disabled {
+  opacity: 1;
+  background: #3b6f90;
+  color: white;
+}
+
+#blockly-workspace-shell {
+  position: relative;
+}
+
+#blocklyDiv {
+  width: 100%;
+  height: var(--blockly-height);
+  min-height: 320px;
+}
+
+#blockly-workspace-shell .bba-trace-empty-hint {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  max-width: min(330px, calc(100% - 20px));
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(36, 64, 74, 0.18);
+  background: rgba(255, 255, 255, 0.96);
+  color: #24404a;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  pointer-events: none;
+}
+
+#blocklyDiv .bba-trace-current .blocklyPath {
+  stroke: #f59e0b !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.35));
+}
+
+#blocklyDiv .bba-trace-selected-action .blocklyPath {
+  stroke: #3b6f90 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(59, 111, 144, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-true .blocklyPath {
+  stroke: #1f7a4b !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(31, 122, 75, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-false .blocklyPath {
+  stroke: #b42318 !important;
+  stroke-width: 4px !important;
+  filter: drop-shadow(0 0 3px rgba(180, 35, 24, 0.32));
+}
+
+#blocklyDiv .bba-trace-result-true-bg,
+#blocklyDiv .bba-trace-result-false-bg,
+#blocklyDiv .bba-trace-overflow-badge-bg {
+  stroke: rgba(255, 255, 255, 0.92);
+  stroke-width: 1.25px;
+}
+
+#blocklyDiv .bba-trace-result-true-bg {
+  fill: #1f7a4b;
+}
+
+#blocklyDiv .bba-trace-result-false-bg {
+  fill: #b42318;
+}
+
+#blocklyDiv .bba-trace-overflow-badge {
+  color: #f59e0b;
+}
+
+#blocklyDiv .bba-trace-overflow-badge-bg {
+  fill: #f59e0b;
+}
+
+#blocklyDiv .bba-trace-result-true-mark,
+#blocklyDiv .bba-trace-result-false-mark,
+#blocklyDiv .bba-trace-overflow-badge-mark {
+  fill: white;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+#blocklyDiv .bba-trace-overflow-badge-mark {
+  font-size: 16px;
+  letter-spacing: -0.04em;
+}
