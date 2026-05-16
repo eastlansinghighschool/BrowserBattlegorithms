@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   AI_ACTION_TYPES,
+  BLOCKLY_TRACE_MAX_DURATION_FRAMES,
+  BLOCKLY_TRACE_MIN_FRAMES_PER_STEP,
   BLOCKLY_TRACE_SPEED_THRESHOLD,
   GAME_VIEW_MODES,
   MAIN_GAME_STATES,
@@ -135,3 +137,12 @@ test("clearBlocklyTracePlayback is idempotent and clears the playback bookkeepin
   assert.deepEqual(app.state.tracePlaybackSteps, []);
 });
 
+test("trace frame budget honors the threshold floor and paused-state cap", () => {
+  const xml = buildSolutionXml(`<block type="battlegorithms_stay_still"></block>`);
+  const { app } = buildTracePlaybackApp(xml);
+
+  assert.equal(getBlocklyTraceFrameBudgetPerStep(app.state), BLOCKLY_TRACE_MIN_FRAMES_PER_STEP);
+
+  app.state.animationSpeedFactor = 0;
+  assert.equal(getBlocklyTraceFrameBudgetPerStep(app.state), BLOCKLY_TRACE_MAX_DURATION_FRAMES);
+});

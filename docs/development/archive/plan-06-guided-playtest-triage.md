@@ -4,7 +4,7 @@
 
 - Packet id: plan-06
 - Packet title: Guided Campaign Pilot Playtest And Project Readiness Triage
-- Status: ready
+- Status: complete
 - Owner/model: browser-capable lower-cost agent, human playtester, or integration-owner-led student pilot
 - Date: 2026-05-13
 - Packet type: scan-only / browser QA / pedagogy / pilot-readiness

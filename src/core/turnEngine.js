@@ -4,6 +4,7 @@ import {
   AI_ACTION_TYPES,
   BLOCKLY_TRACE_MAX_DURATION_FRAMES,
   BLOCKLY_TRACE_MAX_STEPS,
+  BLOCKLY_TRACE_MIN_FRAMES_PER_STEP,
   BLOCKLY_TRACE_SPEED_THRESHOLD,
   AREA_FREEZE_DURATION_TURNS,
   AREA_FREEZE_RADIUS,
@@ -136,7 +137,7 @@ export function getBlocklyTraceFrameBudgetPerStep(state) {
 
   const baseFrameBudget = BLOCKLY_TRACE_MAX_DURATION_FRAMES / BLOCKLY_TRACE_MAX_STEPS;
   const scaledBudget = baseFrameBudget * (BLOCKLY_TRACE_SPEED_THRESHOLD / animationSpeedFactor);
-  return Math.max(1, Math.round(scaledBudget));
+  return Math.max(BLOCKLY_TRACE_MIN_FRAMES_PER_STEP, Math.round(scaledBudget));
 }
 
 function startBlocklyTracePlayback(app, runner, rawTrace) {

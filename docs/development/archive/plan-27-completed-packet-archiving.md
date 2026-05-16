@@ -4,7 +4,7 @@
 
 - Packet id: plan-27
 - Packet title: Completed Packet Archiving + Reusable Hygiene Prompt
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent (small/cheap model is sufficient)
 - Date: 2026-05-15
 - Packet type: docs / repo hygiene

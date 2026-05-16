@@ -245,7 +245,8 @@
 #blocklyDiv .bba-trace-current .blocklyPath {
   stroke: #f59e0b !important;
   stroke-width: 4px !important;
-  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.35));
+  stroke-opacity: 1 !important;
+  filter: brightness(1.15) saturate(1.2) drop-shadow(0 0 3px rgba(245, 158, 11, 0.35)) !important;
 }
 
 #blocklyDiv .bba-trace-selected-action .blocklyPath {
@@ -257,13 +258,13 @@
 #blocklyDiv .bba-trace-result-true .blocklyPath {
   stroke: #1f7a4b !important;
   stroke-width: 4px !important;
-  filter: drop-shadow(0 0 3px rgba(31, 122, 75, 0.32));
+  animation: bbaTraceOutlineFadeTrue 1s ease-out forwards;
 }
 
 #blocklyDiv .bba-trace-result-false .blocklyPath {
   stroke: #b42318 !important;
   stroke-width: 4px !important;
-  filter: drop-shadow(0 0 3px rgba(180, 35, 24, 0.32));
+  animation: bbaTraceOutlineFadeFalse 1s ease-out forwards;
 }
 
 #blocklyDiv .bba-trace-result-true-bg,
@@ -302,4 +303,76 @@
 #blocklyDiv .bba-trace-overflow-badge-mark {
   font-size: 16px;
   letter-spacing: -0.04em;
+}
+
+@keyframes bbaTraceOutlineFadeTrue {
+  0% {
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 3px rgba(31, 122, 75, 0.32));
+  }
+
+  100% {
+    stroke-opacity: 0;
+    filter: drop-shadow(0 0 3px rgba(31, 122, 75, 0));
+  }
+}
+
+@keyframes bbaTraceOutlineFadeFalse {
+  0% {
+    stroke-opacity: 1;
+    filter: drop-shadow(0 0 3px rgba(180, 35, 24, 0.32));
+  }
+
+  100% {
+    stroke-opacity: 0;
+    filter: drop-shadow(0 0 3px rgba(180, 35, 24, 0));
+  }
+}
+
+#game-controls {
+  position: relative;
+}
+
+.bba-speed-threshold-marker {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  color: rgba(36, 64, 74, 0.58);
+  z-index: 2;
+}
+
+.bba-speed-threshold-marker-eye {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.bba-speed-threshold-marker-tick {
+  width: 1px;
+  height: 13px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #blocklyDiv .bba-trace-result-true .blocklyPath,
+  #blocklyDiv .bba-trace-result-false .blocklyPath {
+    animation: none;
+    stroke-opacity: 0 !important;
+    filter: none !important;
+  }
+
+  #blocklyDiv .bba-trace-current .blocklyPath {
+    filter: none !important;
+  }
+
+  #blocklyDiv .bba-trace-current.bba-trace-result-true .blocklyPath,
+  #blocklyDiv .bba-trace-current.bba-trace-result-false .blocklyPath {
+    stroke: #f59e0b !important;
+    stroke-width: 4px !important;
+    stroke-opacity: 1 !important;
+  }
 }

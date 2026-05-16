@@ -46,6 +46,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 25a](archive/plan-25a-blockly-trace-collection.md) | complete | Data-only Blockly evaluation trace collected during action resolution, with action-selection invariance, short-circuit honesty, PvP hidden-workspace skip, and dev-only inspection hook. No turn-engine or UI changes. |
 | [Plan 25b](archive/plan-25b-blockly-trace-playback.md) | complete | Pre-action trace playback UI: new `TRACING_PRE_ACTION` turn state, per-frame block highlighting with outline + glyph + redundant color, 6-step cost cap with "…" overflow badge, low-speed empty-program hint. Depends on Plan 25a. |
 | [Plan 26](archive/plan-26-challenge-22-guided-vertical-patrol.md) | complete | Add a deterministic guided vertical patrol NPC behavior and use it to make Challenge 22 live defenders more readable and less chase-brittle. |
+| [Plan 29](archive/plan-29-trace-visual-refinement.md) | complete | Refine Plan 25b trace visuals: fade result outlines to transparent over ~1s, keep glyphs persistent, add brightness + saturation boost on the current block, bump pacing constants with a min-per-step floor, add a speed-slider threshold marker, and finally honor `prefers-reduced-motion`. Amends Plan 25b Decisions 2 and 4. |
 
 
 ## Future Directions

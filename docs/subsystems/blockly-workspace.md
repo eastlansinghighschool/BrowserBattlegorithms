@@ -87,11 +87,7 @@ Blockly trace collection is a passive, argument-threaded data path that records 
 
 The collector is only attached on the visible-workspace path. The inactive PvP team's hidden-workspace branch stays trace-free.
 
-Plan 25b consumes the collected steps as a third, separate UI signal alongside Blockly's native disabled state and the app's ignored-block warning bubbles:
-- trace highlight uses `workspace.highlightBlock(...)` plus `bba-trace-*` CSS classes on the live workspace SVG;
-- it never calls `setWarningText(...)` or `setDisabledReason(...)`;
-- it cooperates with `hideChaff()` on trace start so open bubbles and menus do not co-render with the highlight;
-- the overflow badge and empty-program hint are part of the same trace UI surface and clear with the block highlights.
+Plan 29 refines the trace playback contract while keeping the same `bba-trace-*` surface, so the following behaviors still hold: trace highlight uses `workspace.highlightBlock(...)` plus `bba-trace-*` CSS classes on the live workspace SVG; it never calls `setWarningText(...)` or `setDisabledReason(...)`; it cooperates with `hideChaff()` on trace start so open bubbles and menus do not co-render with the highlight; and the overflow badge and empty-program hint are part of the same trace UI surface and clear with the block highlights. Result outlines now fade away while their glyphs remain as the durable evaluated-path record, the active block gets a brighter orange live signal, and reduced-motion users see the glyph history plus the plain orange current-step stroke.
 
 ## Undo/redo wrapping
 

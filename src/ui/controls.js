@@ -29,6 +29,19 @@ export function getAnimationSpeedFactorFromSliderValue(sliderValue) {
   return Number.isFinite(speed) ? speed : 1.0;
 }
 
+function getTraceThresholdSliderValue() {
+  const sliderMin = 1;
+  const sliderMax = 20;
+  let selectedValue = sliderMin;
+  for (let sliderValue = sliderMin; sliderValue <= sliderMax; sliderValue += 1) {
+    const factor = getAnimationSpeedFactorFromSliderValue(sliderValue);
+    if (factor <= BLOCKLY_TRACE_SPEED_THRESHOLD) {
+      selectedValue = sliderValue;
+    }
+  }
+  return selectedValue;
+}
+
 function getCurrentProgramFileBaseName(app) {
   if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
     return app.state.currentLevelId || "guided-level";
@@ -93,6 +106,43 @@ export function bindControls(app) {
   const blocklyRetryButton = document.getElementById("blockly-loading-retry");
   let pendingPrivateImportPayload = null;
   let pendingPrivateImportFileName = "";
+  let traceThresholdMarker = null;
+
+  const updateTraceThresholdMarker = () => {
+    if (!controlsPanel || !speedSlider) {
+      return;
+    }
+
+    if (!traceThresholdMarker) {
+      traceThresholdMarker = document.createElement("div");
+      traceThresholdMarker.className = "bba-speed-threshold-marker";
+      traceThresholdMarker.setAttribute("title", "Trace playback activates at or below this speed");
+      traceThresholdMarker.setAttribute("aria-label", "Trace playback activates at or below this speed");
+      traceThresholdMarker.innerHTML = `
+        <svg aria-hidden="true" viewBox="0 0 24 24" class="bba-speed-threshold-marker-eye">
+          <path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z" fill="none" stroke="currentColor" stroke-width="1.6" />
+          <circle cx="12" cy="12" r="2.4" fill="currentColor" />
+        </svg>
+        <span class="bba-speed-threshold-marker-tick" aria-hidden="true"></span>
+      `;
+      controlsPanel.appendChild(traceThresholdMarker);
+      controlsPanel.style.position = "relative";
+    }
+
+    const panelRect = controlsPanel.getBoundingClientRect();
+    const sliderRect = speedSlider.getBoundingClientRect();
+    const sliderMin = Number.parseInt(speedSlider.min || "1", 10) || 1;
+    const sliderMax = Number.parseInt(speedSlider.max || "20", 10) || 20;
+    const thresholdValue = getTraceThresholdSliderValue();
+    const sliderRange = Math.max(1, sliderMax - sliderMin);
+    const ratio = (thresholdValue - sliderMin) / sliderRange;
+    const left = sliderRect.left - panelRect.left + (sliderRect.width * ratio);
+    const top = sliderRect.top - panelRect.top - 19;
+
+    traceThresholdMarker.style.left = `${left}px`;
+    traceThresholdMarker.style.top = `${top}px`;
+  };
+
   if (speedSlider && speedValueDisplay) {
     const updateSpeed = () => {
       const previousSpeed = Number(app.state.animationSpeedFactor);
@@ -108,9 +158,11 @@ export function bindControls(app) {
         app.hooks.clearBlocklyTracePlayback?.(app);
         app.state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
       }
+      updateTraceThresholdMarker();
     };
     speedSlider.addEventListener("input", updateSpeed);
     updateSpeed();
+    window.addEventListener("resize", updateTraceThresholdMarker);
   }
 
   const closeProgramExportModal = () => {
