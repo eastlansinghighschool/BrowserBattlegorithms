@@ -18,20 +18,23 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 12 | Bring it home | helper target swap | helper + flag condition | Levels 3 and 11 |
 | 13 | Enemy nearby | distance in spaces | distance-based sensing | generic sensor idea |
 | 14 | Jump the gap | jump lane / landing | `Jump Forward` | movement basics |
-| **Challenge 15** | **Dodge and Deliver** | **live enemy; real scoring run** | **none — synthesis only** | Levels 1-14 |
+| Bug Hunt: Flag Phase | Trace the flag bug | debugging checkpoint; reversed flag branch | repair `if_have_enemy_flag_else` target order | Levels 1-14 |
+| **Challenge 15** | **Dodge and Deliver** | **live enemy; real scoring run** | **none - synthesis only** | **Levels 1-15** |
 | 16 | Jump if ready | one-time jump resource | jump readiness condition | Level 14 |
 | 17 | Build the barrier | barrier placement target | place barrier + readiness | Level 4 barrier idea |
 | 18 | Stay still can do something | clearing a barrier | `Stay Still` as an action | barrier sensing |
 | 19 | Relay race | staged carrier support | teammate-has-flag | scoring + helper targets |
 | 20 | My side, their side | field halves (my side introduced) | territory conditions (my-side variants only) | board orientation |
 | 21 | Freeze the lane | team freeze power | freeze readiness + helper return | prior resources |
-| **Challenge 22** | **Show What You Know** | **live scrimmage; open goal** | **none — synthesis only** | Levels 1-21 |
+| Bug Hunt: First Action Matters | Trace the first action | debugging checkpoint; an early action steals the turn | repair action ordering around barrier readiness | Levels 1-21 |
+| **Challenge 22** | **Show What You Know** | **live scrimmage; open goal** | **none - synthesis only** | **Levels 1-22** |
 | 23 | Closest threat | Strategy Brain start; intercept the nearest enemy | `Move Toward closest enemy` | helper target idea |
 | 24 | How far away? | distance as numeric value; barrier and enemy force a detour | numeric compare | Level 13 distance idea |
 | 25 | Two conditions at once | two truths required for the same strategy | `AND` | advanced value blocks |
 | 26 | This or that | either warning matters | `OR` | advanced value blocks |
 | 27 | Flip the answer | opposite condition | `NOT` | advanced value blocks |
-| **Challenge 28** | **Full Team Tactics** | **Strategy Brain capstone; live defenders and full single-ally toolbox** | **none — synthesis only** | Levels 1-27 |
+| Bug Hunt: Boolean Trap | Trace the boolean | debugging checkpoint; boolean choice fires too early | repair the boolean gate around freeze | Levels 1-27 |
+| **Challenge 28** | **Full Team Tactics** | **Strategy Brain capstone; live defenders and full single-ally toolbox** | **none - synthesis only** | **Levels 1-28** |
 | 29 | One program, two allies | shared program for allies | runner index | advanced value blocks |
 | 30 | Index jobs | different ally roles | index comparison | Level 29 |
 | 31 | First two defend | grouping allies by range | index `< 2` | Levels 29-30 |
@@ -40,7 +43,8 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 34 | Freeze support | shared team resource by role | index + freeze readiness | Levels 21, 29-33 |
 | 35 | Barrier specialist | support wall for teammate | index + barrier readiness | Levels 17, 29-34 |
 | 36 | Jump team | role-based jump route | index + jump resource | Levels 16, 29-35 |
-| **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | Levels 23-36 |
+| Bug Hunt: Role Split | Trace the roles | debugging checkpoint; overlapping ally jobs | repair the runner-index branch split | Levels 23-36 |
+| **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
 | Optional lab | Move randomly | randomness in action choice | `Move Randomly` | movement basics |
 
 ## Copy Guidelines

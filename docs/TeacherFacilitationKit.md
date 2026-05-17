@@ -1,6 +1,6 @@
 # Teacher Facilitation Kit
 
-> v0.1 — pacing estimates and stuck points are predictions pending classroom evidence. Refine after the first pilot session and update this file in place.
+> v0.1 - pacing estimates and stuck points are predictions pending classroom evidence. Refine after the first pilot session and update this file in place.
 
 This kit complements [Teacher Guide](TeacherGuide.md) and [Student Guide](StudentGuide.md). Use it when you want pacing, intervention prompts, and discussion cues for a live classroom session.
 
@@ -22,7 +22,7 @@ This kit complements [Teacher Guide](TeacherGuide.md) and [Student Guide](Studen
   - 5 minutes to launch the first guided level together and show how to start/stop safely.
 - Main play: **35 minutes** for L1-L7.
 - Wrap-up: **5 minutes**.
-- Buffer: if the class is moving slowly, keep the buffer for troubleshooting; if they fly through, stretch to L8 and only then sample Challenge 15.
+- Buffer: if the class is moving slowly, keep the buffer for troubleshooting; if they fly through, stretch to L8 and use the extra time to preview the first debugging checkpoint later in the campaign.
 
 ### What students should leave with
 
@@ -64,7 +64,23 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Ask students to compare two sensor choices on the same board and explain which one is more precise.
 
-### Synthesis Challenge 15
+### Bug Hunt 15 (L15)
+
+- Concept introduced: debugging a broken flag-phase program before the first synthesis challenge. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Expected time band: **5-10 minutes**.
+- Likely stuck points:
+  - [predicted] students may trace the wrong branch because the starter already looks close to correct.
+  - [predicted] students may forget that the first reached action owns the whole turn.
+- Intervention prompts:
+  - "What does the very top branch do before anything else can happen?"
+  - "If the ally has the enemy flag, which target should it be moving toward?"
+  - "What is the smallest change that repairs the bug?"
+- Discussion question:
+  - "How is debugging this level different from solving a blank-slate challenge?"
+- Extension idea:
+  - Ask early finishers to explain the bug aloud using the words `trace`, `branch`, and `target`.
+
+### Synthesis Challenge 15 (L16)
 
 - Concept introduced: no new tools; students combine movement, sensing, and scoring under pressure. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **5-10 minutes**.
@@ -79,12 +95,12 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Invite a faster student to explain the same solution in fewer blocks or with a different branch order.
 
-### Advanced Logic (L16-L21)
+### Advanced Logic (L17-L21)
 
 - Concept introduced: readiness checks, more comparisons, `AND`, `OR`, `NOT`, and the first role-based decisions. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **30-40 minutes**.
 - Likely stuck points:
-  - [predicted] L16-L18: students may use a resource action without guarding it with readiness.
+  - [predicted] L17-L18: students may use a resource action without guarding it with readiness.
   - [predicted] L20-L21: students may confuse team-side thinking with literal left/right board position.
   - [evidence] L21: freeze timing is easiest to misuse if students do not ask whether the team resource is ready.
 - Intervention prompts:
@@ -97,9 +113,25 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Ask students to restate one branch in plain English before they run it, then compare that sentence to the Blockly structure.
 
-### Synthesis Challenge 22
+### Bug Hunt 22 (L23)
 
-- Concept introduced: no new tools; a live scrimmage that asks students to apply everything from L1-L21. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Concept introduced: debugging a barrier program where an early action steals the turn. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Expected time band: **5-10 minutes**.
+- Likely stuck points:
+  - [predicted] students may focus on the barrier action and miss the stray move block above it.
+  - [predicted] students may assume every visible block runs on the same turn.
+- Intervention prompts:
+  - "Which action happens first?"
+  - "What does the runner do before the readiness check can even run?"
+  - "How could you move the helpful branch back to the top?"
+- Discussion question:
+  - "Why is the order of blocks as important as the blocks themselves?"
+- Extension idea:
+  - Ask students to describe the bug as a `first action` problem rather than a barrier problem.
+
+### Synthesis Challenge 22 (L24)
+
+- Concept introduced: no new tools; a live scrimmage that asks students to apply everything from L1-L23. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **5-10 minutes**.
 - Likely stuck points:
   - [evidence] Plan 26 repaired this level with deterministic vertical-patrol defenders so the challenge is about strategy, not luck.
@@ -113,14 +145,30 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Challenge early finishers to beat the level with a shorter or clearer program, then explain the tradeoff.
 
-### Strategy Brain Project (L23-L28)
+### Bug Hunt 28 (L30)
+
+- Concept introduced: repairing boolean logic before the Strategy Brain capstone. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Expected time band: **5-10 minutes**.
+- Likely stuck points:
+  - [predicted] students may know the branch words but not the boolean logic that controls them.
+  - [predicted] students may spend the freeze too early if they do not trace the condition carefully.
+- Intervention prompts:
+  - "Which two facts have to be true at the same time?"
+  - "What happens if the boolean gate opens too early?"
+  - "What is the smallest operator change that matches the intended behavior?"
+- Discussion question:
+  - "How does a bug hunt help you practice tracing boolean expressions before a capstone?"
+- Extension idea:
+  - Ask students to say the condition out loud in plain English before changing the blocks.
+
+### Strategy Brain Project (L25-L31)
 
 - Concept introduced: shared latest code across a project arc, runner-index roles, and a project-capstone mindset. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **30-45 minutes**.
 - Likely stuck points:
-  - [evidence] L23-L24: students may not notice that code persists across levels once the project starts.
-  - [evidence] L24: runner index can feel like a brand-new concept even though it is still just branching on local information.
-  - [evidence] L28: the capstone combines all project ideas and can benefit from slow-speed trace.
+  - [evidence] L25-L26: students may not notice that code persists across levels once the project starts.
+  - [evidence] L27: runner index can feel like a brand-new concept even though it is still just branching on local information.
+  - [evidence] L30-L31: the bug hunt and capstone benefit from slow-speed trace before changing code.
 - Project callout:
   - Shared code means students should think in roles, not just in individual turns.
   - When the project-start callout appears, pause and name the persistence change before letting them edit.
@@ -135,11 +183,27 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Ask students to describe their project in terms of roles: attacker, defender, escort, or support.
 
-### Team Strategy Script Project (L29-L37)
+### Bug Hunt 37 (L40)
+
+- Concept introduced: debugging a shared-program role split before the final team scrimmage. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Expected time band: **5-10 minutes**.
+- Likely stuck points:
+  - [predicted] students may let both allies chase the same target because the branches look symmetrical.
+  - [predicted] students may forget that one runner index can support while another attacks.
+- Intervention prompts:
+  - "What job should runner 0 have that runner 1 should not?"
+  - "Which branch is supposed to keep the second ally out of the lane?"
+  - "How does the shared program need to split roles to stay readable?"
+- Discussion question:
+  - "Why does one shared program still need different jobs for different allies?"
+- Extension idea:
+  - Ask students to explain the fix as a role split, not just as a block swap.
+
+### Team Strategy Script Project (L32-L41)
 
 - Concept introduced: multi-ally coordination, runner-index grouping, and a second shared-code arc. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **30-45 minutes**.
-- Likely stuck points: [evidence] L29 project start is easy to miss; [evidence] L32-L34 role mapping is easy to mix up; [evidence] L37 capstones need deliberate tracing and review.
+- Likely stuck points: [evidence] L32 project start is easy to miss; [evidence] L35-L37 role mapping is easy to mix up; [evidence] L40-L41 capstones need deliberate tracing and review.
 - Project callout: one program coordinates several allies through local rules, so pause at project start to name the role split before editing.
 - If a team gets stuck on the capstone, have them test one role path at a time and compare outputs before adding complexity.
 - Intervention prompts:
@@ -155,8 +219,8 @@ Students should leave with the execution-model lesson: programs run one action a
 | Conditional control flow | End of Foundations, after L5 | "Which part of your program runs only when the condition is true, and which part runs otherwise?" |
 | Boolean composition | End of Sensors & Branches, after L14 | "Why do `AND`, `OR`, and `NOT` let you say something a single sensor cannot?" |
 | Trace before run | Before any Challenge level | "Before you press Play, which branch will fire first and why?" |
-| Method-like decomposition via runner index | Start of Strategy Brain, around L23-L24 | "How does `runner index` let one program behave like two role-specific methods?" |
-| Resource management | After L12 or at Challenge 22 | "When should your code spend a one-shot resource instead of saving it for later?" |
+| Method-like decomposition via runner index | Start of Strategy Brain, around L25-L26 | "How does `runner index` let one program behave like two role-specific methods?" |
+| Resource management | After L12 or at Challenge 22 (L24) | "When should your code spend a one-shot resource instead of saving it for later?" |
 
 ## Troubleshooting Quick Reference
 

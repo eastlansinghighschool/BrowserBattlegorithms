@@ -9,6 +9,7 @@
 
 - Start with the current level's tutorial and tips.
 - Build your Blockly program under `On Each Turn`.
+- Some guided levels are bug hunts: the starter program is broken on purpose, and your job is to trace the bug and repair it instead of starting from scratch.
 - Press **Start Level** to run the level.
 - Press **Reset Level** to restore the board without losing your code.
 
@@ -43,6 +44,7 @@
   - typed numbers
   - `runner index`
   - `distance to [target]`
+- Bug hunts reuse already-learned blocks and ask you to repair a plausible program before the matching challenge.
 
 ## Saving and Sharing
 

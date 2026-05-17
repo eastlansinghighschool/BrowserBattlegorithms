@@ -6,8 +6,9 @@ For pacing, intervention prompts, and discussion questions while running a sessi
 
 1. Start students in **Guided Levels** so they learn the one-action-per-turn Blockly model.
 2. Use the beginner campaign to introduce movement, scoring, sensing, helper actions, jump, barriers, and freeze.
-3. Move into the advanced levels for logic, comparisons, runner index, and multi-ally shared programs.
-4. Use **Free Play** for open-ended experimentation, competition, and strategy discussions.
+3. Use the bug hunt checkpoints before the challenge levels to practice tracing and repairing a broken program with already-learned tools.
+4. Move into the advanced levels for logic, comparisons, runner index, and multi-ally shared programs.
+5. Use **Free Play** for open-ended experimentation, competition, and strategy discussions.
 
 ## Free Play Modes
 

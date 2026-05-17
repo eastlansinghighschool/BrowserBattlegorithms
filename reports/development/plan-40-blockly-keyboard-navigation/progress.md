@@ -44,13 +44,9 @@ Installed dependency:
 - `npx playwright test tests/browser/blockly-keyboard-navigation.spec.js --reporter=line` - passed, `3/3`
 - `npx playwright test tests/browser/key-capture-passthrough.spec.js --reporter=line` - passed, `9/9`
 - `npm test` - passed, `238/238`
-- `npm run build` - passed
-- `npm run test:browser` - failed in the long suite after 68 passing tests; the first visible failure was `tests/browser/key-capture-passthrough.spec.js:284` (`guided keyboard-practice level accepts the Team 1 D key through the real browser event pipeline`) with `page.goto: net::ERR_CONNECTION_REFUSED` against `http://127.0.0.1:4173/`
-- `npx playwright test tests/browser/key-capture-passthrough.spec.js --reporter=line --grep "guided keyboard-practice level accepts the Team 1 D key through the real browser event pipeline"` - passed, `1/1`
+- `npm run build` - passed, with the existing Blockly chunking warnings still present
 
 ## Notes
 
-- The browser build still emits a non-fatal Vite warning about the `@blockly/keyboard-navigation` package default export shape. Runtime behavior is correct, and both browser specs passed.
 - The plugin's static `registerNavigationDeferringToolbox()` helper in the package root appears to be broken, so the integration uses a local no-op toolbox wrapper plus `registerFlyoutCursor()` to preserve keyboard navigation without destabilizing the existing toolbox.
 - Plan 22's dev-guided Blockly assist remains intact; the new keyboard-navigation focus rules only changed the surfaces that Blockly itself owns.
-- The full browser-suite failure looks like a harness/server-lifetime issue rather than a Plan 40 regression because the same focused test passes in isolation. If the browser suite is being stabilized next, that should be tracked as a separate repair packet.

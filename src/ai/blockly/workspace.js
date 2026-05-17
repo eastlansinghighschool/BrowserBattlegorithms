@@ -1,5 +1,5 @@
 import * as Blockly from "blockly";
-import * as KeyboardNavigationModule from "@blockly/keyboard-navigation";
+import * as keyboardNavigationPkg from "@blockly/keyboard-navigation";
 import {
   ADVANCED_COMPARE_OPERATORS,
   BLOCK_TYPES,
@@ -34,9 +34,7 @@ const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
 const FREE_PLAY_WORKSPACE_STORAGE_KEY = "bba:free-play-workspace";
 const FREE_PLAY_PVP_WORKSPACE_STORAGE_PREFIX = "bba:free-play-pvp-team:";
-const KeyboardNavigation =
-  KeyboardNavigationModule.default?.KeyboardNavigation ||
-  KeyboardNavigationModule.KeyboardNavigation;
+const { KeyboardNavigation } = keyboardNavigationPkg;
 let keyboardNavigationRegistered = false;
 
 class NavigationDeferringToolbox extends Blockly.Toolbox {

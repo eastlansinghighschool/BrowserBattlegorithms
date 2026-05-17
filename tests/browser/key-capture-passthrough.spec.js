@@ -284,6 +284,7 @@ test("Blockly focus does not queue a human action during a running turn", async 
 test("guided keyboard-practice level accepts the Team 1 D key through the real browser event pipeline", async ({ page }) => {
   await page.goto("/");
   await chooseGuided(page);
+  await waitForHeavyReady(page);
   await page.evaluate(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
     hooks.startLevel("human-runner-practice");

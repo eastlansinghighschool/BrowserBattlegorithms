@@ -325,6 +325,10 @@ function getLevelRef(level, referenceSolutionsByLevelId) {
   return referenceSolutionsByLevelId.get(level.id) || null;
 }
 
+function getStarterXml(level) {
+  return typeof level.initialBlocklyXml === "string" ? level.initialBlocklyXml : "";
+}
+
 function getProjectToolboxPolicy(level) {
   if (level.project?.id === "strategy-brain") {
     return new Set(STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS);
@@ -461,20 +465,20 @@ export function checkDemoBlocklyDoesNotSolveLevel(levels, { referenceSolutionsBy
   return diagnostics;
 }
 
-export function checkChallengeLevelsIntroduceNoNewBlock(levels) {
+function checkCumulativeNoNewBlock(levels, { targetLevelKinds, contract, severity }) {
   const diagnostics = [];
   const introducedBlockTypes = new Set();
 
   for (const level of levels) {
     const currentToolbox = normalizeToolboxBlockTypes(level.toolboxBlockTypes);
-    if (level.levelKind === "challenge") {
+    if (targetLevelKinds.has(level.levelKind)) {
       for (const blockType of currentToolbox) {
         if (!introducedBlockTypes.has(blockType)) {
           diagnostics.push(
             makeDiagnostic({
-              severity: SEVERITIES.WARNING,
+              severity,
               levelId: level.id,
-              contract: "challenge-introduces-no-new-block",
+              contract,
               message: `block "${blockType}" is first seen here`,
               file: level.sourcePath || null
             })
@@ -485,6 +489,86 @@ export function checkChallengeLevelsIntroduceNoNewBlock(levels) {
 
     for (const blockType of currentToolbox) {
       introducedBlockTypes.add(blockType);
+    }
+  }
+
+  return diagnostics;
+}
+
+export function checkChallengeLevelsIntroduceNoNewBlock(levels) {
+  return checkCumulativeNoNewBlock(levels, {
+    targetLevelKinds: new Set(["challenge"]),
+    contract: "challenge-introduces-no-new-block",
+    severity: SEVERITIES.WARNING
+  });
+}
+
+export function checkBugHuntLevelsIntroduceNoNewBlock(levels) {
+  return checkCumulativeNoNewBlock(levels, {
+    targetLevelKinds: new Set(["bug_hunt"]),
+    contract: "bug-hunt-introduces-no-new-block",
+    severity: SEVERITIES.WARNING
+  });
+}
+
+export function checkBugHuntHasBrokenStarter(levels, { referenceSolutionsByLevelId = new Map() } = {}) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    if (level.levelKind !== "bug_hunt") {
+      continue;
+    }
+
+    const starterXml = getStarterXml(level);
+    const ref = getLevelRef(level, referenceSolutionsByLevelId);
+    if (!starterXml.trim()) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "bug-hunt-has-broken-starter",
+          message: "bug hunt starter XML is missing or empty",
+          file: level.sourcePath || null
+        })
+      );
+      continue;
+    }
+
+    if (ref && normalizeXmlForComparison(starterXml) === normalizeXmlForComparison(ref.xmlText)) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "bug-hunt-has-broken-starter",
+          message: "bug hunt starter XML matches the reference solution",
+          file: level.sourcePath || ref.filePath || null
+        })
+      );
+    }
+  }
+
+  return diagnostics;
+}
+
+export function checkBugHuntHasReferenceSolution(levels, { referenceSolutionsByLevelId = new Map() } = {}) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    if (level.levelKind !== "bug_hunt") {
+      continue;
+    }
+
+    const ref = getLevelRef(level, referenceSolutionsByLevelId);
+    if (!ref || !ref.xmlText || !String(ref.xmlText).trim()) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "bug-hunt-has-reference-solution",
+          message: "bug hunt reference solution XML is missing or empty",
+          file: level.sourcePath || ref?.filePath || null
+        })
+      );
     }
   }
 
@@ -912,6 +996,9 @@ export function runLevelLint({
     ...checkReferenceSolutionToolboxCompatibility(levels, { referenceSolutionsByLevelId }),
     ...checkDemoBlocklyDoesNotSolveLevel(levels, { referenceSolutionsByLevelId }),
     ...checkChallengeLevelsIntroduceNoNewBlock(levels),
+    ...checkBugHuntLevelsIntroduceNoNewBlock(levels),
+    ...checkBugHuntHasBrokenStarter(levels, { referenceSolutionsByLevelId }),
+    ...checkBugHuntHasReferenceSolution(levels, { referenceSolutionsByLevelId }),
     ...checkProjectMetadata(levels),
     ...checkProjectToolboxPolicy(levels),
     ...checkTurnLimitFloor(levels, minTurnLimit),

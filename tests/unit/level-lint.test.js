@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  checkBugHuntHasBrokenStarter,
+  checkBugHuntHasReferenceSolution,
+  checkBugHuntLevelsIntroduceNoNewBlock,
   checkChallengeLevelsIntroduceNoNewBlock,
   checkFlagSetupGameSpecCompliance,
   checkConceptMatrixAgreement,
@@ -25,6 +28,7 @@ function createLevel(overrides = {}) {
     id: "level-one",
     title: "Level 1: Example",
     levelKind: null,
+    initialBlocklyXml: "<xml><block type=\"battlegorithms_on_each_turn\"></block></xml>",
     toolboxBlockTypes: ["battlegorithms_move_forward"],
     failureCondition: { type: "turn_limit_exceeded", maxTurns: 8 },
     winCondition: { type: "runner_reaches_cell" },
@@ -129,6 +133,62 @@ test("challenge levels warn when they expose a first-seen block", () => {
   const diagnostics = checkChallengeLevelsIntroduceNoNewBlock(levels);
   assert.equal(diagnostics.some((entry) => entry.contract === "challenge-introduces-no-new-block"), true);
   assert.equal(diagnostics[0].severity, "warning");
+});
+
+test("bug hunt levels do not warn when they reuse only previously introduced blocks", () => {
+  const levels = [
+    createLevel({ id: "base-1", title: "Level 1: Base One", toolboxBlockTypes: ["a"] }),
+    createLevel({ id: "base-2", title: "Level 2: Base Two", toolboxBlockTypes: ["a", "b"] }),
+    createLevel({ id: "bug-hunt", title: "Level 3: Bug Hunt", levelKind: "bug_hunt", toolboxBlockTypes: ["b"] })
+  ];
+  const diagnostics = checkBugHuntLevelsIntroduceNoNewBlock(levels);
+  assert.deepEqual(diagnostics, []);
+});
+
+test("bug hunt levels warn when they expose a first-seen block", () => {
+  const levels = [
+    createLevel({ id: "base-1", title: "Level 1: Base One", toolboxBlockTypes: ["a"] }),
+    createLevel({ id: "bug-hunt", title: "Level 2: Bug Hunt", levelKind: "bug_hunt", toolboxBlockTypes: ["a", "c"] })
+  ];
+  const diagnostics = checkBugHuntLevelsIntroduceNoNewBlock(levels);
+  assert.equal(diagnostics.some((entry) => entry.contract === "bug-hunt-introduces-no-new-block"), true);
+  assert.equal(diagnostics[0].severity, "warning");
+});
+
+test("bug hunt starter and reference solution contracts validate the authored repair loop", () => {
+  const level = createLevel({
+    id: "bug-hunt",
+    title: "Level 2: Bug Hunt",
+    levelKind: "bug_hunt",
+    initialBlocklyXml: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>"
+  });
+  const ref = new Map([
+    [
+      "bug-hunt",
+      {
+        filePath: "/abs/bug-hunt.xml",
+        xmlText: "<xml><block type=\"battlegorithms_move_backward\"></block></xml>"
+      }
+    ]
+  ]);
+  assert.deepEqual(checkBugHuntHasBrokenStarter([level], { referenceSolutionsByLevelId: ref }), []);
+  assert.deepEqual(checkBugHuntHasReferenceSolution([level], { referenceSolutionsByLevelId: ref }), []);
+
+  const brokenStarter = createLevel({
+    id: "bug-hunt",
+    title: "Level 3: Bug Hunt",
+    levelKind: "bug_hunt",
+    initialBlocklyXml: "<xml><block type=\"battlegorithms_move_backward\"></block></xml>"
+  });
+  assert.equal(checkBugHuntHasBrokenStarter([brokenStarter], { referenceSolutionsByLevelId: ref })[0].contract, "bug-hunt-has-broken-starter");
+
+  const missingReference = createLevel({
+    id: "missing-ref",
+    title: "Level 4: Bug Hunt",
+    levelKind: "bug_hunt",
+    initialBlocklyXml: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>"
+  });
+  assert.equal(checkBugHuntHasReferenceSolution([missingReference], { referenceSolutionsByLevelId: new Map() })[0].contract, "bug-hunt-has-reference-solution");
 });
 
 test("project capstone challenges do not warn for approved blocks already introduced earlier", () => {
