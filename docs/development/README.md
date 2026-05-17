@@ -19,7 +19,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 40](plan-40-blockly-keyboard-navigation.md) | complete | Integrate Blockly's keyboard-navigation plugin so users and browser agents can author Blockly programs without drag/drop, while preserving Plan 30 key-capture protections, p5 gameplay input routing, modal/form/slider focus behavior, Blockly undo/redo, and dev-guided startup behavior. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
 | [Plan 42](plan-42-bug-hunt-guided-levels.md) | complete | Add one guided bug hunt level before each synthesis challenge so students practice tracing and repairing plausible broken Blockly programs before open-ended challenge work. |
-| [Plan 43](plan-43-multiple-choice-prediction-levels.md) | ready | Add a small multiple-choice prediction interaction for selected guided levels so students commit to expected program behavior before running and comparing the result. |
+| [Plan 43](plan-43-multiple-choice-prediction-levels.md) | complete | Add a small multiple-choice prediction interaction for selected guided levels so students commit to expected program behavior before running and comparing the result. |
 
 ### Completed Packets
 

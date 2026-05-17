@@ -62,6 +62,7 @@ export function createInitialState() {
     levelAttemptCount: 0,
     currentLevelStartTurnNumber: null,
     lastLevelResultReason: null,
+    predictionForCurrentLevel: null,
     currentToolboxBlockTypes: [],
     currentSensorObjectTypes: [],
     currentSensorRelationTypes: [],

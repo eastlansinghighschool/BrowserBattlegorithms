@@ -6,8 +6,8 @@ import { checkInvariants } from "../../src/core/invariants.js";
 import { GUIDED_LEVEL_REFERENCE_SOLUTIONS } from "./fixtures/guidedReferenceSolutions.js";
 import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
 
-test("every non-project guided level has a reference code-block solution", () => {
-  const nonProjectLevels = getLevelDefinitions().filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project);
+test("every non-project non-prediction guided level has a reference code-block solution", () => {
+  const nonProjectLevels = getLevelDefinitions().filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project && level.levelKind !== "prediction");
   const missing = nonProjectLevels
     .map((level) => level.id)
     .filter((levelId) => !GUIDED_LEVEL_REFERENCE_SOLUTIONS[levelId]);
@@ -15,8 +15,8 @@ test("every non-project guided level has a reference code-block solution", () =>
   assert.deepEqual(missing, []);
 });
 
-test("reference code-block programs solve every non-project guided level", () => {
-  const nonProjectLevels = getLevelDefinitions().filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project);
+test("reference code-block programs solve every non-project non-prediction guided level", () => {
+  const nonProjectLevels = getLevelDefinitions().filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project && level.levelKind !== "prediction");
 
   for (const level of nonProjectLevels) {
     const xmlText = GUIDED_LEVEL_REFERENCE_SOLUTIONS[level.id];

@@ -23,7 +23,7 @@ import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
 
 test("level definitions load with the expected starter and advanced level order", () => {
   const levels = getLevelDefinitions();
-  assert.equal(levels.length, 42);
+  assert.equal(levels.length, 45);
   assert.deepEqual(
     levels.map((level) => level.id),
     [
@@ -32,6 +32,7 @@ test("level definitions load with the expected starter and advanced level order"
       "score-a-point",
       "barrier-detour",
       "mirror-forward",
+      "prediction-06",
       "sensor-barrier-branch",
       "watch-the-wall",
       "find-the-human",
@@ -56,6 +57,7 @@ test("level definitions load with the expected starter and advanced level order"
       "two-conditions-at-once",
       "this-or-that",
       "flip-the-answer",
+      "prediction-25",
       "bughunt-28",
       "full-team-tactics",
       "one-program-two-allies",
@@ -66,20 +68,27 @@ test("level definitions load with the expected starter and advanced level order"
       "freeze-support",
       "barrier-specialist",
       "jump-team",
+      "prediction-31",
       "bughunt-37",
       "advanced-scrimmage",
       "optional-random-lab"
     ]
   );
 
-  assert.equal(levels[14].id, "bughunt-15");
-  assert.ok(levels[15].title.startsWith("Challenge 15"));
-  assert.equal(levels[22].id, "bughunt-22");
-  assert.ok(levels[23].title.startsWith("Challenge 22"));
-  assert.equal(levels[29].id, "bughunt-28");
-  assert.ok(levels[30].title.startsWith("Challenge 28"));
-  assert.equal(levels[39].id, "bughunt-37");
-  assert.ok(levels[40].title.startsWith("Challenge 37"));
+  assert.equal(levels[5].id, "prediction-06");
+  assert.ok(levels[5].title.startsWith("Prediction 6"));
+  assert.equal(levels[15].id, "bughunt-15");
+  assert.ok(levels[16].title.startsWith("Challenge 15"));
+  assert.equal(levels[23].id, "bughunt-22");
+  assert.ok(levels[24].title.startsWith("Challenge 22"));
+  assert.equal(levels[30].id, "prediction-25");
+  assert.ok(levels[30].title.startsWith("Prediction 25"));
+  assert.equal(levels[31].id, "bughunt-28");
+  assert.ok(levels[32].title.startsWith("Challenge 28"));
+  assert.equal(levels[41].id, "prediction-31");
+  assert.ok(levels[41].title.startsWith("Prediction 31"));
+  assert.equal(levels[42].id, "bughunt-37");
+  assert.ok(levels[43].title.startsWith("Challenge 37"));
   assert.equal(levels.at(-1).id, "optional-random-lab");
 });
 
@@ -125,6 +134,20 @@ test("bug hunt metadata is preserved on the authored debugging levels and surfac
     const manifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === levelId);
     assert.equal(level.levelKind, "bug_hunt", `${levelId} should be marked as a bug hunt`);
     assert.equal(manifestEntry.levelKind, "bug_hunt", `${levelId} should expose bug hunt metadata in the manifest`);
+  }
+});
+
+test("prediction metadata is preserved on the authored prediction levels and surfaced in the manifest", async () => {
+  const levels = getLevelDefinitions();
+  const { GUIDED_LEVEL_MANIFEST } = await import("../../src/config/levels/manifest.js");
+
+  for (const levelId of ["prediction-06", "prediction-25", "prediction-31"]) {
+    const level = levels.find((entry) => entry.id === levelId);
+    const manifestEntry = GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === levelId);
+    assert.equal(level.levelKind, "prediction", `${levelId} should be marked as a prediction level`);
+    assert.equal(manifestEntry.levelKind, "prediction", `${levelId} should expose prediction metadata in the manifest`);
+    assert.ok(level.prediction?.prompt);
+    assert.ok(level.prediction?.choices?.length >= 2);
   }
 });
 
@@ -486,8 +509,8 @@ test("guided level manifest provides a lightweight sanity check of the campaign"
   assert.equal(GUIDED_LEVEL_MANIFEST.length, levels.length);
   assert.equal(GUIDED_LEVEL_MANIFEST[0].id, "move-to-target");
   assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-random-lab");
-  assert.equal(GUIDED_LEVEL_MANIFEST[14].id, "bughunt-15");
-  assert.ok(GUIDED_LEVEL_MANIFEST[15].title.startsWith("Challenge 15"));
+  assert.equal(GUIDED_LEVEL_MANIFEST[15].id, "bughunt-15");
+  assert.ok(GUIDED_LEVEL_MANIFEST[16].title.startsWith("Challenge 15"));
 });
 
 test("challenge metadata is preserved on the authored synthesis levels and surfaced in the manifest", async () => {

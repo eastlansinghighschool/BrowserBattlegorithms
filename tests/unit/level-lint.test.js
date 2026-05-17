@@ -10,6 +10,7 @@ import {
   checkDemoBlocklyDoesNotSolveLevel,
   checkProjectMetadata,
   checkProjectToolboxPolicy,
+  checkPredictionHasValidSchema,
   checkReferenceSolutionFixtureNameMatchesLevelId,
   checkReferenceSolutionToolboxCompatibility,
   checkSensorRelationPolicy,
@@ -113,6 +114,44 @@ test("demo Blockly comparison ignores layout but flags identical programs", () =
   ]);
   const diagnostics = checkDemoBlocklyDoesNotSolveLevel([level], { referenceSolutionsByLevelId: ref });
   assert.equal(diagnostics[0].contract, "demo-does-not-solve-level");
+});
+
+test("prediction levels do not warn when their schema is complete", () => {
+  const levels = [
+    createLevel({
+      id: "prediction-ok",
+      title: "Prediction 1: Example",
+      levelKind: "prediction",
+      prediction: {
+        prompt: "Will the runner move forward?",
+        choices: [
+          { id: "yes", label: "Yes" },
+          { id: "no", label: "No" }
+        ],
+        correctChoiceId: "yes"
+      }
+    })
+  ];
+  assert.deepEqual(checkPredictionHasValidSchema(levels), []);
+});
+
+test("prediction levels warn when their schema is missing or malformed", () => {
+  const levels = [
+    createLevel({ id: "missing", title: "Prediction 2: Missing", levelKind: "prediction" }),
+    createLevel({
+      id: "bad",
+      title: "Prediction 3: Bad",
+      levelKind: "prediction",
+      prediction: {
+        prompt: "",
+        choices: [{ id: "yes", label: "Yes" }],
+        correctChoiceId: "nope"
+      }
+    })
+  ];
+  const diagnostics = checkPredictionHasValidSchema(levels);
+  assert.equal(diagnostics.some((entry) => entry.contract === "prediction-has-valid-schema"), true);
+  assert.equal(diagnostics.every((entry) => entry.severity === "warning"), true);
 });
 
 test("challenge levels do not warn when they reuse only previously introduced blocks", () => {

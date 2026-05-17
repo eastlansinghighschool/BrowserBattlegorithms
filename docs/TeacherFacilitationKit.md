@@ -12,6 +12,14 @@ This kit complements [Teacher Guide](TeacherGuide.md) and [Student Guide](Studen
 - Students should already know: they will build a Blockly program under `On Each Turn`, and only the first action reached runs.
 - Be ready to discuss: one-action-per-turn execution, boolean reasoning, runner roles, local sensing, and when to trace before changing code.
 
+## Prediction Checkpoints
+
+- Prediction levels ask students to commit to an answer before they press **Start Level**.
+- The useful teacher move is to ask, "What do you expect to happen first?" and wait for a concrete answer before the class runs the board.
+- After the run, ask students to compare their prediction to the observed result using the words `trace`, `branch`, `direction`, or `runner index`.
+- If a student wants to change code before predicting, redirect them back to the starter program and have them read the board first.
+- In this curriculum, the pilot prediction checkpoints sit near L6, L25, and L31 so students can practice the habit before movement, boolean, and shared-program reasoning get more complex.
+
 ## Hour-of-Code Subset
 
 ### 50-minute visit

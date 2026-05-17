@@ -1,5 +1,5 @@
 import { GAME_VIEW_MODES, LEVEL_RESULT } from "../config/constants.js";
-import { getNextAvailableLevelId } from "../core/levels.js";
+import { getCurrentLevel, getNextAvailableLevelId } from "../core/levels.js";
 
 export function setPlayButtonState(app) {
   const button = document.getElementById("playResetButton");
@@ -29,6 +29,13 @@ export function setPlayButtonState(app) {
   }
 
   if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
+    const currentLevel = getCurrentLevel(app);
+    const predictionNeedsChoice =
+      currentLevel?.levelKind === "prediction" &&
+      Boolean(currentLevel.prediction) &&
+      !app.state.predictionForCurrentLevel?.choiceId &&
+      app.state.mainGameState !== "RUNNING" &&
+      app.state.activeLevelResult === LEVEL_RESULT.NONE;
     if (tutorialButton) {
       tutorialButton.style.display = "";
     }
@@ -43,6 +50,17 @@ export function setPlayButtonState(app) {
       button.textContent = "Reset Level";
     } else {
       button.textContent = "Start Level";
+    }
+    button.disabled = predictionNeedsChoice;
+    if (predictionNeedsChoice) {
+      button.setAttribute("aria-disabled", "true");
+      const affordanceId = currentLevel ? `prediction-start-affordance-${currentLevel.id}` : "";
+      if (affordanceId) {
+        button.setAttribute("aria-describedby", affordanceId);
+      }
+    } else {
+      button.removeAttribute("aria-disabled");
+      button.removeAttribute("aria-describedby");
     }
     return;
   }

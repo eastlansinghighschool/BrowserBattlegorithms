@@ -28,6 +28,7 @@ import {
   getCurrentLevel,
   goToNextLevel,
   resetCurrentLevel,
+  selectPredictionChoice,
   setGuidedHumanTurnBehavior,
   startLevel
 } from "../core/levels.js";
@@ -132,6 +133,10 @@ function isChallengeLevel(level) {
   return level?.levelKind === "challenge";
 }
 
+function isPredictionLevel(level) {
+  return level?.levelKind === "prediction" && Boolean(level.prediction);
+}
+
 function renderChallengeBadge(level) {
   if (!isChallengeLevel(level)) {
     return "";
@@ -153,6 +158,14 @@ function renderChallengeCallout(level) {
   `;
 }
 
+function renderPredictionBadge(level) {
+  if (!isPredictionLevel(level)) {
+    return "";
+  }
+
+  return '<span class="level-kind-badge level-kind-badge-prediction" aria-label="Prediction">Prediction</span>';
+}
+
 function renderTargetSquareIcon() {
   return `
     <svg class="lesson-target-icon" aria-hidden="true" viewBox="0 0 48 48" fill="none">
@@ -171,7 +184,7 @@ function renderLegendMarker(item) {
 }
 
 function renderLevelSignifiers(level) {
-  return `${renderProjectBadge(level)}${renderChallengeBadge(level)}`;
+  return `${renderProjectBadge(level)}${renderPredictionBadge(level)}${renderChallengeBadge(level)}`;
 }
 
 function getResultStateLabel(app) {
@@ -257,6 +270,66 @@ function renderLessonDetails(app, level) {
         </ul>
       </div>
     </details>
+  `;
+}
+
+function getPredictionChoiceLabel(level, choiceId) {
+  return level.prediction?.choices?.find((choice) => choice.id === choiceId)?.label || "";
+}
+
+function renderPredictionPrompt(app, level) {
+  if (!isPredictionLevel(level)) {
+    return "";
+  }
+
+  const predictionState = app.state.predictionForCurrentLevel;
+  const promptId = `prediction-prompt-${level.id}`;
+  const affordanceId = `prediction-start-affordance-${level.id}`;
+  const lockedAt = predictionState?.lockedAt || "unselected";
+  const selectedChoiceId = predictionState?.choiceId || null;
+  const selectedChoice = selectedChoiceId ? getPredictionChoiceLabel(level, selectedChoiceId) : "";
+  const correctChoice = getPredictionChoiceLabel(level, level.prediction.correctChoiceId);
+  const isLocked = lockedAt === "running" || lockedAt === "result_shown";
+  const showAffordance = !selectedChoiceId && lockedAt !== "result_shown";
+
+  if (lockedAt === "result_shown") {
+    const matched = selectedChoiceId === level.prediction.correctChoiceId;
+    const observation = `${level.prediction.observation || correctChoice}`.trim();
+    const explanation = `${level.prediction.explanation || ""}`.trim();
+    return `
+      <div class="lesson-prediction lesson-prediction-result">
+        <p class="lesson-prediction-label">Prediction Result</p>
+        <p class="lesson-prediction-feedback">${escapeHtml(
+          matched
+            ? `You predicted ${selectedChoice || "Runner"}. The program did ${observation}. Your prediction matched what happened - nice tracing.`
+            : `You predicted ${selectedChoice || "Runner"}. The program did ${observation}. The correct answer was ${correctChoice}. ${explanation || ""}`
+        )}</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="lesson-prediction">
+      <p class="lesson-prediction-label">Prediction</p>
+      ${showAffordance ? `<p id="${affordanceId}" class="lesson-prediction-affordance" aria-live="polite">Pick a prediction to start.</p>` : ""}
+      <p id="${promptId}" class="lesson-prediction-prompt">${escapeHtml(level.prediction.prompt)}</p>
+      <div class="lesson-prediction-choices" role="radiogroup" aria-labelledby="${promptId}">
+        ${level.prediction.choices.map((choice) => `
+          <label class="lesson-prediction-choice">
+            <input
+              type="radio"
+              name="prediction-${level.id}"
+              value="${escapeHtml(choice.id)}"
+              data-action="prediction-choice"
+              ${selectedChoiceId === choice.id ? "checked" : ""}
+              ${isLocked ? "disabled" : ""}
+            >
+            <span>${escapeHtml(choice.label)}</span>
+          </label>
+        `).join("")}
+      </div>
+      ${lockedAt === "selected" ? `<p class="lesson-prediction-note">${escapeHtml(level.prediction.explanation || "Make your best prediction, then run the level to compare what happened.")}</p>` : ""}
+    </div>
   `;
 }
 
@@ -411,6 +484,13 @@ export function bindLevelPanel(app) {
 
   panel.addEventListener("change", (event) => {
     const target = event.target;
+    if (target instanceof HTMLInputElement && target.dataset.action === "prediction-choice") {
+      if (selectPredictionChoice(app, target.value)) {
+        app.syncUi();
+      }
+      return;
+    }
+
     if (!(target instanceof HTMLSelectElement)) {
       return;
     }
@@ -510,6 +590,7 @@ export function renderLevelPanel(app) {
         ${renderProjectStartLessonCallout(currentLevel)}
         ${renderProjectStateNote(currentLevel)}
         ${renderChallengeCallout(currentLevel)}
+        ${renderPredictionPrompt(app, currentLevel)}
         ${renderLegendItems(currentLevel)}
         ${app.state.humanTurnBehavior === HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT ? `
           <div class="lesson-alert">

@@ -96,6 +96,72 @@
   padding: 6px 8px;
 }
 
+.lesson-prediction {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #eef7ff, #f7fbff);
+  border: 1px solid rgba(58, 111, 144, 0.18);
+}
+
+.lesson-prediction-result {
+  background: linear-gradient(180deg, #f2fbf3, #edf8ef);
+  border-color: rgba(52, 124, 78, 0.2);
+}
+
+.lesson-prediction-label {
+  margin: 0 0 6px;
+  font-weight: 800;
+  color: #24404a;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.82rem;
+}
+
+.lesson-prediction-affordance {
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: #2f6f90;
+}
+
+.lesson-prediction-prompt {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: #24363f;
+}
+
+.lesson-prediction-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-prediction-choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(36, 64, 74, 0.12);
+  cursor: pointer;
+}
+
+.lesson-prediction-choice input {
+  margin: 0;
+}
+
+.lesson-prediction-choice:focus-within {
+  outline: 2px solid #3b6f90;
+  outline-offset: 1px;
+}
+
+.lesson-prediction-note,
+.lesson-prediction-feedback {
+  margin: 10px 0 0;
+  color: #24404a;
+  line-height: 1.4;
+}
+
 .turn-log-toggle {
   display: inline-flex;
   align-items: center;

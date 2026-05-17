@@ -4,6 +4,7 @@ import {
   chooseFreePlay,
   chooseGuided,
   clearStorageBeforeEach,
+  dismissTutorial,
   loadWorkspaceXml,
   waitForHeavyReady
 } from "./helpers.js";
@@ -285,8 +286,10 @@ test("guided keyboard-practice level accepts the Team 1 D key through the real b
   await page.goto("/");
   await chooseGuided(page);
   await waitForHeavyReady(page);
+  await dismissTutorial(page);
   await page.evaluate(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
     hooks.startLevel("human-runner-practice");
     hooks.app.state.mainGameState = "RUNNING";
     hooks.app.state.currentTurnState = "AWAITING_INPUT";
@@ -299,7 +302,21 @@ test("guided keyboard-practice level accepts the Team 1 D key through the real b
     return { x: human.gridX, y: human.gridY };
   });
 
-  await page.locator("#canvas-container canvas").click({ position: { x: 5, y: 5 } });
+  await page.waitForFunction(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const state = hooks.app.state;
+    const human = state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return (
+      state.mainGameState === "RUNNING" &&
+      state.currentTurnState === "AWAITING_INPUT" &&
+      human &&
+      state.allRunners[state.activeRunnerIndex] === human &&
+      !state.activeTutorial &&
+      !human.isMoving &&
+      !human.isBouncing
+    );
+  });
+  await page.locator("#playResetButton").focus();
   await page.keyboard.press("d");
   const queuedActionHandle = await page.waitForFunction(() => {
     const queued = window.__BBA_TEST_HOOKS__?.app?.state?.queuedActionForCurrentRunner;

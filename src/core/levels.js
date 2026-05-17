@@ -87,12 +87,57 @@ function findCurrentLevel(state) {
   return state.levels.find((level) => level.id === state.currentLevelId) || null;
 }
 
+function isPredictionLevel(level) {
+  return level?.levelKind === "prediction" && Boolean(level.prediction);
+}
+
 function getNextLevelId(state, currentLevelId) {
   const index = state.levels.findIndex((level) => level.id === currentLevelId);
   if (index === -1 || index === state.levels.length - 1) {
     return null;
   }
   return state.levels[index + 1].id;
+}
+
+function initializePredictionState(state, level, { preserveExisting = false } = {}) {
+  if (!isPredictionLevel(level)) {
+    state.predictionForCurrentLevel = null;
+    return null;
+  }
+
+  if (preserveExisting && state.predictionForCurrentLevel?.levelId === level.id) {
+    state.predictionForCurrentLevel.levelId = level.id;
+    return state.predictionForCurrentLevel;
+  }
+
+  state.predictionForCurrentLevel = {
+    levelId: level.id,
+    choiceId: null,
+    lockedAt: "unselected"
+  };
+  return state.predictionForCurrentLevel;
+}
+
+export function selectPredictionChoice(app, choiceId) {
+  const { state } = app;
+  const level = getCurrentLevel(app);
+  if (!isPredictionLevel(level) || state.predictionForCurrentLevel?.levelId !== level.id) {
+    return false;
+  }
+
+  const currentPrediction = state.predictionForCurrentLevel;
+  if (currentPrediction.lockedAt === "running" || currentPrediction.lockedAt === "result_shown") {
+    return false;
+  }
+
+  const choiceExists = (level.prediction?.choices || []).some((choice) => choice.id === choiceId);
+  if (!choiceExists) {
+    return false;
+  }
+
+  currentPrediction.choiceId = choiceId;
+  currentPrediction.lockedAt = "selected";
+  return true;
 }
 
 function applyLevelToState(state, level) {
@@ -181,6 +226,7 @@ export function initializeLevelState(app) {
   state.levelAttemptCount = 0;
   state.currentLevelStartTurnNumber = null;
   state.lastLevelResultReason = null;
+  state.predictionForCurrentLevel = null;
   state.currentToolboxBlockTypes = [];
   state.humanTurnBehavior = HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
   const currentLevel = findCurrentLevel(state);
@@ -209,6 +255,7 @@ export function getLevelStateSnapshot(app) {
     currentSensorObjectTypes: [...(state.currentSensorObjectTypes || [])],
     currentSensorRelationTypes: [...(state.currentSensorRelationTypes || [])],
     currentMoveTowardTargetTypes: [...(state.currentMoveTowardTargetTypes || [])],
+    predictionForCurrentLevel: state.predictionForCurrentLevel ? { ...state.predictionForCurrentLevel } : null,
     goalBurstEffect: state.goalBurstEffect ? { ...state.goalBurstEffect } : null,
     activeTutorial: state.activeTutorial ? {
       key: state.activeTutorial.key,
@@ -224,6 +271,9 @@ export function enterGuidedMode(app) {
   const currentLevel = getCurrentLevel(app);
   if (currentLevel) {
     applyLevelToState(state, currentLevel);
+    initializePredictionState(state, currentLevel, { preserveExisting: true });
+  } else {
+    state.predictionForCurrentLevel = null;
   }
   initializeDisplayState(app);
   state.activeLevelResult = LEVEL_RESULT.NONE;
@@ -244,6 +294,7 @@ export function enterFreePlay(app) {
   const { state } = app;
   app.hooks.clearBlocklyTracePlayback?.(app);
   state.currentModeView = GAME_VIEW_MODES.FREE_PLAY;
+  state.predictionForCurrentLevel = null;
   state.freePlayMode = state.freePlayMode || DEFAULT_FREE_PLAY_MODE;
   state.freePlayTeamSize = state.freePlayTeamSize || DEFAULT_FREE_PLAY_TEAM_SIZE;
   state.freePlayMapKey = state.freePlayMapKey || DEFAULT_MAP_KEY;
@@ -283,9 +334,19 @@ export function startLevel(app, levelId = app.state.currentLevelId) {
   state.currentModeView = GAME_VIEW_MODES.GUIDED_LEVELS;
   state.currentLevelId = level.id;
   state.currentLevelStatus = state.levelProgress[level.id];
+  initializePredictionState(state, level, { preserveExisting: true });
+
+  if (isPredictionLevel(level) && !state.predictionForCurrentLevel?.choiceId) {
+    state.activeLevelResult = LEVEL_RESULT.NONE;
+    return null;
+  }
+
   state.activeLevelResult = LEVEL_RESULT.IN_PROGRESS;
   state.levelAttemptCount += 1;
   state.lastLevelResultReason = null;
+  if (isPredictionLevel(level) && state.predictionForCurrentLevel) {
+    state.predictionForCurrentLevel.lockedAt = "running";
+  }
 
   applyLevelToState(state, level);
   state.humanTurnBehavior = level.humanTurnBehavior || HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
@@ -335,6 +396,9 @@ export function completeLevel(app, result, reason) {
   }
   state.activeLevelResult = result;
   state.lastLevelResultReason = reason;
+  if (state.predictionForCurrentLevel?.levelId === state.currentLevelId) {
+    state.predictionForCurrentLevel.lockedAt = "result_shown";
+  }
   state.mainGameState = MAIN_GAME_STATES.LEVEL_RESULT;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
   if (previousLevelResult !== result) {
@@ -370,6 +434,7 @@ export function configureFreePlay(app, updates = {}) {
   const { state } = app;
   app.hooks.clearBlocklyTracePlayback?.(app);
   state.currentModeView = GAME_VIEW_MODES.FREE_PLAY;
+  state.predictionForCurrentLevel = null;
   state.freePlayMode = updates.freePlayMode ?? state.freePlayMode ?? DEFAULT_FREE_PLAY_MODE;
   state.freePlayTeamSize = updates.freePlayTeamSize ?? state.freePlayTeamSize ?? DEFAULT_FREE_PLAY_TEAM_SIZE;
   state.freePlayMapKey = updates.freePlayMapKey ?? state.freePlayMapKey ?? DEFAULT_MAP_KEY;

@@ -233,7 +233,7 @@ test("level 4 passes when the ally reaches the detour target cell", () => {
   assert.equal(app.state.levelProgress["mirror-forward"], LEVEL_STATUS.AVAILABLE);
 });
 
-test("level 5 teaches playDirection from the opposite side of the map", () => {
+test("level 5 unlocks the first prediction checkpoint before the sensor branch", () => {
   const app = createApp();
   initializeLevelState(app);
   app.state.levelProgress["move-to-target"] = LEVEL_STATUS.PASSED;
@@ -250,7 +250,8 @@ test("level 5 teaches playDirection from the opposite side of the map", () => {
 
   const result = evaluateLevelProgress(app);
   assert.deepEqual(result, { result: LEVEL_RESULT.PASSED, reason: "win_condition_met" });
-  assert.equal(app.state.levelProgress["sensor-barrier-branch"], LEVEL_STATUS.AVAILABLE);
+  assert.equal(app.state.levelProgress["prediction-06"], LEVEL_STATUS.AVAILABLE);
+  assert.equal(app.state.levelProgress["sensor-barrier-branch"], LEVEL_STATUS.LOCKED);
 });
 
 test("guided levels fail when the turn limit is exceeded", () => {

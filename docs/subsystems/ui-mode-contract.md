@@ -21,7 +21,8 @@ This note does NOT own:
 | `src/config/gameModes.js` | Defines `GAME_VIEW_MODES` constants (`GUIDED_LEVELS`, `FREE_PLAY`) and free-play sub-mode constants. |
 | `src/ui/controls.js` | Binds buttons to state; enforces which controls are hidden in Guided Levels vs shown in Free Play. |
 | `src/ui/blocklyPanel.js` | Switches the Blockly panel between guided level summary, PvP team tabs, and PvCPU summary. |
-| `src/ui/gameStateUI.js` | Produces mode-sensitive play/reset button labels and level-navigation button visibility. |
+| `src/ui/gameStateUI.js` | Produces mode-sensitive play/reset button labels, prediction run gating, and level-navigation button visibility. |
+| `src/ui/levels.js` | Renders the guided lesson panel, including challenge/project badges and prediction prompts / feedback rows. |
 | `src/ui/scoreboard.js` | Renders turn count, team scores, win threshold, level title, and mode metadata. Output varies by mode. |
 | `src/ui/tutorialOverlay.js` | Manages first-run mode chooser, per-level tutorial step progress, spotlight positioning, and demo Blockly. |
 | `src/ui/projectSignifiers.js` | Renders project badge, persistent project indicator, project-start callout, and L32 carrier note. |
@@ -58,6 +59,10 @@ Guided Levels hide import/export; see [file-pipelines.md](./file-pipelines.md) f
 - **Free Play (PvCPU / PvP)**: `Play` → `Reset` → `Reset Game` (after match ends).
 
 The underlying DOM element is the same button; only its label and visibility change.
+
+## Prediction run gating
+
+Prediction levels use the same guided lesson shell but add one extra rule: the Start button is disabled with `aria-disabled="true"` until the student selects a prediction choice. `src/ui/levels.js` renders the inline prediction prompt, native radio buttons, and the visible "Pick a prediction to start" affordance. `src/ui/gameStateUI.js` mirrors that state onto the Start button so keyboard and screen-reader users get the same cue. Once a choice is selected, the button becomes enabled and the affordance disappears; after `level.result`, the prompt slot switches to a compact comparison row that stays visible until the level is reset or changed.
 
 ## Scoreboard mode behavior
 

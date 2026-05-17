@@ -53,6 +53,10 @@ function expectedMatrixLabelFromTitle(title) {
     const match = normalized.match(/^level\s+(\d+)/);
     return match ? match[1] : normalized;
   }
+  if (normalized.startsWith("prediction ")) {
+    const match = normalized.match(/^prediction\s+(\d+)/);
+    return match ? `prediction ${match[1]}` : normalized;
+  }
   if (normalized.startsWith("challenge ")) {
     const match = normalized.match(/^challenge\s+(\d+)/);
     return match ? `challenge ${match[1]}` : normalized;
@@ -663,6 +667,88 @@ export function checkProjectToolboxPolicy(levels) {
   return diagnostics;
 }
 
+export function checkPredictionHasValidSchema(levels) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    if (level.levelKind !== "prediction") {
+      continue;
+    }
+
+    const prediction = level.prediction || null;
+    if (!prediction || typeof prediction !== "object") {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "prediction-has-valid-schema",
+          message: "prediction levels must define a prediction object",
+          file: level.sourcePath || null
+        })
+      );
+      continue;
+    }
+
+    const prompt = `${prediction.prompt || ""}`.trim();
+    const choices = Array.isArray(prediction.choices) ? prediction.choices : [];
+    const choiceIds = choices
+      .map((choice) => choice && typeof choice.id === "string" ? choice.id.trim() : "")
+      .filter(Boolean);
+    const choiceLabels = choices
+      .map((choice) => choice && typeof choice.label === "string" ? choice.label.trim() : "")
+      .filter(Boolean);
+    const correctChoiceId = `${prediction.correctChoiceId || ""}`.trim();
+
+    if (!prompt) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "prediction-has-valid-schema",
+          message: "prediction prompt must be a non-empty string",
+          file: level.sourcePath || null
+        })
+      );
+    }
+
+    if (choices.length < 2) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "prediction-has-valid-schema",
+          message: "prediction levels must define at least two choices",
+          file: level.sourcePath || null
+        })
+      );
+    } else if (choiceIds.length !== choices.length || choiceLabels.length !== choices.length) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "prediction-has-valid-schema",
+          message: "prediction choices must each define string id and label fields",
+          file: level.sourcePath || null
+        })
+      );
+    }
+
+    if (!correctChoiceId || !choiceIds.includes(correctChoiceId)) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "prediction-has-valid-schema",
+          message: "prediction correctChoiceId must match one of the choice ids",
+          file: level.sourcePath || null
+        })
+      );
+    }
+  }
+
+  return diagnostics;
+}
+
 export function checkTurnLimitFloor(levels, minTurnLimit = DEFAULT_MIN_TURN_LIMIT) {
   const diagnostics = [];
 
@@ -1001,6 +1087,7 @@ export function runLevelLint({
     ...checkBugHuntHasReferenceSolution(levels, { referenceSolutionsByLevelId }),
     ...checkProjectMetadata(levels),
     ...checkProjectToolboxPolicy(levels),
+    ...checkPredictionHasValidSchema(levels),
     ...checkTurnLimitFloor(levels, minTurnLimit),
     ...checkWinConditionRequiresNamedMechanic(levels, conceptMatrix),
     ...checkReferenceSolutionFixtureNameMatchesLevelId(levels, { referenceSolutionsByLevelId }),

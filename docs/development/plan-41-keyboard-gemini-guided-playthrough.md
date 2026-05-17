@@ -114,7 +114,7 @@ For each level attempt, read only:
 
 - this packet
 - Plan 41 progress report
-- the matching Plan 06 context file under `reports/development/plan-06-guided-playtest-triage/level-context/`
+- the matching Plan 06 context file under `reports/development/plan-06-guided-playtest-triage/level-context/` **if one exists** — the seven post-Plan-06 levels (see "Post-Plan-06 levels with no context file" below) have none and that is expected
 - any previous Plan 41 reports needed to understand carried-forward project code
 
 Do not bulk-read all level source files or reference solutions. Use `rg` only to find report/context file names, not to inspect solutions.
@@ -160,6 +160,35 @@ Plan 41 should reuse Plan 06's structure without mutating it:
 3. Use existing Plan 06 reports only as comparison material after attempting the same level, not as a solution guide.
 4. Create all new campaign reports in the Plan 41 folder.
 5. If a Plan 06 context file is stale because the level has changed, record that as a Plan 41 finding rather than editing the Plan 06 file.
+
+## Post-Plan-06 levels with no context file
+
+Plans 42 and 43 added seven new guided levels after Plan 06 wrote its level-context files. These levels have **no Plan 06 context file** and that is expected — record their status under "new level, no Plan 06 context" rather than treating the absence as a finding.
+
+Bug hunt levels (Plan 42 — `levelKind: "bug_hunt"`):
+
+- `bughunt-15` — debugging the flag-phase / first-action concept; placed immediately before challenge `level-15`.
+- `bughunt-22` — debugging readiness checks / branch ordering; placed immediately before challenge `level-22`.
+- `bughunt-28` — debugging `AND`/`OR` boolean composition; placed immediately before Strategy Brain capstone `level-28`.
+- `bughunt-37` — debugging runner-index role split; placed immediately before Team Strategy Script capstone `level-37`.
+
+Bug hunts load with an intentionally broken starter program. The student's job is to read the program, identify the bug, and apply a small repair — not to author from scratch. Record whether the bug was discoverable from the visible directions and starter, and how many keystroke-edits it took to repair.
+
+Prediction levels (Plan 43 — `levelKind: "prediction"`):
+
+- `prediction-06` — predict the ally's first move given a short starter program. Placed in the sensing-arc opener slot.
+- `prediction-25` — predict whether an `AND`/`OR` branch evaluates true given a labeled board state. Placed late in the Strategy Brain arc, before `bughunt-28`.
+- `prediction-31` — predict which runner takes which action given a runner-index branching program. Placed late in the Team Strategy Script arc, before `bughunt-37`.
+
+**Prediction levels behave differently from every other guided level.** Before reading directions, expect this:
+
+- The lesson panel shows a multiple-choice prompt with 2–4 radio choices.
+- The Start Level button is rendered with the `disabled` and `aria-disabled="true"` attributes and an affordance label "Pick a prediction to start" until a choice is selected.
+- Keyboard reach: Tab to the radio group, Arrow keys to navigate choices, Space or Enter to select, Tab again to reach Start.
+- After Start, the choice is **locked for the entire attempt** — including across the Reset button. This is intentional (the level's pedagogy depends on commitment). Record this as expected behavior, not a bug.
+- Prediction feedback appears at `level.result` (level pass or fail), not at Start, comparing the selected choice to the observed outcome.
+
+For these seven levels, write a fresh `levels/<id>.md` Plan 41 report without expecting prior Plan 06 material. Note in the report that the level is a Plan 42 bug hunt or Plan 43 prediction so the final memo can group findings by level kind.
 
 ## Keyboard-First Workflow
 
