@@ -4,7 +4,7 @@
 
 - Packet id: plan-33
 - Packet title: Teacher Facilitation Kit
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent (docs-only)
 - Date: 2026-05-17
 - Packet type: docs / classroom-readiness

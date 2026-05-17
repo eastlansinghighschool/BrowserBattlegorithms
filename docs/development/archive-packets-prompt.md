@@ -10,7 +10,6 @@ Rules:
 
 - Move only rows marked `complete`.
 - Do not move packets marked `ready`, `draft`, `in-progress`, or `deprecated`.
-- Leave the deprecated Plan 25 cluster in place unless the owner explicitly tells you otherwise. If all of its supersessors are archived, report that fact instead of acting on it.
 - Use `git mv` for every move so history is preserved.
 - Keep packet contents byte-identical. Do not edit packet bodies unless the owner explicitly asked for a one-line archive badge.
 - Rework the README into two tables: `Active Packets` and `Completed Packets`.

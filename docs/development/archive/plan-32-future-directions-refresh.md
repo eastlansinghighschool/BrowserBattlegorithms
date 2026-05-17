@@ -4,7 +4,7 @@
 
 - Packet id: plan-32
 - Packet title: Future Directions Refresh
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent (small/cheap model is sufficient — docs-only)
 - Date: 2026-05-16
 - Packet type: docs / hygiene
