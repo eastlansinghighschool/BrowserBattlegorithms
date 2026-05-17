@@ -4,7 +4,7 @@
 
 - Packet id: plan-31
 - Packet title: Modal Stability Regression Suite
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-16
 - Packet type: testing / accessibility

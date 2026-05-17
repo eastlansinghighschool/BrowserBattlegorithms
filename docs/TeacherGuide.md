@@ -1,5 +1,7 @@
 # Teacher Guide
 
+For pacing, intervention prompts, and discussion questions while running a session, see [Teacher Facilitation Kit](TeacherFacilitationKit.md).
+
 ## Recommended Flow
 
 1. Start students in **Guided Levels** so they learn the one-action-per-turn Blockly model.

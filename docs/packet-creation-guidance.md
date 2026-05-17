@@ -164,6 +164,7 @@ Every packet should include a checklist. Use relevant items:
 - [ ] `npm test` passes when source or tests changed.
 - [ ] `npm run build` passes when frontend changed.
 - [ ] `npm run test:browser` passes when workflows or layouts changed.
+- [ ] Packets that touch guided levels run `npm run lint:levels` and either resolve any new errors or surface them for owner review.
 - [ ] Guided level count, order, and documentation agree.
 - [ ] Toolbox restrictions match the intended curriculum path.
 - [ ] Reference solutions still solve authored non-human guided levels.
