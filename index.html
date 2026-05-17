@@ -37,6 +37,7 @@
     </header>
     <div id="tutorial-overlay" aria-live="polite"></div>
     <div id="goal-burst-overlay" aria-hidden="true"></div>
+    <div id="shortcuts"></div>
     <div id="game-container">
       <main id="simulation-region">
         <div id="canvas-container">
@@ -58,6 +59,29 @@
             <input type="range" id="speedSlider" min="1" max="20" value="10" style="vertical-align: middle;">
             <span id="speedValue" style="margin-left: 10px;">Normal</span>
             <p id="scoreDisplay" style="margin-top:10px; font-weight: bold;">Turn: 1 | Scores: T1: 0 - T2: 0 (Win at 2)</p>
+            <label class="turn-log-toggle" for="turnLogToggle">
+              <input id="turnLogToggle" type="checkbox">
+              Show Turn Log
+            </label>
+            <p id="board-narration-strip" class="board-narration-strip" hidden></p>
+            <label class="turn-log-toggle" for="coachingModeToggle">
+              <input id="coachingModeToggle" type="checkbox">
+              Coaching Mode
+            </label>
+            <p id="board-coaching-strip" class="board-coaching-strip" hidden></p>
+            <div id="board-coaching" class="board-narration" aria-live="polite" aria-atomic="true"></div>
+            <label class="turn-log-toggle" for="voiceNarrationToggle">
+              <input id="voiceNarrationToggle" type="checkbox">
+              Voice Narration
+            </label>
+            <div id="voice-controls" class="voice-controls" hidden>
+              <label class="voice-controls-label" for="voiceRateSlider">Speed:
+                <input type="range" id="voiceRateSlider" min="0.75" max="1.5" step="0.05" value="1">
+              </label>
+              <label class="voice-controls-label" for="voicePicker">Voice:
+                <select id="voicePicker" aria-label="Select voice"></select>
+              </label>
+            </div>
           </div>
         </div>
       </main>
@@ -187,6 +211,7 @@
         </div>
       </aside>
     </div>
+    <div id="board-narration" class="board-narration" aria-live="polite" aria-atomic="true"></div>
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

@@ -1,4 +1,5 @@
 import { COLS, FROZEN_DURATION_TURNS } from "../config/constants.js";
+import { emit } from "./events.js";
 import { getTeamConfig } from "./teams.js";
 
 function getMapSideDefenderTeam(state, collisionX) {
@@ -42,6 +43,15 @@ export function resolveCollision(state, attacker, defenderInCell, collisionX, co
     const flagCarriedByLoser = state.gameFlags[enemyTeamOfLoser];
     if (flagCarriedByLoser) {
       loser.dropFlag(flagCarriedByLoser);
+      emit(state, "flag.dropped", {
+        flagTeam: enemyTeamOfLoser,
+        previousCarrierRunnerId: loser.id,
+        cell: {
+          x: collisionX,
+          y: collisionY
+        },
+        reason: "collision_lost"
+      });
       flagCarriedByLoser.resetToInitialPosition();
     }
   }

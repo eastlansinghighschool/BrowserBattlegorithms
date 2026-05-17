@@ -22,6 +22,7 @@ const PROJECT_ORDER = [
     cumulativeExceptions: {
       "closest-threat": "The cumulative Strategy Brain checkpoint keeps the later project shape instead of recreating the exact introductory intercept timing from the first project lesson.",
       "how-far-away": "The cumulative Strategy Brain checkpoint keeps the later project shape instead of recreating the load-bearing distance-check turn pattern from the middle lesson.",
+      "two-conditions-at-once": "The cumulative Strategy Brain checkpoint keeps the later project shape instead of reproducing the exact third-lesson freeze corridor and timing.",
       "flip-the-answer": "The cumulative Strategy Brain checkpoint keeps the later project shape instead of backtracking into the NOT lesson's intermediate routing."
     }
   },

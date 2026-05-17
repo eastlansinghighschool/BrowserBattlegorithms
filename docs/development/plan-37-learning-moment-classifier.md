@@ -4,8 +4,8 @@
 
 - Packet id: plan-37
 - Packet title: Learning Moment Classifier
-- Status: draft — blocked on Plan 35 landing and on two decisions about input shape (see Open Decisions)
-- Owner/model: implementation agent, after Plan 35 lands and Open Decisions resolve
+- Status: ready
+- Owner/model: implementation agent
 - Date: 2026-05-17
 - Packet type: implementation / source-code / tests
 - Mutation level: source-code / tests
@@ -44,13 +44,13 @@ Why this packet exists:
 
 Plan 25b made the runtime trace visible; Plan 36 makes the engine state audible. Neither yet says "your ally tried to use freeze but had already used it" as a structured observation about *student programming choices*. The classifier turns the engine's factual events and the student's trace into a structured catalog of teaching moments. The catalog is reusable: same data feeds narration, usage evidence, dashboards, and future formative checkpoints. Codex (orchestrator) correctly elevated this as a load-bearing data layer, not just a narration prerequisite.
 
-## Open Decisions
+## Recorded Decisions
 
-This packet cannot move to `ready` until the integration owner resolves:
+All four decisions resolved as of 2026-05-17. Plan 37 is ready for implementation.
 
-### Decision 1: LearningMoment kind set for v1
+### Decision 1 (resolved): LearningMoment kind set for v1 — **all six**
 
-Proposed initial kinds (subset chosen for v1 by owner):
+The v1 classifier emits all six proposed kinds. If classroom feedback shows specific kinds produce audible chatter through Plan 38's coach surface (especially `recurring_pattern` and `runner_index_unhandled`, which carry the highest noise risk), Plan 38's cadence policy will suppress them — or a follow-up packet will drop the emission entirely. v1 is "emit everything, suppress at the consumer."
 
 - `bounced` — runner's queued movement was blocked or bounced.
 - `resource_no_readiness_guard` — runner queued a resource action (freeze, jump, barrier) without the corresponding readiness condition in its program path; trace shows the resource block was reached but readiness condition wasn't.
@@ -59,31 +59,36 @@ Proposed initial kinds (subset chosen for v1 by owner):
 - `recurring_pattern` — a previously-emitted moment kind has fired N times within the current level attempt (cooldown helper kind).
 - `runner_index_unhandled` — for multi-ally teams, a runner's trace ends in `"empty"` because no branch matched its `runnerIndex` (suggests the program only handles a subset of team indices).
 
-Owner picks any subset. Defaults to all six.
+Type name confirmed: `LearningMoment`.
 
-### Decision 2: Trace input source
+### Decision 2 (resolved): Trace input source — **state-based via `state.lastBlocklyTrace`**
 
-The Plan 25a trace currently lives at `window.__bbaLastBlocklyTrace` as a dev-only inspection stash. Options:
+Plan 35 landed using `state.lastTurnEventLog` exactly as designed; the pattern is clean and testable. Plan 37 mirrors it: the Plan 25a trace is persisted onto `state.lastBlocklyTrace` as part of this packet's implementation work.
 
-- **A (simplest):** Classifier reads from `window.__bbaLastBlocklyTrace`. Dev-only stash gets promoted to a documented input. Survives unchanged.
-- **B (cleaner):** Plan 25a's window stash is supplemented by an exported `getLastBlocklyTrace(app)` API in `src/ai/blockly/workspace.js` or `interpreter.js`. Classifier consumes that. No dependency on `window`.
-- **C (architecturally most consistent):** Plan 25a's trace gets persisted onto `state.lastBlocklyTrace` alongside the event log. Classifier reads from state, matches the Plan 35 pattern.
+Concretely, this packet includes a small Plan 25a follow-up (~5 lines): inside `getAIAllyAction` in `src/ai/blockly/interpreter.js`, when `isBlocklyTraceCollectionActive(app.state)` is true, write the trace to `app.state.lastBlocklyTrace` in addition to (or instead of) the existing `window.__bbaLastBlocklyTrace` stash. The window stash may stay as a dev-inspection mirror or be removed entirely — implementer's call documented in the progress report.
 
-Recommendation: C. State-based input matches the Plan 35 idiom and is testable without window globals. Costs a small Plan 25a follow-up to wire state persistence, but that's a one-line change inside `getAIAllyAction`.
+The classifier reads `state.lastBlocklyTrace` synchronously alongside `state.lastTurnEventLog`. No `window` dependency. Unit tests construct synthetic state and assert classifier output without browser globals.
 
-### Decision 3 (depends on 35's implementation): event payload reads
+### Decision 3 (resolved): event payload reads — answered by Plan 35's actual emissions
 
-After Plan 35 lands, confirm:
+Confirmed from Plan 35's landing:
 
-- Does `resource.unavailable` fire before or after `runner.actionResolved`? Affects how the classifier distinguishes "tried freeze, freeze was unavailable, stayed" from "tried freeze, freeze worked." (Recommend: 35 emits `resource.unavailable` at planning, then `runner.actionResolved` with outcome `"stayed"`. Two events, clear sequence.)
-- Does `runner.blockedOrBounced` always co-occur with `runner.actionResolved` outcome `"stayed"` or can a bounce result in some other outcome? Affects the `bounced` classifier.
+- `resource.unavailable` fires AT PLANNING, before `runner.actionResolved`. The canonical sequence for a "tried freeze, freeze was unavailable, stayed" turn is `[resource.unavailable {reason: "freeze_already_used"}, runner.actionResolved {outcome: "stayed"}]` (other events may intersperse). The `resource_no_readiness_guard` classifier matches this pattern in the event log AND verifies via the Plan 25a trace that the resource block was reached without a readiness condition guarding it.
+- `runner.blockedOrBounced` reliably co-occurs with `runner.actionResolved` outcome `"stayed"` in the same turn log. The `bounced` classifier can match on the `blockedOrBounced` event alone — the `actionResolved` cross-check is redundant but harmless. The bounce `reason` field (`"wall"`, `"barrier"`, `"out_of_bounds"`, `"runner_collision_bounce"`) is available for finer-grained classification if a future LearningMoment variant needs it; v1 treats all bounce reasons as the same kind.
+- `runner.actionResolved` outcome enum is stable: `"moved"`, `"jumped"`, `"barrier_placed"`, `"freeze_applied"`, `"stayed"`, `"skipped_frozen"`, `"illegal_noop"`. The classifier reads `outcome` directly; no further normalization needed.
+- `level.result` fires only on transition (`"passed"` or `"failed"`), not per-turn `"in_progress"`. The classifier anchors per-level-attempt recurrence on level-load (a separate event/hook) and on `level.result` transitions, not on synthetic per-turn signals.
 
-These are not Plan 35 changes; they're observations of Plan 35's output. The classifier specifies its reads after Plan 35 has emitted real data.
+### Decision 4 (resolved alongside Plan 35): recurrence-state storage
 
-## Authority And Contracts (preview)
+Plan 35's implementation clears both event-log fields in `src/core/setup.js` round/level reset paths. The classifier's recurrence counters **cannot live in the event log** or they'd be cleared at the wrong cadence.
+
+Plan 37 introduces a separate state field — `state.classifierRecurrenceState: object` — that the classifier mutates as it runs. The field's reset rules are explicit and per-counter: per-level-attempt counters reset on level reset; per-match counters reset on full match restart; cross-level pattern counters (if any) persist across level transitions and reset only on full app reload. Plan 38 reads from this same field for cadence/cooldown enforcement.
+
+## Authority And Contracts
 
 - `state.lastTurnEventLog` from Plan 35.
-- Plan 25a trace input source (per Decision 2).
+- `state.lastBlocklyTrace` from the Plan 25a follow-up included in this packet (see Requirement 0).
+- `state.classifierRecurrenceState` introduced by this packet.
 - `LearningMoment` shape:
 
 ```js
@@ -93,48 +98,117 @@ These are not Plan 35 changes; they're observations of Plan 35's output. The cla
   runnerId: string | number,
   runnerTeam: number,
   turn: number,
-  metadata: object  // kind-specific
+  metadata: object  // kind-specific; documented per detector below
 }
 ```
 
-## Required Reading (preview)
+## Required Reading
 
+- `docs/packet-creation-guidance.md`
 - Plan 35's `src/core/events.js` and event taxonomy.
-- Plan 25a's trace step shape.
-- Whichever solution is picked for Decision 2.
+- Plan 25a's trace step shape (`{ blockId, blockType, kind, result, numericLeft, numericRight, runnerId, runnerTeam }`) — currently stashed at `window.__bbaLastBlocklyTrace`.
+- `src/ai/blockly/interpreter.js` (`getAIAllyAction` is where the Plan 25a follow-up wires the state-based trace).
+- `src/core/state.js` for the state-field addition pattern.
+- `tests/unit/narration-event-log.test.js` as the fixture pattern for synthetic event/trace tests.
 
-## Implementation Requirements (preview, refined when packet is promoted to ready)
+## Implementation Requirements
+
+### Requirement 0: Plan 25a follow-up — `state.lastBlocklyTrace`
+
+Required behavior:
+
+- Add `state.lastBlocklyTrace: { runnerId, runnerTeam, turnNumber, levelId, steps }` (or `null`) to `createInitialState()`.
+- In `src/ai/blockly/interpreter.js`'s `getAIAllyAction`, when `isBlocklyTraceCollectionActive(app.state)` is true and `getFirstRunnableActionWithTrace` returns a trace, write the trace to `app.state.lastBlocklyTrace` in addition to the existing `window.__bbaLastBlocklyTrace` stash. The window stash stays as a dev-inspection mirror; do not remove it.
+- Reset `state.lastBlocklyTrace = null` at the same places Plan 35 clears the event log (round reset, level reset). Use the existing setup.js reset paths.
+- This is a ~5-line change. Document the lines added in the progress report.
+
+Constraints:
+
+- Do not change Plan 25a's collector, trace step shape, or any other Plan 25a contract.
+- Do not break the existing window-stash behavior.
+
+Edge cases:
+
+- If `getFirstRunnableActionWithTrace` returns `{ action, trace: null }` (PvP hidden-workspace path), do not overwrite `state.lastBlocklyTrace`. Leave whatever the visible-workspace path last wrote.
 
 ### Requirement 1: Classifier function shape
 
-- `classifyTurn(turnEventLog, blocklyTrace, recurrenceState): LearningMoment[]`
-- Pure function. No state mutation outside its return value.
-- `recurrenceState` is an opaque structure threaded across calls so the classifier can implement `recurring_pattern` cooldown counters. Plan 38 owns the storage; this packet defines the shape.
+- `classifyTurn(turnEventLog, blocklyTrace, recurrenceState): LearningMoment[]` exported from `src/ai/learningMoments.js` (new file).
+- Pure function. No state mutation outside the `recurrenceState` argument (which is mutated in place; see Requirement 4 for the contract).
+- `recurrenceState` is `state.classifierRecurrenceState`; the classifier reads and writes it but does not control its lifetime.
+- Returns an array of `LearningMoment` records, possibly empty.
 
 ### Requirement 2: One detector per kind
 
-Each kind has its own detection function with clear inputs and well-defined "should fire" semantics. Heuristic kinds (e.g. `runner_index_unhandled`) document false-positive risk.
+Implement six detector functions, each consuming the same `(turnEventLog, blocklyTrace, recurrenceState)` inputs and returning zero or more `LearningMoment` records:
+
+- `detectBounced(turnEventLog)` — emits when `runner.blockedOrBounced` is present in the log. Metadata: `{ attemptedCell, reason }` from the event payload.
+- `detectResourceNoReadinessGuard(turnEventLog, blocklyTrace)` — emits when `resource.unavailable` is in the log AND the trace shows the resource block was reached without a guarding readiness condition. Metadata: `{ actionType, reason, missingGuardBlockType }` where `missingGuardBlockType` names the readiness block that should have guarded it (e.g. `"battlegorithms_area_freeze_ready"`).
+- `detectNoActionSelected(turnEventLog, blocklyTrace)` — emits when the trace ends in an `"empty"` step. Metadata: `{ traceLength }`.
+- `detectIgnoredBlocksBelowAction(blocklyTrace)` — emits when the trace records an `"action"` step AND the workspace has sibling action blocks below the first reached one. Uses the existing ignored-block scanner pattern from `src/ai/blockly/workspace.js`. Metadata: `{ firstActionBlockId, ignoredActionBlockIds: [] }`.
+- `detectRecurringPattern(currentMoments, recurrenceState)` — meta-detector. Looks at the moment kinds the current turn produced, increments per-kind counters in `recurrenceState`, and emits a `recurring_pattern` moment when any counter crosses a threshold (default 3). Metadata: `{ patternKind, occurrenceCount }`.
+- `detectRunnerIndexUnhandled(turnEventLog, blocklyTrace, app)` — for multi-ally teams. Heuristic detector. Emits when the trace ends in `"empty"` AND the trace contains at least one `comparison` step against `runnerIndex` AND the team has more than one ally. The heuristic is intentionally conservative; document false-positive scenarios in the implementation comments. Metadata: `{ runnerIndex, hasIndexComparisons: true }`.
+
+Each detector returns its findings; `classifyTurn` concatenates them. The recurring-pattern detector runs *last* with the other detectors' output as part of its input.
 
 ### Requirement 3: Unit tests
 
-Per-kind passing and failing case. Synthetic event logs and traces — no real Blockly workspace required.
+- `tests/unit/learning-moments.test.js` (new) covers each detector with at least one passing case and one negative case (input that should NOT emit).
+- Heuristic detectors (`detectResourceNoReadinessGuard`, `detectRunnerIndexUnhandled`) get at least one explicit false-positive-resistance test — input that looks like it might trigger but shouldn't.
+- The `detectRecurringPattern` test exercises the counter increment and threshold crossing.
+- All tests use synthetic event logs and synthetic traces; no real Blockly workspace, no DOM.
 
-### Requirement 4: No prose, no DOM
+### Requirement 4: Recurrence state lifecycle
 
-Classifier returns structured records only. No string templating, no UI calls.
+- `state.classifierRecurrenceState` is an object initialized in `createInitialState()` as `{ counters: {}, perLevelAttempt: {}, perMatch: {} }` (or similar — the exact shape is the implementer's design call, documented in the file's comments).
+- Reset rules:
+  - `perLevelAttempt` resets on level reset and on level switch. Wire alongside Plan 35's existing reset paths in `src/core/setup.js` and `src/core/levels.js`.
+  - `perMatch` resets on full match restart (round-reset triggered by scoring is NOT a match restart; only `initializeMatch` is).
+  - Top-level `counters` (cross-level patterns) persists across level transitions and resets only on full state recreation (e.g. mode switch back to setup).
+- The classifier mutates `recurrenceState` in place; the field belongs to state, not the classifier module.
+
+### Requirement 5: No prose, no DOM
+
+Classifier returns structured records only. No string templating, no UI calls, no narration. Plan 38 is the consumer that turns records into prose.
+
+### Requirement 6: Documentation
+
+- Add a short section to `docs/subsystems/ui-mode-contract.md` (or a new dedicated `docs/subsystems/learning-moments.md` if the file would be more than ~30 lines) describing the classifier as a passive data layer over Plan 35's event log and Plan 25a's trace, naming the six kinds, and pointing at Plan 38 as the first prose consumer.
+- The progress report lists every kind detected, every detector's false-positive risk, and any heuristic limitations the implementer hit.
+
+## Commands
+
+```powershell
+node --test --test-isolation=none tests/unit/learning-moments.test.js
+npm test
+npm run build
+```
+
+`npm run test:browser` is not required for this packet (no DOM/UI changes), but a green run is welcome if cheap.
+
+## Validation Checklist
+
+- [ ] `state.lastBlocklyTrace` field added to `createInitialState()` and populated by `getAIAllyAction` (Requirement 0).
+- [ ] Window stash `window.__bbaLastBlocklyTrace` still works as dev-inspection mirror.
+- [ ] `state.classifierRecurrenceState` field added with documented shape and reset rules.
+- [ ] `src/ai/learningMoments.js` exports `classifyTurn(turnEventLog, blocklyTrace, recurrenceState): LearningMoment[]`.
+- [ ] All six detector functions implemented.
+- [ ] Each detector's metadata shape documented in code comments.
+- [ ] `tests/unit/learning-moments.test.js` covers each detector with passing + negative cases plus the explicit false-positive-resistance tests for heuristic kinds.
+- [ ] `npm test` passes.
+- [ ] `npm run build` passes.
+- [ ] Subsystem note updated.
+- [ ] No DOM, prose, or UI code added.
+- [ ] Plan 25a follow-up is ≤ 10 lines of source change in `interpreter.js` + state init.
+- [ ] Progress report lists detected kinds, false-positive risks, and any heuristic limitations.
 
 ## Stop Conditions
 
-- Plan 35 hasn't shipped.
-- Decisions 1 and 2 unresolved.
-- A proposed moment kind requires reading data Plan 35 / Plan 25a doesn't expose.
-- A heuristic kind has unacceptable false-positive rate after dry-running on the current campaign.
+Stop and report for integration-owner review if:
 
-## Notes For Future Self
+- A heuristic detector produces unacceptable false positives on synthetic test inputs that look classroom-realistic.
+- The Plan 25a follow-up requires more than ~10 lines of source change (suggests the trace plumbing has shifted since 2026-05-17 and the assumption is stale).
+- `state.classifierRecurrenceState` reset rules conflict with existing setup/levels reset paths in a non-trivial way.
+- A detector needs data Plan 35 or Plan 25a doesn't expose.
+- The classifier would need to call into Blockly's live workspace (it should not — all detection works from the per-turn trace snapshot Plan 25a captured).
 
-This packet is a stub. When promoting to `ready`:
-
-1. Resolve Open Decisions inline (same pattern as Plan 25b's recorded-decisions section).
-2. Lock the v1 LearningMoment kind set.
-3. Fill in Requirement details with concrete payload reads from Plan 35's actual event payloads (which may differ slightly from the v1 taxonomy after implementation).
-4. Confirm the Decision 2 path is implemented (likely a small Plan 25a follow-up if Option C is chosen).

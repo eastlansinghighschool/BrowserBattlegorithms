@@ -4,7 +4,7 @@
 
 - Packet id: plan-36
 - Packet title: ARIA-Live Board Narration
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-17
 - Packet type: implementation / accessibility / source-code / tests

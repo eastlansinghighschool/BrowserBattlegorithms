@@ -18,6 +18,7 @@ import { initializeDisplayState, initializeMatch, syncHumanTurnBehaviorVisuals }
 import { createRandomizedFreePlayTeamSetup, getGameModeForFreePlayMode, getTeamFlagHome } from "./teams.js";
 import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
+import { emit, finalizeTurnEventLog } from "./events.js";
 
 const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
 
@@ -321,6 +322,7 @@ export function setGuidedHumanTurnBehavior(app, behavior) {
 
 export function completeLevel(app, result, reason) {
   const { state } = app;
+  const previousLevelResult = state.activeLevelResult;
   if (result === LEVEL_RESULT.PASSED) {
     playSound(state, "level-pass");
     const goalCell = getLevelGoalCell(app);
@@ -335,6 +337,12 @@ export function completeLevel(app, result, reason) {
   state.lastLevelResultReason = reason;
   state.mainGameState = MAIN_GAME_STATES.LEVEL_RESULT;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
+  if (previousLevelResult !== result) {
+    emit(state, "level.result", {
+      levelId: state.currentLevelId,
+      result
+    });
+  }
 
   if (result === LEVEL_RESULT.PASSED) {
     state.levelProgress[state.currentLevelId] = LEVEL_STATUS.PASSED;
@@ -355,6 +363,7 @@ export function completeLevel(app, result, reason) {
   if (typeof app.hooks.onLevelEnded === "function") {
     app.hooks.onLevelEnded(result, reason);
   }
+  finalizeTurnEventLog(state);
 }
 
 export function configureFreePlay(app, updates = {}) {

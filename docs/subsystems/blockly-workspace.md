@@ -55,6 +55,12 @@ Three distinct operations exist; they are not interchangeable:
 
 **Local-dev guided assist**: When the dev-only `devGuidedLevel` shortcut is active, the startup path applies a dev-only viewport-fitting guided layout, scales the board visually so the canvas stays fully visible, opens the first toolbox category, and uses a one-shot clamped Blockly scroll to keep the starter `On Each Turn` block visible to the right of the open drawer. This assist is local-dev only, does not rewrite saved XML, and does not depend on a long delayed translation.
 
+## Keyboard navigation
+
+Plan 40 integrates Blockly's official `@blockly/keyboard-navigation` plugin for the live workspace. `initBlockly()` registers the plugin's keyboard-navigation styles before `Blockly.inject(...)`, installs a navigation-deferring toolbox wrapper, and creates a `KeyboardNavigation` instance for the live workspace after injection. The app shell also provides the plugin's required `#shortcuts` host so `/` can open the keyboard-help dialog.
+
+The plugin owns workspace, toolbox, flyout, and field-edit keyboard behavior. The app's p5 layer stays out of the way whenever focus is inside Blockly-owned surfaces (`#blockly-region`, `#shortcuts`, `.blocklyWidgetDiv`, or `.blocklyDropDownDiv`) so Blockly keyboard navigation, undo/redo, and field editors can run without queuing runner actions.
+
 ## Toolbox policy
 
 Toolbox breadth is controlled per level kind:

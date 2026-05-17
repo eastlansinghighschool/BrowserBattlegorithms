@@ -23,6 +23,7 @@ This note does NOT own:
 | `src/core/conditions.js` | Sensor and condition evaluation consumed by Blockly block execution. |
 | `src/core/scoring.js` | Flag pickup, score increment, `GAME_OVER` transitions, round reset trigger. |
 | `src/core/collisions.js` | Winner/loser resolution, freeze application, flag drop. |
+| `src/core/events.js` | Per-turn event log for narration consumers; passive observer, does not change resolution order. |
 | `src/core/invariants.js` | Post-resolution state validation: duplicate positions, invalid flag state, team direction. |
 
 ## Turn resolution order

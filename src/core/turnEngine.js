@@ -9,6 +9,7 @@ import {
   AREA_FREEZE_DURATION_TURNS,
   AREA_FREEZE_RADIUS,
   CELL_SIZE,
+  CELL_TYPE,
   GAME_VIEW_MODES,
   HUMAN_TURN_BEHAVIORS,
   MAIN_GAME_STATES,
@@ -28,6 +29,7 @@ import {
 } from "./movement.js";
 import { checkForFlagPickup, checkForScoring } from "./scoring.js";
 import { resetRound } from "./setup.js";
+import { emit, finalizeTurnEventLog } from "./events.js";
 import { calculateNpcType1Action } from "../ai/npc/npcType1.js";
 import { calculateNpcType2Action } from "../ai/npc/npcType2.js";
 import { calculateFreePlayCpuAction } from "../ai/npc/freePlayCpu.js";
@@ -43,6 +45,82 @@ function sync(app) {
   if (typeof app.syncUi === "function") {
     app.syncUi();
   }
+}
+
+function ensureTurnStarted(state, runner) {
+  if (!state || !runner || state.currentTurnState !== TURN_STATES.AWAITING_INPUT) {
+    return;
+  }
+  if (Array.isArray(state.currentTurnEventLog) && state.currentTurnEventLog.length > 0) {
+    return;
+  }
+
+  emit(state, "turn.started", {
+    runnerId: runner.id,
+    runnerTeam: runner.team,
+    isHuman: Boolean(runner.isHumanControlled),
+    isNPC: Boolean(runner.isNPC),
+    isFrozen: Boolean(runner.isFrozen)
+  });
+}
+
+function emitActionChosen(state, runner, actionType, source) {
+  emit(state, "runner.actionChosen", {
+    runnerId: runner.id,
+    runnerTeam: runner.team,
+    actionType,
+    source
+  });
+}
+
+function emitActionResolved(state, runner, actionType, outcome) {
+  emit(state, "runner.actionResolved", {
+    runnerId: runner.id,
+    runnerTeam: runner.team,
+    actionType,
+    outcome
+  });
+}
+
+function emitBlockedOrBounced(state, runner, attemptedCell, reason) {
+  emit(state, "runner.blockedOrBounced", {
+    runnerId: runner.id,
+    runnerTeam: runner.team,
+    attemptedCell,
+    reason
+  });
+}
+
+function emitResourceUnavailable(state, runner, actionType, reason) {
+  emit(state, "resource.unavailable", {
+    runnerId: runner.id,
+    runnerTeam: runner.team,
+    actionType,
+    reason
+  });
+}
+
+function getBlockedOrBouncedReason(state, targetGridX, targetGridY, runnerInTargetCell) {
+  if (targetGridX < 0 || targetGridX >= state.gameMap[0].length || targetGridY < 0 || targetGridY >= state.gameMap.length) {
+    return "out_of_bounds";
+  }
+
+  if (state.gameMap[targetGridY]?.[targetGridX] === CELL_TYPE.WALL) {
+    return "wall";
+  }
+
+  if (runnerInTargetCell) {
+    return "runner_collision_bounce";
+  }
+
+  return "barrier";
+}
+
+function finalizeCompletedTurn(app) {
+  const { state } = app;
+  finalizeTurnEventLog(state);
+  app.hooks.announceLastTurn?.(app);
+  app.hooks.announceCoachingMoments?.(app);
 }
 
 function recordRunnerAction(state, runner, actionType) {
@@ -111,6 +189,7 @@ export function handlePlayerInput(app, runner, actionData) {
   }
 
   state.queuedActionForCurrentRunner = createQueuedHumanAction(runner, actionData);
+  emitActionChosen(state, runner, state.queuedActionForCurrentRunner.actionType, "human");
   state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
 }
 
@@ -183,6 +262,7 @@ function startBlocklyTracePlayback(app, runner, rawTrace) {
 function planActionForActiveRunner(app, runner) {
   const { state } = app;
   if (runner.isNPC) {
+    const source = runner.cpuBehavior ? "cpu" : "npc";
     const decision = runner.cpuBehavior
       ? calculateFreePlayCpuAction(runner, state)
       : (
@@ -191,6 +271,7 @@ function planActionForActiveRunner(app, runner) {
           : calculateNpcType2Action(runner, state)
     );
     state.queuedActionForCurrentRunner = translateActionDecision(runner, decision, state);
+    emitActionChosen(state, runner, state.queuedActionForCurrentRunner.actionType, source);
     state.currentTurnState = TURN_STATES.PROCESSING_ACTION;
     return false;
   }
@@ -207,10 +288,13 @@ function planActionForActiveRunner(app, runner) {
   }
 
   let queued = translateActionDecision(runner, aiDecision, state);
+  emitActionChosen(state, runner, queued.actionType, "blockly");
   if (queued.actionType === AI_ACTION_TYPES.JUMP_FORWARD && !runner.canJump) {
+    emitResourceUnavailable(state, runner, queued.actionType, "jump_exhausted");
     queued = translateActionDecision(runner, { type: AI_ACTION_TYPES.STAY_STILL }, state);
   }
   if (queued.actionType === AI_ACTION_TYPES.PLACE_BARRIER_FORWARD && (!runner.canPlaceBarrier || runner.activeBarrierId)) {
+    emitResourceUnavailable(state, runner, queued.actionType, runner.activeBarrierId ? "barrier_already_active" : "barrier_exhausted");
     queued = translateActionDecision(runner, { type: AI_ACTION_TYPES.STAY_STILL }, state);
   }
 
@@ -222,7 +306,9 @@ function planActionForActiveRunner(app, runner) {
   return false;
 }
 
-function advanceToNextRunner(state) {
+function advanceToNextRunner(app) {
+  finalizeCompletedTurn(app);
+  const { state } = app;
   const previousActiveRunnerIndex = state.activeRunnerIndex;
   state.activeRunnerIndex = (state.activeRunnerIndex + 1) % state.allRunners.length;
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
@@ -238,6 +324,7 @@ function handleFrozenRunnerTurn(app, runner) {
     runner.isFrozen = false;
     runner.isGracePeriod = true;
   }
+  emitActionResolved(app.state, runner, AI_ACTION_TYPES.STAY_STILL, "skipped_frozen");
   handleActionCompletion(app, runner);
 }
 
@@ -279,6 +366,7 @@ function handleActionCompletion(app, completedRunner) {
     }
     const levelResult = evaluateLevelProgress(app);
     if (levelResult) {
+      finalizeCompletedTurn(app);
       clearBlocklyTracePlayback(app);
       sync(app);
       return;
@@ -302,6 +390,7 @@ function handleActionCompletion(app, completedRunner) {
       }
       const postScoreLevelResult = evaluateLevelProgress(app);
       if (postScoreLevelResult) {
+        finalizeCompletedTurn(app);
         clearBlocklyTracePlayback(app);
         sync(app);
         return;
@@ -309,10 +398,12 @@ function handleActionCompletion(app, completedRunner) {
       if (state.currentTurnState === TURN_STATES.GAME_OVER) {
         state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
         recordFreePlayGameOver(app);
+        finalizeCompletedTurn(app);
         clearBlocklyTracePlayback(app);
         sync(app);
         return;
       }
+      finalizeCompletedTurn(app);
       clearBlocklyTracePlayback(app);
       resetRound(state);
       sync(app);
@@ -323,6 +414,7 @@ function handleActionCompletion(app, completedRunner) {
   if (state.currentTurnState === TURN_STATES.GAME_OVER) {
     state.mainGameState = MAIN_GAME_STATES.GAME_OVER;
     recordFreePlayGameOver(app);
+    finalizeCompletedTurn(app);
     clearBlocklyTracePlayback(app);
     sync(app);
     return;
@@ -330,15 +422,17 @@ function handleActionCompletion(app, completedRunner) {
 
   const endOfTurnLevelResult = evaluateLevelProgress(app);
   if (endOfTurnLevelResult) {
+    finalizeCompletedTurn(app);
     clearBlocklyTracePlayback(app);
     sync(app);
     return;
   }
 
   clearBlocklyTracePlayback(app);
-  advanceToNextRunner(state);
+  advanceToNextRunner(app);
   const advancedLevelResult = evaluateLevelProgress(app);
   if (advancedLevelResult) {
+    finalizeCompletedTurn(app);
     clearBlocklyTracePlayback(app);
     sync(app);
     return;
@@ -355,6 +449,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
   let actionResolvedAndAnimating = false;
   let actionCompletedImmediately = false;
   let performRegularMoveOrJump = false;
+  let actionOutcome = "illegal_noop";
 
   switch (actionType) {
     case "MOVE":
@@ -393,17 +488,26 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
         state.barriers.push(barrier);
         actionRunner.activeBarrierId = barrier.id;
         actionRunner.canPlaceBarrier = false;
+        actionOutcome = "barrier_placed";
       }
       actionCompletedImmediately = true;
       break;
     }
     case AI_ACTION_TYPES.FREEZE_OPPONENTS: {
+      if (state.teamAreaFreezeUsed?.[actionRunner.team]) {
+        emitResourceUnavailable(state, actionRunner, actionType, "freeze_already_used");
+        actionOutcome = "stayed";
+        actionCompletedImmediately = true;
+        break;
+      }
       applyAreaFreeze(state, actionRunner);
       playSound(state, "freeze");
+      actionOutcome = "freeze_applied";
       actionCompletedImmediately = true;
       break;
     }
     default:
+      actionOutcome = actionType === AI_ACTION_TYPES.STAY_STILL ? "stayed" : "illegal_noop";
       actionCompletedImmediately = true;
       break;
   }
@@ -412,6 +516,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
     const isJump = actionType === AI_ACTION_TYPES.JUMP_FORWARD;
     if (isJump) {
       if (!actionRunner.canJump) {
+        actionOutcome = "stayed";
         actionRunner.startBounceAnimation(actionRunner.gridX + actionRunner.playDirection, actionRunner.gridY);
         actionResolvedAndAnimating = true;
       } else {
@@ -425,6 +530,13 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
         if (isJump) {
           actionRunner.canJump = false;
         }
+        actionOutcome = "stayed";
+        emitBlockedOrBounced(
+          state,
+          actionRunner,
+          { x: targetGridX, y: targetGridY },
+          getBlockedOrBouncedReason(state, targetGridX, targetGridY, null)
+        );
         actionRunner.startBounceAnimation(targetGridX, targetGridY);
         actionResolvedAndAnimating = true;
       } else {
@@ -434,6 +546,13 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
             if (isJump) {
               actionRunner.canJump = false;
             }
+            actionOutcome = "stayed";
+            emitBlockedOrBounced(
+              state,
+              actionRunner,
+              { x: targetGridX, y: targetGridY },
+              "runner_collision_bounce"
+            );
             actionRunner.startBounceAnimation(targetGridX, targetGridY);
             actionResolvedAndAnimating = true;
           } else {
@@ -450,6 +569,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
             if (isJump) {
               actionRunner.canJump = false;
             }
+            actionOutcome = isJump ? "jumped" : "moved";
             actionCompletedImmediately = true;
           }
         } else {
@@ -465,6 +585,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
   }
 
   state.queuedActionForCurrentRunner = null;
+  emitActionResolved(state, actionRunner, actionType, actionOutcome);
   if (actionCompletedImmediately) {
     handleActionCompletion(app, actionRunner);
   } else if (actionResolvedAndAnimating) {
@@ -484,6 +605,8 @@ export function processTurnActions(app, p) {
   if (!runner) {
     return;
   }
+
+  ensureTurnStarted(state, runner);
 
   if (state.currentTurnState === TURN_STATES.AWAITING_INPUT) {
     if (runner.isFrozen) {

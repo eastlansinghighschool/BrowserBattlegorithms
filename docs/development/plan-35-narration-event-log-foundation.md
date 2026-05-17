@@ -4,7 +4,7 @@
 
 - Packet id: plan-35
 - Packet title: Narration Event Log Foundation
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-17
 - Packet type: implementation / source-code / tests

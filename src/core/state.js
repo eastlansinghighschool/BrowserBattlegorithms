@@ -20,6 +20,10 @@ export function createInitialState() {
     allRunners: [],
     gameFlags: {},
     barriers: [],
+    currentTurnEventLog: [],
+    lastTurnEventLog: [],
+    lastTurnNarrationText: "",
+    narrationVisibleStrip: false,
     activeRunnerIndex: 0,
     currentTurnNumber: 1,
     currentTurnState: TURN_STATES.SETUP_DISPLAY,
@@ -88,7 +92,11 @@ export function createInitialState() {
     usageExportStatus: null,
     usageTrackerReady: false,
     randomFn: Math.random,
-    runnerActionHistory: {}
+    runnerActionHistory: {},
+    lastBlocklyTrace: null,
+    classifierRecurrenceState: { counters: {}, perLevelAttempt: {}, perMatch: {} },
+    coachingModeEnabled: false,
+    lastCoachingText: ""
   };
 }
 
@@ -97,6 +105,7 @@ export function createApp() {
     state: createInitialState(),
     ui: {},
     blocklyWorkspace: null,
+    blocklyKeyboardNavigation: null,
     p5Instance: null,
     syncUi: () => {},
     hooks: {}

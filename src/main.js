@@ -3,6 +3,9 @@ import { initializeDisplayState } from "./core/setup.js";
 import { bindControls, handleKeyInput } from "./ui/controls.js";
 import { bindGoalBurstOverlay, renderGoalBurstOverlay } from "./ui/goalBurstOverlay.js";
 import { initializeSoundState } from "./ui/sound.js";
+import { announceLastTurn, initializeNarrationState, syncTurnNarration } from "./ui/narration.js";
+import { announceCoachingMoments, initializeCoachingState, syncCoachingNarration } from "./ui/coachingNarration.js";
+import { cancelSpeech, initVoiceNarration } from "./ui/voiceNarration.js";
 import { updateScoreDisplay } from "./ui/scoreboard.js";
 import { setPlayButtonState } from "./ui/gameStateUI.js";
 import {
@@ -40,6 +43,9 @@ app.usageTracker?.ready?.then(() => {
 }).catch(() => {});
 app.ui.isLevelPickerOpen = false;
 initializeSoundState(app.state);
+initializeNarrationState(app.state);
+initializeCoachingState(app.state);
+app.hooks.cancelSpeech = cancelSpeech;
 
 function renderLoadingPanels() {
   const boardPlaceholder = document.getElementById("board-loading-placeholder");
@@ -138,6 +144,11 @@ app.hooks.onLevelEnded = () => {
   app.hooks.setBlocklyEditable?.(true);
 };
 
+app.hooks.announceLastTurn = announceLastTurn;
+app.hooks.syncTurnNarration = syncTurnNarration;
+app.hooks.announceCoachingMoments = announceCoachingMoments;
+app.hooks.syncCoachingNarration = syncCoachingNarration;
+
 app.hooks.startCurrentLevelTutorial = (force = false) => {
   if (!app.state.boardReady || !app.state.editorReady) {
     return;
@@ -178,6 +189,9 @@ app.syncUi = () => {
   renderLoadingPanels();
   app.hooks.updateControlsVisibility?.();
   app.hooks.syncBlocklySizeControls?.();
+  app.hooks.syncNarrationControls?.();
+  app.hooks.syncTurnNarration?.(app);
+  app.hooks.syncCoachingNarration?.(app);
   updateScoreDisplay(app);
   setPlayButtonState(app);
   renderLevelPanel(app);
@@ -194,6 +208,7 @@ app.syncUi = () => {
   renderTutorialOverlay(app);
 };
 
+initVoiceNarration(app);
 initializeLevelState(app);
 if (import.meta.env.DEV) {
   const { applyDevGuidedLevelShortcut } = await import("./ui/devGuidedLevelLink.js");

@@ -7,6 +7,24 @@ import { drawBarriers, drawFlags, drawGameOverOverlay, drawHumanPlayerLabels, dr
 import { drawActiveRunnerGlow } from "./effects.js";
 import { handleKeyInput } from "../ui/controls.js";
 
+function isBlocklyKeyboardFocusActive() {
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  const activeElement = document.activeElement;
+  if (!activeElement || typeof activeElement.closest !== "function") {
+    return false;
+  }
+
+  return Boolean(
+    activeElement.closest("#blockly-region") ||
+    activeElement.closest("#shortcuts") ||
+    activeElement.closest(".blocklyWidgetDiv") ||
+    activeElement.closest(".blocklyDropDownDiv")
+  );
+}
+
 function drawLevelGoal(p, app) {
   const goalCell = getLevelGoalCell(app);
   if (!goalCell) {
@@ -60,6 +78,9 @@ export function initializeP5App(app) {
     };
 
     p.keyPressed = (event) => {
+      if (isBlocklyKeyboardFocusActive()) {
+        return undefined;
+      }
       if (event && (event.ctrlKey || event.altKey || event.metaKey)) {
         return undefined;
       }

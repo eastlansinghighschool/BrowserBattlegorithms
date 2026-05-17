@@ -1,4 +1,5 @@
 import * as Blockly from "blockly";
+import * as KeyboardNavigationModule from "@blockly/keyboard-navigation";
 import {
   ADVANCED_COMPARE_OPERATORS,
   BLOCK_TYPES,
@@ -33,6 +34,17 @@ const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
 const FREE_PLAY_WORKSPACE_STORAGE_KEY = "bba:free-play-workspace";
 const FREE_PLAY_PVP_WORKSPACE_STORAGE_PREFIX = "bba:free-play-pvp-team:";
+const KeyboardNavigation =
+  KeyboardNavigationModule.default?.KeyboardNavigation ||
+  KeyboardNavigationModule.KeyboardNavigation;
+let keyboardNavigationRegistered = false;
+
+class NavigationDeferringToolbox extends Blockly.Toolbox {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  onKeyDown_(e) {
+    return undefined;
+  }
+}
 
 function buildToolboxXml(blockTypes) {
   const blockLibrary = getBlockLibrary();
@@ -64,6 +76,16 @@ function buildDefaultWorkspaceXml() {
       <block type="${BLOCK_TYPES.ON_EACH_TURN}" x="24" y="24"></block>
     </xml>
   `.trim();
+}
+
+function ensureKeyboardNavigationRegistered() {
+  if (keyboardNavigationRegistered) {
+    return;
+  }
+  KeyboardNavigation.registerKeyboardNavigationStyles();
+  Blockly.registry.register(Blockly.registry.Type.TOOLBOX, Blockly.registry.DEFAULT, NavigationDeferringToolbox, true);
+  KeyboardNavigation.registerFlyoutCursor();
+  keyboardNavigationRegistered = true;
 }
 
 function buildGuidedAssistStarterWorkspaceXml(xmlText, x = 360) {
@@ -747,13 +769,18 @@ export function getFirstRunnableActionWithTrace(app, runner) {
 
 export function initBlockly(app) {
   registerBattleBlocklyBlocks();
+  ensureKeyboardNavigationRegistered();
   const blocklyDiv = document.getElementById("blocklyDiv");
   const initialToolboxXml = buildToolboxXml(getFullToolboxBlockTypes());
+  app.blocklyKeyboardNavigation?.dispose?.();
+  app.blocklyKeyboardNavigation = null;
+  app.blocklyWorkspace?.dispose?.();
   app.blocklyWorkspace = Blockly.inject(blocklyDiv, {
     toolbox: initialToolboxXml,
     scrollbars: true,
     trashcan: true
   });
+  app.blocklyKeyboardNavigation = new KeyboardNavigation(app.blocklyWorkspace);
   applyBlocklyPanelSize(app);
   loadWorkspaceXml(app, "");
   app.usageTracker?.recordWorkspaceSnapshot?.("editor_initialized", buildUsageWorkspaceCapture(app, "editor_initialized"));

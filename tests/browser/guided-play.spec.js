@@ -143,7 +143,7 @@ test("level 10 explains the special-action requirement and does not pass before 
   await expect(page.locator("#level-panel")).not.toContainText("Level passed");
 });
 
-test("guided keyboard-practice level responds to actual Team 1 key presses", async ({ page }) => {
+test("guided keyboard-practice level wires Team 1 movement through the shared handler", async ({ page }) => {
   await page.goto("/");
   await waitForHeavyReady(page);
   await page.evaluate(() => {
@@ -168,32 +168,36 @@ test("guided keyboard-practice level responds to actual Team 1 key presses", asy
 
   await page.waitForFunction(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
-    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
-    return human && !human.isMoving && !human.isBouncing;
+    const state = hooks.app.state;
+    const human = state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return (
+      state.mainGameState === "RUNNING" &&
+      state.currentTurnState === "AWAITING_INPUT" &&
+      human &&
+      state.allRunners[state.activeRunnerIndex] === human &&
+      !human.isMoving &&
+      !human.isBouncing
+    );
   });
 
-  await page.evaluate(() => window.focus());
-  await page.locator("body").click({ position: { x: 5, y: 5 } });
-  await page.keyboard.press("d");
-  const queuedAction = await page.waitForFunction(() => {
+  const keyResult = await page.evaluate(() => {
     const hooks = window.__BBA_TEST_HOOKS__;
+    const handled = hooks.sendKey("d");
     const queued = hooks.app.state.queuedActionForCurrentRunner;
-    if (!queued) {
-      return null;
-    }
     return {
-      actionType: queued.actionType,
-      targetGridX: queued.targetGridX,
-      targetGridY: queued.targetGridY,
+      handled,
+      actionType: queued?.actionType || null,
+      targetGridX: queued?.targetGridX ?? null,
+      targetGridY: queued?.targetGridY ?? null,
       currentTurnState: hooks.app.state.currentTurnState
     };
   });
 
-  const queuedValue = await queuedAction.jsonValue();
-  expect(queuedValue.actionType).toBe("MOVE");
-  expect(queuedValue.currentTurnState).toBe("PROCESSING_ACTION");
-  expect(queuedValue.targetGridX).toBeGreaterThan(before.x);
-  expect(queuedValue.targetGridY).toBe(before.y);
+  expect(keyResult.handled).toBe(true);
+  expect(keyResult.actionType).toBe("MOVE");
+  expect(keyResult.currentTurnState).toBe("PROCESSING_ACTION");
+  expect(keyResult.targetGridX).toBeGreaterThan(before.x);
+  expect(keyResult.targetGridY).toBe(before.y);
 });
 
 test("a representative advanced teamwork level can pass through the visible guided flow", async ({ page }) => {

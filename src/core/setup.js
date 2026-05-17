@@ -185,6 +185,13 @@ export function initializeMatch(app) {
   state.teamScores = { 1: 0, 2: 0 };
   state.teamAreaFreezeUsed = { 1: false, 2: false };
   state.runnerActionHistory = {};
+  state.currentTurnEventLog = [];
+  state.lastTurnEventLog = [];
+  state.lastTurnNarrationText = "";
+  state.lastCoachingText = "";
+  state.lastBlocklyTrace = null;
+  state.classifierRecurrenceState.perLevelAttempt = {};
+  state.classifierRecurrenceState.perMatch = {};
   state.currentTurnNumber = 1;
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
@@ -195,6 +202,7 @@ export function initializeMatch(app) {
 
 export function initializeDisplayState(app) {
   const { state } = app;
+  app.hooks.cancelSpeech?.();
   app.hooks.clearBlocklyTracePlayback?.(app);
   if (state.currentModeView === GAME_VIEW_MODES.FREE_PLAY) {
     state.currentGameMode = getGameModeForFreePlayMode(state.freePlayMode);
@@ -207,6 +215,12 @@ export function initializeDisplayState(app) {
   state.teamScores = { 1: 0, 2: 0 };
   state.teamAreaFreezeUsed = { 1: false, 2: false };
   state.runnerActionHistory = {};
+  state.currentTurnEventLog = [];
+  state.lastTurnEventLog = [];
+  state.lastTurnNarrationText = "";
+  state.lastCoachingText = "";
+  state.lastBlocklyTrace = null;
+  state.classifierRecurrenceState.perLevelAttempt = {};
   state.currentTurnNumber = 1;
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;

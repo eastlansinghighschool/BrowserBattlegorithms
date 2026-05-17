@@ -1,5 +1,6 @@
 import { TURN_STATES, MAIN_GAME_STATES } from "../config/constants.js";
 import { getTeamBaseCellType } from "./teams.js";
+import { emit } from "./events.js";
 
 export function checkForFlagPickup(state, runner) {
   if (runner.hasEnemyFlag) {
@@ -10,6 +11,14 @@ export function checkForFlagPickup(state, runner) {
   if (enemyFlag && !enemyFlag.carriedByRunnerId) {
     if (runner.gridX === enemyFlag.gridX && runner.gridY === enemyFlag.gridY) {
       runner.pickupFlag(enemyFlag);
+      emit(state, "flag.pickedUp", {
+        flagTeam: enemyTeamId,
+        carrierRunnerId: runner.id,
+        cell: {
+          x: runner.gridX,
+          y: runner.gridY
+        }
+      });
     }
   }
 }
@@ -35,6 +44,11 @@ export function checkForScoring(state, runner) {
   }
 
   scorePointForTeam(state, runner.team);
+  emit(state, "team.scored", {
+    scoringTeam: runner.team,
+    newScore: state.teamScores[runner.team],
+    pointsToWin: state.pointsToWin
+  });
   return true;
 }
 

@@ -1,6 +1,11 @@
 const SOUND_PREF_KEY = "bba:sound-enabled";
 
 let audioContext = null;
+let duckGain = 1.0;
+
+export function setNarrationDucking(active) {
+  duckGain = active ? 0.3 : 1.0;
+}
 
 function getAudioContext() {
   if (typeof window === "undefined") {
@@ -22,12 +27,12 @@ function tone(frequency, durationMs, volume = 0.03, type = "sine") {
   const gainNode = ctx.createGain();
   oscillator.type = type;
   oscillator.frequency.value = frequency;
-  gainNode.gain.value = volume;
+  gainNode.gain.value = volume * duckGain;
   oscillator.connect(gainNode);
   gainNode.connect(ctx.destination);
   const now = ctx.currentTime;
   oscillator.start(now);
-  gainNode.gain.setValueAtTime(volume, now);
+  gainNode.gain.setValueAtTime(volume * duckGain, now);
   gainNode.gain.exponentialRampToValueAtTime(0.0001, now + durationMs / 1000);
   oscillator.stop(now + durationMs / 1000);
 }

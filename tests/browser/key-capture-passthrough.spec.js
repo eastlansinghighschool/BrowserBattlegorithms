@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   buildSolutionXml,
   chooseFreePlay,
+  chooseGuided,
   clearStorageBeforeEach,
   loadWorkspaceXml,
   waitForHeavyReady
@@ -171,6 +172,7 @@ test("non-binding keys do not trigger a human action during a running turn", asy
     hooks.app.state.currentTurnState = "AWAITING_INPUT";
     const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
     hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+    hooks.app.p5Instance?.noLoop?.();
   });
 
   const before = await page.evaluate(() => {
@@ -236,4 +238,105 @@ test("modifier-decorated binding keys do not trigger a human action during a run
     queued: null,
     turnState: "AWAITING_INPUT"
   });
+});
+
+test("Blockly focus does not queue a human action during a running turn", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
+    hooks.startLevel("human-runner-practice");
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+    hooks.app.p5Instance?.noLoop?.();
+  });
+
+  const before = await page.evaluate(() => {
+    const human = window.__BBA_TEST_HOOKS__.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return { x: human.gridX, y: human.gridY };
+  });
+
+  await page.locator("#blocklyDiv").click();
+  await page.keyboard.press("r");
+
+  const after = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return {
+      x: human.gridX,
+      y: human.gridY,
+      queued: hooks.app.state.queuedActionForCurrentRunner,
+      turnState: hooks.app.state.currentTurnState
+    };
+  });
+
+  expect(after).toMatchObject({
+    x: before.x,
+    y: before.y,
+    queued: null,
+    turnState: "AWAITING_INPUT"
+  });
+});
+
+test("guided keyboard-practice level accepts the Team 1 D key through the real browser event pipeline", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.startLevel("human-runner-practice");
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+  });
+
+  const before = await page.evaluate(() => {
+    const human = window.__BBA_TEST_HOOKS__.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return { x: human.gridX, y: human.gridY };
+  });
+
+  await page.locator("#canvas-container canvas").click({ position: { x: 5, y: 5 } });
+  await page.keyboard.press("d");
+  const queuedActionHandle = await page.waitForFunction(() => {
+    const queued = window.__BBA_TEST_HOOKS__?.app?.state?.queuedActionForCurrentRunner;
+    if (!queued) {
+      return null;
+    }
+    return {
+      actionType: queued.actionType,
+      targetGridX: queued.targetGridX,
+      targetGridY: queued.targetGridY,
+      currentTurnState: window.__BBA_TEST_HOOKS__?.app?.state?.currentTurnState
+    };
+  });
+  const queuedAction = await queuedActionHandle.jsonValue();
+
+  expect(queuedAction).toEqual({
+    actionType: "MOVE",
+    targetGridX: before.x + 1,
+    targetGridY: before.y,
+    currentTurnState: "PROCESSING_ACTION"
+  });
+
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    for (let i = 0; i < 10; i += 1) {
+      hooks.processTurn();
+    }
+  });
+
+  const after = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    return {
+      queued: hooks.app.state.queuedActionForCurrentRunner,
+      actionHistory: hooks.app.state.runnerActionHistory[human.id] || []
+    };
+  });
+
+  expect(after.actionHistory).toContain("MOVE");
+  expect(after.queued).toBeNull();
 });

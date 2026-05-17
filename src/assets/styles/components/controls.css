@@ -95,3 +95,13 @@
 .free-play-setup select {
   padding: 6px 8px;
 }
+
+.turn-log-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #24404a;
+  cursor: pointer;
+}

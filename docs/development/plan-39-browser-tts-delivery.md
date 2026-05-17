@@ -4,7 +4,7 @@
 
 - Packet id: plan-39
 - Packet title: Browser TTS Delivery
-- Status: ready
+- Status: complete — pending manual smoke — 2026-05-17
 - Owner/model: implementation agent
 - Date: 2026-05-17
 - Packet type: implementation / accessibility / source-code / tests

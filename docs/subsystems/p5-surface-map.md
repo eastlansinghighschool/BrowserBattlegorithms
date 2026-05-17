@@ -61,7 +61,7 @@ p5's `keyPressed()` callback is the entry point for keyboard events in gameplay.
 
 `handleKeyInput` in `src/ui/` translates the key into a queued action for the human runner. Key bindings are defined in `src/config/`. The p5 keyboard callback is only for in-game runner control; UI buttons and overlays use standard DOM event listeners, not p5.
 
-Do not add UI interaction to `keyPressed()` unless it is an in-game runner action. Blockly keyboard shortcuts, tutorial navigation, and panel controls all use DOM listeners.
+Do not add UI interaction to `keyPressed()` unless it is an in-game runner action. Blockly keyboard shortcuts, tutorial navigation, and panel controls all use DOM listeners. When Blockly keyboard navigation owns focus, `src/render/p5App.js` deliberately treats `#blockly-region`, `#shortcuts`, `.blocklyWidgetDiv`, and `.blocklyDropDownDiv` as Blockly-owned surfaces and returns without queuing a runner action.
 
 ## Entity rendering conventions
 

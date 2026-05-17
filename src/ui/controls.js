@@ -15,6 +15,9 @@ import { handlePlayerInput } from "../core/turnEngine.js";
 import { playSound, setSoundEnabled } from "./sound.js";
 import { setBlocklyPanelSize } from "./blocklyLayout.js";
 import { dismissProjectStartCallout } from "./projectSignifiers.js";
+import { setNarrationVisibleStrip } from "./narration.js";
+import { setCoachingModeEnabled } from "./coachingNarration.js";
+import { getAvailableVoices, isVoiceEnabled, setVoiceEnabled, setVoiceRate, setVoiceUri } from "./voiceNarration.js";
 import {
   decryptPrivateProgramXml,
   encryptPrivateProgramXml,
@@ -99,6 +102,12 @@ export function bindControls(app) {
   const privateImportPassword = document.getElementById("privateImportPassword");
   const privateImportModalMessage = document.getElementById("privateImportModalMessage");
   const soundToggleButton = document.getElementById("soundToggleButton");
+  const turnLogToggle = document.getElementById("turnLogToggle");
+  const coachingModeToggle = document.getElementById("coachingModeToggle");
+  const voiceNarrationToggle = document.getElementById("voiceNarrationToggle");
+  const voiceControlsPanel = document.getElementById("voice-controls");
+  const voiceRateSlider = document.getElementById("voiceRateSlider");
+  const voicePicker = document.getElementById("voicePicker");
   const blocklyProgramTabs = document.getElementById("blockly-program-tabs");
   const blocklySizeControls = document.getElementById("blockly-size-controls");
   const blocklyRegion = document.getElementById("blockly-region");
@@ -321,6 +330,17 @@ export function bindControls(app) {
       controlsPanel.style.display = app.state.showModePicker ? "none" : "";
     }
   };
+
+  const syncTurnLogToggle = () => {
+    if (turnLogToggle) {
+      turnLogToggle.checked = Boolean(app.state.narrationVisibleStrip);
+    }
+    if (coachingModeToggle) {
+      coachingModeToggle.checked = Boolean(app.state.coachingModeEnabled);
+    }
+  };
+
+  app.hooks.syncNarrationControls = syncTurnLogToggle;
 
   const playResetButton = document.getElementById("playResetButton");
   const showTutorialButton = document.getElementById("showTutorialButton");
@@ -547,6 +567,69 @@ export function bindControls(app) {
       playSound(app.state, "flag-pickup");
     });
     syncSoundButton();
+  }
+
+  if (turnLogToggle) {
+    turnLogToggle.addEventListener("change", () => {
+      setNarrationVisibleStrip(app.state, turnLogToggle.checked);
+      syncTurnLogToggle();
+      app.syncUi();
+    });
+    syncTurnLogToggle();
+  }
+
+  if (coachingModeToggle) {
+    coachingModeToggle.addEventListener("change", () => {
+      setCoachingModeEnabled(app.state, coachingModeToggle.checked);
+      syncTurnLogToggle();
+      app.syncUi();
+    });
+  }
+
+  const syncVoiceControls = () => {
+    const enabled = isVoiceEnabled();
+    if (voiceNarrationToggle) voiceNarrationToggle.checked = enabled;
+    if (voiceControlsPanel) voiceControlsPanel.hidden = !enabled;
+  };
+
+  const populateVoicePicker = () => {
+    if (!voicePicker) return;
+    const voices = getAvailableVoices();
+    const current = voicePicker.value;
+    voicePicker.innerHTML = "";
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Default";
+    voicePicker.appendChild(defaultOption);
+    for (const v of voices) {
+      const option = document.createElement("option");
+      option.value = v.voiceURI;
+      option.textContent = `${v.name} (${v.lang})`;
+      voicePicker.appendChild(option);
+    }
+    voicePicker.value = current || "";
+  };
+
+  app.hooks.populateVoicePicker = populateVoicePicker;
+
+  if (voiceNarrationToggle) {
+    voiceNarrationToggle.addEventListener("change", () => {
+      setVoiceEnabled(voiceNarrationToggle.checked);
+      syncVoiceControls();
+    });
+    syncVoiceControls();
+  }
+
+  if (voiceRateSlider) {
+    voiceRateSlider.addEventListener("input", () => {
+      setVoiceRate(Number(voiceRateSlider.value));
+    });
+  }
+
+  if (voicePicker) {
+    voicePicker.addEventListener("change", () => {
+      setVoiceUri(voicePicker.value);
+    });
   }
 
   if (blocklySizeControls) {

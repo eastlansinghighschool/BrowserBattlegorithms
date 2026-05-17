@@ -7,6 +7,8 @@ import {
   HUMAN_TURN_BEHAVIORS,
   LEVEL_RESULT,
   LEVEL_STATUS,
+  CELL_TYPE,
+  MAPS,
   MOVE_TOWARD_TARGETS,
   NPC_BEHAVIORS,
   SENSOR_OBJECT_TYPES,
@@ -184,6 +186,27 @@ test("challenge 22 authors guided vertical patrol defenders near the center lane
   );
   assert.match(level.introText, /Two enemies are active/i);
   assert.match(level.description, /live defenders/i);
+});
+
+test("guided teamplay and scrimmage levels keep the opponent flag on the home stripe", () => {
+  const levelIds = [
+    "two-conditions-at-once",
+    "one-program-two-allies",
+    "index-jobs"
+  ];
+
+  for (const levelId of levelIds) {
+    const level = getLevelDefinitions().find((entry) => entry.id === levelId);
+    const opponentFlag = level.setup.flags.opponent;
+    const map = MAPS[level.mapKey];
+
+    assert.ok(opponentFlag, `${levelId} should author an opponent flag`);
+    assert.equal(
+      map[opponentFlag.gridY][opponentFlag.gridX],
+      CELL_TYPE.TEAM2_BASE,
+      `${levelId} should keep the opponent flag on the opponent base stripe`
+    );
+  }
 });
 
 test("guided toolbox restriction reflects the curriculum unlock path", () => {

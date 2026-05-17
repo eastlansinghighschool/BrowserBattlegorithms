@@ -28,6 +28,6 @@ export default {
       player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 1, gridY: 5 }, { slot: "ally2", gridX: 7, gridY: 5 }] },
       opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 }, { slot: "npc2", gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }] }
     },
-    flags: { opponent: { gridX: 9, gridY: 5 } }
+    flags: { opponent: { gridX: 10, gridY: 5 } }
   }
 };

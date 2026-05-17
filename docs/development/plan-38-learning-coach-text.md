@@ -4,7 +4,7 @@
 
 - Packet id: plan-38
 - Packet title: Learning Coach Text
-- Status: draft — blocked on Plan 37 landing and on Open Decisions about cadence, gating, and delivery surface
+- Status: complete — 2026-05-17
 - Owner/model: implementation agent, after Plan 37 lands and Open Decisions resolve
 - Date: 2026-05-17
 - Packet type: implementation / pedagogy / source-code / tests
@@ -115,12 +115,14 @@ Owner confirms or amends.
 - For each LearningMoment kind in v1, two prose templates: one block-named (when toolbox allows), one generic.
 - Templates are short (≤ 25 words).
 - Templates are interpolated with kind-specific metadata (runner identifier, resource name, etc.).
+- **Runner labels come from the Plan 36 enrichment pattern, not re-derived from state.** Plan 36 established that natural-language consumers (formatter, coach, future sportscaster) all need consistent runner naming ("Ally 0", "Enemy 1", "Team 1 runner 0"). That labeling lives in `getRunnerLabel(state, runnerId)` in `src/ui/narration.js` (Plan 36). Plan 38's templater imports and reuses this helper rather than re-implementing the lookup. If Plan 38 needs a label variant Plan 36 doesn't expose, extend the shared helper rather than fork it.
 
 ### Requirement 2: Cadence/cooldown enforcement
 
 - Per-level-attempt and per-match counters tracking moment-kind occurrences.
 - Suppression based on the Decision 1 policy.
 - Reset on level reset, level switch, mode switch.
+- **Counters live in `state.classifierRecurrenceState`** — the same state field Plan 37 introduces for its recurrence tracking. Plan 37 writes occurrence counts; Plan 38 reads from the same field to decide whether to fire a coach message. Do not introduce a parallel counter system. Reset rules are owned by Plan 37 (per-level-attempt, per-match, cross-level — see Plan 37 Decision 4).
 
 ### Requirement 3: Curriculum gate
 
@@ -160,6 +162,7 @@ When promoting this packet to `ready`:
 1. Resolve all four Open Decisions inline.
 2. Lock the prose templates per moment kind (owner reviews phrasing for ethics, not just correctness).
 3. Confirm Decision 2's surface choice is compatible with Plan 36's actual implementation.
-4. Add `recurrenceState` storage decision: in `app.state` or in a module-level object? Plan 37 left this open; Plan 38 decides where it lives.
+4. ~~Add `recurrenceState` storage decision~~ — resolved by Plan 37: `state.classifierRecurrenceState` with shape `{ counters, perLevelAttempt, perMatch }`. `perLevelAttempt` is the field Plan 38's cadence reads. `counters` and `perMatch` are reserved for Plan 38 if any cadence rule needs cross-level or per-match persistence.
+5. Note: `getRunnerLabel` is currently a private helper in `src/ui/narration.js` (line 42). Plan 38's implementer needs to export it (small one-line change inside Plan 38's scope) before importing.
 
 The prose authoring is the dominant cost in this packet. Build the structural plumbing first, then iterate on phrasing with classroom feedback.

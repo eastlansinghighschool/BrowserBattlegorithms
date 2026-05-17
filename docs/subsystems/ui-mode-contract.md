@@ -67,6 +67,14 @@ The underlying DOM element is the same button; only its label and visibility cha
 - In Free Play: shows the free-play mode label and map name.
 - Scoreboard rendering is suppressed while the mode-chooser overlay is active.
 
+## Narration surface
+
+`src/ui/narration.js` renders the board narration surface. The off-screen `aria-live="polite"` region is always present for running and game-over play so screen readers can hear the latest turn summary, while the visible "Show Turn Log" strip is an optional preference-backed echo for sighted students. Setup and mode-picker screens keep the strip hidden and leave the live region empty so no narration leaks into non-game UI.
+
+## Voice narration surface (Plan 39)
+
+`src/ui/voiceNarration.js` is an opt-in Web Speech API layer that speaks the same text produced by Plan 36 (narration) and Plan 38 (coaching). It is **off by default** and persisted in `localStorage` under `bba:voice-narration-enabled`. When voice is enabled, each `announceLastTurn` / `announceCoachingMoments` call feeds the formatted text through the voice wrapper immediately after updating the aria-live region's `textContent`. To prevent screen-reader users from hearing the same sentence twice, the wrapper temporarily sets the aria-live region's `aria-live` attribute to `"off"` before calling `speechSynthesis.speak()`, then restores it to `"polite"` on utterance end or error. SFX volume is reduced to 30% while speech is active and restored on completion. Speech is cancelled on level reset, level switch, mode switch, game-over, and `beforeunload`. Voice is also never spoken before the user's first qualifying gesture (click, keypress, or touch), in compliance with browser autoplay policy.
+
 ## Tutorial overlay and seen-state
 
 `src/ui/tutorialOverlay.js` manages three distinct states:

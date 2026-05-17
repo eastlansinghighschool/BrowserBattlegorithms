@@ -2,7 +2,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { HUMAN_TURN_BEHAVIORS } from "../src/config/constants.js";
+import { CELL_TYPE, HUMAN_TURN_BEHAVIORS, MAPS } from "../src/config/constants.js";
+import { deriveHomeSideFromPlayDirection, getDefaultSlotPosition, getRunnerSlotMetadata } from "../src/core/teams.js";
 import {
   STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS,
   TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS
@@ -66,6 +67,14 @@ function uniqueSorted(values) {
   return [...new Set(values)].sort();
 }
 
+function getRoleFromTeamId(teamId) {
+  return Number(teamId) === 1 ? "player" : "opponent";
+}
+
+function getTeamIdFromRole(role) {
+  return role === "player" ? 1 : 2;
+}
+
 function normalizeToolboxBlockTypes(blockTypes = []) {
   return uniqueSorted(
     blockTypes.filter((blockType) => blockType && blockType !== "battlegorithms_on_each_turn")
@@ -100,6 +109,58 @@ function normalizeXmlForComparison(xmlText) {
 
 function makeDiagnostic({ severity, levelId, contract, message, file }) {
   return { severity, levelId, contract, message, file: file || null };
+}
+
+function buildRunnerIndex(level) {
+  const runnerIndex = new Map();
+  const teamEntries = Object.entries(level.setup?.teams || {});
+
+  for (const [role, teamSetup] of teamEntries) {
+    const teamId = getTeamIdFromRole(role);
+    for (const runnerSpec of teamSetup?.runners || []) {
+      const slotMetadata = getRunnerSlotMetadata(teamId, runnerSpec.slot);
+      const idSuffix = runnerSpec.idSuffix || slotMetadata.idSuffix;
+      runnerIndex.set(`runner_${teamId}_${idSuffix}`, {
+        teamId,
+        role,
+        runnerSpec,
+        slotMetadata
+      });
+    }
+  }
+
+  return runnerIndex;
+}
+
+function getBaseAreaCellSet(level, teamId) {
+  const map = MAPS[level.mapKey];
+  const role = getRoleFromTeamId(teamId);
+  const teamSetup = level.setup?.teams?.[role] || null;
+  const homeSide = teamSetup?.homeSide || deriveHomeSideFromPlayDirection(teamSetup?.playDirection);
+  const baseCellType = teamSetup?.baseCellType ?? (homeSide === "left" ? CELL_TYPE.TEAM1_BASE : CELL_TYPE.TEAM2_BASE);
+
+  if (!map || baseCellType === undefined || baseCellType === null) {
+    return new Set();
+  }
+
+  const cells = new Set();
+  for (let y = 0; y < map.length; y += 1) {
+    for (let x = 0; x < map[y].length; x += 1) {
+      if (map[y][x] === baseCellType) {
+        cells.add(`${x},${y}`);
+      }
+    }
+  }
+  return cells;
+}
+
+function resolveRunnerPosition(teamSetup, runnerSpec) {
+  const homeSide = teamSetup?.homeSide || deriveHomeSideFromPlayDirection(teamSetup?.playDirection);
+  const defaultPosition = getDefaultSlotPosition(homeSide, runnerSpec.slot);
+  return {
+    x: runnerSpec.gridX ?? defaultPosition.gridX,
+    y: runnerSpec.gridY ?? defaultPosition.gridY
+  };
 }
 
 async function readTextIfExists(filePath) {
@@ -708,6 +769,138 @@ export function checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId 
   return diagnostics;
 }
 
+export function checkFlagSetupGameSpecCompliance(levels) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    const flagEntries = Object.entries(level.setup?.flags || {});
+    if (!flagEntries.length) {
+      continue;
+    }
+
+    const runnerIndex = buildRunnerIndex(level);
+
+    for (const [role, flag] of flagEntries) {
+      if (!flag || typeof flag !== "object") {
+        continue;
+      }
+
+      const teamId = getTeamIdFromRole(role);
+      const teamSetup = level.setup?.teams?.[role];
+      if (!teamSetup) {
+        continue;
+      }
+
+      const baseCells = getBaseAreaCellSet(level, teamId);
+      const flagHasExplicitPosition = flag.gridX !== undefined || flag.gridY !== undefined;
+      const resolvedFlagX = flag.gridX ?? teamSetup.flagHome?.x ?? null;
+      const resolvedFlagY = flag.gridY ?? teamSetup.flagHome?.y ?? null;
+      const resolvedFlagCell = resolvedFlagX !== null && resolvedFlagY !== null
+        ? `${resolvedFlagX},${resolvedFlagY}`
+        : null;
+      const carrierId = flag.carriedByRunnerId || null;
+
+      if (carrierId) {
+        const carrier = runnerIndex.get(carrierId) || null;
+        if (!carrier) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "flag-setup-game-spec-compliance",
+              message: `flag for team ${teamId} is carried by missing runner "${carrierId}"`,
+              file: level.sourcePath || null
+            })
+          );
+          continue;
+        }
+
+        if (carrier.teamId === teamId) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "flag-setup-game-spec-compliance",
+              message: `flag for team ${teamId} is carried by same-team runner "${carrierId}"`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+
+        if (!carrier.runnerSpec.hasEnemyFlag) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "flag-setup-game-spec-compliance",
+              message: `runner "${carrierId}" should start with hasEnemyFlag=true when carrying flag for team ${teamId}`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+
+        const carrierPosition = resolveRunnerPosition(level.setup.teams[carrier.role], carrier.runnerSpec);
+        if (
+          flagHasExplicitPosition &&
+          resolvedFlagCell &&
+          (carrierPosition.x !== resolvedFlagX || carrierPosition.y !== resolvedFlagY)
+        ) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "flag-setup-game-spec-compliance",
+              message: `flag for team ${teamId} should match carrier "${carrierId}" position when carried`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+
+        if (flag.isAtBase === true) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "flag-setup-game-spec-compliance",
+              message: `flag for team ${teamId} is carried but still marked at base`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+
+        continue;
+      }
+
+      if (flag.isAtBase === false) {
+        diagnostics.push(
+          makeDiagnostic({
+            severity: SEVERITIES.WARNING,
+            levelId: level.id,
+            contract: "flag-setup-game-spec-compliance",
+            message: `flag for team ${teamId} is marked off-base without a carrier`,
+            file: level.sourcePath || null
+          })
+        );
+        continue;
+      }
+
+      if (!resolvedFlagCell || !baseCells.has(resolvedFlagCell)) {
+        diagnostics.push(
+          makeDiagnostic({
+            severity: SEVERITIES.WARNING,
+            levelId: level.id,
+            contract: "flag-setup-game-spec-compliance",
+            message: `flag for team ${teamId} should start on that team's base area`,
+            file: level.sourcePath || null
+          })
+        );
+      }
+    }
+  }
+
+  return diagnostics;
+}
+
 export function runLevelLint({
   levels,
   conceptMatrix,
@@ -724,7 +917,8 @@ export function runLevelLint({
     ...checkTurnLimitFloor(levels, minTurnLimit),
     ...checkWinConditionRequiresNamedMechanic(levels, conceptMatrix),
     ...checkReferenceSolutionFixtureNameMatchesLevelId(levels, { referenceSolutionsByLevelId }),
-    ...checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId })
+    ...checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId }),
+    ...checkFlagSetupGameSpecCompliance(levels)
   ];
 }
 

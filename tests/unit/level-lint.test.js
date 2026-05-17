@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   checkChallengeLevelsIntroduceNoNewBlock,
+  checkFlagSetupGameSpecCompliance,
   checkConceptMatrixAgreement,
   checkDemoBlocklyDoesNotSolveLevel,
   checkProjectMetadata,
@@ -244,6 +245,165 @@ test("sensor relation policy warns for undeclared relations in the reference sol
   const diagnostics = checkSensorRelationPolicy([level], { referenceSolutionsByLevelId: ref });
   assert.equal(diagnostics[0].severity, "warning");
   assert.equal(diagnostics[0].contract, "sensor-relation-policy");
+});
+
+test("flag setup game spec compliance passes for base flags and carried flags with valid carriers", () => {
+  const baseLevel = createLevel({
+    id: "base-flag",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "human", gridX: 1, gridY: 1 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { gridX: 11, gridY: 4 }
+      }
+    }
+  });
+
+  const carriedLevel = createLevel({
+    id: "carried-flag",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [
+            { slot: "human", gridX: 1, gridY: 1 },
+            { slot: "ally", gridX: 2, gridY: 4, hasEnemyFlag: true }
+          ]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { carriedByRunnerId: "runner_1_AI_AllyP1", isAtBase: false }
+      }
+    }
+  });
+
+  assert.deepEqual(checkFlagSetupGameSpecCompliance([baseLevel]), []);
+  assert.deepEqual(checkFlagSetupGameSpecCompliance([carriedLevel]), []);
+});
+
+test("flag setup game spec compliance warns for off-base, missing-carrier, mismatched-carrier, and false-at-base flags", () => {
+  const offBase = createLevel({
+    id: "off-base-flag",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "human", gridX: 1, gridY: 1 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { gridX: 9, gridY: 4 }
+      }
+    }
+  });
+
+  const missingCarrier = createLevel({
+    id: "missing-carrier",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "human", gridX: 1, gridY: 1 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { carriedByRunnerId: "runner_1_AI_AllyP1", isAtBase: false }
+      }
+    }
+  });
+
+  const carrierWithoutFlag = createLevel({
+    id: "carrier-without-flag",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "ally", gridX: 2, gridY: 4 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { carriedByRunnerId: "runner_1_AI_AllyP1", isAtBase: false }
+      }
+    }
+  });
+
+  const falseAtBase = createLevel({
+    id: "false-at-base",
+    mapKey: "simpleAisle",
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "human", gridX: 1, gridY: 1 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: [{ slot: "npc1", gridX: 10, gridY: 2 }]
+        }
+      },
+      flags: {
+        opponent: { gridX: 10, gridY: 4, isAtBase: false }
+      }
+    }
+  });
+
+  assert.equal(checkFlagSetupGameSpecCompliance([offBase])[0].contract, "flag-setup-game-spec-compliance");
+  assert.equal(checkFlagSetupGameSpecCompliance([missingCarrier])[0].contract, "flag-setup-game-spec-compliance");
+  assert.equal(checkFlagSetupGameSpecCompliance([carrierWithoutFlag]).some((entry) => /hasEnemyFlag/.test(entry.message)), true);
+  assert.equal(checkFlagSetupGameSpecCompliance([falseAtBase])[0].contract, "flag-setup-game-spec-compliance");
 });
 
 test("lint runner returns exit code 0 for warnings only and 1 for errors", () => {
