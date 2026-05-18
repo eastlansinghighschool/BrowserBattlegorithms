@@ -9,7 +9,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 3 | Score a point | bring flag home, score | flag possession condition | Levels 1-2 |
 | 4 | Barrier detour | barrier as obstacle | simple named conditional branch | Levels 1-3 |
 | 5 | Forward works both ways | relative forward / play direction | same block, different orientation | Levels 1-4 |
-| Prediction 6 | First move prediction | commit to the ally's first movement before running | prediction checkpoint; no new Blockly idea | Level 5 |
+| Prediction: First Move | First move prediction | commit to the ally's first movement before running | prediction checkpoint; no new Blockly idea | Level 5 |
 | 6 | Enemy sensor branch | generic sensor; enemy runner blocking a lane | sensor object + relation dropdowns | Level 4 named check |
 | 7 | Watch the wall | edge / wall | generic sensor reused on terrain | Level 6 sensor shape |
 | 8 | Find the human | support square near teammate | directional sensing | Levels 6-7 |
@@ -34,7 +34,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 25 | Two conditions at once | two truths required for the same strategy | `AND` | advanced value blocks |
 | 26 | This or that | either warning matters | `OR` | advanced value blocks |
 | 27 | Flip the answer | opposite condition | `NOT` | advanced value blocks |
-| Prediction 25 | Boolean prediction | commit to whether the AND branch is true | prediction checkpoint; no new Blockly idea | Levels 25-27 |
+| Prediction: Two Truths | Boolean prediction | commit to whether the AND branch is true | prediction checkpoint; no new Blockly idea | Levels 25-27 |
 | Bug Hunt: Boolean Trap | Trace the boolean | debugging checkpoint; boolean choice fires too early | repair the boolean gate around freeze | Levels 1-27 |
 | **Challenge 28** | **Full Team Tactics** | **Strategy Brain capstone; live defenders and full single-ally toolbox** | **none - synthesis only** | **Levels 1-28** |
 | 29 | One program, two allies | shared program for allies | runner index | advanced value blocks |
@@ -45,7 +45,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | 34 | Freeze support | shared team resource by role | index + freeze readiness | Levels 21, 29-33 |
 | 35 | Barrier specialist | support wall for teammate | index + barrier readiness | Levels 17, 29-34 |
 | 36 | Jump team | role-based jump route | index + jump resource | Levels 16, 29-35 |
-| Prediction 31 | Runner index prediction | commit to which ally takes the first shared-program job | prediction checkpoint; no new Blockly idea | Levels 29-31 |
+| Prediction: Role Split | Runner index prediction | commit to which ally takes the first shared-program job | prediction checkpoint; no new Blockly idea | Levels 29-31 |
 | Bug Hunt: Role Split | Trace the roles | debugging checkpoint; overlapping ally jobs | repair the runner-index branch split | Levels 23-36 |
 | **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
 | Optional lab | Move randomly | randomness in action choice | `Move Randomly` | movement basics |

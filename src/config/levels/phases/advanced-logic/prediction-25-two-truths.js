@@ -36,7 +36,7 @@ const PREDICTION_25_STARTER_XML = `
 
 export default {
   id: "prediction-25",
-  title: "Prediction 25: Two Truths",
+  title: "Prediction: Two Truths",
   description: "Predict whether the AND branch runs before you observe the result.",
   introText: "The starter program checks two truths at once. Pick whether the branch is true, then run it and compare the outcome.",
   mode: GAME_MODES.PLAYER_VS_NPC,

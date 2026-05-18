@@ -14,7 +14,7 @@ test("prediction levels gate Start Level until a choice is selected and preserve
   await waitForHeavyReady(page);
   await chooseGuided(page);
   await dismissTutorial(page);
-  await openPredictionLevel(page, "Prediction 6: First Move");
+  await openPredictionLevel(page, "Prediction: First Move");
   await dismissTutorial(page);
 
   await expect(page.locator("#prediction-prompt-prediction-06")).toHaveText("Where will the ally move on its first turn?");
@@ -51,7 +51,7 @@ test("prediction levels expose a native radiogroup for keyboard navigation and r
   await waitForHeavyReady(page);
   await chooseGuided(page);
   await dismissTutorial(page);
-  await openPredictionLevel(page, "Prediction 31: Role Split");
+  await openPredictionLevel(page, "Prediction: Role Split");
   await dismissTutorial(page);
 
   await expect(page.locator("#prediction-prompt-prediction-31")).toHaveText("Which runner will move forward on the first turn?");

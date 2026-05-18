@@ -33,7 +33,7 @@ const PREDICTION_31_STARTER_XML = `
 
 export default {
   id: "prediction-31",
-  title: "Prediction 31: Role Split",
+  title: "Prediction: Role Split",
   description: "Predict which runner takes the forward job when one program runs on both allies.",
   introText: "The shared program now runs on two allies. Pick which runner takes the first action, then run and compare the outcome.",
   mode: GAME_MODES.PLAYER_VS_NPC,

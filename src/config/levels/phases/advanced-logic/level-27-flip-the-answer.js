@@ -7,7 +7,7 @@ export default {
   id: "flip-the-answer",
   title: "Level 27: Flip The Answer",
   description: "Use NOT to reverse a boolean check.",
-  introText: "The Strategy Brain now knows how to flip a check around. NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.",
+  introText: "NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.  Use NOT to flip on my side into not on my side. That lets the Strategy Brain react after it crosses midfield.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

@@ -4,7 +4,7 @@
  * Tests the "Reset Workspace to Starter" button in the Blockly toolbar
  * (Requirement 7 and 8).
  *
- * Level used: prediction-06 (Prediction 6: First Move) for confirm/cancel/free-play tests.
+ * Level used: prediction-06 (Prediction: First Move) for confirm/cancel/free-play tests.
  * Project level: "closest-threat" (Level 23, part of a project arc) for project-hidden test.
  */
 

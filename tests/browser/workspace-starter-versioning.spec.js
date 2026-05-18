@@ -4,7 +4,7 @@
  * Tests the stale-replace logic (Requirement 6) by pre-seeding localStorage
  * before page load and asserting the correct workspace content after load.
  *
- * Level used: prediction-06 (Prediction 6: First Move).
+ * Level used: prediction-06 (Prediction: First Move).
  *   - Has initialBlocklyXml with a move_forward block → workspace shows "Move Forward".
  *   - A seeded stale workspace has a stay_still block → workspace shows "Stay Still".
  *

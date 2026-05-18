@@ -13,7 +13,7 @@ const PREDICTION_06_STARTER_XML = `
 
 export default {
   id: "prediction-06",
-  title: "Prediction 6: First Move",
+  title: "Prediction: First Move",
   description: "Predict the ally's first move before you run the program.",
   introText: "Read the starter code, choose your prediction, and then run the level to compare what happened.",
   mode: GAME_MODES.PLAYER_VS_NPC,

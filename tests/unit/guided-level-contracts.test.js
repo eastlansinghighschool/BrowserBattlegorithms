@@ -76,17 +76,17 @@ test("level definitions load with the expected starter and advanced level order"
   );
 
   assert.equal(levels[5].id, "prediction-06");
-  assert.ok(levels[5].title.startsWith("Prediction 6"));
+  assert.ok(levels[5].title.startsWith("Prediction"));
   assert.equal(levels[15].id, "bughunt-15");
   assert.ok(levels[16].title.startsWith("Challenge 15"));
   assert.equal(levels[23].id, "bughunt-22");
   assert.ok(levels[24].title.startsWith("Challenge 22"));
   assert.equal(levels[30].id, "prediction-25");
-  assert.ok(levels[30].title.startsWith("Prediction 25"));
+  assert.ok(levels[30].title.startsWith("Prediction"));
   assert.equal(levels[31].id, "bughunt-28");
   assert.ok(levels[32].title.startsWith("Challenge 28"));
   assert.equal(levels[41].id, "prediction-31");
-  assert.ok(levels[41].title.startsWith("Prediction 31"));
+  assert.ok(levels[41].title.startsWith("Prediction"));
   assert.equal(levels[42].id, "bughunt-37");
   assert.ok(levels[43].title.startsWith("Challenge 37"));
   assert.equal(levels.at(-1).id, "optional-random-lab");
