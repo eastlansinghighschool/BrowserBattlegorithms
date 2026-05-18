@@ -44,6 +44,22 @@
   color: white;
 }
 
+/* Plan 45: Reset Workspace to Starter — visually distinct from undo/redo to
+   signal a destructive action. Muted amber treatment, no fill at rest. */
+#resetWorkspaceToStarterButton {
+  color: #7c5a0c;
+  border-color: rgba(124, 90, 12, 0.28) !important;
+}
+
+#resetWorkspaceToStarterButton:hover:not(:disabled) {
+  background: rgba(124, 90, 12, 0.12);
+  border-color: rgba(124, 90, 12, 0.48) !important;
+}
+
+#resetWorkspaceToStarterButton:disabled {
+  opacity: 0.42;
+}
+
 #blockly-toolbar button {
   padding: 7px 12px;
   border: none;

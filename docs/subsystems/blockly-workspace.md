@@ -30,6 +30,7 @@ All Blockly-related `localStorage` keys use the `bba:` prefix. The full set:
 | Key | What it stores |
 |---|---|
 | `bba:guided-workspace:<levelId>` | Serialized XML for one ordinary guided level. |
+| `bba:guided-workspace-version:<levelId>` | Hash of the guided level's `initialBlocklyXml` at the time the workspace was last written. Used by the starter versioning system (see "Starter XML versioning" below). |
 | `bba:guided-project-workspace:<projectId>` | Shared latest XML for all levels in a guided project arc. |
 | `bba:free-play-workspace` | Player-team XML for PvCPU free play. |
 | `bba:free-play-pvp-team:1` | Team 1 XML for PvP free play. |
@@ -54,6 +55,31 @@ Three distinct operations exist; they are not interchangeable:
 **Project-shared workspaces**: Levels inside a project arc (`strategy-brain` L23-L28, `team-strategy-script` L29-L37) share one workspace key per project id. A save on any project level updates that shared key. Backward navigation within the arc loads the same shared latest XML.
 
 **Local-dev guided assist**: When the dev-only `devGuidedLevel` shortcut is active, the startup path applies a dev-only viewport-fitting guided layout, scales the board visually so the canvas stays fully visible, opens the first toolbox category, and uses a one-shot clamped Blockly scroll to keep the starter `On Each Turn` block visible to the right of the open drawer. This assist is local-dev only, does not rewrite saved XML, and does not depend on a long delayed translation.
+
+## Starter XML versioning
+
+**Why this exists.** On 2026-05-17 the integration owner fixed a malformed `<next>` nesting in the bughunt-22 starter XML. The fix was deployed but returning students still saw the broken level — `localStorage` had cached the broken parse result and the load path preferred it over the newly-authored `initialBlocklyXml`. School-managed Chromebooks lock students out of DevTools, so the manual `localStorage.removeItem` escape hatch was unavailable. This versioning layer closes that hole.
+
+**Hash function and normalization (Plan 45, stable by contract).** Each guided level's `initialBlocklyXml` is hashed once at module-load time using FNV-1a 32-bit, producing an 8-character lowercase hex digest (e.g. `"a3f7c218"`). The hash is computed on a normalized form of the XML:
+- Inter-element whitespace-only text nodes are stripped (`> ... <` → `><`).
+- Remaining runs of whitespace are collapsed to a single space.
+- `x="…"` and `y="…"` block-position attributes are removed.
+
+This means an author can reformat the XML file or change the saved block positions without triggering a stale-replace on students.  A change to any block type, field value, or structural nesting produces a different hash and will trigger stale-replace on the next student visit.
+
+The hash function itself is the contract. Do not swap FNV-1a for a different algorithm without also versioning the key format (e.g. prefixing the digest with an algorithm tag like `fnv1a-32:`).
+
+**Two-key storage shape.** For every ordinary guided level (keys with the `bba:guided-workspace:` prefix), a sibling key `bba:guided-workspace-version:<levelId>` stores the hash at the time of the last write. Both keys are always written together. If the main workspace key is absent, the version key is ignored.
+
+**Replace-on-mismatch (silent by design).** On load, if the stored version hash does not match the current level's computed hash, the stored workspace is discarded and `initialBlocklyXml` is loaded as if the student were visiting fresh. No toast or modal is shown. The student simply sees the corrected starter. Rationale: in pilot, the orchestrator is the source of truth for authored content; students benefit from seeing the correct level, not from knowing it changed.
+
+**Grace stamp for pre-packet stored workspaces (Decision 5).** Stored workspaces written before Plan 45 shipped have no version key. On first load after deploy, the loader detects the missing key and stamps the current hash, letting the student keep their in-flight work. From the second load onward, the hash is present and normal compare logic applies — any subsequent author edit reaches the student reliably.
+
+**Scope — guided non-project levels only.** The versioning layer only applies to `bba:guided-workspace:*` keys. The following are intentionally exempt:
+- **Free play workspaces** (`bba:free-play-workspace`, `bba:free-play-pvp-team:N`): student-authored programs, not authored content. Must persist unchanged across sessions.
+- **Project shared workspaces** (`bba:guided-project-workspace:<projectId>`): one workspace shared across all levels in a project arc. Versioning here is more complex (the canonical "starter" is the first-level state, not per-level), and project-level authoring fixes are rare enough to communicate out-of-band for now.
+
+**Manual reset affordance.** A "Reset Workspace to Starter" button (`#resetWorkspaceToStarterButton`) appears in `#blockly-toolbar` next to the undo/redo controls. It is visible only on guided non-project levels that have a non-empty `initialBlocklyXml`; hidden in Free Play and on project-shared-workspace levels. On click, a `window.confirm()` dialog prompts "Reset your blocks to the starter program for this level? Your current blocks will be lost." On confirm, the button uses the same internal code path as the stale-replace branch: `resetWorkspaceToCurrentStarter(app)` in `workspace.js`. This is distinct from the Play/Reset button, which preserves the workspace and only resets the game board state.
 
 ## Keyboard navigation
 

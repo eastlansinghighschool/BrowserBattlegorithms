@@ -16,6 +16,7 @@ function installEditorHooks(app, workspaceApi, interpreterApi) {
   app.hooks.canRedoBlocklyWorkspace = () => workspaceApi.canRedoBlocklyWorkspace(app);
   app.hooks.undoBlocklyWorkspace = () => workspaceApi.undoBlocklyWorkspace(app);
   app.hooks.redoBlocklyWorkspace = () => workspaceApi.redoBlocklyWorkspace(app);
+  app.hooks.resetWorkspaceToCurrentStarter = () => workspaceApi.resetWorkspaceToCurrentStarter(app);
   app.hooks.getActiveProgramLabel = () => workspaceApi.getActiveBlocklyProgramLabel(app);
   app.hooks.getAvailableToolboxBlockTypes = () => workspaceApi.getAvailableToolboxBlockTypes(app);
   app.hooks.getAvailableToolboxBlockLabels = () => workspaceApi.getAvailableToolboxBlockLabels(app);

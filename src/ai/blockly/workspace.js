@@ -8,6 +8,7 @@ import {
   MOVE_TOWARD_TARGETS
 } from "../../config/constants.js";
 import { getCurrentLevel } from "../../core/levels.js";
+export { hashStarterXml, normalizeStarterXmlForHashing } from "./starterVersioning.js";
 import { evaluateCondition } from "../../core/conditions.js";
 import { getEnemyTeamId, getTeamFlagHome } from "../../core/teams.js";
 import {
@@ -32,6 +33,9 @@ import { clearAllTraceClasses } from "./traceRenderer.js";
 
 const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
+// Sibling key that stores the starterXmlVersion hash written alongside each guided workspace.
+// Key shape: bba:guided-workspace-version:{levelId}
+const GUIDED_WORKSPACE_VERSION_KEY_PREFIX = "bba:guided-workspace-version:";
 const FREE_PLAY_WORKSPACE_STORAGE_KEY = "bba:free-play-workspace";
 const FREE_PLAY_PVP_WORKSPACE_STORAGE_PREFIX = "bba:free-play-pvp-team:";
 const { KeyboardNavigation } = keyboardNavigationPkg;
@@ -240,6 +244,18 @@ export function redoBlocklyWorkspace(app) {
 
 export function getActiveBlocklyProgramLabel(app) {
   return getActiveProgramLabel(app.state);
+}
+
+/**
+ * Returns true when the current app state points at a guided non-project level.
+ * Only this class of level has per-level starter versioning (Decision 3).
+ */
+function isGuidedNonProjectLevel(app) {
+  if (app.state.currentModeView !== GAME_VIEW_MODES.GUIDED_LEVELS) {
+    return false;
+  }
+  const currentLevel = getCurrentLevel(app);
+  return !currentLevel?.project?.id;
 }
 
 function getWorkspaceStorageKey(app, overrideTeamId = null) {
@@ -900,8 +916,52 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
   if (typeof window === "undefined" || !window.localStorage) {
     return getCachedWorkspaceXml(app, overrideTeamId) || fallbackXml;
   }
+
+  const storageKey = getWorkspaceStorageKey(app, overrideTeamId);
+  const storedXml = window.localStorage.getItem(storageKey);
+
+  // ── Plan 45: starter versioning for guided non-project levels ───────────────
+  // Only run the version check for the guided non-project workspace class.
+  // Free play and project shared workspaces are explicitly exempt (Decision 3).
+  if (isGuidedNonProjectLevel(app) && storedXml) {
+    const levelId = app.state.currentLevelId;
+    const currentLevel = getCurrentLevel(app);
+    const currentVersion = currentLevel?.starterXmlVersion ?? null;
+    const versionKey = `${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`;
+    const storedVersion = window.localStorage.getItem(versionKey);
+
+    if (storedVersion === null) {
+      // Decision 5 — grace stamp: stored workspace pre-dates this packet.
+      // Stamp the current version so the next author edit will trigger replace,
+      // but let this student keep their in-flight work.
+      if (currentVersion) {
+        window.localStorage.setItem(versionKey, currentVersion);
+      }
+      return storedXml;
+    }
+
+    if (storedVersion === currentVersion) {
+      // Normal case: authored starter has not changed since last save.
+      return storedXml;
+    }
+
+    // Stale-replace: the author has updated the starter since the student last
+    // loaded this level. Discard stored content, stamp the new version, and
+    // overwrite the workspace key so a follow-up save doesn't restore stale
+    // content (Requirement 4 constraint).
+    if (currentVersion) {
+      window.localStorage.setItem(versionKey, currentVersion);
+    }
+    window.localStorage.setItem(storageKey, fallbackXml);
+    if (import.meta.env?.DEV) {
+      console.debug(`[BBA] Stale workspace replaced for level "${levelId}": stored=${storedVersion} current=${currentVersion}`);
+    }
+    return fallbackXml;
+  }
+  // ── End Plan 45 ─────────────────────────────────────────────────────────────
+
   return (
-    window.localStorage.getItem(getWorkspaceStorageKey(app, overrideTeamId)) ||
+    storedXml ||
     getCachedWorkspaceXml(app, overrideTeamId) ||
     fallbackXml
   );
@@ -914,6 +974,18 @@ export function saveWorkspaceToLocalStorage(app, overrideTeamId = null) {
   const xmlText = getWorkspaceXmlText(app);
   cacheWorkspaceXml(app, xmlText, overrideTeamId);
   window.localStorage.setItem(getWorkspaceStorageKey(app, overrideTeamId), xmlText);
+
+  // Plan 45: stamp the sibling version key for guided non-project levels so
+  // future loads can detect whether the authored starter has changed.
+  // Free play and project shared workspace saves intentionally skip this write.
+  if (isGuidedNonProjectLevel(app)) {
+    const levelId = app.state.currentLevelId;
+    const currentLevel = getCurrentLevel(app);
+    const currentVersion = currentLevel?.starterXmlVersion ?? null;
+    if (levelId && currentVersion) {
+      window.localStorage.setItem(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
+    }
+  }
 }
 
 export function switchActiveBlocklyTeamTab(app, teamId) {
@@ -946,6 +1018,39 @@ export function loadWorkspaceFromLocalStorage(app, fallbackXml = "", overrideTea
   applyGuidedDevBlocklyAssist(app);
   app.usageTracker?.recordWorkspaceSnapshot?.("workspace_loaded", buildUsageWorkspaceCapture(app, "workspace_loaded"));
   return xmlToLoad;
+}
+
+/**
+ * Reset the Blockly workspace to the current level's authored starter XML.
+ *
+ * This is the shared code path used by both:
+ *   - The stale-replace branch in getStoredWorkspaceXmlText (automatic, on load)
+ *   - The "Reset Workspace to Starter" button in the toolbar (manual, on click)
+ *
+ * Writes the current starterXmlVersion to the sibling key and the starter XML
+ * to the workspace key so neither a future load nor a future save restores stale
+ * content. Safe to call when localStorage is unavailable (writes are skipped).
+ *
+ * @param {object} app
+ */
+export function resetWorkspaceToCurrentStarter(app) {
+  const currentLevel = getCurrentLevel(app);
+  if (!currentLevel?.initialBlocklyXml) {
+    return;
+  }
+  const starterXml = currentLevel.initialBlocklyXml;
+  const levelId = app.state.currentLevelId;
+
+  if (typeof window !== "undefined" && window.localStorage && levelId) {
+    window.localStorage.setItem(`${GUIDED_WORKSPACE_STORAGE_PREFIX}${levelId}`, starterXml);
+    const currentVersion = currentLevel.starterXmlVersion;
+    if (currentVersion) {
+      window.localStorage.setItem(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
+    }
+  }
+
+  loadWorkspaceXml(app, starterXml);
+  app.syncUi?.();
 }
 
 export function importWorkspaceXml(app, xmlText) {

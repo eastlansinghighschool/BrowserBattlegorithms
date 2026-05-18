@@ -91,6 +91,7 @@ export function bindControls(app) {
   const importWorkspaceInput = document.getElementById("importWorkspaceInput");
   const undoWorkspaceButton = document.getElementById("undoWorkspaceButton");
   const redoWorkspaceButton = document.getElementById("redoWorkspaceButton");
+  const resetWorkspaceToStarterButton = document.getElementById("resetWorkspaceToStarterButton");
   const programExportModal = document.getElementById("programExportModal");
   const privateExportCheckbox = document.getElementById("privateExportCheckbox");
   const privateExportFields = document.getElementById("privateExportFields");
@@ -403,6 +404,22 @@ export function bindControls(app) {
     redoWorkspaceButton.addEventListener("click", () => {
       if (app.hooks.redoBlocklyWorkspace?.()) {
         app.syncUi();
+      }
+    });
+  }
+
+  // Plan 45: Reset Workspace to Starter (Decision 7).
+  // Uses window.confirm() — no custom modal, works on locked-down Chromebooks.
+  if (resetWorkspaceToStarterButton) {
+    resetWorkspaceToStarterButton.addEventListener("click", () => {
+      if (resetWorkspaceToStarterButton.disabled) {
+        return;
+      }
+      const confirmed = window.confirm(
+        "Reset your blocks to the starter program for this level? Your current blocks will be lost."
+      );
+      if (confirmed) {
+        app.hooks.resetWorkspaceToCurrentStarter?.();
       }
     });
   }

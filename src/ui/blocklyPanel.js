@@ -5,6 +5,7 @@ import {
   isProjectLevel,
   renderProjectStartWorkspaceCallout
 } from "./projectSignifiers.js";
+import { getCurrentLevel } from "../core/levels.js";
 
 function escapeHtml(value) {
   return `${value || ""}`
@@ -46,6 +47,7 @@ export function renderBlocklyPanel(app) {
   const usageExportStatus = document.getElementById("usage-export-status");
   const undoButton = document.getElementById("undoWorkspaceButton");
   const redoButton = document.getElementById("redoWorkspaceButton");
+  const resetToStarterButton = document.getElementById("resetWorkspaceToStarterButton");
   const programFileControls = document.getElementById("program-file-controls");
   const exportWorkspaceButton = document.getElementById("exportWorkspaceButton");
   const exportUsageButton = document.getElementById("exportUsageButton");
@@ -104,6 +106,17 @@ export function renderBlocklyPanel(app) {
   }
   if (redoButton) {
     redoButton.disabled = !canRedo;
+  }
+  // Plan 45: reset-to-starter button — visible only on guided non-project levels
+  // that have a non-empty initialBlocklyXml. Disabled until editor is ready.
+  if (resetToStarterButton) {
+    const isGuidedNonProject =
+      app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS &&
+      !isProjectLevel(getCurrentLevel(app));
+    const currentLevelHasStarter = Boolean(getCurrentLevel(app)?.initialBlocklyXml);
+    const showResetButton = isGuidedNonProject && currentLevelHasStarter;
+    resetToStarterButton.hidden = !showResetButton;
+    resetToStarterButton.disabled = !editorReady;
   }
   if (blocklyToolbar) {
     blocklyToolbar.classList.toggle("blockly-toolbar-disabled", !editorReady);

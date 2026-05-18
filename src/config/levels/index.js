@@ -6,6 +6,7 @@ import advancedLogic from "./phases/advanced-logic/index.js";
 import advancedTeamplay from "./phases/advanced-teamplay/index.js";
 import optional from "./phases/optional/index.js";
 import { normalizeLegacyLevelSetup } from "./shared/normalizeSetup.js";
+import { hashStarterXml } from "../../ai/blockly/starterVersioning.js";
 
 const RAW_LEVEL_DEFINITIONS = [
   ...foundations,
@@ -30,6 +31,9 @@ export function getLevelDefinitions() {
     project: level.project ? structuredClone(level.project) : null,
     winCondition: { ...level.winCondition },
     failureCondition: level.failureCondition ? { ...level.failureCondition } : null,
-    setup: normalizeLegacyLevelSetup(level.setup || level.setupOverrides)
+    setup: normalizeLegacyLevelSetup(level.setup || level.setupOverrides),
+    // Plan 45: content-derived hash for stale-replace versioning (Decision 4 approach b).
+    // Null for levels without a starter (those are not subject to stale-replace).
+    starterXmlVersion: level.initialBlocklyXml ? hashStarterXml(level.initialBlocklyXml) : null
   }));
 }

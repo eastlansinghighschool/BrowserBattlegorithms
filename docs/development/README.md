@@ -59,6 +59,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 42](archive/plan-42-bug-hunt-guided-levels.md) | complete | Add one guided bug hunt level before each synthesis challenge so students practice tracing and repairing plausible broken Blockly programs before open-ended challenge work. |
 | [Plan 43](archive/plan-43-multiple-choice-prediction-levels.md) | complete | Add a small multiple-choice prediction interaction for selected guided levels so students commit to expected program behavior before running and comparing the result. |
 | [Plan 44](archive/plan-44-narration-controls-and-voice-bootstrap-repair.md) | complete | Fix three narration/coaching/voice UI defects surfaced by the Plan 39 escalation: tutorial scrim blocks controls, voice picker startup race, and a missing coaching-toggle initial sync. Manual Chrome smoke verified by integration owner. |
+| [Plan 45](archive/plan-45-guided-workspace-starter-versioning.md) | complete | Add per-level starter XML versioning to guided workspaces so authored fixes (e.g. the 2026-05-17 bughunt-22 repair) reach returning students automatically, plus a "Reset Workspace to Starter" toolbar button as the manual escape hatch. Closes the localStorage staleness hole without DevTools access. |
 
 
 ## Future Directions
@@ -87,9 +88,9 @@ Loose backlog triage and unnumbered future packet ideas live in [future-directio
 
 ## Current Validation Baseline
 
-As of Plan 39 completion on 2026-05-17:
+As of Plan 45 completion on 2026-05-17:
 
-- `npm test` passes — 238 tests across 21 unit test files.
+- `npm test` passes — 276 tests across 22 unit test files.
 - `npm run build` passes.
 - Build output still warns that Blockly is both dynamically and statically imported, preventing the intended chunk split.
 - Build output still warns that minified chunks exceed 500 kB.
