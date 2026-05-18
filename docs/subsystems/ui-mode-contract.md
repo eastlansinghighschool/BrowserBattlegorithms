@@ -89,6 +89,7 @@ Prediction levels use the same guided lesson shell but add one extra rule: the S
 3. **Tutorial replay** — students can re-trigger the per-level tutorial from the lesson panel. Replay does not reset seen-state.
 
 Seen-state is persisted in `localStorage` separately from workspace XML and level progression. It controls whether a tutorial is shown automatically on next entry to a level.
+The narration controls row in `#game-controls` is intentionally lifted above the tutorial scrim so `Show Turn Log`, `Coaching Mode`, and `Voice Narration` remain interactive during guided steps; the rest of the page still follows the tutorial spotlight contract.
 
 ## Project signals
 

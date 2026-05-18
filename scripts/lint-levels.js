@@ -189,8 +189,27 @@ async function discoverLevelModulePaths() {
   for (const phaseIndexPath of phaseIndexPaths) {
     const phaseSource = await fs.readFile(phaseIndexPath, "utf8");
     const phaseDir = path.dirname(phaseIndexPath);
-    for (const match of phaseSource.matchAll(/import\s+\w+\s+from\s+"\.\/([^"]+)";/g)) {
-      levelModulePaths.push(path.join(phaseDir, match[1]));
+
+    // Build a map from import variable name → resolved file path.
+    const importMap = new Map();
+    for (const match of phaseSource.matchAll(/import\s+(\w+)\s+from\s+"\.\/([^"]+)";/g)) {
+      importMap.set(match[1], path.join(phaseDir, match[2]));
+    }
+
+    // Walk the export default array in its declared order so that the paths
+    // array aligns with getLevelDefinitions() — which uses the same export
+    // order — rather than with the (potentially different) import order.
+    const exportMatch = phaseSource.match(/export default \[([^\]]+)\]/);
+    if (exportMatch) {
+      for (const name of exportMatch[1].split(",").map((s) => s.trim()).filter(Boolean)) {
+        const filePath = importMap.get(name);
+        if (filePath) levelModulePaths.push(filePath);
+      }
+    } else {
+      // Fallback for any phase index that uses a different export shape.
+      for (const filePath of importMap.values()) {
+        levelModulePaths.push(filePath);
+      }
     }
   }
 
@@ -573,6 +592,61 @@ export function checkBugHuntHasReferenceSolution(levels, { referenceSolutionsByL
           file: level.sourcePath || ref?.filePath || null
         })
       );
+    }
+  }
+
+  return diagnostics;
+}
+
+// Detects malformed Blockly XML where a <next> element appears as a sibling of a
+// <block> element instead of as that block's child. Blockly silently drops the
+// dangling <next> chain when this happens, so authored blocks vanish without an
+// error. The signature pattern is `</block>` followed immediately by `<next>` —
+// in well-formed Blockly XML, `</block>` is only ever followed by another
+// closing tag (`</next>`, `</statement>`, `</value>`, `</xml>`) or by an
+// independent top-level sibling block at the workspace root.
+//
+// Scans both the starter XML on the level definition and the matching reference
+// solution XML when one is present.
+export function checkStarterXmlWellFormedNextNesting(
+  levels,
+  { referenceSolutionsByLevelId = new Map() } = {}
+) {
+  const diagnostics = [];
+  const danglingNextPattern = /<\/block>\s*<next\b/;
+
+  function scan(xmlText, { levelId, sourcePath, role }) {
+    if (typeof xmlText !== "string" || !xmlText.trim()) return;
+    if (danglingNextPattern.test(xmlText)) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId,
+          contract: "starter-xml-well-formed-next-nesting",
+          message:
+            `${role} XML contains a <next> element as a sibling of a <block> ` +
+            "element; Blockly will silently drop the dangling chain. Move the " +
+            "<next> inside the preceding <block>'s opening/closing tags.",
+          file: sourcePath || null
+        })
+      );
+    }
+  }
+
+  for (const level of levels) {
+    scan(getStarterXml(level), {
+      levelId: level.id,
+      sourcePath: level.sourcePath,
+      role: "starter"
+    });
+
+    const ref = getLevelRef(level, referenceSolutionsByLevelId);
+    if (ref) {
+      scan(ref.xmlText, {
+        levelId: level.id,
+        sourcePath: ref.filePath || level.sourcePath,
+        role: "reference solution"
+      });
     }
   }
 
@@ -1085,6 +1159,7 @@ export function runLevelLint({
     ...checkBugHuntLevelsIntroduceNoNewBlock(levels),
     ...checkBugHuntHasBrokenStarter(levels, { referenceSolutionsByLevelId }),
     ...checkBugHuntHasReferenceSolution(levels, { referenceSolutionsByLevelId }),
+    ...checkStarterXmlWellFormedNextNesting(levels, { referenceSolutionsByLevelId }),
     ...checkProjectMetadata(levels),
     ...checkProjectToolboxPolicy(levels),
     ...checkPredictionHasValidSchema(levels),

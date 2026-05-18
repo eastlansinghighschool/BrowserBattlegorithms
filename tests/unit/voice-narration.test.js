@@ -5,6 +5,7 @@ import {
   getAvailableVoices,
   isVoiceEnabled,
   markUserGestured,
+  initVoiceNarration,
   setVoiceEnabled,
   setVoiceRate,
   setVoiceUri,
@@ -138,4 +139,64 @@ test("cancelSpeech does not throw after voice is enabled", () => {
   setVoiceEnabled(true);
   assert.doesNotThrow(() => cancelSpeech());
   setVoiceEnabled(false);
+});
+
+test("initVoiceNarration retries populateVoicePicker when the hook is assigned after the first voice load", async () => {
+  const originalWindow = globalThis.window;
+  const originalDocument = globalThis.document;
+
+  let populateCalls = 0;
+  globalThis.window = {
+    localStorage: {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {}
+    },
+    speechSynthesis: {
+      getVoices: () => [
+        {
+          name: "Test Voice",
+          lang: "en-US",
+          voiceURI: "test-voice",
+          default: true
+        }
+      ],
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      cancel: () => {},
+      speak: () => {}
+    },
+    addEventListener: () => {},
+    removeEventListener: () => {}
+  };
+  globalThis.document = {
+    documentElement: {
+      lang: "en"
+    }
+  };
+
+  try {
+    const app = { hooks: {} };
+    initVoiceNarration(app);
+    app.hooks.populateVoicePicker = () => {
+      populateCalls += 1;
+    };
+
+    assert.equal(populateCalls, 0);
+    await Promise.resolve();
+    assert.equal(populateCalls, 1);
+  } finally {
+    if (typeof originalWindow === "undefined") {
+      delete globalThis.window;
+    } else {
+      globalThis.window = originalWindow;
+    }
+    if (typeof originalDocument === "undefined") {
+      delete globalThis.document;
+    } else {
+      globalThis.document = originalDocument;
+    }
+    setVoiceEnabled(false);
+    setVoiceUri("");
+  }
 });

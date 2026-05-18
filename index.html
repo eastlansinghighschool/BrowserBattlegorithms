@@ -55,30 +55,30 @@
             <button id="nextLevelButton" style="padding: 10px 20px; font-size: 16px; display: none;">Next Level</button>
           </div>
           <div id="game-controls" style="margin-top: 10px; padding: 10px; background-color: #fff; border-radius: 8px; text-align: center;">
-            <label for="speedSlider">Game Speed:</label>
+            <label>Game Speed:</label>
             <input type="range" id="speedSlider" min="1" max="20" value="10" style="vertical-align: middle;">
             <span id="speedValue" style="margin-left: 10px;">Normal</span>
             <p id="scoreDisplay" style="margin-top:10px; font-weight: bold;">Turn: 1 | Scores: T1: 0 - T2: 0 (Win at 2)</p>
-            <label class="turn-log-toggle" for="turnLogToggle">
-              <input id="turnLogToggle" type="checkbox">
-              Show Turn Log
-            </label>
+            <div class="turn-log-toggle">
+              <input id="turnLogToggle" type="checkbox" aria-labelledby="turnLogToggleLabel">
+              <span id="turnLogToggleLabel">Show Turn Log</span>
+            </div>
             <p id="board-narration-strip" class="board-narration-strip" hidden></p>
-            <label class="turn-log-toggle" for="coachingModeToggle">
-              <input id="coachingModeToggle" type="checkbox">
-              Coaching Mode
-            </label>
+            <div class="turn-log-toggle">
+              <input id="coachingModeToggle" type="checkbox" aria-labelledby="coachingModeToggleLabel">
+              <span id="coachingModeToggleLabel">Coaching Mode</span>
+            </div>
             <p id="board-coaching-strip" class="board-coaching-strip" hidden></p>
             <div id="board-coaching" class="board-narration" aria-live="polite" aria-atomic="true"></div>
-            <label class="turn-log-toggle" for="voiceNarrationToggle">
-              <input id="voiceNarrationToggle" type="checkbox">
-              Voice Narration
-            </label>
+            <div class="turn-log-toggle">
+              <input id="voiceNarrationToggle" type="checkbox" aria-labelledby="voiceNarrationToggleLabel">
+              <span id="voiceNarrationToggleLabel">Voice Narration</span>
+            </div>
             <div id="voice-controls" class="voice-controls" hidden>
-              <label class="voice-controls-label" for="voiceRateSlider">Speed:
+              <label class="voice-controls-label">Speed:
                 <input type="range" id="voiceRateSlider" min="0.75" max="1.5" step="0.05" value="1">
               </label>
-              <label class="voice-controls-label" for="voicePicker">Voice:
+              <label class="voice-controls-label">Voice:
                 <select id="voicePicker" aria-label="Select voice"></select>
               </label>
             </div>

@@ -208,7 +208,6 @@ app.syncUi = () => {
   renderTutorialOverlay(app);
 };
 
-initVoiceNarration(app);
 initializeLevelState(app);
 if (import.meta.env.DEV) {
   const { applyDevGuidedLevelShortcut } = await import("./ui/devGuidedLevelLink.js");
@@ -216,6 +215,7 @@ if (import.meta.env.DEV) {
 }
 initializeTutorialState(app);
 bindControls(app);
+initVoiceNarration(app);
 bindGoalBurstOverlay(app);
 bindLevelPanel(app);
 bindTutorialOverlay(app);

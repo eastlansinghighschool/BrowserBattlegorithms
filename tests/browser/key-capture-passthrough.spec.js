@@ -316,7 +316,10 @@ test("guided keyboard-practice level accepts the Team 1 D key through the real b
       !human.isBouncing
     );
   });
-  await page.locator("#playResetButton").focus();
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.app.p5Instance?.noLoop?.();
+    document.body.focus();
+  });
   await page.keyboard.press("d");
   const queuedActionHandle = await page.waitForFunction(() => {
     const queued = window.__BBA_TEST_HOOKS__?.app?.state?.queuedActionForCurrentRunner;

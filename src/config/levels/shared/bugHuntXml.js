@@ -81,17 +81,18 @@ export const BUGHUNT_22_STARTER_XML = `
 <xml xmlns="https://developers.google.com/blockly/xml">
   <block type="battlegorithms_on_each_turn" x="24" y="24">
     <next>
-      <block type="battlegorithms_move_forward"></block>
-      <next>
-        <block type="battlegorithms_if_can_place_barrier_else">
-          <statement name="DO">
-            <block type="battlegorithms_place_barrier"></block>
-          </statement>
-          <statement name="ELSE">
-            <block type="battlegorithms_stay_still"></block>
-          </statement>
-        </block>
-      </next>
+      <block type="battlegorithms_move_forward">
+        <next>
+          <block type="battlegorithms_if_can_place_barrier_else">
+            <statement name="DO">
+              <block type="battlegorithms_place_barrier"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_stay_still"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
     </next>
   </block>
 </xml>

@@ -14,6 +14,7 @@ import {
   checkReferenceSolutionFixtureNameMatchesLevelId,
   checkReferenceSolutionToolboxCompatibility,
   checkSensorRelationPolicy,
+  checkStarterXmlWellFormedNextNesting,
   checkTurnLimitFloor,
   checkWinConditionRequiresNamedMechanic,
   formatDiagnostic,
@@ -228,6 +229,73 @@ test("bug hunt starter and reference solution contracts validate the authored re
     initialBlocklyXml: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>"
   });
   assert.equal(checkBugHuntHasReferenceSolution([missingReference], { referenceSolutionsByLevelId: new Map() })[0].contract, "bug-hunt-has-reference-solution");
+});
+
+test("checkStarterXmlWellFormedNextNesting passes on well-formed Blockly XML", () => {
+  const wellFormed = createLevel({
+    id: "well-formed",
+    initialBlocklyXml: `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn">
+    <next>
+      <block type="battlegorithms_move_forward">
+        <next>
+          <block type="battlegorithms_stay_still"></block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>`.trim()
+  });
+  assert.deepEqual(checkStarterXmlWellFormedNextNesting([wellFormed]), []);
+});
+
+test("checkStarterXmlWellFormedNextNesting flags a <next> sibling of a <block> in starter XML", () => {
+  // This is the exact malformation that hit bughunt-22: the inner <block> is
+  // self-closed and the <next> chain sits next to it as a sibling instead of
+  // inside it. Blockly silently drops the second block, so authored content
+  // never reaches the student.
+  const malformed = createLevel({
+    id: "malformed-starter",
+    initialBlocklyXml: `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn">
+    <next>
+      <block type="battlegorithms_move_forward"></block>
+      <next>
+        <block type="battlegorithms_stay_still"></block>
+      </next>
+    </next>
+  </block>
+</xml>`.trim()
+  });
+  const diagnostics = checkStarterXmlWellFormedNextNesting([malformed]);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].contract, "starter-xml-well-formed-next-nesting");
+  assert.equal(diagnostics[0].levelId, "malformed-starter");
+  assert.ok(diagnostics[0].message.includes("starter"));
+});
+
+test("checkStarterXmlWellFormedNextNesting also flags reference solution XML when malformed", () => {
+  const level = createLevel({
+    id: "ref-broken",
+    initialBlocklyXml: "<xml><block type=\"battlegorithms_move_forward\"></block></xml>"
+  });
+  const refs = new Map([
+    [
+      "ref-broken",
+      {
+        filePath: "/abs/ref-broken.xml",
+        xmlText:
+          "<xml><block type=\"battlegorithms_move_forward\"></block><next><block type=\"battlegorithms_stay_still\"></block></next></xml>"
+      }
+    ]
+  ]);
+  const diagnostics = checkStarterXmlWellFormedNextNesting([level], {
+    referenceSolutionsByLevelId: refs
+  });
+  assert.equal(diagnostics.length, 1);
+  assert.ok(diagnostics[0].message.includes("reference solution"));
 });
 
 test("project capstone challenges do not warn for approved blocks already introduced earlier", () => {

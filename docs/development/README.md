@@ -10,9 +10,6 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | --- | --- | --- |
 | [00 Mini Packet Agent Starting Prompt](00-mini-packet-agent-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
-| [Plan 37](plan-37-learning-moment-classifier.md) | ready | Pure-function classifier emitting `LearningMoment[]` records across all six v1 kinds (bounced, resource_no_readiness_guard, no_action_selected, ignored_blocks_below_action, recurring_pattern, runner_index_unhandled). Includes the small Plan 25a follow-up that persists the per-turn trace to `state.lastBlocklyTrace` and introduces `state.classifierRecurrenceState` with documented reset rules. No prose, no UI. Multi-consumer data layer for Plan 38 coach + future usage enrichment and dashboards. |
-| [Plan 38](plan-38-learning-coach-text.md) | draft | Short coaching messages tied to Plan 37 LearningMoments with disciplined cadence, toolbox-aware gating that won't reveal not-yet-introduced concepts, and a separate aria-live region from Plan 36. Opt-in, default off. Blocked on Plan 37 + Open Decisions on cadence/delivery surface. |
-| [Plan 39](plan-39-browser-tts-delivery.md) | ready | Web Speech API wrapper that speaks Plan 36 narration (and Plan 38 coach text if available). Handles user-gesture-first-speak, async voice loading, queue cancellation, SFX ducking, aria-live conflict suppression so screen-reader users don't double-hear. Off by default. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
 
 ### Completed Packets
@@ -55,9 +52,13 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 34](archive/plan-34-level-authoring-contract-linter.md) | complete | Developer-side `npm run lint:levels` script auditing every guided level against ten curriculum contracts (concept-matrix agreement, toolbox compatibility, demo-isn't-solution, challenge-introduces-no-new-block, project metadata and toolbox, turn-limit floor, sensor-relation policy, fixture-naming, mechanic-required-by-win-condition). Errors and warnings; no auto-fix. |
 | [Plan 35](archive/plan-35-narration-event-log-foundation.md) | complete | Per-turn append-only event log on `state` with 9 v1 event kinds (`turn.started`, `runner.actionChosen`, `runner.actionResolved`, `runner.blockedOrBounced`, `flag.pickedUp`, `flag.dropped`, `team.scored`, `resource.unavailable`, `level.result`). Engine becomes a passive producer; no consumers in this packet. Foundation for narration, classifier, replay, and usage enrichment. |
 | [Plan 36](archive/plan-36-aria-live-board-narration.md) | complete | Factual ARIA narration consuming the Plan 35 event log. Per-turn aria-live="polite" announcement summarizing coincident events into one short sentence; optional visible "Last turn" strip behind a settings toggle. Concise, mode-gated, no interpretation. Pairs with Plan 35; depends on it. |
+| [Plan 37](archive/plan-37-learning-moment-classifier.md) | complete | Pure-function classifier emitting `LearningMoment[]` records across all six v1 kinds (bounced, resource_no_readiness_guard, no_action_selected, ignored_blocks_below_action, recurring_pattern, runner_index_unhandled). Persists the per-turn trace to `state.lastBlocklyTrace` with workspace-enriched metadata and introduces `state.classifierRecurrenceState` with documented reset rules. No prose, no UI. Multi-consumer data layer for Plan 38 coach + future usage enrichment and dashboards. |
+| [Plan 38](archive/plan-38-learning-coach-text.md) | complete | Short opt-in coaching messages (≤ 25 words) tied to Plan 37 LearningMoments. Disciplined cadence (first-time-only or every-occurrence per kind), toolbox-aware tiered phrasing that never names blocks the student can't yet use, and a separate warm-yellow aria-live region from Plan 36 narration. Default off; persists to localStorage. |
+| [Plan 39](archive/plan-39-browser-tts-delivery.md) | complete — pending manual smoke | Web Speech API wrapper that speaks Plan 36 narration and Plan 38 coach text. Handles user-gesture-first-speak, async voice loading, queue cancellation, SFX ducking (30% volume during speech), aria-live conflict suppression for screen-reader users, and beforeunload cancel. Voice rate slider and voice picker. Off by default; persists to localStorage. |
 | [Plan 40](archive/plan-40-blockly-keyboard-navigation.md) | complete | Integrate Blockly's keyboard-navigation plugin so users and browser agents can author Blockly programs without drag/drop, while preserving Plan 30 key-capture protections, p5 gameplay input routing, modal/form/slider focus behavior, Blockly undo/redo, and dev-guided startup behavior. |
 | [Plan 42](archive/plan-42-bug-hunt-guided-levels.md) | complete | Add one guided bug hunt level before each synthesis challenge so students practice tracing and repairing plausible broken Blockly programs before open-ended challenge work. |
 | [Plan 43](archive/plan-43-multiple-choice-prediction-levels.md) | complete | Add a small multiple-choice prediction interaction for selected guided levels so students commit to expected program behavior before running and comparing the result. |
+| [Plan 44](archive/plan-44-narration-controls-and-voice-bootstrap-repair.md) | complete | Fix three narration/coaching/voice UI defects surfaced by the Plan 39 escalation: tutorial scrim blocks controls, voice picker startup race, and a missing coaching-toggle initial sync. Manual Chrome smoke verified by integration owner. |
 
 
 ## Future Directions
@@ -86,9 +87,10 @@ Loose backlog triage and unnumbered future packet ideas live in [future-directio
 
 ## Current Validation Baseline
 
-As of Plan 02 completion on 2026-05-12:
+As of Plan 39 completion on 2026-05-17:
 
-- `npm test` passes.
+- `npm test` passes — 238 tests across 21 unit test files.
 - `npm run build` passes.
 - Build output still warns that Blockly is both dynamically and statically imported, preventing the intended chunk split.
 - Build output still warns that minified chunks exceed 500 kB.
+- Plan 39 (voice narration) requires a manual smoke pass in a real browser; automated TTS audibility is not assertable from the unit suite.

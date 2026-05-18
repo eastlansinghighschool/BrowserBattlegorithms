@@ -153,7 +153,17 @@ export function initVoiceNarration(app) {
       ? all.filter((v) => v.lang.startsWith(docLang))
       : all;
     if (!availableVoices.length) availableVoices = all;
-    app.hooks.populateVoicePicker?.();
+    if (app.hooks.populateVoicePicker) {
+      app.hooks.populateVoicePicker();
+    } else if (typeof queueMicrotask === "function") {
+      queueMicrotask(() => {
+        app.hooks.populateVoicePicker?.();
+      });
+    } else {
+      setTimeout(() => {
+        app.hooks.populateVoicePicker?.();
+      }, 0);
+    }
   };
 
   window.speechSynthesis.addEventListener("voiceschanged", loadVoices);

@@ -584,6 +584,7 @@ export function bindControls(app) {
       syncTurnLogToggle();
       app.syncUi();
     });
+    syncTurnLogToggle();
   }
 
   const syncVoiceControls = () => {

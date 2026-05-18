@@ -509,10 +509,11 @@ export function bindLevelPanel(app) {
   });
 
   document.addEventListener("click", (event) => {
-    if (!panel.contains(event.target)) {
-      app.ui.isLevelPickerOpen = false;
-      app.syncUi();
+    if (!app.ui.isLevelPickerOpen || panel.contains(event.target)) {
+      return;
     }
+    app.ui.isLevelPickerOpen = false;
+    app.syncUi();
   });
 
   window.addEventListener("resize", () => {
