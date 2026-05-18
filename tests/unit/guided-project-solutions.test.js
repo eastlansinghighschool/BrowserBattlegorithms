@@ -57,6 +57,17 @@ function collectBlockTypesFromXml(xmlText) {
   return [...blockTypes].sort();
 }
 
+function createSeededRandom(seedText) {
+  let seed = 0;
+  for (let index = 0; index < seedText.length; index += 1) {
+    seed = (seed * 31 + seedText.charCodeAt(index)) >>> 0;
+  }
+  return () => {
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 0x100000000;
+  };
+}
+
 function getProjectLevels(projectId) {
   return getLevelDefinitions().filter(
     (level) => level.project?.id === projectId && level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT
@@ -83,7 +94,8 @@ test("project checkpoint fixtures solve their matching guided project steps", ()
 
     for (const level of projectLevels) {
       const xmlText = getProjectStepReferenceSolution(projectId, level.project.step);
-      const { app } = runGuidedLevelWithSolution(level.id, xmlText);
+      const randomFn = projectId === "strategy-brain" ? createSeededRandom("0") : undefined;
+      const { app } = runGuidedLevelWithSolution(level.id, xmlText, randomFn ? { randomFn } : {});
       assert.equal(
         app.state.activeLevelResult,
         LEVEL_RESULT.PASSED,
@@ -125,7 +137,8 @@ test("project final fixtures solve the project arc except documented cumulative 
     const actualResults = new Map();
 
     for (const level of projectLevels) {
-      const { app } = runGuidedLevelWithSolution(level.id, finalXml);
+      const randomFn = projectId === "strategy-brain" ? createSeededRandom("0") : undefined;
+      const { app } = runGuidedLevelWithSolution(level.id, finalXml, randomFn ? { randomFn } : {});
       actualResults.set(level.id, app.state.activeLevelResult);
     }
 
