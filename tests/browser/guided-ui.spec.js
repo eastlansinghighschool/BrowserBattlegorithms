@@ -18,6 +18,19 @@ test("guided instructions are visible after dismissing the first tutorial", asyn
   await expect(page.locator("#importWorkspaceButton")).toBeHidden();
 });
 
+test("Show Tutorial reopens the active guided tutorial immediately after dismissal", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.locator("#showTutorialButton").click();
+
+  const tutorialOverlay = page.locator("#tutorial-overlay");
+  await expect(tutorialOverlay).toHaveClass(/tutorial-overlay-active/);
+  await expect(tutorialOverlay).toContainText("Meet The Board");
+  await expect(tutorialOverlay).toContainText("Step 1 of 3");
+});
+
 test("Blockly execution hints dismiss once a block becomes valid", async ({ page }) => {
   await page.goto("/");
   await chooseGuided(page);
@@ -268,6 +281,45 @@ test("guided HUD shows level state, turn, and title instead of scores", async ({
   await expect(page.locator("#scoreDisplay")).toContainText("Turn: 1");
   await expect(page.locator("#scoreDisplay")).toContainText("Level 1: Move to Target");
   await expect(page.locator("#scoreDisplay")).not.toContainText("Scores:");
+});
+
+test("guided levels show the Area Freeze status chip when the toolbox includes freeze", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("freeze-the-lane");
+  });
+
+  const chip = page.locator("#areaFreezeStatus .area-freeze-status-chip").first();
+  await expect(page.locator("#areaFreezeStatus")).toBeVisible();
+  await expect(chip).not.toHaveAttribute("role", "status");
+  await expect(chip.locator(".area-freeze-status-a11y")).toContainText("Team 1 Area Freeze");
+  await expect(chip).toContainText("❄ Ready");
+  await expect(chip.locator('[aria-hidden="true"]')).toContainText("❄ Ready");
+
+  await page.evaluate(() => {
+    const state = window.__BBA_TEST_HOOKS__.app.state;
+    state.currentTurnNumber = 3;
+    state.teamAreaFreezeNextAvailableTurn[1] = 6;
+    window.__BBA_TEST_HOOKS__.app.syncUi();
+  });
+
+  await expect(chip).toContainText("❄ 3 turns");
+  await expect(chip.locator(".area-freeze-status-a11y")).toContainText("Team 1 Area Freeze available in 3 turns");
+});
+
+test("guided levels hide the Area Freeze chip when the toolbox has no freeze tools", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  await page.evaluate(() => {
+    window.__BBA_TEST_HOOKS__.startLevel("move-to-target");
+  });
+
+  await expect(page.locator("#areaFreezeStatus")).toBeHidden();
 });
 
 test("guided reset keeps the learner program and returns the level to Start Level", async ({ page }) => {

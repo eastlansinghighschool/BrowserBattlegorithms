@@ -159,6 +159,7 @@ app.hooks.startCurrentLevelTutorial = (force = false) => {
     modeView: app.state.currentModeView
   });
   startCurrentLevelTutorial(app, force);
+  app.syncUi();
 };
 
 app.hooks.chooseInitialMode = (mode) => {

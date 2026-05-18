@@ -45,7 +45,7 @@ This game is primarily aimed at students in introductory computer science course
 * **Return to Base:** After capturing the enemy flag, a runner must carry it back to their own team's starting base location on the map.  
 * **Scoring a Point:** A point is scored when a runner carrying the enemy flag successfully reaches any cell within their team's designated starting base area.  
 * **Winning the Game:** The first team to reach a predetermined number of points (e.g., 2 points) wins the match.  
-* **Round Reset:** After a point is scored, the game resets for a new round: flags are returned to their starting base positions, all runners are reset to their starting positions and states (e.g., hasEnemyFlag \= false, isFrozen \= false, canJump \= true, canPlaceBarrier \= true, team areaFreezeUsedThisRound \= false). The map itself remains the same for the duration of a match. The captured flag should immediately return to its home base so the next round begins from a clear state.
+* **Round Reset:** After a point is scored, the game resets for a new round: flags are returned to their starting base positions, all runners are reset to their starting positions and states (e.g., hasEnemyFlag \= false, isFrozen \= false, canJump \= true, canPlaceBarrier \= true). Area Freeze is also reset to ready for each team. The map itself remains the same for the duration of a match. The captured flag should immediately return to its home base so the next round begins from a clear state.
 
 2.4. Turn Structure
 
@@ -62,7 +62,7 @@ The game proceeds in turns.
    * The game engine advances through runners in a deterministic active-runner sequence. Each runner's action is fully resolved — including movement, collision, flag pickup, and scoring checks — before the next runner acts. Visuals (including movement animations) reflect each outcome immediately.  
    * For the full per-runner resolution order, see [`docs/subsystems/turn-engine.md`](./subsystems/turn-engine.md).  
 3. **End of Turn Phase:**  
-   * Check for win/scoring conditions. If a point is scored, proceed to round reset.  
+   * Check for win/scoring conditions. If a point is scored, proceed to round reset. Guided levels may also author one or more separate failure conditions, such as a turn limit or the opposing team scoring first, so the same scoring event can either pass the level or fail it depending on the authored objective. Older levels may still use the singular `failureCondition` field; newer authored levels may use `failureConditions`.  
    * Update any turn-based effects (e.g., decrement frozenTurnsRemaining).  
    * The next turn begins.
 
@@ -152,7 +152,7 @@ Each active (not frozen) runner can perform **one** action per turn.
   * Jump Forward  
   * Place Barrier (in front)  
   * Stay Still  
-  * Use Area Freeze (at my location): (AI Ally Only) If team's areaFreezeUsedThisRound is false. Freezes opposing runners in a radius for 1-2 turns. Sets team's areaFreezeUsedThisRound to true.
+  * Use Area Freeze (at my location): (AI Ally Only) If Area Freeze is ready for the team. Freezes opposing runners in a radius for 2 turns and starts the cooldown timer. The resource is ready when `currentTurnNumber >= nextAvailableTurn`.
 
 4.2. Action Resolution (Sequential, Per Runner)
 
@@ -161,7 +161,7 @@ As each runner's action is processed in the alternating sequence described in 2.
 1. **Special Action Execution (e.g., Area Freeze):**  
    * If Use Area Freeze is planned by an AI Ally and available for the team:  
      * Apply freeze effect to nearby opponents.  
-     * Mark areaFreezeUsedThisRound for the team as true.  
+     * Mark the team's next available Area Freeze turn using the shared cooldown helper.  
      * This runner's turn ends.  
 2. **Barrier Placement:**  
    * If Place Barrier is planned and canPlaceBarrier is true:  
@@ -208,11 +208,12 @@ As each runner's action is processed in the alternating sequence described in 2.
 
 When an active runner attempts to move into a cell occupied by an active opposing runner (as determined in Action Resolution Step 4c):
 
-1. **Determine Defender:** The team whose home side contains the collision cell is the "defender." The map is split at X \= mapWidth/2; whichever team's `homeSide` (from the active team configuration) covers that half owns it. This is orientation-agnostic: in Free Play the orientation is randomized at match start, so the defender of the left or right half is whichever team was assigned to it, not a fixed team number.  
+1. **Determine Map-Side Defender:** The team whose home side contains the collision cell is the "defender." The map is split at X \= mapWidth/2; whichever team's `homeSide` (from the active team configuration) covers that half owns it. This is orientation-agnostic: in Free Play the orientation is randomized at match start, so the defender of the left or right half is whichever team was assigned to it, not a fixed team number.  
 2. **Collision Outcome:**  
-   * If one runner isFrozen and the other is not, the frozen runner automatically loses (this check is more for completeness, as frozen runners shouldn't be initiating moves that cause collisions).  
-   * If a runner is carrying the enemy flag and is *not* the defender in the collision cell, they automatically lose.  
-   * Otherwise, the **defender always wins** the collision.  
+   * If exactly one runner carries the enemy flag, the flag carrier loses.  
+   * If both runners carry the enemy flag, the moving attacker loses because they initiated the collision.  
+   * If neither runner carries the enemy flag, the map-side defender wins.  
+   * The old Java percent-chance collision rule is not part of Browser Battlegorithms.  
 3. **Consequences (applied immediately):**  
    * **Loser:**  
      * Becomes isFrozen \= true.  

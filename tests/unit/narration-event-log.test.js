@@ -26,6 +26,7 @@ function snapshotState(state) {
     mainGameState: state.mainGameState,
     teamScores: { ...state.teamScores },
     teamAreaFreezeUsed: { ...state.teamAreaFreezeUsed },
+    teamAreaFreezeNextAvailableTurn: { ...state.teamAreaFreezeNextAvailableTurn },
     runnerActionHistory: structuredClone(state.runnerActionHistory),
     runners: state.allRunners.map((runner) => ({
       id: runner.id,

@@ -66,10 +66,11 @@ Prediction levels use the same guided lesson shell but add one extra rule: the S
 
 ## Scoreboard mode behavior
 
-`src/ui/scoreboard.js` combines turn count, team scores, and win threshold for all modes. Additional mode-sensitive fields:
+`src/ui/scoreboard.js` combines turn count, team scores, win threshold, and the area-freeze status chip for all modes. Additional mode-sensitive fields:
 
 - In Guided Levels: shows the current level title and guided level pass/fail status.
 - In Free Play: shows the free-play mode label and map name.
+- When Area Freeze is available in the current context, shows a compact snowflake chip with ready/cooldown text and an offscreen accessible Team / Area Freeze label instead of a live region. Free Play PvCPU shows the player team's chip; PvP shows both teams.
 - Scoreboard rendering is suppressed while the mode-chooser overlay is active.
 
 ## Narration surface

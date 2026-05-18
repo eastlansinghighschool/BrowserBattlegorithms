@@ -16,11 +16,16 @@ export function resolveCollision(state, attacker, defenderInCell, collisionX, co
   const mapSideDefenderTeam = getMapSideDefenderTeam(state, collisionX);
   let winner;
   let loser;
+  const attackerHasFlag = attacker.hasEnemyFlag === true;
+  const defenderHasFlag = defenderInCell.hasEnemyFlag === true;
 
-  if (attacker.hasEnemyFlag && attacker.team !== mapSideDefenderTeam) {
+  if (attackerHasFlag && defenderHasFlag) {
     winner = defenderInCell;
     loser = attacker;
-  } else if (defenderInCell.hasEnemyFlag && defenderInCell.team !== mapSideDefenderTeam) {
+  } else if (attackerHasFlag) {
+    winner = defenderInCell;
+    loser = attacker;
+  } else if (defenderHasFlag) {
     winner = attacker;
     loser = defenderInCell;
   } else if (attacker.team === mapSideDefenderTeam) {

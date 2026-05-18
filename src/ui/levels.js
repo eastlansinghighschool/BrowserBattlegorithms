@@ -48,6 +48,7 @@ function humanizeResultReason(reason) {
   if (!reason) return "";
   if (reason === "win_condition_met") return "Challenge complete.";
   if (reason === "turn_limit_exceeded") return "The turn limit was reached before the goal was met.";
+  if (reason === "team_scores_point") return "The other team scored before you finished the goal.";
   if (reason === "manual_reset") return "The level was restarted.";
   return reason;
 }

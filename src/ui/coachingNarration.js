@@ -46,7 +46,7 @@ function resourceActionLabel(actionType) {
 const GUARD_BLOCK_LABELS = {
   "battlegorithms_if_can_jump": "Can Jump?",
   "battlegorithms_if_can_place_barrier": "Can Place Barrier?",
-  "battlegorithms_if_area_freeze_ready": "Freeze Ready?"
+  "battlegorithms_if_area_freeze_ready": "Area Freeze Ready?"
 };
 
 function templateRecurring(moment, runnerLabel) {

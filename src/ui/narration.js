@@ -86,8 +86,8 @@ function getActionPhrase(actionType) {
 function describeResourceUnavailable(resourceEvent) {
   const actionType = resourceEvent?.payload?.actionType || "";
   const reason = resourceEvent?.payload?.reason || "";
-  if (actionType === "FREEZE_OPPONENTS" && reason === "freeze_already_used") {
-    return "but the freeze was already used";
+  if (actionType === "FREEZE_OPPONENTS" && reason === "freeze_on_cooldown") {
+    return "but Area Freeze was still cooling down";
   }
   if (actionType === "JUMP_FORWARD" && reason === "jump_exhausted") {
     return "but the jump was already used";

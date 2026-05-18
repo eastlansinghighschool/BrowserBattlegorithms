@@ -6,7 +6,6 @@ import { runGuidedLevelWithSolution } from "../unit/helpers/testHarness.js";
 
 export const REGRESSION_OUTPUT_DIR = resolve(process.cwd(), "tests", "regression", "output");
 export const REGRESSION_SCREENSHOT_DIR = resolve(process.cwd(), "tests", "regression", "screenshots");
-export const REGRESSION_OPTIONAL_LEVEL_ID = "optional-random-lab";
 export const REGRESSION_HUMAN_SEQUENCE = ["f", "d"];
 
 const FIXTURE_ROOT = "tests/unit/fixtures";
@@ -314,7 +313,7 @@ const PROFILE_PLANS = [
 ];
 
 function isRequiredCampaignLevel(level) {
-  return level.id !== REGRESSION_OPTIONAL_LEVEL_ID;
+  return !level.id.startsWith("optional-");
 }
 
 function buildAttemptForLevel(level, profilePlan) {

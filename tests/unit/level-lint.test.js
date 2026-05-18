@@ -58,6 +58,18 @@ test("concept matrix agreement passes when level order and labels match", () => 
   assert.deepEqual(checkConceptMatrixAgreement(levels, matrix), []);
 });
 
+test("concept matrix agreement keeps distinct optional lab rows separate", () => {
+  const levels = [
+    createLevel({ id: "optional-one", title: "Optional Lab: First Optional" }),
+    createLevel({ id: "optional-two", title: "Optional Lab: Second Optional", sourcePath: "/abs/optional-two.js" })
+  ];
+  const matrix = [
+    createMatrixRow("Optional Lab: First Optional", ""),
+    createMatrixRow("Optional Lab: Second Optional", "")
+  ];
+  assert.deepEqual(checkConceptMatrixAgreement(levels, matrix), []);
+});
+
 test("concept matrix agreement reports missing and misordered rows", () => {
   const levels = [createLevel({ id: "one", title: "Level 1: One" }), createLevel({ id: "two", title: "Level 2: Two" })];
   const matrix = [createMatrixRow("1", "One"), createMatrixRow("3", "Three")];
@@ -355,6 +367,15 @@ test("turn limit floor reports low or missing turn limits", () => {
   const bad = createLevel({ failureCondition: { type: "turn_limit_exceeded", maxTurns: 6 } });
   assert.equal(checkTurnLimitFloor([bad])[0].contract, "turn-limit-floor");
   assert.equal(checkTurnLimitFloor([bad])[0].severity, "warning");
+
+  const plural = createLevel({
+    failureCondition: null,
+    failureConditions: [
+      { type: "team_scores_point", teamId: 2 },
+      { type: "turn_limit_exceeded", maxTurns: 8 }
+    ]
+  });
+  assert.deepEqual(checkTurnLimitFloor([plural]), []);
 });
 
 test("win condition heuristic warns when the mechanic is only described in prose", () => {

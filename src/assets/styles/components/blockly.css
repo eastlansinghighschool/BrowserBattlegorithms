@@ -347,7 +347,7 @@
 
 #game-controls {
   position: relative;
-  z-index: 1002;
+  z-index: 1;
 }
 
 .bba-speed-threshold-marker {

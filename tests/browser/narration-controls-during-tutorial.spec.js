@@ -3,7 +3,7 @@ import { clearStorageBeforeEach, waitForHeavyReady } from "./helpers.js";
 
 clearStorageBeforeEach(test);
 
-test("guided tutorial keeps narration controls clickable while the scrim is active", async ({ page }) => {
+test("guided tutorial blocks narration controls while the scrim is active", async ({ page }) => {
   await page.goto("/");
   await waitForHeavyReady(page);
   await page.evaluate(() => {
@@ -24,16 +24,24 @@ test("guided tutorial keeps narration controls clickable while the scrim is acti
   await expect(turnLogToggle).not.toBeChecked();
   await expect(coachingToggle).not.toBeChecked();
   await expect(voiceToggle).not.toBeChecked();
+  await expect(voiceControls).toBeHidden();
 
-  await turnLogToggle.check({ timeoutMs: 10000 });
-  await expect(turnLogToggle).toBeChecked();
+  let turnLogBlocked = false;
+  try {
+    await turnLogToggle.click({ trial: true, timeout: 3000 });
+  } catch {
+    turnLogBlocked = true;
+  }
+  expect(turnLogBlocked).toBe(true);
 
-  await coachingToggle.check({ timeoutMs: 10000 });
-  await expect(coachingToggle).toBeChecked();
-
-  await voiceToggle.check({ timeoutMs: 10000 });
-  await expect(voiceToggle).toBeChecked();
-  await expect(voiceControls).toBeVisible();
+  let voiceBlocked = false;
+  try {
+    await voiceToggle.click({ trial: true, timeout: 3000 });
+  } catch {
+    voiceBlocked = true;
+  }
+  expect(voiceBlocked).toBe(true);
+  await expect(coachingToggle).not.toBeChecked();
 
   const supportsWebSpeech = await page.evaluate(() => (
     typeof window.speechSynthesis !== "undefined" &&

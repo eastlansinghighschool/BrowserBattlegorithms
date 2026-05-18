@@ -1,10 +1,82 @@
+import { FREE_PLAY_MODES, GAME_VIEW_MODES } from "../config/constants.js";
+import { getAreaFreezeTurnsRemaining, isAreaFreezeReady } from "../core/areaFreeze.js";
+
+const FREEZE_TOOLBOX_BLOCK_TYPES = new Set([
+  "battlegorithms_freeze_opponents",
+  "battlegorithms_if_area_freeze_ready",
+  "battlegorithms_if_area_freeze_ready_else",
+  "battlegorithms_boolean_area_freeze_ready"
+]);
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getVisibleAreaFreezeTeams(state) {
+  if (!state || state.showModePicker) {
+    return [];
+  }
+
+  if (state.currentModeView === GAME_VIEW_MODES.FREE_PLAY) {
+    return state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER ? [1, 2] : [1];
+  }
+
+  const toolbox = state.currentToolboxBlockTypes || [];
+  const currentLevelToolbox = state.levels?.find((level) => level.id === state.currentLevelId)?.toolboxBlockTypes || [];
+  const combined = new Set([...toolbox, ...currentLevelToolbox]);
+  const shouldShow = [...combined].some((blockType) => FREEZE_TOOLBOX_BLOCK_TYPES.has(blockType));
+  return shouldShow ? [1] : [];
+}
+
+function buildAreaFreezeChipText(state, teamId, showTeamPrefix) {
+  const ready = isAreaFreezeReady(state, teamId);
+  const turnsRemaining = getAreaFreezeTurnsRemaining(state, teamId);
+  const prefix = showTeamPrefix ? `T${teamId} ` : "";
+  const visibleState = ready ? "Ready" : `${turnsRemaining} turn${turnsRemaining === 1 ? "" : "s"}`;
+  const accessibleText = `Team ${teamId} Area Freeze ${ready ? "is ready" : `available in ${turnsRemaining} turn${turnsRemaining === 1 ? "" : "s"}`}`;
+  const visibleText = `${prefix}❄ ${visibleState}`;
+  return {
+    html: `
+      <span class="area-freeze-status-chip">
+        <span class="area-freeze-status-a11y">${escapeHtml(accessibleText)}</span>
+        <span aria-hidden="true">${escapeHtml(visibleText)}</span>
+      </span>
+    `.trim()
+  };
+}
+
+export function updateAreaFreezeStatus(app) {
+  const statusElement = document.getElementById("areaFreezeStatus");
+  if (!statusElement) {
+    return;
+  }
+
+  const visibleTeams = getVisibleAreaFreezeTeams(app.state);
+  if (visibleTeams.length === 0) {
+    statusElement.hidden = true;
+    statusElement.innerHTML = "";
+    return;
+  }
+
+  const showTeamPrefix = visibleTeams.length > 1;
+  statusElement.hidden = false;
+  statusElement.innerHTML = visibleTeams.map((teamId) => buildAreaFreezeChipText(app.state, teamId, showTeamPrefix).html).join("");
+}
+
 export function updateScoreDisplay(app) {
   const scoreElement = document.getElementById("scoreDisplay");
   if (!scoreElement) {
+    updateAreaFreezeStatus(app);
     return;
   }
   if (app.state.showModePicker) {
     scoreElement.textContent = "";
+    updateAreaFreezeStatus(app);
     return;
   }
   const { currentTurnNumber, teamScores, pointsToWin, currentModeView, activeLevelResult, currentLevelId, levels } = app.state;
@@ -25,4 +97,5 @@ export function updateScoreDisplay(app) {
     prefix = `${prefix} | ${modeText} | Map: ${app.state.freePlayMapKey} | Team Size: ${app.state.freePlayTeamSize}`;
   }
   scoreElement.innerHTML = prefix;
+  updateAreaFreezeStatus(app);
 }

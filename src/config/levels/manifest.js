@@ -10,5 +10,6 @@ export const GUIDED_LEVEL_MANIFEST = LEVEL_DEFINITIONS.map((level, index) => ({
   project: level.project ? structuredClone(level.project) : null,
   hasDemoBlocklyXml: level.tutorialSteps?.some((step) => step.demoBlocklyXml),
   winConditionType: level.winCondition?.type,
-  turnLimit: level.failureCondition?.maxTurns
+  turnLimit: level.failureConditions?.find((condition) => condition?.type === "turn_limit_exceeded")?.maxTurns
+    ?? level.failureCondition?.maxTurns
 }));

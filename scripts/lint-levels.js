@@ -62,13 +62,20 @@ function expectedMatrixLabelFromTitle(title) {
     return match ? `challenge ${match[1]}` : normalized;
   }
   if (normalized.startsWith("optional lab")) {
-    return "optional lab";
+    return normalized;
   }
   return normalized;
 }
 
 function uniqueSorted(values) {
   return [...new Set(values)].sort();
+}
+
+function getFailureConditions(level) {
+  if (Array.isArray(level.failureConditions) && level.failureConditions.length > 0) {
+    return level.failureConditions;
+  }
+  return level.failureCondition ? [level.failureCondition] : [];
 }
 
 function getRoleFromTeamId(teamId) {
@@ -827,7 +834,10 @@ export function checkTurnLimitFloor(levels, minTurnLimit = DEFAULT_MIN_TURN_LIMI
   const diagnostics = [];
 
   for (const level of levels) {
-    const turnLimit = level.failureCondition?.maxTurns ?? level.turnLimit ?? null;
+    const turnLimit =
+      getFailureConditions(level).find((condition) => condition?.type === "turn_limit_exceeded")?.maxTurns
+      ?? level.turnLimit
+      ?? null;
     if (typeof turnLimit !== "number" || turnLimit < minTurnLimit) {
       diagnostics.push(
         makeDiagnostic({
@@ -845,10 +855,12 @@ export function checkTurnLimitFloor(levels, minTurnLimit = DEFAULT_MIN_TURN_LIMI
 }
 
 function mechanicEvidenceFromLevel(level) {
+  const failureConditions = getFailureConditions(level);
   const structuredHaystack = [
     level.winCondition?.type,
-    level.failureCondition?.type,
+    ...failureConditions.map((condition) => condition?.type),
     JSON.stringify(level.winCondition || {}),
+    JSON.stringify(failureConditions || []),
     JSON.stringify(level.sensorObjectTypes || []),
     JSON.stringify(level.sensorRelationTypes || []),
     JSON.stringify(level.moveTowardTargetTypes || []),

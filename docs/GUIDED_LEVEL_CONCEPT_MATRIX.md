@@ -48,7 +48,8 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | Prediction: Role Split | Runner index prediction | commit to which ally takes the first shared-program job | prediction checkpoint; no new Blockly idea | Levels 29-31 |
 | Bug Hunt: Role Split | Trace the roles | debugging checkpoint; overlapping ally jobs | repair the runner-index branch split | Levels 23-36 |
 | **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
-| Optional lab | Move randomly | randomness in action choice | `Move Randomly` | movement basics |
+| Optional Lab: Move Randomly | randomness in action choice | randomness in action | `Move Randomly` | movement basics |
+| Optional Lab: Double Carrier Showdown | carrier vulnerability under pressure | carrier vulnerability, runner index roles, teammate flag pressure | `runner index`, `teammate-has-flag`, `Move Toward` | Levels 19, 29-37 and the carrier collision rule |
 
 ## Copy Guidelines
 

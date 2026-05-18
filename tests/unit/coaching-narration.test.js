@@ -80,12 +80,12 @@ test("formatCoachingMessage resource guard: freeze action uses correct label", (
   const toolbox = ["battlegorithms_if_area_freeze_ready"];
   const moment = makeMoment("resource_no_readiness_guard", {
     actionType: "FREEZE_OPPONENTS",
-    reason: "freeze_already_used",
+    reason: "freeze_on_cooldown",
     missingGuardBlockType: "battlegorithms_if_area_freeze_ready"
   });
   const text = formatCoachingMessage(moment, "Ally 0", toolbox);
   assert.ok(text.includes("freeze"));
-  assert.ok(text.includes('"Freeze Ready?"'));
+  assert.ok(text.includes('"Area Freeze Ready?"'));
 });
 
 test("formatCoachingMessage resource guard: barrier action uses correct label", () => {

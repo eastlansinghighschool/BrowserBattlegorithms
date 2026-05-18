@@ -91,7 +91,7 @@ test("detectResourceNoReadinessGuard emits when resource.unavailable and no guar
 });
 
 test("detectResourceNoReadinessGuard emits for FREEZE_OPPONENTS with no guard", () => {
-  const log = [makeEvent("resource.unavailable", { runnerId: "ally-0", runnerTeam: 1, actionType: "FREEZE_OPPONENTS", reason: "freeze_already_used" })];
+  const log = [makeEvent("resource.unavailable", { runnerId: "ally-0", runnerTeam: 1, actionType: "FREEZE_OPPONENTS", reason: "freeze_on_cooldown" })];
   const trace = makeTrace({ steps: [] });
   const moments = detectResourceNoReadinessGuard(log, trace);
   assert.equal(moments.length, 1);

@@ -19,6 +19,7 @@ This note does NOT own:
 |---|---|
 | `src/core/turnEngine.js` | Main turn loop: activates runners, resolves queued actions, advances the sequence. |
 | `src/core/actions.js` | Action family definitions (move, jump, barrier place/remove, freeze, stay still). |
+| `src/core/areaFreeze.js` | Shared Area Freeze cooldown helpers (`isAreaFreezeReady`, `getAreaFreezeTurnsRemaining`, `markAreaFreezeUsed`). |
 | `src/core/movement.js` | Target cell translation, board-blocking checks, bounce logic. |
 | `src/core/conditions.js` | Sensor and condition evaluation consumed by Blockly block execution. |
 | `src/core/scoring.js` | Flag pickup, score increment, `GAME_OVER` transitions, round reset trigger. |
@@ -45,6 +46,20 @@ Human input goes through the same engine pipeline as AI input. There is no paral
 
 The trace pause does not consume an extra turn, does not change collision/scoring/level-completion outcomes, and is cleared on reset, level switch, mode switch, workspace reload, game-over, threshold-crossing upward, and PvP team tab switch.
 
+## Area Freeze cooldown
+
+Area Freeze is a team cooldown, not a once-per-round boolean.
+Source: `src/core/areaFreeze.js`.
+
+The shared helper contract is:
+
+- `isAreaFreezeReady(state, teamId)` returns `true` when `state.currentTurnNumber >= teamAreaFreezeNextAvailableTurn[teamId]`.
+- `markAreaFreezeUsed(state, teamId)` sets `teamAreaFreezeNextAvailableTurn[teamId]` to `currentTurnNumber + AREA_FREEZE_COOLDOWN_TURNS`.
+- `getAreaFreezeTurnsRemaining(state, teamId)` reports the countdown until readiness returns.
+- Round reset and level / match reset both restore readiness immediately.
+
+Blockly readiness blocks, the freeze action itself, and free-play CPU logic all use that shared helper so the UI and runtime cannot disagree about whether the resource is ready.
+
 ## Bounce vs illegal vs skipped
 
 These three outcomes look similar at the surface but are distinct:
@@ -57,7 +72,7 @@ Extra blocks in a Blockly program are ignored, not bounced. The engine only read
 
 ## Collision rule tree
 
-Collision resolution is determined by three factors: map side, flag-carrying state, and grace period.
+Collision resolution is determined by flag-carrying state first, then map side, then grace period.
 Source: `src/core/collisions.js`.
 
 The map-side defender for a collision cell is the team whose `homeSide` (from the runtime team config) covers that half of the map. `src/core/collisions.js` resolves this by looking up each team's `homeSide` rather than comparing literal team numbers, so the rule is orientation-agnostic and correct in both guided levels (Team 1 always on the left) and Free Play (orientation randomized per match).
@@ -66,10 +81,10 @@ The map-side defender for a collision cell is the team whose `homeSide` (from th
 
 | Priority | Condition | Outcome |
 |---|---|---|
-| 1 | Attacker carries enemy flag AND attacker's team ≠ map-side owner | Defender wins |
-| 2 | Defender carries enemy flag AND defender's team ≠ map-side owner | Attacker wins |
-| 3 | Attacker's team = map-side owner | Attacker wins |
-| 4 | Defender's team = map-side owner | Defender wins |
+| 1 | Exactly one runner carries enemy flag | Flag carrier loses |
+| 2 | Both runners carry enemy flag | Moving attacker loses |
+| 3 | Neither runner carries enemy flag AND attacker's team = map-side owner | Attacker wins |
+| 4 | Neither runner carries enemy flag AND defender's team = map-side owner | Defender wins |
 | 5 | Default (no rule matched) | Defender wins |
 
 **After winner and loser are determined:**
@@ -78,7 +93,7 @@ The map-side defender for a collision cell is the team whose `homeSide` (from th
 - If loser carries the enemy flag: the flag drops and resets to its initial position.
 - Loser returns to origin cell (`attackerOriginCell` if available, else attacker's current grid position).
 
-The "defender always wins" shorthand in older docs is an oversimplification. Rules 1 and 2 override the map-side default when a runner is carrying the enemy flag on enemy territory.
+The old Java percent-chance collision rule is not used here. The "defender always wins" shorthand in older docs is an oversimplification, because flag carriers lose before map-side ownership is considered.
 
 ## Scoring vs level completion vs round reset
 
@@ -86,7 +101,7 @@ These three events are related but distinct and can happen independently:
 
 - **Scoring** (`scoring.js`): a runner returns the enemy flag to their team's base. The team score increments. A round reset immediately follows: all runners return to their start positions, flags reset. The match continues.
 - **Game over**: when a team reaches the win threshold during a scoring check, `GAME_OVER` state is set. The match ends and the end-state overlay appears.
-- **Level completion** (guided mode only): after a scoring event, the engine evaluates whether the guided level's win condition is satisfied. A level may require scoring a specific number of points or other conditions. Level pass or fail triggers the level-result overlay and enables the Next Level button.
+- **Level completion** (guided mode only): after a scoring event, the engine evaluates whether the guided level's win condition is satisfied. A level may require scoring a specific number of points or other conditions, and it may also fail if one or more authored failure conditions are met, such as the opposing team scoring first or a turn cap being exceeded. Older authored levels still use the singular `failureCondition` field, while newer levels may author a `failureConditions` array. Level pass or fail triggers the level-result overlay and enables the Next Level button.
 - **Stateful guided goals**: a small number of guided levels may track an authored staging phase before a later support phase. Those levels still use the same turn pipeline; the win condition simply remembers which phase the player reached and evaluates the final support square after the teammate acquires the flag.
 - **Round reset ≠ level reset**: a round reset happens automatically after scoring and preserves workspace state. A level reset re-enters the current level from scratch using the persisted workspace.
 
@@ -95,7 +110,7 @@ A single score event can trigger all three in sequence: increment score → eval
 ## Common traps
 
 - **Treating frozen runners as absent.** Frozen runners occupy their cell and are processed in turn order. Other runners can collide with them.
-- **Assuming "defender always wins."** Flag-carrying state on the wrong map side overrides the home-defender rule (priorities 1 and 2 above).
+- **Assuming "defender always wins."** Flag carriers lose before map-side ownership is considered; only the no-carrier case falls back to the home-defender rule.
 - **Conflating round reset and level reset.** Round reset is automatic after scoring. Level reset is a user action that re-enters the level.
 - **Expecting extra Blockly blocks to cause errors.** The engine reads the first action from the program each turn; extra blocks are silently ignored.
 - **Assuming grace period prevents all collision effects.** Grace period skips the freeze, but the loser is still displaced and drops their flag.

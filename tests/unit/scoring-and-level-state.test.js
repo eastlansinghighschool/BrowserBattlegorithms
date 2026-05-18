@@ -147,6 +147,34 @@ test("level 3 turn limit allows the intended out-and-back route", () => {
   assert.equal(level3.failureCondition.maxTurns, 20);
 });
 
+test("optional double carrier showdown fails when Team 2 scores a point first", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  app.state.levelProgress["optional-random-lab"] = LEVEL_STATUS.PASSED;
+  app.state.levelProgress["optional-double-carrier-showdown"] = LEVEL_STATUS.AVAILABLE;
+  startLevel(app, "optional-double-carrier-showdown");
+
+  app.state.teamScores[2] = 1;
+
+  const result = evaluateLevelProgress(app);
+  assert.deepEqual(result, { result: LEVEL_RESULT.FAILED, reason: "team_scores_point" });
+  assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
+});
+
+test("optional double carrier showdown also fails when the turn cap is exceeded", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  app.state.levelProgress["optional-random-lab"] = LEVEL_STATUS.PASSED;
+  app.state.levelProgress["optional-double-carrier-showdown"] = LEVEL_STATUS.AVAILABLE;
+  startLevel(app, "optional-double-carrier-showdown");
+
+  app.state.currentTurnNumber = 21;
+
+  const result = evaluateLevelProgress(app);
+  assert.deepEqual(result, { result: LEVEL_RESULT.FAILED, reason: "turn_limit_exceeded" });
+  assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
+});
+
 test("guided auto-skip freezes the parked human runner for a clearer idle visual", () => {
   const app = createApp();
   initializeLevelState(app);

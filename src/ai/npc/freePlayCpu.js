@@ -4,6 +4,7 @@ import {
   MOVE_TOWARD_TARGETS,
   NPC_BEHAVIORS
 } from "../../config/constants.js";
+import { isAreaFreezeReady } from "../../core/areaFreeze.js";
 import {
   getBarrierAtCell,
   getForwardCell,
@@ -45,7 +46,7 @@ function getLegalActionCandidates(runner, state) {
     }
   }
 
-  if (!state.teamAreaFreezeUsed?.[runner.team]) {
+  if (isAreaFreezeReady(state, runner.team)) {
     candidates.push({ type: AI_ACTION_TYPES.FREEZE_OPPONENTS });
   }
 
@@ -172,7 +173,7 @@ function getDefenderAction(runner, state) {
   const enemyCarrier = getEnemyFlagCarrier(state, getEnemyTeamId(runner.team));
   if (enemyCarrier) {
     const carrierDistance = Math.abs(enemyCarrier.gridX - runner.gridX) + Math.abs(enemyCarrier.gridY - runner.gridY);
-    if (!state.teamAreaFreezeUsed?.[runner.team] && carrierDistance <= AREA_FREEZE_RADIUS) {
+    if (isAreaFreezeReady(state, runner.team) && carrierDistance <= AREA_FREEZE_RADIUS) {
       return { actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS };
     }
     return calculateMoveTowardsTarget(runner, enemyCarrier.gridX, enemyCarrier.gridY, state.barriers, state.gameMap, state);
@@ -181,7 +182,7 @@ function getDefenderAction(runner, state) {
   const nearbyIntruder = getNearestEnemyOnMySide(runner, state);
   if (nearbyIntruder) {
     const intruderDistance = Math.abs(nearbyIntruder.gridX - runner.gridX) + Math.abs(nearbyIntruder.gridY - runner.gridY);
-    if (!state.teamAreaFreezeUsed?.[runner.team] && intruderDistance <= AREA_FREEZE_RADIUS) {
+    if (isAreaFreezeReady(state, runner.team) && intruderDistance <= AREA_FREEZE_RADIUS) {
       return { actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS };
     }
     return calculateMoveTowardsTarget(runner, nearbyIntruder.gridX, nearbyIntruder.gridY, state.barriers, state.gameMap, state);

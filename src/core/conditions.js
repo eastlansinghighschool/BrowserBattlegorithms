@@ -7,6 +7,7 @@ import {
   SENSOR_OBJECT_TYPES,
   SENSOR_RELATION_TYPES
 } from "../config/constants.js";
+import { isAreaFreezeReady } from "./areaFreeze.js";
 import { getBarrierAtCell, getForwardCell, getRunnerAtCell } from "./movement.js";
 import { isOnHomeSide } from "./teams.js";
 
@@ -164,7 +165,7 @@ export function evaluateCondition(state, runner, condition) {
     descriptor.type === BLOCK_TYPES.IF_AREA_FREEZE_READY ||
     descriptor.type === BLOCK_TYPES.IF_AREA_FREEZE_READY_ELSE
   ) {
-    return !state.teamAreaFreezeUsed?.[runner.team];
+    return isAreaFreezeReady(state, runner.team);
   }
 
   if (

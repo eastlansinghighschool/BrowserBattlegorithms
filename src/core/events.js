@@ -6,7 +6,7 @@
 // - flag.pickedUp -> src/core/scoring.js:5
 // - flag.dropped -> src/core/collisions.js:15
 // - team.scored -> src/core/scoring.js:26
-// - resource.unavailable -> src/core/turnEngine.js:290 (jump resource exhausted fallback); 294 (barrier resource unavailable fallback); 494 (freeze already used guard)
+// - resource.unavailable -> src/core/turnEngine.js:290 (jump resource exhausted fallback); 294 (barrier resource unavailable fallback); 494 (freeze cooldown guard)
 // - level.result -> src/core/levels.js:323
 
 function ensureTurnEventLogState(state) {

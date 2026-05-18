@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   AI_ACTION_TYPES,
   BLOCK_TYPES,
+  GAME_MODES,
   GAME_VIEW_MODES,
   HUMAN_TURN_BEHAVIORS,
   LEVEL_RESULT,
@@ -19,11 +20,11 @@ import { getToolboxBlockTypesForMode } from "../../src/ai/blockly/blocks.js";
 import { createApp } from "../../src/core/state.js";
 import { completeLevel, evaluateLevelProgress, getLevelStateSnapshot, initializeLevelState, startLevel } from "../../src/core/levels.js";
 import { buildSolutionXml, GUIDED_LEVEL_REFERENCE_SOLUTIONS } from "./fixtures/guidedReferenceSolutions.js";
-import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
+import { runGuidedLevelWithHumanScript, runGuidedLevelWithSolution } from "./helpers/testHarness.js";
 
 test("level definitions load with the expected starter and advanced level order", () => {
   const levels = getLevelDefinitions();
-  assert.equal(levels.length, 45);
+  assert.equal(levels.length, 46);
   assert.deepEqual(
     levels.map((level) => level.id),
     [
@@ -71,7 +72,8 @@ test("level definitions load with the expected starter and advanced level order"
       "prediction-31",
       "bughunt-37",
       "advanced-scrimmage",
-      "optional-random-lab"
+      "optional-random-lab",
+      "optional-double-carrier-showdown"
     ]
   );
 
@@ -89,7 +91,8 @@ test("level definitions load with the expected starter and advanced level order"
   assert.ok(levels[41].title.startsWith("Prediction"));
   assert.equal(levels[42].id, "bughunt-37");
   assert.ok(levels[43].title.startsWith("Challenge 37"));
-  assert.equal(levels.at(-1).id, "optional-random-lab");
+  assert.equal(levels.at(-2).id, "optional-random-lab");
+  assert.equal(levels.at(-1).id, "optional-double-carrier-showdown");
 });
 
 test("guided mode cold start: level 1 available, all others locked", () => {
@@ -170,6 +173,106 @@ test("advanced campaign contract exposes capstone and optional lab tools as auth
   const optionalRandomLab = getLevelDefinitions().find((entry) => entry.id === "optional-random-lab");
   assert.ok(optionalRandomLab);
   assert.equal(optionalRandomLab.toolboxBlockTypes.includes(BLOCK_TYPES.MOVE_RANDOMLY), true);
+
+  const optionalCarrierShowdown = getLevelDefinitions().find((entry) => entry.id === "optional-double-carrier-showdown");
+  assert.ok(optionalCarrierShowdown);
+  assert.equal(optionalCarrierShowdown.humanTurnBehavior, HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT);
+  assert.equal(optionalCarrierShowdown.mode, GAME_MODES.PLAYER_VS_NPC);
+  assert.equal(optionalCarrierShowdown.mapKey, "wideScrimmage");
+  assert.equal(optionalCarrierShowdown.winCondition.type, "team_scores_point");
+  assert.equal(optionalCarrierShowdown.winCondition.teamId, 1);
+  assert.equal(optionalCarrierShowdown.winCondition.runnerId, "runner_1_HumanP1");
+  assert.deepEqual(optionalCarrierShowdown.failureConditions, [
+    { type: "team_scores_point", teamId: 2 },
+    { type: "turn_limit_exceeded", maxTurns: 20 }
+  ]);
+  assert.equal(optionalCarrierShowdown.failureCondition.type, "team_scores_point");
+  assert.equal(optionalCarrierShowdown.failureCondition.teamId, 2);
+  assert.equal(optionalCarrierShowdown.failureCondition.maxTurns, undefined);
+  assert.ok(optionalCarrierShowdown.toolboxBlockTypes.includes(BLOCK_TYPES.IF_TEAMMATE_HAS_FLAG));
+  assert.ok(optionalCarrierShowdown.toolboxBlockTypes.includes(BLOCK_TYPES.VALUE_RUNNER_INDEX));
+  assert.ok(optionalCarrierShowdown.toolboxBlockTypes.includes(BLOCK_TYPES.MOVE_TOWARD));
+  assert.deepEqual(optionalCarrierShowdown.moveTowardTargetTypes, [
+    MOVE_TOWARD_TARGETS.ENEMY_FLAG,
+    MOVE_TOWARD_TARGETS.MY_BASE,
+    MOVE_TOWARD_TARGETS.HUMAN_RUNNER,
+    MOVE_TOWARD_TARGETS.CLOSEST_ENEMY
+  ]);
+  assert.equal(optionalCarrierShowdown.setup.teams.player.runners.length, 3);
+  assert.equal(optionalCarrierShowdown.setup.teams.opponent.runners.length, 3);
+  assert.equal(optionalCarrierShowdown.setup.teams.player.runners[0].hasEnemyFlag, true);
+  assert.equal(optionalCarrierShowdown.setup.teams.opponent.runners[0].hasEnemyFlag, true);
+  assert.equal(optionalCarrierShowdown.setup.flags.opponent.carriedByRunnerId, "runner_1_HumanP1");
+  assert.equal(optionalCarrierShowdown.setup.flags.player.carriedByRunnerId, "runner_2_Npc1");
+});
+
+test("optional double carrier showdown passes with a scripted human carrier and split ally roles", () => {
+  const xmlText = buildSolutionXml(`
+    <block type="battlegorithms_if_boolean_else">
+      <value name="BOOL">
+        <block type="battlegorithms_value_compare">
+          <value name="LEFT">
+            <block type="battlegorithms_value_runner_index"></block>
+          </value>
+          <field name="OPERATOR">EQ</field>
+          <value name="RIGHT">
+            <block type="battlegorithms_value_number">
+              <field name="VALUE">0</field>
+            </block>
+          </value>
+        </block>
+      </value>
+      <statement name="DO">
+        <block type="battlegorithms_if_boolean_else">
+          <value name="BOOL">
+            <block type="battlegorithms_boolean_teammate_has_flag"></block>
+          </value>
+          <statement name="DO">
+            <block type="battlegorithms_move_toward">
+              <field name="TARGET">MY_BASE</field>
+            </block>
+          </statement>
+          <statement name="ELSE">
+            <block type="battlegorithms_move_toward">
+              <field name="TARGET">ENEMY_FLAG</field>
+            </block>
+          </statement>
+        </block>
+      </statement>
+      <statement name="ELSE">
+        <block type="battlegorithms_if_boolean_else">
+          <value name="BOOL">
+            <block type="battlegorithms_boolean_teammate_has_flag"></block>
+          </value>
+          <statement name="DO">
+            <block type="battlegorithms_move_toward">
+              <field name="TARGET">CLOSEST_ENEMY</field>
+            </block>
+          </statement>
+          <statement name="ELSE">
+            <block type="battlegorithms_move_toward">
+              <field name="TARGET">ENEMY_FLAG</field>
+            </block>
+          </statement>
+        </block>
+      </statement>
+    </block>
+  `);
+
+  const { app } = runGuidedLevelWithHumanScript(
+    "optional-double-carrier-showdown",
+    xmlText,
+    {
+      humanActionScript: ({ runner }) => (
+        runner.hasEnemyFlag
+          ? { type: AI_ACTION_TYPES.MOVE_BACKWARD }
+          : { type: AI_ACTION_TYPES.STAY_STILL }
+      )
+    }
+  );
+
+  assert.equal(app.state.activeLevelResult, LEVEL_RESULT.PASSED);
+  assert.equal(app.state.levelProgress["optional-double-carrier-showdown"], LEVEL_STATUS.PASSED);
 });
 
 test("starter levels include onboarding copy and tutorial steps", () => {
@@ -508,7 +611,8 @@ test("guided level manifest provides a lightweight sanity check of the campaign"
 
   assert.equal(GUIDED_LEVEL_MANIFEST.length, levels.length);
   assert.equal(GUIDED_LEVEL_MANIFEST[0].id, "move-to-target");
-  assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-random-lab");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-2).id, "optional-random-lab");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-double-carrier-showdown");
   assert.equal(GUIDED_LEVEL_MANIFEST[15].id, "bughunt-15");
   assert.ok(GUIDED_LEVEL_MANIFEST[16].title.startsWith("Challenge 15"));
 });

@@ -5,8 +5,8 @@ import { AREA_FREEZE_BLOCKS, GENERIC_SENSOR_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED
 export default {
   id: "freeze-the-lane",
   title: "Level 21: Freeze the Lane",
-  description: "Spend Area Freeze once, then let the ally keep moving toward the flag while the lane is safe.",
-  introText: "Area Freeze is a team power, not a normal move. This puzzle is about spending it at the right time and then returning to the main plan.",
+  description: "Spend Area Freeze, then let the ally keep moving toward the flag while the lane is safe and the cooldown runs.",
+  introText: "Area Freeze is a team power, not a normal move. This puzzle is about spending it at the right time and then returning to the main plan while it cools down.",
   tips: [
     "Area Freeze affects nearby active enemies.",
     "Think about what the ally should do before the freeze is spent and what it should do afterward.",
@@ -31,12 +31,12 @@ export default {
   tutorialSteps: [
     {
       id: "level-20-freeze",
-      title: "One Team Freeze Per Round",
-      body: "Area Freeze can lock nearby enemies in place for a short time, but your team only gets one use each round. A simple if/else can spend it once, then switch back to movement.",
+      title: "Team Freeze Cooldown",
+      body: "Area Freeze can lock nearby enemies in place for a short time, then it cools down before your team can use it again. A simple if/else can spend it, then switch back to movement.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: FREEZE_THE_LANE_DEMO_XML,
       demoTitle: "Example freeze-then-go program",
-      demoCaption: "This example checks a one-time resource using a condition not available in this level. The pattern — spend the resource in the DO branch, then fall back to normal movement in the ELSE branch — is the same structure you need here."
+      demoCaption: "This example checks a cooling resource using a condition not available in this level. The pattern — spend the resource in the DO branch, then fall back to normal movement in the ELSE branch — is the same structure you need here."
     },
     {
       id: "level-20-timing",

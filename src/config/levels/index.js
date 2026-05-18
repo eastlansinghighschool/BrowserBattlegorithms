@@ -30,7 +30,16 @@ export function getLevelDefinitions() {
     tutorialSteps: structuredClone(level.tutorialSteps || []),
     project: level.project ? structuredClone(level.project) : null,
     winCondition: { ...level.winCondition },
-    failureCondition: level.failureCondition ? { ...level.failureCondition } : null,
+    failureConditions: Array.isArray(level.failureConditions)
+      ? structuredClone(level.failureConditions)
+      : level.failureCondition
+        ? [{ ...level.failureCondition }]
+        : [],
+    failureCondition: level.failureCondition
+      ? { ...level.failureCondition }
+      : Array.isArray(level.failureConditions) && level.failureConditions[0]
+        ? { ...level.failureConditions[0] }
+        : null,
     setup: normalizeLegacyLevelSetup(level.setup || level.setupOverrides),
     // Plan 45: content-derived hash for stale-replace versioning (Decision 4 approach b).
     // Null for levels without a starter (those are not subject to stale-replace).

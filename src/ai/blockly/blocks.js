@@ -99,14 +99,14 @@ const CONDITION_BLOCK_LIBRARY = {
     color: "%{BKY_LOGIC_HUE}",
     label: "If Area Freeze Is Ready",
     phrase: "Area Freeze Is Ready",
-    tooltip: "Runs the block inside if this team has not used Area Freeze this round."
+    tooltip: "Runs the block inside if this team's Area Freeze is ready now."
   },
   [BLOCK_TYPES.IF_AREA_FREEZE_READY_ELSE]: {
     category: "Conditions",
     color: "%{BKY_LOGIC_HUE}",
     label: "If Area Freeze Is Ready",
     phrase: "Area Freeze Is Ready",
-    tooltip: "Chooses one move if Area Freeze is still ready this round and another if it is not."
+    tooltip: "Chooses one move if Area Freeze is ready and another while it cools down."
   },
   [BLOCK_TYPES.IF_TEAMMATE_HAS_FLAG]: {
     category: "Conditions",
@@ -278,7 +278,7 @@ const BLOCK_LIBRARY = {
     category: "Actions",
     color: "%{BKY_LOGIC_HUE}",
     label: "Freeze Opponents",
-    tooltip: "Freezes nearby active enemies for 2 turns. This can only be used once per team each round.",
+    tooltip: "Freezes nearby active enemies for 2 turns. This can be used again after its cooldown ends.",
     actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS
   }
 };
@@ -312,7 +312,7 @@ const BOOLEAN_VALUE_LIBRARY = {
     category: "Advanced",
     color: "%{BKY_LOGIC_HUE}",
     label: "Area Freeze is ready",
-    tooltip: "Returns true when this team has not used Area Freeze this round."
+    tooltip: "Returns true when this team's Area Freeze is ready now."
   },
   [BLOCK_TYPES.BOOLEAN_TEAMMATE_HAS_FLAG]: {
     category: "Advanced",

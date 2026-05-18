@@ -211,14 +211,14 @@ test("formatTurnNarration summarizes an unavailable resource", () => {
         outcome: "stayed"
       }
     },
-    {
-      kind: "resource.unavailable",
-      payload: {
-        actionType: "FREEZE_OPPONENTS",
-        reason: "freeze_already_used"
+      {
+        kind: "resource.unavailable",
+        payload: {
+          actionType: "FREEZE_OPPONENTS",
+          reason: "freeze_on_cooldown"
+        }
       }
-    }
-  ]));
+    ]));
 
-  assert.equal(text, "Turn 5. Ally 0 tried to freeze opponents, but the freeze was already used. Ally 0 stayed still.");
+  assert.equal(text, "Turn 5. Ally 0 tried to freeze opponents, but Area Freeze was still cooling down. Ally 0 stayed still.");
 });

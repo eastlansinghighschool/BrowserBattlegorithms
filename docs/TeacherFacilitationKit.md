@@ -110,7 +110,7 @@ Students should leave with the execution-model lesson: programs run one action a
 - Likely stuck points:
   - [predicted] L17-L18: students may use a resource action without guarding it with readiness.
   - [predicted] L20-L21: students may confuse team-side thinking with literal left/right board position.
-  - [evidence] L21: freeze timing is easiest to misuse if students do not ask whether the team resource is ready.
+  - [evidence] L21: freeze timing is easiest to misuse if students do not ask whether the team resource is ready or cooling down.
 - Intervention prompts:
   - "What must be true at the same time before this branch should run?"
   - "What does `AND` buy you that a nested `if` does not?"
@@ -159,7 +159,7 @@ Students should leave with the execution-model lesson: programs run one action a
 - Expected time band: **5-10 minutes**.
 - Likely stuck points:
   - [predicted] students may know the branch words but not the boolean logic that controls them.
-  - [predicted] students may spend the freeze too early if they do not trace the condition carefully.
+  - [predicted] students may spend the freeze too early if they do not trace the condition carefully and watch the cooldown.
 - Intervention prompts:
   - "Which two facts have to be true at the same time?"
   - "What happens if the boolean gate opens too early?"
@@ -228,7 +228,7 @@ Students should leave with the execution-model lesson: programs run one action a
 | Boolean composition | End of Sensors & Branches, after L14 | "Why do `AND`, `OR`, and `NOT` let you say something a single sensor cannot?" |
 | Trace before run | Before any Challenge level | "Before you press Play, which branch will fire first and why?" |
 | Method-like decomposition via runner index | Start of Strategy Brain, around L25-L26 | "How does `runner index` let one program behave like two role-specific methods?" |
-| Resource management | After L12 or at Challenge 22 (L24) | "When should your code spend a one-shot resource instead of saving it for later?" |
+| Resource management | After L12 or at Challenge 22 (L24) | "When should your code spend a timed resource instead of saving it for later?" |
 
 ## Troubleshooting Quick Reference
 

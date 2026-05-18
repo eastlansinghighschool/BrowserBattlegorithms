@@ -239,6 +239,13 @@ export function getCurrentLevel(app) {
   return findCurrentLevel(app.state);
 }
 
+function getFailureConditions(level) {
+  if (Array.isArray(level.failureConditions) && level.failureConditions.length > 0) {
+    return level.failureConditions;
+  }
+  return level.failureCondition ? [level.failureCondition] : [];
+}
+
 export function getLevelStateSnapshot(app) {
   const { state } = app;
   return {
@@ -654,9 +661,16 @@ export function evaluateLevelProgress(app) {
     return { result: LEVEL_RESULT.PASSED, reason: "win_condition_met" };
   }
 
-  if (level.failureCondition?.type === "turn_limit_exceeded" && state.currentTurnNumber > level.failureCondition.maxTurns) {
-    completeLevel(app, LEVEL_RESULT.FAILED, "turn_limit_exceeded");
-    return { result: LEVEL_RESULT.FAILED, reason: "turn_limit_exceeded" };
+  for (const failureCondition of getFailureConditions(level)) {
+    if (failureCondition?.type === "turn_limit_exceeded" && state.currentTurnNumber > failureCondition.maxTurns) {
+      completeLevel(app, LEVEL_RESULT.FAILED, "turn_limit_exceeded");
+      return { result: LEVEL_RESULT.FAILED, reason: "turn_limit_exceeded" };
+    }
+
+    if (failureCondition?.type === "team_scores_point" && (state.teamScores[failureCondition.teamId] || 0) > 0) {
+      completeLevel(app, LEVEL_RESULT.FAILED, "team_scores_point");
+      return { result: LEVEL_RESULT.FAILED, reason: "team_scores_point" };
+    }
   }
 
   return null;

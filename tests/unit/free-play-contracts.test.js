@@ -5,6 +5,7 @@ import { createApp } from "../../src/core/state.js";
 import { enterFreePlay, initializeLevelState } from "../../src/core/levels.js";
 import { getToolboxBlockTypesForMode } from "../../src/ai/blockly/blocks.js";
 import { calculateFreePlayCpuAction } from "../../src/ai/npc/freePlayCpu.js";
+import { getAreaFreezeTurnsRemaining, isAreaFreezeReady } from "../../src/core/areaFreeze.js";
 import { buildMatch } from "./helpers/builders.js";
 import { resetRound } from "../../src/core/setup.js";
 import { translateActionDecision } from "../../src/core/movement.js";
@@ -100,7 +101,7 @@ test("guided vertical patrol alternates up and down without using special action
   assert.equal(decision.actionType, AI_ACTION_TYPES.STAY_STILL);
 });
 
-test("area freeze freezes nearby enemies once per round and resets on round reset", () => {
+test("area freeze freezes nearby enemies, uses a turn cooldown, and resets on round reset", () => {
   const app = buildMatch();
   const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
   const enemies = app.state.allRunners.filter((runner) => runner.team === 2);
@@ -114,6 +115,7 @@ test("area freeze freezes nearby enemies once per round and resets on round rese
   app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
   app.state.currentTurnState = "PROCESSING_ACTION";
   app.state.activeRunnerIndex = app.state.allRunners.indexOf(actor);
+  app.state.currentTurnNumber = 10;
   app.state.queuedActionForCurrentRunner = {
     runner: actor,
     actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS,
@@ -123,10 +125,70 @@ test("area freeze freezes nearby enemies once per round and resets on round rese
   processTurnActions(app, TEST_P5);
 
   assert.equal(app.state.teamAreaFreezeUsed[1], true);
+  assert.equal(app.state.teamAreaFreezeNextAvailableTurn[1], 20);
+  assert.equal(isAreaFreezeReady(app.state, 1), false);
+  assert.equal(getAreaFreezeTurnsRemaining(app.state, 1), 10);
   assert.equal(enemies[0].isFrozen, true);
   assert.equal(enemies[0].frozenTurnsRemaining, AREA_FREEZE_DURATION_TURNS);
   assert.equal(enemies[1].isFrozen, false);
 
+  app.state.currentTurnNumber = 19;
+  assert.equal(isAreaFreezeReady(app.state, 1), false);
+  assert.equal(getAreaFreezeTurnsRemaining(app.state, 1), 1);
+  app.state.currentTurnNumber = 20;
+  assert.equal(isAreaFreezeReady(app.state, 1), true);
+  assert.equal(getAreaFreezeTurnsRemaining(app.state, 1), 0);
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(actor);
+  app.state.currentTurnNumber = 15;
+  app.state.queuedActionForCurrentRunner = {
+    runner: actor,
+    actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS,
+    targetGridX: actor.gridX,
+    targetGridY: actor.gridY
+  };
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(app.state.teamAreaFreezeNextAvailableTurn[1], 20);
+  assert.equal(isAreaFreezeReady(app.state, 1), false);
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(actor);
+  app.state.currentTurnNumber = 20;
+  app.state.queuedActionForCurrentRunner = {
+    runner: actor,
+    actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS,
+    targetGridX: actor.gridX,
+    targetGridY: actor.gridY
+  };
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(app.state.teamAreaFreezeNextAvailableTurn[1], 30);
+  assert.equal(isAreaFreezeReady(app.state, 1), false);
+
   resetRound(app.state);
   assert.equal(app.state.teamAreaFreezeUsed[1], false);
+  assert.equal(app.state.teamAreaFreezeNextAvailableTurn[1], 1);
+  assert.equal(isAreaFreezeReady(app.state, 1), true);
+});
+
+test("free play tactical defenders do not choose freeze while cooling down", () => {
+  const app = buildMatch();
+  const defender = app.state.allRunners.find((runner) => runner.team === 2 && runner.isNPC) || app.state.allRunners.find((runner) => runner.team === 2);
+  const playerCarrier = app.state.allRunners.find((runner) => runner.team === 1 && !runner.isHumanControlled) || app.state.allRunners.find((runner) => runner.team === 1);
+  defender.cpuBehavior = NPC_BEHAVIORS.FREE_PLAY_TACTICAL_DEFENDER;
+  playerCarrier.hasEnemyFlag = true;
+  app.state.gameFlags[2].carriedByRunnerId = null;
+  app.state.gameFlags[1].carriedByRunnerId = playerCarrier.id;
+  defender.gridX = playerCarrier.gridX + 1;
+  defender.gridY = playerCarrier.gridY;
+
+  app.state.currentTurnNumber = 5;
+  app.state.teamAreaFreezeNextAvailableTurn[defender.team] = 10;
+
+  const decision = calculateFreePlayCpuAction(defender, app.state);
+  assert.notEqual(decision.actionType, AI_ACTION_TYPES.FREEZE_OPPONENTS);
 });

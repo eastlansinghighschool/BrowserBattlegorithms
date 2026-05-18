@@ -112,6 +112,20 @@ test("free play selectors update the visible setup summary and rebuild the match
   expect(runnerCounts.cpuTeam).toBe(5);
 });
 
+test("free play shows the Area Freeze chip for the active team and both teams in PvP", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+
+  await page.locator('select[data-action="free-play-mode"]').selectOption("PVCPU_EASY");
+  await expect(page.locator("#areaFreezeStatus .area-freeze-status-chip")).toHaveCount(1);
+  await expect(page.locator("#areaFreezeStatus")).toContainText("Team 1 Area Freeze");
+
+  await page.locator('select[data-action="free-play-mode"]').selectOption("PVP");
+  await expect(page.locator("#areaFreezeStatus .area-freeze-status-chip")).toHaveCount(2);
+  await expect(page.locator("#areaFreezeStatus")).toContainText("Team 1 Area Freeze");
+  await expect(page.locator("#areaFreezeStatus")).toContainText("Team 2 Area Freeze");
+});
+
 test("PvCPU Easy and Tactical both create active sandbox opponents", async ({ page }) => {
   await page.goto("/");
   await chooseFreePlay(page);

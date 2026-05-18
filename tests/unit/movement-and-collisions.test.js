@@ -51,7 +51,7 @@ test("translateActionDecision converts move-forward into a target cell", () => {
   assert.equal(queued.targetGridY, runner.gridY);
 });
 
-test("collision resolves in favor of defender side", () => {
+test("collision resolves in favor of defender side when neither runner carries a flag", () => {
   const app = buildMatch();
   const attacker = app.state.allRunners[0];
   const defender = app.state.allRunners[2];
@@ -63,6 +63,120 @@ test("collision resolves in favor of defender side", () => {
   assert.equal(outcome.winner.id, defender.id);
   assert.equal(outcome.loser.id, attacker.id);
   assert.deepEqual(outcome.loserCell, { x: 8, y: 3 });
+});
+
+test("moving attacker carrying a flag loses on the enemy side", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2);
+  attacker.gridX = 8;
+  attacker.gridY = 3;
+  attacker.hasEnemyFlag = true;
+  const carriedFlag = app.state.gameFlags[2];
+  carriedFlag.carriedByRunnerId = attacker.id;
+  carriedFlag.isAtBase = false;
+  carriedFlag.gridX = attacker.gridX;
+  carriedFlag.gridY = attacker.gridY;
+  defender.gridX = 9;
+  defender.gridY = 3;
+
+  const outcome = resolveCollision(app.state, attacker, defender, 9, 3, { x: 8, y: 3 });
+
+  assert.equal(outcome.winner.id, defender.id);
+  assert.equal(outcome.loser.id, attacker.id);
+});
+
+test("moving attacker carrying a flag loses on their own side too", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2);
+  attacker.gridX = 4;
+  attacker.gridY = 3;
+  attacker.hasEnemyFlag = true;
+  const carriedFlag = app.state.gameFlags[2];
+  carriedFlag.carriedByRunnerId = attacker.id;
+  carriedFlag.isAtBase = false;
+  carriedFlag.gridX = attacker.gridX;
+  carriedFlag.gridY = attacker.gridY;
+  defender.gridX = 5;
+  defender.gridY = 3;
+
+  const outcome = resolveCollision(app.state, attacker, defender, 5, 3, { x: 4, y: 3 });
+
+  assert.equal(outcome.winner.id, defender.id);
+  assert.equal(outcome.loser.id, attacker.id);
+});
+
+test("in-cell defender carrying a flag loses even on their own side", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2);
+  attacker.gridX = 9;
+  attacker.gridY = 3;
+  defender.gridX = 10;
+  defender.gridY = 3;
+  defender.hasEnemyFlag = true;
+  const carriedFlag = app.state.gameFlags[1];
+  carriedFlag.carriedByRunnerId = defender.id;
+  carriedFlag.isAtBase = false;
+  carriedFlag.gridX = defender.gridX;
+  carriedFlag.gridY = defender.gridY;
+
+  const outcome = resolveCollision(app.state, attacker, defender, 10, 3, { x: 9, y: 3 });
+
+  assert.equal(outcome.winner.id, attacker.id);
+  assert.equal(outcome.loser.id, defender.id);
+});
+
+test("if both runners carry flags, the moving attacker loses", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2);
+  attacker.gridX = 2;
+  attacker.gridY = 3;
+  attacker.hasEnemyFlag = true;
+  const attackerFlag = app.state.gameFlags[2];
+  attackerFlag.carriedByRunnerId = attacker.id;
+  attackerFlag.isAtBase = false;
+  attackerFlag.gridX = attacker.gridX;
+  attackerFlag.gridY = attacker.gridY;
+  defender.gridX = 3;
+  defender.gridY = 3;
+  defender.hasEnemyFlag = true;
+  const defenderFlag = app.state.gameFlags[1];
+  defenderFlag.carriedByRunnerId = defender.id;
+  defenderFlag.isAtBase = false;
+  defenderFlag.gridX = defender.gridX;
+  defenderFlag.gridY = defender.gridY;
+
+  const outcome = resolveCollision(app.state, attacker, defender, 3, 3, { x: 2, y: 3 });
+
+  assert.equal(outcome.winner.id, defender.id);
+  assert.equal(outcome.loser.id, attacker.id);
+});
+
+test("a losing flag carrier drops and resets the carried flag through the existing consequence path", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2);
+  attacker.gridX = 2;
+  attacker.gridY = 3;
+  attacker.hasEnemyFlag = true;
+  const carriedFlag = app.state.gameFlags[2];
+  carriedFlag.carriedByRunnerId = attacker.id;
+  carriedFlag.isAtBase = false;
+  carriedFlag.gridX = attacker.gridX;
+  carriedFlag.gridY = attacker.gridY;
+  defender.gridX = 3;
+  defender.gridY = 3;
+
+  const outcome = resolveCollision(app.state, attacker, defender, 3, 3, { x: 2, y: 3 });
+
+  assert.equal(outcome.loser.id, attacker.id);
+  assert.equal(attacker.hasEnemyFlag, false);
+  assert.equal(carriedFlag.carriedByRunnerId, null);
+  assert.equal(carriedFlag.isAtBase, true);
+  assert.deepEqual({ x: carriedFlag.gridX, y: carriedFlag.gridY }, { x: carriedFlag.initialGridX, y: carriedFlag.initialGridY });
 });
 
 test("collision defender is determined by team home side, not literal team number", () => {

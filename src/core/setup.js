@@ -4,6 +4,7 @@ import {
   MAIN_GAME_STATES,
   TURN_STATES
 } from "../config/constants.js";
+import { resetAreaFreezeState } from "./areaFreeze.js";
 import { Flag } from "../entities/Flag.js";
 import { Barrier } from "../entities/Barrier.js";
 import { Runner } from "../entities/Runner.js";
@@ -183,7 +184,6 @@ export function initializeMatch(app) {
   state.barriers = [];
   state.activeRunnerIndex = 0;
   state.teamScores = { 1: 0, 2: 0 };
-  state.teamAreaFreezeUsed = { 1: false, 2: false };
   state.runnerActionHistory = {};
   state.currentTurnEventLog = [];
   state.lastTurnEventLog = [];
@@ -193,6 +193,7 @@ export function initializeMatch(app) {
   state.classifierRecurrenceState.perLevelAttempt = {};
   state.classifierRecurrenceState.perMatch = {};
   state.currentTurnNumber = 1;
+  resetAreaFreezeState(state);
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;
@@ -213,7 +214,6 @@ export function initializeDisplayState(app) {
   state.barriers = [];
   applySetupBarriers(state);
   state.teamScores = { 1: 0, 2: 0 };
-  state.teamAreaFreezeUsed = { 1: false, 2: false };
   state.runnerActionHistory = {};
   state.currentTurnEventLog = [];
   state.lastTurnEventLog = [];
@@ -222,6 +222,7 @@ export function initializeDisplayState(app) {
   state.lastBlocklyTrace = null;
   state.classifierRecurrenceState.perLevelAttempt = {};
   state.currentTurnNumber = 1;
+  resetAreaFreezeState(state);
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
   state.mainGameState = MAIN_GAME_STATES.SETUP;
@@ -234,7 +235,7 @@ export function resetRound(state) {
   state.allRunners.forEach((runner) => runner.resetToInitial());
   Object.values(state.gameFlags).forEach((flag) => flag.resetToInitialPosition());
   state.barriers = [];
-  state.teamAreaFreezeUsed = { 1: false, 2: false };
+  resetAreaFreezeState(state);
   state.runnerActionHistory = {};
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;

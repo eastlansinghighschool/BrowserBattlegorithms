@@ -19,6 +19,7 @@ export const DEFAULT_FREE_PLAY_TEAM_SIZE = 2;
 export const FROZEN_DURATION_TURNS = 3;
 export const AREA_FREEZE_DURATION_TURNS = 2;
 export const AREA_FREEZE_RADIUS = 2;
+export const AREA_FREEZE_COOLDOWN_TURNS = 10;
 export const UNLOCK_ALL_GUIDED_LEVELS_FOR_TESTING = false;
 
 export const NPC_BEHAVIORS = {

@@ -9,8 +9,13 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | Packet | Status | Purpose |
 | --- | --- | --- |
 | [00 Mini Packet Agent Starting Prompt](00-mini-packet-agent-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
+| [00 Level Editing Agent Starting Prompt](00-level-editing-agent-starting-prompt.md) | ready | Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation. |
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
+| [Plan 46](plan-46-flag-carrier-vulnerability-collision-rule.md) | ready | Change collision rules so flag carriers are always vulnerable: one-carrier collisions make the carrier lose, both-carrier collisions make the moving attacker lose, and no-carrier collisions keep home-side advantage. |
+| [Plan 47](plan-47-optional-double-carrier-showdown.md) | ready | Add a late optional guided level after the final project sequence where both teams begin with flag carriers and students must use human control plus two ally runners against at least three live NPCs to score under carrier-vulnerability pressure. |
+| [Plan 48](plan-48-area-freeze-cooldown-and-status-chip.md) | ready | Change Area Freeze from once-per-round to a configurable turn cooldown and add a compact snowflake status chip showing ready/cooldown state. |
+| [Plan 49](plan-49-area-freeze-board-effect-visualization.md) | ready | Add board-level Area Freeze visuals: caster pulse, affected-runner flash, persistent frozen countdown badges, and reduced-motion equivalents. |
 
 ### Completed Packets
 

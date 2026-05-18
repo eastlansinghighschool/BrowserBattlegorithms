@@ -18,6 +18,7 @@ import {
   TURN_STATES
 } from "../config/constants.js";
 import { createQueuedHumanAction } from "./actions.js";
+import { isAreaFreezeReady, markAreaFreezeUsed } from "./areaFreeze.js";
 import { resolveCollision } from "./collisions.js";
 import {
   getBarrierAtCell,
@@ -149,7 +150,7 @@ function snapRunnerToCell(runner, gridX, gridY) {
 }
 
 function applyAreaFreeze(state, actionRunner) {
-  if (state.teamAreaFreezeUsed?.[actionRunner.team]) {
+  if (!isAreaFreezeReady(state, actionRunner.team)) {
     return false;
   }
 
@@ -165,7 +166,7 @@ function applyAreaFreeze(state, actionRunner) {
     }
   }
 
-  state.teamAreaFreezeUsed[actionRunner.team] = true;
+  markAreaFreezeUsed(state, actionRunner.team);
   return frozeAnyone;
 }
 
@@ -494,8 +495,8 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
       break;
     }
     case AI_ACTION_TYPES.FREEZE_OPPONENTS: {
-      if (state.teamAreaFreezeUsed?.[actionRunner.team]) {
-        emitResourceUnavailable(state, actionRunner, actionType, "freeze_already_used");
+      if (!isAreaFreezeReady(state, actionRunner.team)) {
+        emitResourceUnavailable(state, actionRunner, actionType, "freeze_on_cooldown");
         actionOutcome = "stayed";
         actionCompletedImmediately = true;
         break;

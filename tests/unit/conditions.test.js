@@ -5,6 +5,7 @@ import {
   SENSOR_OBJECT_TYPES,
   SENSOR_RELATION_TYPES
 } from "../../src/config/constants.js";
+import { markAreaFreezeUsed } from "../../src/core/areaFreeze.js";
 import { buildMatch } from "./helpers/builders.js";
 import { evaluateCondition, evaluateSensorCondition } from "../../src/core/conditions.js";
 
@@ -39,6 +40,8 @@ test("resource, team, and territory conditions evaluate correctly", () => {
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_CAN_JUMP), true);
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_CAN_PLACE_BARRIER), true);
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_AREA_FREEZE_READY), true);
+  markAreaFreezeUsed(app.state, actor.team);
+  assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_AREA_FREEZE_READY), false);
 
   human.hasEnemyFlag = true;
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_TEAMMATE_HAS_FLAG), true);
@@ -49,6 +52,17 @@ test("resource, team, and territory conditions evaluate correctly", () => {
   actor.gridX = 8;
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_ON_MY_SIDE), false);
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_ON_ENEMY_SIDE), true);
+});
+
+test("area freeze readiness follows next available turn even if the legacy used flag is stale", () => {
+  const app = buildMatch();
+  const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+
+  app.state.teamAreaFreezeUsed[actor.team] = true;
+  app.state.teamAreaFreezeNextAvailableTurn[actor.team] = 1;
+  app.state.currentTurnNumber = 12;
+
+  assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.IF_AREA_FREEZE_READY), true);
 });
 
 test("generic sensor evaluation supports barrier, edge or wall, enemy flag, and human runner relations", () => {
