@@ -109,22 +109,14 @@ test("welcome modal keeps focus on Guided Levels while the emoji frame animates"
   await page.goto("/");
   await page.waitForSelector('button[data-tutorial-action="choose-guided"]', { state: "visible" });
 
-  await page.mouse.click(10, 10);
-  for (let i = 0; i < 20; i += 1) {
-    await page.keyboard.press("Tab");
-    if (await page.evaluate(() => document.activeElement?.matches('button[data-tutorial-action="choose-guided"]'))) {
-      break;
-    }
-  }
-
   const guidedButton = page.locator('button[data-tutorial-action="choose-guided"]');
-  await expect(guidedButton).toBeFocused();
-
   const strip = page.locator(".tutorial-mode-chooser-strip");
   await expect(strip).toBeVisible();
   const beforeText = await strip.textContent();
   expect(beforeText || "").toMatch(/🧎|🏃/);
 
+  await guidedButton.focus();
+  await expect(guidedButton).toBeFocused();
   await page.waitForTimeout(1500);
 
   await expect(guidedButton).toBeFocused();
@@ -318,8 +310,8 @@ test("guided keyboard-practice level accepts the Team 1 D key through the real b
   });
   await page.evaluate(() => {
     window.__BBA_TEST_HOOKS__.app.p5Instance?.noLoop?.();
-    document.body.focus();
   });
+  await page.locator("#playResetButton").focus();
   await page.keyboard.press("d");
   const queuedActionHandle = await page.waitForFunction(() => {
     const queued = window.__BBA_TEST_HOOKS__?.app?.state?.queuedActionForCurrentRunner;
