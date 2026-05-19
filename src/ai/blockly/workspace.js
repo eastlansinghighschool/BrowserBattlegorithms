@@ -9,7 +9,7 @@ import {
 } from "../../config/constants.js";
 import { getCurrentLevel } from "../../core/levels.js";
 export { hashStarterXml, normalizeStarterXmlForHashing } from "./starterVersioning.js";
-import { evaluateCondition } from "../../core/conditions.js";
+import { countObjectsWithin, evaluateCondition } from "../../core/conditions.js";
 import { getEnemyTeamId, getTeamFlagHome } from "../../core/teams.js";
 import {
   getActionTypeForBlockType,
@@ -495,7 +495,14 @@ function evaluateBlocklyNumberValue(state, runner, block, collector = null) {
       return Number.isInteger(runner?.allyIndex) ? runner.allyIndex : 0;
     case BLOCK_TYPES.VALUE_DISTANCE_TO_TARGET: {
       const target = resolveMoveTowardTargetCell(state, runner, block.getFieldValue("TARGET"));
-      return target ? Math.abs(target.x - runner.gridX) + Math.abs(target.y - runner.gridY) : 0;
+      const result = target && runner ? Math.abs(target.x - runner.gridX) + Math.abs(target.y - runner.gridY) : 0;
+      recordTraceStep(collector, block, "value", { result });
+      return result;
+    }
+    case BLOCK_TYPES.VALUE_COUNT_WITHIN: {
+      const result = countObjectsWithin(state, runner, block.getFieldValue("OBJECT"), block.getFieldValue("DISTANCE"));
+      recordTraceStep(collector, block, "value", { result });
+      return result;
     }
     case BLOCK_TYPES.VALUE_RANDOM_ROLL: {
       const randomFn = typeof state.randomFn === "function" ? state.randomFn : Math.random;

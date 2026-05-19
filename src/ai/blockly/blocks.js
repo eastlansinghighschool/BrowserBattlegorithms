@@ -170,7 +170,24 @@ const FULL_SENSOR_OBJECT_OPTIONS = [
   ["edge or wall", SENSOR_OBJECT_TYPES.EDGE_OR_WALL],
   ["enemy runner", SENSOR_OBJECT_TYPES.ENEMY_RUNNER],
   ["enemy flag", SENSOR_OBJECT_TYPES.ENEMY_FLAG],
-  ["human runner", SENSOR_OBJECT_TYPES.HUMAN_RUNNER]
+  ["human runner", SENSOR_OBJECT_TYPES.HUMAN_RUNNER],
+  ["ally runner", SENSOR_OBJECT_TYPES.ALLY_RUNNER]
+];
+
+const COUNT_WITHIN_OBJECT_OPTIONS = [
+  ["enemy runner", SENSOR_OBJECT_TYPES.ENEMY_RUNNER],
+  ["barrier", SENSOR_OBJECT_TYPES.BARRIER],
+  ["human runner", SENSOR_OBJECT_TYPES.HUMAN_RUNNER],
+  ["ally runner", SENSOR_OBJECT_TYPES.ALLY_RUNNER]
+];
+
+const COUNT_WITHIN_DISTANCE_OPTIONS = [
+  ["1", "1"],
+  ["2", "2"],
+  ["3", "3"],
+  ["4", "4"],
+  ["5", "5"],
+  ["6", "6"]
 ];
 
 const FULL_SENSOR_RELATION_OPTIONS = [
@@ -377,6 +394,12 @@ const VALUE_LIBRARY = {
     label: "distance to",
     tooltip: "Returns Manhattan distance to the chosen target."
   },
+  [BLOCK_TYPES.VALUE_COUNT_WITHIN]: {
+    category: "Advanced",
+    color: "%{BKY_MATH_HUE}",
+    label: "count of",
+    tooltip: "Returns how many chosen objects are within the chosen Manhattan distance."
+  },
   [BLOCK_TYPES.VALUE_RANDOM_ROLL]: {
     category: "Advanced",
     color: "%{BKY_MATH_HUE}",
@@ -515,6 +538,13 @@ export function registerBattleBlocklyBlocks() {
           this.appendDummyInput()
             .appendField("distance to")
             .appendField(new Blockly.FieldDropdown(() => getMoveTowardTargetOptions()), "TARGET");
+        } else if (type === BLOCK_TYPES.VALUE_COUNT_WITHIN) {
+          this.appendDummyInput()
+            .appendField("count of")
+            .appendField(new Blockly.FieldDropdown(COUNT_WITHIN_OBJECT_OPTIONS), "OBJECT")
+            .appendField("within")
+            .appendField(new Blockly.FieldDropdown(COUNT_WITHIN_DISTANCE_OPTIONS), "DISTANCE")
+            .appendField("spaces");
         } else {
           this.appendDummyInput().appendField(config.label);
         }

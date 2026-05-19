@@ -104,7 +104,8 @@ The current Blockly catalog is the canonical authored block set for this game. T
 - Actions: `On Each Turn`, `Move Forward`, `Move Backward`, `Move Up`, `Move Down`, `Move Randomly`, `Stay Still`, `Jump Forward`, `Place Barrier`, `Move Toward [Enemy Flag / My Base / Human Runner / Closest Enemy]`, `Use Area Freeze`.
 - Conditions: `If [Object] is [Relation]`, `If [Object] is [Relation] / Else`, `If I have enemy flag`, `If enemy is in front`, `If barrier is in front`, `If I can jump`, `If I can place barrier`, `If Area Freeze is ready`, `Is enemy within [1/2/3] steps?`, `Is [My Runner / Enemy Flag / My Base] on [My Side / Enemy Side] of map?`, `Die roll (1-6) > [1/2/3/4/5]`.
 - Logic: `If [boolean]`, `If [boolean] / else`, `AND`, `OR`, `NOT`.
-- Values and sensing: typed numbers, runner index, distance to target, random roll, playDirection, `My X`, `My Y`, `Enemy Flag X`, `Enemy Flag Y`, and `My Base X`, `My Base Y`.
+- Values and sensing: typed numbers, runner index, distance to target, `count of [enemy runner / barrier / human runner / ally runner] within [1-6] spaces`, random roll, playDirection, `My X`, `My Y`, `Enemy Flag X`, `Enemy Flag Y`, and `My Base X`, `My Base Y`. The count-within block appears in the Strategy Brain and Team Strategy Script project toolboxes and in Free Play default.
+- Sensor object dropdowns include barrier, edge/wall, enemy runner, enemy flag, human runner, and ally runner wherever the current level allows the generic sensor block.
 - Free Play exposes the broader sandbox, while guided levels scope the toolbox to the current lesson and prior mastered concepts.
 
 ## Execution model

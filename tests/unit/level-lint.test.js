@@ -177,6 +177,26 @@ test("challenge levels do not warn when they reuse only previously introduced bl
   assert.deepEqual(diagnostics, []);
 });
 
+test("challenge levels can reuse a block first introduced by the project arc", () => {
+  const levels = [
+    createLevel({ id: "base-1", title: "Level 1: Base One", toolboxBlockTypes: ["battlegorithms_move_forward"] }),
+    createLevel({
+      id: "project-start",
+      title: "Level 2: Project Start",
+      project: { id: "strategy-brain", step: 1 },
+      toolboxBlockTypes: ["battlegorithms_move_forward", "battlegorithms_value_count_within"]
+    }),
+    createLevel({
+      id: "challenge",
+      title: "Challenge 3: Challenge",
+      levelKind: "challenge",
+      toolboxBlockTypes: ["battlegorithms_value_count_within"]
+    })
+  ];
+  const diagnostics = checkChallengeLevelsIntroduceNoNewBlock(levels);
+  assert.deepEqual(diagnostics, []);
+});
+
 test("challenge levels warn when they expose a first-seen block", () => {
   const levels = [
     createLevel({ id: "base-1", title: "Level 1: Base One", toolboxBlockTypes: ["a"] }),
@@ -432,6 +452,46 @@ test("sensor relation policy warns for undeclared relations in the reference sol
   ]);
   const diagnostics = checkSensorRelationPolicy([level], { referenceSolutionsByLevelId: ref });
   assert.equal(diagnostics[0].severity, "warning");
+  assert.equal(diagnostics[0].contract, "sensor-relation-policy");
+});
+
+test("sensor relation policy passes when horizontal and vertical directional pairs are both declared", () => {
+  const level = createLevel({
+    id: "sensor-paired",
+    sensorRelationTypes: [
+      "DIRECTLY_IN_FRONT",
+      "DIRECTLY_BEHIND",
+      "DIRECTLY_ABOVE",
+      "DIRECTLY_BELOW",
+      "ANYWHERE_FORWARD",
+      "ANYWHERE_BEHIND",
+      "ANYWHERE_ABOVE",
+      "ANYWHERE_BELOW"
+    ]
+  });
+
+  assert.deepEqual(checkSensorRelationPolicy([level]), []);
+});
+
+test("sensor relation policy warns when the vertical direct pair is missing beside the horizontal pair", () => {
+  const level = createLevel({
+    id: "sensor-missing-vertical",
+    sensorRelationTypes: ["DIRECTLY_IN_FRONT", "DIRECTLY_BEHIND"]
+  });
+
+  const diagnostics = checkSensorRelationPolicy([level]);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].contract, "sensor-relation-policy");
+});
+
+test("sensor relation policy warns when the vertical anywhere pair is missing beside the horizontal pair", () => {
+  const level = createLevel({
+    id: "sensor-missing-anywhere-vertical",
+    sensorRelationTypes: ["ANYWHERE_FORWARD", "ANYWHERE_BEHIND"]
+  });
+
+  const diagnostics = checkSensorRelationPolicy([level]);
+  assert.equal(diagnostics.length, 1);
   assert.equal(diagnostics[0].contract, "sensor-relation-policy");
 });
 

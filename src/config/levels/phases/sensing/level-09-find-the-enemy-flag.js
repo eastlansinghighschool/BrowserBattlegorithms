@@ -16,7 +16,10 @@ export default {
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   toolboxBlockTypes: [...GENERIC_SENSOR_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
-  sensorObjectTypes: [SENSOR_OBJECT_TYPES.ENEMY_FLAG],
+  sensorObjectTypes: [
+    SENSOR_OBJECT_TYPES.ENEMY_FLAG,
+    SENSOR_OBJECT_TYPES.ALLY_RUNNER
+  ],
   sensorRelationTypes: [
     SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
     SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,

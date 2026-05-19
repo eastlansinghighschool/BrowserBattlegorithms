@@ -11,6 +11,7 @@ import { createApp } from "../../src/core/state.js";
 import { getLevelDefinitions } from "../../src/config/levels.js";
 import { initializeLevelState, startLevel } from "../../src/core/levels.js";
 import { handleKeyInput } from "../../src/ui/controls.js";
+import { getCurrentSensorRelationValues, setAllowedSensorOptions } from "../../src/ai/blockly/blocks.js";
 import {
   getProjectDisplayName,
   getProjectStartCalloutStorageKey,
@@ -69,4 +70,23 @@ test("project signifiers identify the project arc and render a distinct badge", 
   assert.equal(isProjectStartLevel(strategyCapstone), false);
   assert.equal(isProjectLevel(ordinaryLevel), false);
   assert.equal(renderProjectBadge(ordinaryLevel), "");
+});
+
+test("free play defaults expose all eight directional sensor relations", () => {
+  setAllowedSensorOptions();
+  assert.deepEqual(getCurrentSensorRelationValues(), [
+    "DIRECTLY_IN_FRONT",
+    "DIRECTLY_BEHIND",
+    "DIRECTLY_ABOVE",
+    "DIRECTLY_BELOW",
+    "ANYWHERE_FORWARD",
+    "ANYWHERE_BEHIND",
+    "ANYWHERE_ABOVE",
+    "ANYWHERE_BELOW",
+    "WITHIN_2",
+    "WITHIN_3",
+    "WITHIN_4",
+    "WITHIN_5",
+    "WITHIN_6"
+  ]);
 });

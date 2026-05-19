@@ -7,7 +7,7 @@ export default {
   id: "one-program-two-allies",
   title: "Level 29: One Program, Two Allies",
   description: "Two allies now share one workspace. Use runner index so one ally attacks and the other supports.",
-  introText: "This is the beginning of Team Strategy Script. The same program runs on both allies, so runner index has to decide which one takes the scoring job.",
+  introText: "This is the beginning of Team Strategy Script.  You want the ally with runner index 0 to be doing the scoring in this level, not the ally with runner index 1. The same program runs on both allies, so runner index has to decide which one takes the scoring job.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

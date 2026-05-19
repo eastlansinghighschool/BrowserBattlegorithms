@@ -12,7 +12,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | Prediction: First Move | First move prediction | commit to the ally's first movement before running | prediction checkpoint; no new Blockly idea | Level 5 |
 | 6 | Enemy sensor branch | generic sensor; enemy runner blocking a lane | sensor object + relation dropdowns | Level 4 named check |
 | 7 | Watch the wall | edge / wall | generic sensor reused on terrain | Level 6 sensor shape |
-| 8 | Find the human | support square near teammate | directional sensing | Levels 6-7 |
+| 8 | Find the human | support square near teammate; directional sensing with above/below analogs on the same board axis | directional sensing | Levels 6-7 |
 | 9 | Find the enemy flag | sensing can point at goals | same sensor on a new target | Level 8 |
 | 10 | Human runner practice | keyboard control, special actions | no new Blockly concept | beginner controls |
 | 11 | Move Toward flag | helper target | `Move Toward enemy flag` | Levels 1-9 |
@@ -50,6 +50,8 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
 | Optional Lab: Move Randomly | randomness in action choice | randomness in action | `Move Randomly` | movement basics |
 | Optional Lab: Double Carrier Showdown | carrier vulnerability under pressure | carrier vulnerability, runner index roles, teammate flag pressure | `runner index`, `teammate-has-flag`, `Move Toward` | Levels 19, 29-37 and the carrier collision rule |
+
+Note: the Strategy Brain project arc also makes `count-within` available in the toolbox from Level 23 onward. The block is additive rather than a separately taught lesson, so the matrix still treats the first authored count-and-threshold lesson as future work.
 
 ## Copy Guidelines
 

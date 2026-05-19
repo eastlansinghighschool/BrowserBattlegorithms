@@ -23,7 +23,29 @@ const SEVERITIES = {
   WARNING: "warning"
 };
 
-const DIRECTED_SENSOR_RELATIONS = new Set(["DIRECTLY_IN_FRONT", "DIRECTLY_BEHIND"]);
+const DIRECTED_SENSOR_RELATIONS = new Set([
+  "DIRECTLY_IN_FRONT",
+  "DIRECTLY_BEHIND",
+  "DIRECTLY_ABOVE",
+  "DIRECTLY_BELOW",
+  "ANYWHERE_FORWARD",
+  "ANYWHERE_BEHIND",
+  "ANYWHERE_ABOVE",
+  "ANYWHERE_BELOW"
+]);
+
+const SENSOR_RELATION_PAIR_REQUIREMENTS = [
+  {
+    name: "directed",
+    horizontal: ["DIRECTLY_IN_FRONT", "DIRECTLY_BEHIND"],
+    vertical: ["DIRECTLY_ABOVE", "DIRECTLY_BELOW"]
+  },
+  {
+    name: "anywhere",
+    horizontal: ["ANYWHERE_FORWARD", "ANYWHERE_BEHIND"],
+    vertical: ["ANYWHERE_ABOVE", "ANYWHERE_BELOW"]
+  }
+];
 
 function normalizeText(value) {
   return String(value || "")
@@ -985,15 +1007,42 @@ export function checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId 
 
   for (const level of levels) {
     const sensorRelations = new Set(level.sensorRelationTypes || []);
-    const hasDirectedToolboxRelations = [...(level.sensorRelationTypes || [])].some((relation) => DIRECTED_SENSOR_RELATIONS.has(relation));
-    if (hasDirectedToolboxRelations) {
-      if (!sensorRelations.has("DIRECTLY_IN_FRONT") || !sensorRelations.has("DIRECTLY_BEHIND")) {
+    for (const pair of SENSOR_RELATION_PAIR_REQUIREMENTS) {
+      const hasHorizontalPairRelation = pair.horizontal.some((relation) => sensorRelations.has(relation));
+      const hasVerticalPairRelation = pair.vertical.some((relation) => sensorRelations.has(relation));
+
+      if (hasHorizontalPairRelation && !pair.horizontal.every((relation) => sensorRelations.has(relation))) {
         diagnostics.push(
           makeDiagnostic({
             severity: SEVERITIES.WARNING,
             levelId: level.id,
             contract: "sensor-relation-policy",
-            message: "directed sensor relations should be declared together",
+            message: `${pair.name} sensor relations should be declared together`,
+            file: level.sourcePath || null
+          })
+        );
+        continue;
+      }
+
+      if (hasHorizontalPairRelation && !pair.vertical.every((relation) => sensorRelations.has(relation))) {
+        diagnostics.push(
+          makeDiagnostic({
+            severity: SEVERITIES.WARNING,
+            levelId: level.id,
+            contract: "sensor-relation-policy",
+            message: `${pair.name} sensor relations should include above/below when forward/backward relations are declared`,
+            file: level.sourcePath || null
+          })
+        );
+      }
+
+      if (hasVerticalPairRelation && !pair.vertical.every((relation) => sensorRelations.has(relation))) {
+        diagnostics.push(
+          makeDiagnostic({
+            severity: SEVERITIES.WARNING,
+            levelId: level.id,
+            contract: "sensor-relation-policy",
+            message: `${pair.name} sensor relations should be declared together`,
             file: level.sourcePath || null
           })
         );

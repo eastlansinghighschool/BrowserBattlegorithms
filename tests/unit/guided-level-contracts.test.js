@@ -157,9 +157,11 @@ test("prediction metadata is preserved on the authored prediction levels and sur
 test("advanced campaign contract exposes capstone and optional lab tools as authored", () => {
   const fullTeamTactics = getLevelDefinitions().find((entry) => entry.id === "full-team-tactics");
   assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.VALUE_DISTANCE_TO_TARGET));
+  assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.VALUE_COUNT_WITHIN));
   assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.LOGIC_AND));
   assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_HAVE_ENEMY_FLAG));
   assert.ok(fullTeamTactics.toolboxBlockTypes.includes(BLOCK_TYPES.IF_BARRIER_IN_FRONT));
+  assert.ok(fullTeamTactics.sensorObjectTypes.includes(SENSOR_OBJECT_TYPES.ALLY_RUNNER));
 
   const advancedScrimmage = getLevelDefinitions().find((entry) => entry.id === "advanced-scrimmage");
   assert.ok(advancedScrimmage.title.startsWith("Challenge 37"));
@@ -204,6 +206,19 @@ test("advanced campaign contract exposes capstone and optional lab tools as auth
   assert.equal(optionalCarrierShowdown.setup.teams.opponent.runners[0].hasEnemyFlag, true);
   assert.equal(optionalCarrierShowdown.setup.flags.opponent.carriedByRunnerId, "runner_1_HumanP1");
   assert.equal(optionalCarrierShowdown.setup.flags.player.carriedByRunnerId, "runner_2_Npc1");
+});
+
+test("guided sensor lessons expose above and below relations alongside their existing front and behind pairs", () => {
+  const levels = getLevelDefinitions();
+  const relationMap = new Map(levels.map((level) => [level.id, level.sensorRelationTypes || []]));
+
+  for (const levelId of ["sensor-barrier-branch", "watch-the-wall", "stay-still-can-do-something", "bughunt-15"]) {
+    const relations = relationMap.get(levelId) || [];
+    assert.equal(relations.includes(SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT), true, `${levelId} should keep directly in front`);
+    assert.equal(relations.includes(SENSOR_RELATION_TYPES.DIRECTLY_BEHIND), true, `${levelId} should keep directly behind`);
+    assert.equal(relations.includes(SENSOR_RELATION_TYPES.DIRECTLY_ABOVE), true, `${levelId} should expose directly above`);
+    assert.equal(relations.includes(SENSOR_RELATION_TYPES.DIRECTLY_BELOW), true, `${levelId} should expose directly below`);
+  }
 });
 
 test("optional double carrier showdown passes with a scripted human carrier and split ally roles", () => {
@@ -301,6 +316,8 @@ test("dodge-and-deliver authors a stationary defender and a movement-only wander
     SENSOR_RELATION_TYPES.WITHIN_3,
     SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
     SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+    SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+    SENSOR_RELATION_TYPES.DIRECTLY_BELOW,
     SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
     SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
     SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
@@ -378,24 +395,37 @@ test("guided toolbox restriction reflects the curriculum unlock path", () => {
   }
 
   const sensingLevel = app.state.levels.find((level) => level.id === "sensor-barrier-branch");
-  assert.deepEqual(sensingLevel.sensorObjectTypes, [SENSOR_OBJECT_TYPES.ENEMY_RUNNER]);
+  assert.deepEqual(sensingLevel.sensorObjectTypes, [
+    SENSOR_OBJECT_TYPES.ENEMY_RUNNER,
+    SENSOR_OBJECT_TYPES.ALLY_RUNNER
+  ]);
   assert.deepEqual(sensingLevel.sensorRelationTypes, [
     SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
-    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+    SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+    SENSOR_RELATION_TYPES.DIRECTLY_BELOW
   ]);
 });
 
 test("guided sensing unlocks progress in authored stages", () => {
   const levels = getLevelDefinitions();
   const watchTheWall = levels.find((level) => level.id === "watch-the-wall");
-  assert.deepEqual(watchTheWall.sensorObjectTypes, [SENSOR_OBJECT_TYPES.EDGE_OR_WALL]);
+  assert.deepEqual(watchTheWall.sensorObjectTypes, [
+    SENSOR_OBJECT_TYPES.EDGE_OR_WALL,
+    SENSOR_OBJECT_TYPES.ALLY_RUNNER
+  ]);
   assert.deepEqual(watchTheWall.sensorRelationTypes, [
     SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
-    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND
+    SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+    SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+    SENSOR_RELATION_TYPES.DIRECTLY_BELOW
   ]);
 
   const findTheHuman = levels.find((level) => level.id === "find-the-human");
-  assert.deepEqual(findTheHuman.sensorObjectTypes, [SENSOR_OBJECT_TYPES.HUMAN_RUNNER]);
+  assert.deepEqual(findTheHuman.sensorObjectTypes, [
+    SENSOR_OBJECT_TYPES.HUMAN_RUNNER,
+    SENSOR_OBJECT_TYPES.ALLY_RUNNER
+  ]);
   assert.deepEqual(findTheHuman.sensorRelationTypes, [
     SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
     SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
@@ -404,11 +434,27 @@ test("guided sensing unlocks progress in authored stages", () => {
   ]);
 });
 
-test("guided levels that use directly in front also expose directly behind", () => {
+test("guided levels that use directly in front also expose above and below", () => {
   const levels = getLevelDefinitions();
   const expectations = new Map([
-    ["sensor-barrier-branch", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
-    ["watch-the-wall", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
+    [
+      "sensor-barrier-branch",
+      [
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW
+      ]
+    ],
+    [
+      "watch-the-wall",
+      [
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW
+      ]
+    ],
     [
       "dodge-and-deliver",
       [
@@ -416,13 +462,23 @@ test("guided levels that use directly in front also expose directly behind", () 
         SENSOR_RELATION_TYPES.WITHIN_3,
         SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
         SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW,
         SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
         SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
         SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
         SENSOR_RELATION_TYPES.ANYWHERE_BELOW
       ]
     ],
-    ["stay-still-can-do-something", [SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT, SENSOR_RELATION_TYPES.DIRECTLY_BEHIND]],
+    [
+      "stay-still-can-do-something",
+      [
+        SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
+        SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW
+      ]
+    ],
     [
       "show-what-you-know",
       [
@@ -430,6 +486,8 @@ test("guided levels that use directly in front also expose directly behind", () 
         SENSOR_RELATION_TYPES.WITHIN_3,
         SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
         SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW,
         SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
         SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
         SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
@@ -443,6 +501,8 @@ test("guided levels that use directly in front also expose directly behind", () 
         SENSOR_RELATION_TYPES.WITHIN_3,
         SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT,
         SENSOR_RELATION_TYPES.DIRECTLY_BEHIND,
+        SENSOR_RELATION_TYPES.DIRECTLY_ABOVE,
+        SENSOR_RELATION_TYPES.DIRECTLY_BELOW,
         SENSOR_RELATION_TYPES.ANYWHERE_FORWARD,
         SENSOR_RELATION_TYPES.ANYWHERE_BEHIND,
         SENSOR_RELATION_TYPES.ANYWHERE_ABOVE,
@@ -453,7 +513,7 @@ test("guided levels that use directly in front also expose directly behind", () 
 
   for (const [levelId, expectedRelations] of expectations) {
     const level = levels.find((entry) => entry.id === levelId);
-    assert.deepEqual(level.sensorRelationTypes, expectedRelations, `${levelId} should expose directly behind alongside directly in front`);
+    assert.deepEqual(level.sensorRelationTypes, expectedRelations, `${levelId} should expose above/below alongside direct sensing`);
   }
 });
 
@@ -481,7 +541,10 @@ test("later guided resource levels expose the intended freeze tools and sensing 
   const freezeLane = getLevelDefinitions().find((level) => level.id === "freeze-the-lane");
   assert.ok(freezeLane.toolboxBlockTypes.includes(BLOCK_TYPES.FREEZE_OPPONENTS));
   assert.ok(freezeLane.toolboxBlockTypes.includes(BLOCK_TYPES.IF_AREA_FREEZE_READY_ELSE));
-  assert.deepEqual(freezeLane.sensorObjectTypes, [SENSOR_OBJECT_TYPES.ENEMY_RUNNER]);
+  assert.deepEqual(freezeLane.sensorObjectTypes, [
+    SENSOR_OBJECT_TYPES.ENEMY_RUNNER,
+    SENSOR_OBJECT_TYPES.ALLY_RUNNER
+  ]);
   assert.deepEqual(freezeLane.sensorRelationTypes, [SENSOR_RELATION_TYPES.WITHIN_2, SENSOR_RELATION_TYPES.WITHIN_3]);
 });
 

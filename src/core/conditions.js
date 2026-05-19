@@ -73,9 +73,66 @@ export function getSensorCandidates(state, runner, objectType) {
       return state.allRunners
         .filter((candidate) => candidate.team === runner.team && candidate.isHumanControlled)
         .map((candidate) => ({ x: candidate.gridX, y: candidate.gridY }));
+    case SENSOR_OBJECT_TYPES.ALLY_RUNNER:
+      return state.allRunners
+        .filter(
+          (candidate) => candidate.team === runner.team && !candidate.isHumanControlled && !candidate.isNPC && candidate.id !== runner.id
+        )
+        .map((candidate) => ({ x: candidate.gridX, y: candidate.gridY }));
     default:
       return [];
   }
+}
+
+export function countObjectsWithin(state, runner, objectType, distance) {
+  if (!runner) {
+    return 0;
+  }
+
+  const limit = Math.floor(Number(distance));
+  if (!Number.isFinite(limit) || limit < 1) {
+    return 0;
+  }
+
+  const runnerX = Number(runner.gridX);
+  const runnerY = Number(runner.gridY);
+  if (!Number.isFinite(runnerX) || !Number.isFinite(runnerY)) {
+    return 0;
+  }
+
+  let candidates = [];
+  switch (objectType) {
+    case SENSOR_OBJECT_TYPES.BARRIER:
+      candidates = state?.barriers || [];
+      break;
+    case SENSOR_OBJECT_TYPES.ENEMY_RUNNER:
+      candidates = (state?.allRunners || []).filter((candidate) => candidate.team !== runner.team);
+      break;
+    case SENSOR_OBJECT_TYPES.HUMAN_RUNNER:
+      candidates = (state?.allRunners || []).filter(
+        (candidate) => candidate.team === runner.team && candidate.isHumanControlled && candidate.id !== runner.id
+      );
+      break;
+    case SENSOR_OBJECT_TYPES.ALLY_RUNNER:
+      candidates = (state?.allRunners || []).filter(
+        (candidate) => candidate.team === runner.team && !candidate.isHumanControlled && !candidate.isNPC && candidate.id !== runner.id
+      );
+      break;
+    default:
+      return 0;
+  }
+
+  return candidates.reduce((count, candidate) => {
+    const gridX = candidate.gridX ?? candidate.x;
+    const gridY = candidate.gridY ?? candidate.y;
+    const candidateX = Number(gridX);
+    const candidateY = Number(gridY);
+    if (!Number.isFinite(candidateX) || !Number.isFinite(candidateY)) {
+      return count;
+    }
+    const manhattanDistance = Math.abs(candidateX - runnerX) + Math.abs(candidateY - runnerY);
+    return manhattanDistance <= limit ? count + 1 : count;
+  }, 0);
 }
 
 function relationDistanceLimit(relationType) {

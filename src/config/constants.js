@@ -71,7 +71,8 @@ export const SENSOR_OBJECT_TYPES = {
   EDGE_OR_WALL: "EDGE_OR_WALL",
   ENEMY_RUNNER: "ENEMY_RUNNER",
   ENEMY_FLAG: "ENEMY_FLAG",
-  HUMAN_RUNNER: "HUMAN_RUNNER"
+  HUMAN_RUNNER: "HUMAN_RUNNER",
+  ALLY_RUNNER: "ALLY_RUNNER"
 };
 
 export const SENSOR_RELATION_TYPES = {
@@ -176,6 +177,7 @@ export const BLOCK_TYPES = {
   VALUE_NUMBER: "battlegorithms_value_number",
   VALUE_RUNNER_INDEX: "battlegorithms_value_runner_index",
   VALUE_DISTANCE_TO_TARGET: "battlegorithms_value_distance_to_target",
+  VALUE_COUNT_WITHIN: "battlegorithms_value_count_within",
   VALUE_RANDOM_ROLL: "battlegorithms_value_random_roll",
   VALUE_PLAY_DIRECTION: "battlegorithms_value_play_direction",
   VALUE_COMPARE: "battlegorithms_value_compare"
