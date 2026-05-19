@@ -54,6 +54,7 @@ export function checkForScoring(state, runner) {
 
 export function scorePointForTeam(state, teamId) {
   state.teamScores[teamId] += 1;
+  state.lastScoringTeam = teamId;
   if (state.teamScores[teamId] >= state.pointsToWin) {
     state.currentTurnState = TURN_STATES.GAME_OVER;
     state.mainGameState = MAIN_GAME_STATES.GAME_OVER;

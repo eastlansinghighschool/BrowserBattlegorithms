@@ -4,7 +4,7 @@
 
 - Packet id: plan-55
 - Packet title: Level Result Invariant At Game Over
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-18
 - Packet type: bugfix / engine-invariant / source-code / tests / docs

@@ -184,6 +184,7 @@ export function initializeMatch(app) {
   state.barriers = [];
   state.activeRunnerIndex = 0;
   state.teamScores = { 1: 0, 2: 0 };
+  state.lastScoringTeam = null;
   state.runnerActionHistory = {};
   state.currentTurnEventLog = [];
   state.lastTurnEventLog = [];
@@ -216,6 +217,7 @@ export function initializeDisplayState(app) {
   state.barriers = [];
   applySetupBarriers(state);
   state.teamScores = { 1: 0, 2: 0 };
+  state.lastScoringTeam = null;
   state.runnerActionHistory = {};
   state.currentTurnEventLog = [];
   state.lastTurnEventLog = [];
@@ -241,6 +243,7 @@ export function resetRound(state) {
   state.barriers = [];
   resetAreaFreezeState(state);
   state.runnerActionHistory = {};
+  state.lastScoringTeam = null;
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;

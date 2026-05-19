@@ -21,6 +21,7 @@ Plan 31's repair note is already complete in the packet index, so it is not repe
 | Embedded formative assessment checkpoints | deferred | Same family as prediction; revisit after prediction lands. |
 | Strategy reflection export | deferred | Hold until usage evidence shows whether export would help teachers. |
 | Guided misconception detectors | deferred | Wait for concrete classroom stuck points before adding inline lint-style warnings. |
+| Wrong-runner scoring coach | deferred | Plan 55's event breadcrumb can later drive a Plan 38-style hint when a non-target ally scores in a runner-specific win-condition level. |
 | Sensor sandbox / API explorer | deferred | Trace playback already covers much of the intuition gap. |
 | Replay viewer UI / game history and replays | deferred | Separate from the RNG decision; build only if teachers ask for step-through replay. |
 | Advanced multi-ally coordination levels | deferred | Keep for post-project-saturation exploration. |

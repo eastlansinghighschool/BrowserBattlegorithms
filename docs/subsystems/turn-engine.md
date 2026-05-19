@@ -23,6 +23,7 @@ This note does NOT own:
 | `src/core/movement.js` | Target cell translation, board-blocking checks, bounce logic. |
 | `src/core/conditions.js` | Sensor and condition evaluation consumed by Blockly block execution. |
 | `src/core/scoring.js` | Flag pickup, score increment, `GAME_OVER` transitions, round reset trigger. |
+| `src/core/levels.js` | Guided level completion, pass/fail resolution, and the `GAME_OVER` level-result safety net. |
 | `src/core/collisions.js` | Winner/loser resolution, freeze application, flag drop. |
 | `src/core/events.js` | Per-turn event log for narration consumers; passive observer, does not change resolution order. |
 | `src/core/invariants.js` | Post-resolution state validation: duplicate positions, invalid flag state, team direction. |
@@ -110,6 +111,14 @@ These three events are related but distinct and can happen independently:
 - **Round reset ≠ level reset**: a round reset happens automatically after scoring and preserves workspace state. A level reset re-enters the current level from scratch using the persisted workspace.
 
 A single score event can trigger all three in sequence: increment score → evaluate game-over → if guided, evaluate level completion.
+
+## Game-over level-result invariant
+
+Whenever `mainGameState === GAME_OVER`, `activeLevelResult` must already be a terminal value: `PASSED` or `FAILED`. It must not remain `IN_PROGRESS`, `NONE`, `null`, or `undefined`.
+
+`src/core/levels.js` enforces that invariant in `evaluateLevelProgress()`. If scoring ends the match before the level's own win condition is satisfied, the safety-net branch records `lastLevelResultReason = "match_ended_without_level_win_condition_satisfied"`, emits `level.forcedFailedAtGameOver` with the `levelId`, `reason`, `winConditionType`, `winConditionRunnerId`, and `scoringTeam`, and finalizes the level as failed while preserving the match-ending `GAME_OVER` state.
+
+This is a separate safety net from the `PROCESSING_ACTION` recovery in `src/core/turnEngine.js`. Plan 28 repairs an orphaned turn-state branch; Plan 55 repairs an orphaned level-result branch after scoring.
 
 ## Common traps
 

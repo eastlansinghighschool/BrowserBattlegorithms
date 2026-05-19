@@ -214,6 +214,8 @@ function updateRelayRaceProgress(state, level, actor) {
   }
 }
 
+const GAME_OVER_SAFETY_NET_REASON = "match_ended_without_level_win_condition_satisfied";
+
 export function initializeLevelState(app) {
   const { state } = app;
   state.currentModeView = GAME_VIEW_MODES.GUIDED_LEVELS;
@@ -390,7 +392,7 @@ export function setGuidedHumanTurnBehavior(app, behavior) {
   syncHumanTurnBehaviorVisuals(app.state);
 }
 
-export function completeLevel(app, result, reason) {
+export function completeLevel(app, result, reason, options = {}) {
   const { state } = app;
   const previousLevelResult = state.activeLevelResult;
   if (result === LEVEL_RESULT.PASSED) {
@@ -408,7 +410,9 @@ export function completeLevel(app, result, reason) {
   if (state.predictionForCurrentLevel?.levelId === state.currentLevelId) {
     state.predictionForCurrentLevel.lockedAt = "result_shown";
   }
-  state.mainGameState = MAIN_GAME_STATES.LEVEL_RESULT;
+  if (!options.preserveMainGameState) {
+    state.mainGameState = MAIN_GAME_STATES.LEVEL_RESULT;
+  }
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
   if (previousLevelResult !== result) {
     emit(state, "level.result", {
@@ -437,6 +441,7 @@ export function completeLevel(app, result, reason) {
     app.hooks.onLevelEnded(result, reason);
   }
   finalizeTurnEventLog(state);
+  state.lastScoringTeam = null;
 }
 
 export function configureFreePlay(app, updates = {}) {
@@ -673,6 +678,26 @@ export function evaluateLevelProgress(app) {
       completeLevel(app, LEVEL_RESULT.FAILED, "team_scores_point");
       return { result: LEVEL_RESULT.FAILED, reason: "team_scores_point" };
     }
+  }
+
+  if (
+    state.mainGameState === MAIN_GAME_STATES.GAME_OVER &&
+    state.activeLevelResult !== LEVEL_RESULT.PASSED &&
+    state.activeLevelResult !== LEVEL_RESULT.FAILED
+  ) {
+    const scoringTeam = Number.isFinite(state.lastScoringTeam) ? state.lastScoringTeam : null;
+    state.lastLevelResultReason = GAME_OVER_SAFETY_NET_REASON;
+    emit(state, "level.forcedFailedAtGameOver", {
+      levelId: state.currentLevelId,
+      reason: GAME_OVER_SAFETY_NET_REASON,
+      winConditionType: level.winCondition?.type || null,
+      winConditionRunnerId: level.winCondition?.runnerId || null,
+      scoringTeam
+    });
+    completeLevel(app, LEVEL_RESULT.FAILED, GAME_OVER_SAFETY_NET_REASON, {
+      preserveMainGameState: true
+    });
+    return { result: LEVEL_RESULT.FAILED, reason: GAME_OVER_SAFETY_NET_REASON };
   }
 
   return null;

@@ -6,6 +6,7 @@
 // - flag.pickedUp -> src/core/scoring.js:5
 // - flag.dropped -> src/core/collisions.js:15
 // - team.scored -> src/core/scoring.js:26
+// - level.forcedFailedAtGameOver -> src/core/levels.js (guided-mode safety net)
 // - resource.unavailable -> src/core/turnEngine.js:290 (jump resource exhausted fallback); 294 (barrier resource unavailable fallback); 494 (freeze cooldown guard)
 // - level.result -> src/core/levels.js:323
 
