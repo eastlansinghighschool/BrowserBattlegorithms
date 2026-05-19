@@ -1,322 +1,218 @@
-# **Browser Battlegorithms \- Game Specification V1.1**
+# Browser Battlegorithms — Game Specification
+*Last reviewed: 2026-05-18*
 
-For implementation contracts and subsystem details, see [`docs/subsystems/`](./subsystems/). This specification describes the intended game design; the subsystem notes are the authoritative source for runtime behavior.
+Browser Battlegorithms is a two-team, turn-based, grid-based capture-the-flag game for students learning programming strategy in a browser or on paper.
+The rules below describe the game itself; the subsystem notes cover implementation details.
+The document is intentionally game-first rather than software-first.
+It is meant to read cleanly as a classroom rules handout.
+The same core rules apply across every mode described later.
 
-## **1\. Introduction & Educational Goals**
+## 1. Overview
+Browser Battlegorithms is designed so a reader can understand the game without reading the code.
+It supports classroom play, ally coordination, and strategic reasoning through simple grid rules.
 
-1.1. Overview
+## 2. Learning Objectives
+- Teach sequencing, branching, and turn-by-turn planning.
+- Encourage students to reason about local sensing, roles, and resource timing.
+- Show how simple rules create coordination without a central commander.
+- Support strategic decomposition for ally runners sharing one program.
+- Provide a gentle bridge from visual programming to deeper CS ideas.
+- Reinforce that local sensing and resource checks matter more than guessing.
+- Keep the game legible enough that students can explain it back to each other.
+- Make runner roles and shared strategy visible instead of hidden.
+- Give students a concrete way to talk about timing, spacing, and positioning.
 
-Browser Battlegorithms is a two-player, turn-based, grid-based capture-the-flag game designed as an introductory programming and computational thinking activity. It is intended to be played in a web browser. Players (or students) will primarily interact with the game by constructing strategies for their AI-controlled "Ally" runners using a visual, block-based programming interface (Blockly). The game supports play against built-in NPC opponents or hot-seat multiplayer where two human players, each with their own AI-controlled allies, compete on the same machine.
+## 3. Board and Setup
+- This section describes the physical board and the default starting state for a match.
+- The game is played on a static 2D grid of floor, wall, base, and jail cells.
+- Each match uses one fixed map layout until the match ends.
+- The two teams always start on opposite sides of the board.
+- Team identity determines home side, flag home location, and forward direction.
+- Free Play may randomize which team starts on the left or right.
+- The teams still face opposite directions in every match.
+- Each team has spawn positions for its runners and a starting flag location in its home area.
+- Each team fields one human runner and a small number of allies in modes that use them.
+- The team setup determines which runner is controlled directly and which runners share the ally program.
+- Runners start in their own territory rather than in the middle of the map.
+- A tabletop player can model the board using tokens for runners, flags, barriers, and jails.
+- Jails appear in the lower corners and stay open for pathfinding while remaining functionally blocked.
+- A team's base area is the place where its own flag starts and where an enemy flag must be returned to score.
+- Board size, team size, points to win, and similar knobs are configurable per mode or level.
+- The map does not regenerate during a match.
+- A match keeps the same board until a round reset or full match reset occurs.
+- If a level authors a custom setup, it still respects the same board rules and side assignment logic.
+- The board can be played with tokens and paper if the rules are followed faithfully.
+- Setup is the point where the match decides who starts where, not where the core rules change.
 
-1.2. Target Audience
+## 4. Game Entities
+The entities below are the persistent objects that the rules move around and update.
+### Runners
+- Each runner belongs to a team and has a grid position.
+- A runner may be human-controlled, ally-controlled, or NPC-controlled depending on the mode.
+- Runners inherit their forward direction from their team setup.
+- Runners track enemy-flag state, frozen state, frozen-turn countdown, jump availability, and barrier availability.
+- The human runner is the direct-input runner for that team.
+- Ally runners may share one Blockly program, so a single strategy can coordinate several bodies.
+- Frozen runners still occupy space and cannot act until they thaw.
+- A runner's team identity is what ties together its direction, base, and scoring side.
+- The runner list and the flag list are the active state a match keeps track of from turn to turn.
 
-This game is primarily aimed at students in introductory computer science courses or those new to programming concepts (e.g., middle school or early high school, or "Hour of Code" participants).
+### Flags
+- Each team has one flag.
+- A flag has a team, a current grid position, an at-base state, and an optional carrying runner id.
+- Flags move only when carried.
+- A flag stays at its home unless a runner carries it away or a round reset returns it home.
+- When a flag is carried, its visible position follows the carrier.
+- A runner can only score with the enemy flag, not with its own flag.
 
-**1.3. Learning Objectives**
+### Barriers
+- A barrier has a grid position and the id of the runner who placed it.
+- A runner may have only one active barrier at a time.
+- A runner who stands still can remove the barrier directly in front of them if that barrier belongs to a runner.
+- Barriers are temporary board objects, not team-wide structures.
+- Removing a barrier restores that runner's ability to place another one.
+- Barriers exist to create tactical detours, not to permanently reshape the map.
+- Barrier placement and removal are how the game creates short-lived map puzzles.
 
-* Introduce fundamental programming concepts: sequencing, conditional logic (if/then/else), simple loops (implicit in "each turn"), and event-based thinking.  
-* Develop problem-solving and strategic thinking skills within a game context.  
-* Foster an understanding of how simple rules and AI behaviors can lead to complex emergent gameplay.  
-* Provide a gentle and engaging entry point to computational thinking without the immediate overhead of text-based syntax.  
-* Serve as a potential bridge to more advanced programming environments and concepts.
+### Special actions
+- Traps are not part of Browser Battlegorithms.
+- Area Freeze is the only team special action.
+- The special-action slot is team-wide, not tied to one specific runner.
+- Special actions are resources, so the team must decide when spending them is worth it.
 
-## **2\. Core Gameplay Loop & Mechanics**
+## 5. Turn Structure
+This section is the canonical order of play for a single runner turn.
+- Runners act one at a time in a fixed sequence.
+- At the start of a runner's turn, the game checks whether that runner is frozen.
+- Frozen runners skip their action and thaw one step as the sequence continues.
+- Otherwise the active runner chooses one action for the turn.
+- Human runners choose with keyboard input.
+- AI allies and free-play CPU runners choose through the same action pipeline via their mode.
+- The engine resolves the chosen action, then applies movement legality, collisions, flag pickup, and scoring.
+- Successful moves may animate.
+- Blocked moves bounce back.
+- Illegal no-op actions consume the turn without movement.
+- After the active runner finishes, the next runner becomes active.
+- When the sequence wraps back to the first runner, the current turn number advances.
+- The active runner is the only runner who may act at that moment.
+- The turn engine's deterministic order is what makes the game readable on paper.
+- For the exact runtime order, see the turn-engine subsystem note.
+- A round ends only when scoring or another match-level rule says it should.
+- A turn can still advance even when the action was a no-op.
+- A frozen runner still counts as part of the sequence even though its action is skipped.
+- The turn structure is intentionally simple enough that students can track it by hand.
 
-**2.1. Game Type**
+## 6. Actions
+Human-controlled runners use keyboard input; AI allies select from the same action set through Blockly programs, and the current block inventory is documented in the Blockly workspace subsystem note.
+Each runner may execute only one action per turn.
+- The difference between human and AI control is input path, not the underlying action rules.
 
-* Turn-based strategy.  
-* Grid-based map.  
-* Two teams: "Team 1" (e.g., Blue) and "Team 2" (e.g., Orange).  
-* Each team consists of one Human-Controlled Runner and a small number (e.g., 2\) of AI Ally Runners.
+- Move: step one cell in a cardinal direction.
+- Move Forward / Backward / Up / Down: team-relative move actions used by Blockly.
+- Move Randomly: choose a legal cardinal move.
+- Move Toward [target]: take one step toward the chosen target without full pathfinding.
+- Jump Forward: move two cells forward if jump is available.
+- Place Barrier: place a barrier in front if the cell is valid and barrier is available.
+- Stay Still: do nothing for the turn.
+- Stay Still can also remove a barrier directly in front of the runner.
+- Use Area Freeze: if the team power is ready, freeze opposing runners in range and start the cooldown.
+- The action set is mode-agnostic even when the input medium differs.
+- Move Up / Down / Left / Right are the screen-keyboard actions a human runner uses.
+- Move Forward / Backward are the same movement idea expressed through team direction.
+- Jump Forward and Place Barrier each consume a limited resource until the next reset or removal.
+- Move Toward is a helper action, not a full pathfinder.
+- Use Area Freeze targets the caster's location and then affects opposing runners within range around it.
+- The first reachable Blockly action under `On Each Turn` is the one that matters for execution.
+- Any later sequential Blockly action is ignored by the engine.
+- Free-play CPU modes still choose from the same underlying action family.
+- Students can explain the game as "pick one action, then let the engine resolve it."
 
-**2.2. Game Modes**
+## 7. Collision Resolution
+When an active runner moves into a cell occupied by an active opposing runner, resolve the collision immediately.
+The map-side defender is the team whose home side contains the collision cell.
+- A collision only happens when the target cell is occupied by an active opposing runner.
 
-* **Player vs. NPC:** One human player controls their team's Human Runner and programs their AI Allies. The opposing team is controlled by built-in NPC logic.  
-* **Hot-Seat Multiplayer:** Two human players on the same computer. Each player controls their respective Human Runner using distinct keyboard inputs and programs their own team's AI Allies using separate Blockly workspaces/configurations.
-* **Free-Play PvP:** Each side fields one human runner plus Blockly-controlled allies. The UI uses one visible Blockly editor with Team 1 / Team 2 tabs so each side still has its own saved/importable program.
-* **Free-Play PvCPU Easy:** The player side fields one human runner plus Blockly allies, while the CPU side uses low-skill random legal actions and opportunistic special-ability use.
-* **Free-Play PvCPU Tactical:** The player side fields one human runner plus Blockly allies, while the CPU side splits into attacker and defender roles that pursue flags, protect home side, place midfield barriers, and freeze nearby threats when appropriate.
+- If exactly one runner carries the enemy flag, that flag carrier loses.
+- If both runners carry the enemy flag, the moving attacker loses.
+- If neither runner carries the enemy flag, the map-side defender wins.
+- The loser becomes frozen for the collision freeze duration.
+- If the loser carries a flag, that flag returns to its home base.
+- The loser is moved back to the attacker's origin cell.
+- The winner remains on the collision cell.
+- Frozen opponents still block space.
+- The old percent-chance collision rule is not used.
+- The defender is defined by the collision cell's home side, not by a fixed team number.
+- Collision resolution therefore stays correct even when Free Play randomizes the left/right assignment.
+- A collision never leaves two runners stacked on the same square.
+- The collision rule is what makes flag-carrying play more dangerous and more interesting.
+- Collisions are resolved before the next runner gets a turn.
+- If a collision happens during a carrier run, the flag logic stays part of the same immediate resolution.
 
-* **Free-Play Configuration:** Free play supports configurable team sizes from 2-6 total runners per side and exposes multiple map layouts through a free-play-only setup panel.
+## 8. Area Freeze
+Area Freeze is a team power with a shared readiness cooldown.
+A team may use it only when the shared helper says it is ready.
+- The power is ready or not ready for the whole team, not for individual runners.
 
-**2.3. Objective & Winning**
+- The power freezes opposing runners within the Area Freeze radius around the caster.
+- Frozen runners remain disabled for the frozen duration.
+- Using the power spends it even if no opponents are in range.
+- After use, the team must wait for the cooldown window before using it again.
+- Readiness is tracked by the shared cooldown helper used by the runtime and the UI.
+- The radius is measured with Manhattan distance.
+- The frozen duration for Area Freeze is two turns.
+- The resource is team-wide, so one ally's use affects the whole team clock.
+- Area Freeze matters most when a team wants to protect a carrier or create space for a run.
+- The action still counts as spent even if it does not freeze anyone.
+- The power is local, so it changes a nearby lane rather than the whole board.
+- The shared cooldown is what keeps the power from being spammed every turn.
 
-* **Capture the Flag:** The primary objective is to capture the opposing team's flag.  
-* **Return to Base:** After capturing the enemy flag, a runner must carry it back to their own team's starting base location on the map.  
-* **Scoring a Point:** A point is scored when a runner carrying the enemy flag successfully reaches any cell within their team's designated starting base area.  
-* **Winning the Game:** The first team to reach a predetermined number of points (e.g., 2 points) wins the match.  
-* **Round Reset:** After a point is scored, the game resets for a new round: flags are returned to their starting base positions, all runners are reset to their starting positions and states (e.g., hasEnemyFlag \= false, isFrozen \= false, canJump \= true, canPlaceBarrier \= true). Area Freeze is also reset to ready for each team. The map itself remains the same for the duration of a match. The captured flag should immediately return to its home base so the next round begins from a clear state.
+## 9. Scoring and Win Conditions
+A point is scored when a runner carrying the enemy flag reaches any cell in its own team's base area.
+When scoring happens, the flag returns home, the round resets, and play continues unless the match is over.
+The first team to reach the points-to-win threshold wins the match.
+Guided levels may add authored pass/fail conditions on top of these match rules.
+- Scoring uses the current base area, not a separate goal cell.
+- Round reset returns runners to their starting positions and resets their jump, barrier, and frozen states.
+- Area Freeze readiness also resets on round reset.
+- The map itself stays the same across rounds in a match.
+- Scoring is the thing that turns a successful flag run into a completed round.
+- A full match can contain several scored rounds before one team reaches the win threshold.
+- A round reset happens immediately after the point is awarded.
+- The match is over only when a team reaches the win threshold.
 
-2.4. Turn Structure
+## 10. Configurable Parameters
+- Board dimensions and map layout.
+- Team size and the free-play mode's player/CPU split.
+- Points required to win the match.
+- Collision freeze duration.
+- Area Freeze radius, freeze duration, and cooldown length.
+- Whether free play randomizes which team starts on which side.
+- The active map and the runner spawn setup for the current level or match.
+- The default board remains 12 columns by 8 rows unless a level or mode overrides it.
+- Free Play team size can vary within the authored sandbox limits.
+- Collision freeze duration is separate from Area Freeze duration and cooldown.
+- Configurable parameters change the match feel without changing the core rules.
+- The same rules still apply when a level chooses a smaller or larger map.
+- Level authors can tune the board and the starting setup without rewriting the rules.
+- Player-facing modes can expose different sandbox breadth while keeping the same match logic.
 
-The game proceeds in turns.
+## 11. Levels
+Browser Battlegorithms ships with a guided campaign of progressive levels.
+See [`GUIDED_LEVEL_CONCEPT_MATRIX.md`](./GUIDED_LEVEL_CONCEPT_MATRIX.md) for the canonical level inventory and [`StudentGuide.md`](./StudentGuide.md) for student-facing descriptions.
+The spec does not list the levels individually.
+The level matrix is the place to look for order, unlocks, and level-specific teaching goals.
+- Guided level names, objectives, and toolbox shaping live outside this rules doc.
+- This keeps the rules doc stable even when the campaign grows.
 
-1. **Player Input & AI Plan Collection Phase:**  
-   * Human Player 1 determines the action for their Human Runner via keyboard input.  
-   * The Blockly programs for Player 1's AI Allies are evaluated to determine their intended actions for the turn.  
-   * (If Hot-Seat) Human Player 2 determines the action for their Human Runner via keyboard input.  
-   * (If Hot-Seat) The Blockly programs for Player 2's AI Allies are evaluated.  
-   * (If Player vs. NPC) The NPC team's AI logic determines their intended actions.  
-   * All these intended actions are collected by the game engine.  
-2. **Action Resolution Phase (Sequential & Animated):**  
-   * The game engine advances through runners in a deterministic active-runner sequence. Each runner's action is fully resolved — including movement, collision, flag pickup, and scoring checks — before the next runner acts. Visuals (including movement animations) reflect each outcome immediately.  
-   * For the full per-runner resolution order, see [`docs/subsystems/turn-engine.md`](./subsystems/turn-engine.md).  
-3. **End of Turn Phase:**  
-   * Check for win/scoring conditions. If a point is scored, proceed to round reset. Guided levels may also author one or more separate failure conditions, such as a turn limit or the opposing team scoring first, so the same scoring event can either pass the level or fail it depending on the authored objective. Older levels may still use the singular `failureCondition` field; newer authored levels may use `failureConditions`.  
-   * Update any turn-based effects (e.g., decrement frozenTurnsRemaining).  
-   * The next turn begins.
-
-**2.5. Map**
-
-* **Grid-Based:** The game takes place on a 2D grid of cells.  
-* **Predefined Maps:** A selection of 3-5 predefined map layouts will be available. These maps will vary in terms of obstacle placement and path complexity.  
-  * Example map dimensions: 12 columns wide by 8 rows high.  
-  * Maps will contain open floor cells and impassable wall cells (visualized by color).  
-* **No Dynamic Generation:** Maps are static for the duration of a match.  
-* **Team Starting Areas/Bases:** Each team has a designated starting "base" area on opposite sides of the map. These areas are where their flag starts and where the enemy flag must be returned to score. In the current architecture, the active team's home side and base area are derived from team configuration rather than hard-coded runner defaults.  
-* **Dynamic Free-Play Side Assignment:** Free play may randomize which team starts on the left versus right, but the two teams must always occupy opposite sides and therefore use opposite `playDirection` values.  
-* **Jails:** Simple designated cells, visually distinct (e.g., outlined), typically in corners.
-
-**2.6. Play Direction (Internal Concept)**
-
-* For simplicity in Blockly, blocks like "Move Forward" will be provided.  
-* The game engine now treats `playDirection` as a **team-level property**. Runners inherit their effective forward direction from their active team during match setup rather than authoring an independent value per runner.  
-* Opposing teams must always use different `playDirection` values, and setup should fail fast if both teams point the same way.  
-* "Move Forward" blocks use this team-derived playDirection to determine the actual change in X or Y coordinates. This concept will not be directly exposed to beginner students via blocks initially.
-
-## **3\. Game Entities**
-
-3.1. Runners
-
-Represented by emoji characters. Each runner object will have:
-
-* id: Unique identifier.  
-* team: (TEAM\_1 or TEAM\_2).  
-* x**,** y: Current grid coordinates.  
-* isHumanControlled: Boolean.  
-* emojiChar: The emoji character representing this runner (e.g., 🏃, 🤖).  
-* hasEnemyFlag: Boolean.  
-* isFrozen: Boolean.  
-* frozenTurnsRemaining: Integer.  
-* canJump: Boolean (resets each round).  
-* canPlaceBarrier: Boolean (resets each round, or when their placed barrier is removed).
-
-3.2. Flags
-
-Represented by emoji characters (e.g., 🚩, 🏳️).
-
-* Attributes:  
-  * team: Which team it belongs to.  
-  * x**,** y: Current grid coordinates.  
-  * emojiChar: The emoji for the flag.  
-  * isAtBase: Boolean.  
-  * carriedByRunnerId: ID of the runner carrying it, or null.  
-* No flag dancing. Flags only move when carried.
-
-3.3. Barriers
-
-Represented by an emoji character (e.g., 🚧, 🧱).
-
-* Attributes:  
-  * x**,** y: Grid coordinates.  
-  * ownerRunnerId: ID of the runner who placed it.  
-  * emojiChar: The emoji for the barrier.  
-* A runner can have only one of their barriers active on the map at a time.  
-* If a runner's active barrier is removed, their canPlaceBarrier status becomes true again.
-
-**3.4. Traps**
-
-* Traps are not a feature in this version of Browser Battlegorithms. The "Area Effect Freeze" serves as a primary special action.
-
-## **4\. Runner Actions & Resolution**
-
-Each active (not frozen) runner can perform **one** action per turn.
-
-**4.1. Available Actions**
-
-* **For Human Keyboard Control:**  
-  * Move Up (Screen): Move one cell towards the top of the screen.  
-  * Move Down (Screen): Move one cell towards the bottom of the screen.  
-  * Move Left (Screen): Move one cell towards the left of the screen.  
-  * Move Right (Screen): Move one cell towards the right of the screen.  
-  * Jump Forward: If canJump is true, move two cells "Forward" (engine determines direction). Consumes canJump.  
-  * Place Barrier: If canPlaceBarrier is true, place a barrier in the cell directly "Forward." Consumes canPlaceBarrier until removed.  
-  * Stay Still: Runner remains in its current cell. Can remove an adjacent barrier.  
-* **For AI Ally Blockly Programs:**  
-  * Move Forward  
-  * Move Backward  
-  * Move Up (screen)  
-  * Move Down (screen)  
-  * Move Randomly (cardinal)  
-  * Move Towards \[Target\] (Dropdown: Enemy Flag, My Base, Human Runner, Closest Enemy) \- helper movement using a deterministic one-step heuristic rather than full pathfinding.  
-  * Jump Forward  
-  * Place Barrier (in front)  
-  * Stay Still  
-  * Use Area Freeze (at my location): (AI Ally Only) If Area Freeze is ready for the team. Freezes opposing runners in a radius for 2 turns and starts the cooldown timer. The resource is ready when `currentTurnNumber >= nextAvailableTurn`.
-
-4.2. Action Resolution (Sequential, Per Runner)
-
-As each runner's action is processed in the alternating sequence described in 2.4:
-
-1. **Special Action Execution (e.g., Area Freeze):**  
-   * If Use Area Freeze is planned by an AI Ally and available for the team:  
-     * Apply freeze effect to nearby opponents.  
-     * Mark the team's next available Area Freeze turn using the shared cooldown helper.  
-     * This runner's turn ends.  
-2. **Barrier Placement:**  
-   * If Place Barrier is planned and canPlaceBarrier is true:  
-     * Determine target cell "Forward."  
-     * Validate: Cell must be on map, not a wall, not occupied by another barrier or any runner, and not be a home-flag cell that still has a flag sitting on it.  
-     * If valid: Place barrier, set runner's canPlaceBarrier to false.  
-     * If invalid: Action fails, runner effectively stays still.  
-     * This runner's turn ends.  
-3. **Stay Still & Barrier Removal:**  
-   * If Stay Still is planned:  
-     * Check cell "Forward." If it contains a barrier:  
-       * Remove the barrier.  
-       * Find the original ownerRunnerId of that barrier.  
-       * Set that owner's canPlaceBarrier to true.  
-     * Runner remains in place. This runner's turn ends.  
-4. **Movement Intention Validation & Execution (for** Move **or** Jump**):**  
-   * Determine target cell based on the planned move (e.g., Move Forward, Move Towards \[Target\], Jump Forward).  
-   * **Basic Validity:**  
-     * Is target cell on map?  
-     * Is target cell a wall?  
-     * Is target cell occupied by a barrier?  
-     * Is target cell the runner's own home-flag cell while that flag is still at home? If so, the move is illegal. Runners defend around their flag rather than standing on top of it.  
-     * If Jump: Is canJump true? (If so, consume canJump now, regardless of move success). Is landing cell valid as per above? (Intermediate cell is ignored for obstacles).  
-     * If any of these checks fail, the move fails. The runner "bounces back" (remains in their original cell for this turn). An animation may show the attempt and return. This runner's turn ends.  
-   * **Teammate Occupancy Check:**  
-     * If the target cell is valid (passed basic checks) BUT is currently occupied by an *active (not frozen) friendly runner*: The move fails. The runner "bounces back" to their original cell. An animation may show the attempt and return. This runner's turn ends.  
-     * *Note: This simplified rule prevents adjacent swaps but is easier to visualize and implement.*  
-   * **Opponent Occupancy / Collision Flagging:**  
-     * If the target cell is valid AND is currently occupied by an *active (not frozen) opposing runner*: The move is provisionally successful (runner moves to the cell). A collision is flagged for immediate resolution (see Section 5).  
-   * **Moving to Empty Cell:**  
-     * If the target cell is valid AND empty: The runner successfully moves to the target cell. Update runner's x,y. Animate the movement. This runner's turn ends.  
-   * **Frozen Occupancy Check:**  
-     * If the target cell is occupied by a *frozen* opposing runner, the move fails and the runner bounces back. Frozen runners still occupy space on the board.  
-5. **Immediate Collision Resolution (if flagged in step 4c):**  
-   * If a collision was flagged, resolve it immediately as per Section 5\. Update statuses (isFrozen, frozenTurnsRemaining, flag position if dropped).  
-6. **Immediate Flag Pickup (if applicable):**  
-   * If a runner (not frozen) successfully ends their move on the same cell as an opponent's flag (and the flag is not carried by another teammate):  
-     * Runner's hasEnemyFlag becomes true.  
-     * Flag's carriedByRunnerId is set to this runner.  
-     * Flag's x,y updates to the carrier's x,y.  
-7. **Animation:** All successful movements should be visually animated (e.g., using an easing function over a short duration) before the next runner's action is processed. "Bounce back" animations should also occur for failed moves due to teammate occupancy or invalid targets.
-
-## **5\. Collision Resolution**
-
-When an active runner attempts to move into a cell occupied by an active opposing runner (as determined in Action Resolution Step 4c):
-
-1. **Determine Map-Side Defender:** The team whose home side contains the collision cell is the "defender." The map is split at X \= mapWidth/2; whichever team's `homeSide` (from the active team configuration) covers that half owns it. This is orientation-agnostic: in Free Play the orientation is randomized at match start, so the defender of the left or right half is whichever team was assigned to it, not a fixed team number.  
-2. **Collision Outcome:**  
-   * If exactly one runner carries the enemy flag, the flag carrier loses.  
-   * If both runners carry the enemy flag, the moving attacker loses because they initiated the collision.  
-   * If neither runner carries the enemy flag, the map-side defender wins.  
-   * The old Java percent-chance collision rule is not part of Browser Battlegorithms.  
-3. **Consequences (applied immediately):**  
-   * **Loser:**  
-     * Becomes isFrozen \= true.  
-     * frozenTurnsRemaining is set (e.g., to 2 turns).  
-     * If carrying a flag, the flag is immediately returned to its team's starting base location and its carriedByRunnerId is set to null.  
-     * The collision resolves to **one occupied cell only**. The winner ends on the collision cell. The loser is frozen and moved to the attacker's origin cell, so the board never shows stacked runners on the same square.  
-   * **Winner:** Remains on the collision cell (their move to it was successful).  
-4. **Frozen Opponents Still Block Space:** Active runners cannot move into or through cells occupied by frozen opposing runners. The frozen runner remains in place until they thaw.
-
-## **6\. Blockly Interface & Blocks**
-
-*(This section (6.1 UI Layout, 6.2 Block Categories & Specific Blocks, 6.3 Blockly Execution Model) remains largely the same as in the previous version of the spec, focusing on the visual programming environment. Ensure block descriptions match the simplified actions in 4.1.)*
-
-**6.2. Block Categories & Specific Blocks (Example Refinements):**
-
-* **Actions:**  
-  * On Each Turn (required event block; immovable, undeletable, starter anchor for student programs in guided and free-play workspaces)  
-  * Move Forward (engine handles direction)  
-  * Move Backward (engine handles direction)  
-  * Move Up (on screen)  
-  * Move Down (on screen)  
-  * Move Randomly (N,S,E,W)  
-  * Stay Still (removes barrier if facing)  
-  * Jump Forward (engine handles direction)  
-  * Place Barrier (in front)  
-  * Move Towards \[Enemy Flag / My Base / Human Runner / Closest Enemy\]  
-  * *Later (AI Ally Only):* Use Area Freeze (at my location)  
-* **Conditions:**  
-  * If [Object] is [Relation]  
-  * If [Object] is [Relation] / Else  
-  * If I have enemy flag  
-  * If enemy is in front  
-  * If barrier is in front  
-  * If I can jump  
-  * If I can place barrier  
-  * *Later:* If Area Freeze is ready (for my team)  
-  * *Later:* Is enemy within \[1/2/3\] steps? (dropdown)  
-  * *Later:* Is \[My Runner / Enemy Flag / My Base\] on \[My Side / Enemy Side\] of map?  
-  * Die roll (1-6) \> \[1/2/3/4/5\] (dropdown)  
-* **Logic:** If-Then, If-Then-Else, AND, OR, NOT.  
-* **Sensing (Later/Advanced):** My X, My Y, Enemy Flag X, Enemy Flag Y, My Base X, My Base Y. The playDirection value block is deferred for advanced use.
-
-**Current Advanced Blockly Additions**
-
-* `If [boolean]`
-* `If [boolean] / else`
-* boolean value blocks for sensor matches, resource checks, flag possession, teammate flag possession, and side-of-map checks
-* number/value blocks for typed numbers, runner index, distance to target, random roll, and playDirection
-* comparison block with `=`, `!=`, `<`, `<=`, `>`, `>=`
-
-**6.3. Blockly Execution Model (Current Guided MVP Clarification)**
-
-* Student programs currently start from a required `On Each Turn` block.
-* Only blocks attached beneath that event are considered part of the ally's program.
-* In the current early-phase execution model, only the **first action** under `On Each Turn` is executed each ally turn.
-* One-branch conditional blocks may choose which action becomes that first executed action, but the ally still performs only one action each turn.
-* `Move Towards [Target]` is a one-step helper action that selects a single move toward the chosen target for the current turn. It is intentionally not full pathfinding.  
-* The generic sensing blocks use an object dropdown (such as barrier, edge or wall, enemy flag, or human runner) and a relation dropdown (such as directly in front, anywhere above, or within N spaces).  
-* Distance-based sensing currently uses Manhattan distance so "within N spaces" means the number of ideal grid moves to reach that target if nothing blocked the path.  
-* Free play currently exposes a broader Blockly sandbox than guided mode, including readiness checks (`If I can jump`, `If I can place barrier`, `If Area Freeze is ready`), teammate/territory checks, `Move Randomly`, and `Freeze Opponents`.  
-* The advanced campaign now also allows one Blockly workspace to control multiple allied runners, with `runner index` used to assign different jobs inside one shared program.
-* Additional sequential actions after that first action are intentionally ignored for now and should be visually marked as such so beginners are not misled.  
-* Unattached blocks elsewhere in the workspace are also ignored and should be visually indicated as inactive.
-
-## **7\. Scaffolded Levels / Challenges (Initial Outline)**
-
-*(This section remains largely the same, but level objectives should align with the simplified mechanics, e.g., Level 5 introduces human control but against a very basic NPC. Level 6 could be hot-seat or vs. a slightly better NPC, focusing on barrier use.)*
-
-* **Pass Conditions:**  
-  * Level 1 (Move to Target): Ally's (x,y) matches target (x,y).  
-  * Level 2 (Reach Enemy Flag): Ally's (x,y) matches enemy flag's starting (x,y).  
-  * Level 3 (Score a Point): Team score increments.  
-  * Level 4 (Obstacle Map Score): Team score increments on a map with pre-set barriers.  
-  * Level 5 (First Match): Player's team wins a best-of-3 (or single point) match.  
-  * Level 6 (Hot-Seat/Advanced NPC): Player's team wins, or specific strategic goals met (e.g., block X enemy advances with barriers).
-
-**Guided Onboarding Expectations**
-
-* The first-run guided experience should make key tutorial constraints explicit instead of assuming they are obvious.
-* The product should support spotlight/callout overlays that can direct student attention to:
-  * the board
-  * target cells or flags
-  * Blockly/toolbox changes
-  * replaying tutorial help
-* Guided levels should include concise intros/tips explaining unusual states such as frozen practice opponents or auto-skipped human turns.
-* Guided level navigation should scale beyond a handful of levels, ideally through a richer picker/popover rather than an ever-growing row of buttons.
-
-## **8\. Technical Stack & Deployment**
-
-* **Core Language:** JavaScript (ES6+).  
-* **Application Structure:** Modular ES modules with responsibility split across core game rules, entities, AI integration, rendering, and UI wiring.  
-* **Rendering & Game Loop:** p5.js library.  
-  * **Visuals:** Emoji characters for runners, flags, and barriers, rendered using p5.js text() function. Game grid, background, wall coloring, and jail outlines drawn using p5.js geometric drawing functions.  
-  * **Animation:** Movement of runners between cells should be animated using an easing function over a short duration. "Bounce back" animations for failed moves.  
-* **Visual Programming:** Blockly library.  
-* **UI Structure:** HTML, CSS (Flexbox/Grid).  
-* **Build Tooling:** Vite-based local development and production build pipeline.  
-* **Deployment:** Static web hosting.  
-* **Saving/Loading Student Work:** Three separate file pipelines exist — workspace XML (program portability), private encrypted program files (Free Play hot-seat privacy), and usage evidence JSON (classroom evidence for teacher review). See [`docs/subsystems/file-pipelines.md`](./subsystems/file-pipelines.md) for the full contrast.
-* **Testing Strategy:**  
-  * Command-line JavaScript tests should validate pure rule behavior such as setup, movement, collisions, scoring, round reset, and NPC action legality.  
-  * Browser tests should validate app boot, mode selection, tutorial overlays, Blockly visibility, play/reset flow, keyboard interactions, level navigation UI, and representative UI/gameplay states.  
-
-## **9\. "Fun Factor" Enhancements (Post-Core Development)**
-
-*(This section remains the same.)*
+## 12. Modes of Play
+- PvNPC: one human player controls their team's human runner and programs allies, while the opposing team uses built-in NPC behavior. See [`ui-mode-contract.md`](./subsystems/ui-mode-contract.md) for runtime control details.
+- Hot-Seat: two human players share one machine, each controlling their own human runner and ally program. See the ui-mode contract note for how the shared UI switches between players.
+- Free-Play PvP: both teams are human-facing free-play teams with separate Blockly tabs. See the ui-mode contract note for how the tabs, scoreboard, and controls change.
+- Free-Play PvCPU Easy: the player team uses Blockly allies while the CPU team plays a simpler legal-action style. See the ui-mode contract note for the control layout.
+- Free-Play PvCPU Tactical: the player team uses Blockly allies while the CPU team uses a more role-based defender/attacker strategy. See the ui-mode contract note for the control layout.
+- The mode descriptions here stay short on purpose; the ui-mode contract note owns the exact control visibility and UI behavior.
+- Guided levels sit on top of these modes rather than replacing them.
+- Each mode keeps the same core rules; only the controlling agents and UI framing change.
+- Mode choice changes who decides the action, not what the board rules are.
+- The scoreboard and control surface adapt to the selected mode, but the match rules do not.
+- The same board, collision, flag, and scoring rules continue to apply in every mode.

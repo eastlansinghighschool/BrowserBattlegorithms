@@ -1,6 +1,7 @@
-import { AREA_FREEZE_COOLDOWN_TURNS } from "../config/constants.js";
+import { AREA_FREEZE_COOLDOWN_TURNS, AREA_FREEZE_RADIUS } from "../config/constants.js";
 
 const TEAM_IDS = [1, 2];
+const AREA_FREEZE_VISUAL_EFFECT_DURATION_MS = 600;
 
 function normalizeTeamId(teamId) {
   return Number(teamId) === 2 ? 2 : 1;
@@ -71,4 +72,34 @@ export function markAreaFreezeUsed(state, teamId) {
   state.teamAreaFreezeNextAvailableTurn[normalizedTeamId] = nextAvailableTurn;
   state.teamAreaFreezeUsed[normalizedTeamId] = true;
   return nextAvailableTurn;
+}
+
+export function buildAreaFreezeEffect({
+  currentTurnNumber,
+  startedAtMs
+}, casterRunner, affectedRunners = []) {
+  if (!casterRunner || !Number.isFinite(Number(currentTurnNumber)) || !Number.isFinite(Number(startedAtMs))) {
+    return null;
+  }
+
+  return {
+    effectKey: `${Number(currentTurnNumber)}-${casterRunner.id}-${Number(startedAtMs)}`,
+    startedAtMs: Number(startedAtMs),
+    currentTurnNumber: Number(currentTurnNumber),
+    durationMs: AREA_FREEZE_VISUAL_EFFECT_DURATION_MS,
+    casterRunnerId: casterRunner.id,
+    casterTeamId: normalizeTeamId(casterRunner.team),
+    casterCell: {
+      x: Number(casterRunner.gridX),
+      y: Number(casterRunner.gridY)
+    },
+    radius: AREA_FREEZE_RADIUS,
+    affectedRunners: affectedRunners.map((runner) => ({
+      runnerId: runner.id,
+      teamId: normalizeTeamId(runner.team),
+      cellX: Number(runner.gridX),
+      cellY: Number(runner.gridY),
+      frozenTurnsRemaining: runner.frozenTurnsRemaining
+    }))
+  };
 }

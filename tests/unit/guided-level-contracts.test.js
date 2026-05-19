@@ -310,7 +310,7 @@ test("dodge-and-deliver authors a stationary defender and a movement-only wander
   assert.equal(Boolean(wanderingEnemy.isFrozen), false);
   assert.equal(stationaryDefender.gridX > ally.gridX, true);
   assert.equal(stationaryDefender.gridX < enemyFlag.gridX, true);
-  assert.equal(stationaryDefender.gridY < enemyFlag.gridY, true);
+  assert.equal(stationaryDefender.gridY <= enemyFlag.gridY, true);
   assert.equal(Math.abs(stationaryDefender.gridY - enemyFlag.gridY) <= 1, true);
   assert.equal(wanderingEnemy.gridX, 8);
   assert.equal(wanderingEnemy.gridY, 6);
@@ -327,7 +327,7 @@ test("challenge 22 authors guided vertical patrol defenders near the center lane
     enemies.map((runner) => ({ slot: runner.slot, gridX: runner.gridX, gridY: runner.gridY, cpuBehavior: runner.cpuBehavior })),
     [
       { slot: "npc1", gridX: 7, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
-      { slot: "npc2", gridX: 8, gridY: 5, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+      { slot: "npc2", gridX: 8, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_STAY_STILL },
       { slot: "npc3", gridX: 9, gridY: 7, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
     ]
   );

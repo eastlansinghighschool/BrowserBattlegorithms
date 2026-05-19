@@ -4,7 +4,7 @@ import { processTurnActions } from "../core/turnEngine.js";
 import { getLevelGoalCell } from "../core/levels.js";
 import { drawGrid, drawMapElements } from "./drawBoard.js";
 import { drawBarriers, drawFlags, drawGameOverOverlay, drawHumanPlayerLabels, drawRunners } from "./drawEntities.js";
-import { drawActiveRunnerGlow } from "./effects.js";
+import { drawActiveRunnerGlow, drawAreaFreezePulse } from "./effects.js";
 import { handleKeyInput } from "../ui/controls.js";
 
 function isBlocklyKeyboardFocusActive() {
@@ -69,6 +69,7 @@ export function initializeP5App(app) {
       drawMapElements(p, app.state.gameMap);
       drawGrid(p);
       drawLevelGoal(p, app);
+      drawAreaFreezePulse(p, app);
       drawActiveRunnerGlow(p, app.state);
       drawFlags(p, app.state);
       drawBarriers(p, app.state);

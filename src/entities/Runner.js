@@ -3,6 +3,7 @@ import {
   CELL_SIZE
 } from "../config/constants.js";
 import { easeInOutQuad } from "../render/animation.js";
+import { drawAreaFreezeRunnerFlash, drawFrozenCountdownBadge } from "../render/effects.js";
 import { resolveRunnerDisplayEmoji, shouldMirrorRunnerEmoji } from "../render/runnerVisuals.js";
 
 export class Runner {
@@ -58,12 +59,14 @@ export class Runner {
     this.isGracePeriod = false;
   }
 
-  display(p) {
+  display(p, state = null) {
     const emojiToDisplay = this.getDisplayEmoji();
     const centerX = this.pixelX + CELL_SIZE / 2;
     const centerY = this.pixelY + CELL_SIZE / 2;
+    const freezeEffect = state?.areaFreezeEffect || null;
 
     p.push();
+    drawAreaFreezeRunnerFlash(p, this, freezeEffect);
     p.fill(0);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(CELL_SIZE * 0.7);
@@ -88,6 +91,8 @@ export class Runner {
       );
       p.pop();
     }
+
+    drawFrozenCountdownBadge(p, this);
   }
 
   pickupFlag(flag) {

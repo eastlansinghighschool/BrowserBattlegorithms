@@ -31,7 +31,7 @@ export function drawRunners(p, state) {
   });
 
   for (const runner of runnersToDisplay) {
-    runner.display(p);
+    runner.display(p, state);
   }
 }
 

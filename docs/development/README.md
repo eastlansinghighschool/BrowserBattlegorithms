@@ -11,11 +11,10 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Mini Packet Agent Starting Prompt](00-mini-packet-agent-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
 | [00 Level Editing Agent Starting Prompt](00-level-editing-agent-starting-prompt.md) | ready | Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation. |
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
+| [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
-| [Plan 46](plan-46-flag-carrier-vulnerability-collision-rule.md) | ready | Change collision rules so flag carriers are always vulnerable: one-carrier collisions make the carrier lose, both-carrier collisions make the moving attacker lose, and no-carrier collisions keep home-side advantage. |
-| [Plan 47](plan-47-optional-double-carrier-showdown.md) | ready | Add a late optional guided level after the final project sequence where both teams begin with flag carriers and students must use human control plus two ally runners against at least three live NPCs to score under carrier-vulnerability pressure. |
-| [Plan 48](plan-48-area-freeze-cooldown-and-status-chip.md) | ready | Change Area Freeze from once-per-round to a configurable turn cooldown and add a compact snowflake status chip showing ready/cooldown state. |
-| [Plan 49](plan-49-area-freeze-board-effect-visualization.md) | ready | Add board-level Area Freeze visuals: caster pulse, affected-runner flash, persistent frozen countdown badges, and reduced-motion equivalents. |
+| [Plan 51](plan-51-game-specification-restructure.md) | ready | Restructure `docs/GameSpecification.md` into a foundational rules document (board-game-playable), absorb Blockly content into the subsystem note, move Fun Factor out to future-directions, and drop V1.1/"later:"/"not in this version" framings. Dispatches after Plan 49 lands. |
+| [Plan 52](plan-52-jump-forward-animation-and-flair.md) | ready | Replace the slide-and-ease Jump Forward animation with a parabolic arc (apex over the skipped cell) plus drop shadow, converging takeoff lines, dust ring landing, takeoff/landing SFX, and a failed-jump partial-arc reversal. Visual+audio only — no game rule changes. Reduced-motion paths for every effect. Surfaced by 2026-05-18 pilot student feedback. |
 
 ### Completed Packets
 
@@ -65,6 +64,11 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 43](archive/plan-43-multiple-choice-prediction-levels.md) | complete | Add a small multiple-choice prediction interaction for selected guided levels so students commit to expected program behavior before running and comparing the result. |
 | [Plan 44](archive/plan-44-narration-controls-and-voice-bootstrap-repair.md) | complete | Fix three narration/coaching/voice UI defects surfaced by the Plan 39 escalation: tutorial scrim blocks controls, voice picker startup race, and a missing coaching-toggle initial sync. Manual Chrome smoke verified by integration owner. |
 | [Plan 45](archive/plan-45-guided-workspace-starter-versioning.md) | complete | Add per-level starter XML versioning to guided workspaces so authored fixes (e.g. the 2026-05-17 bughunt-22 repair) reach returning students automatically, plus a "Reset Workspace to Starter" toolbar button as the manual escape hatch. Closes the localStorage staleness hole without DevTools access. |
+| [Plan 46](archive/plan-46-flag-carrier-vulnerability-collision-rule.md) | complete | Change collision rules so flag carriers are always vulnerable: one-carrier collisions make the carrier lose, both-carrier collisions make the moving attacker lose, and no-carrier collisions keep home-side advantage. |
+| [Plan 47](archive/plan-47-optional-double-carrier-showdown.md) | complete | Add a late optional guided level after the final project sequence where both teams begin with flag carriers and students must use human control plus two ally runners against at least three live NPCs to score under carrier-vulnerability pressure. |
+| [Plan 48](archive/plan-48-area-freeze-cooldown-and-status-chip.md) | complete | Change Area Freeze from once-per-round to a configurable turn cooldown and add a compact snowflake status chip showing ready/cooldown state. |
+| [Plan 49](archive/plan-49-area-freeze-board-effect-visualization.md) | complete | Add board-level Area Freeze visuals: caster pulse, affected-runner flash, persistent frozen countdown badges, and reduced-motion equivalents. |
+| [Plan 50](plan-50-browser-test-suite-hygiene.md) | complete | Tier the Playwright browser suite into fast smoke and extended runs, validate safe parallelism, and move slow low-signal checks out of the frequent validation path without losing coverage. |
 
 
 ## Future Directions
@@ -93,9 +97,11 @@ Loose backlog triage and unnumbered future packet ideas live in [future-directio
 
 ## Current Validation Baseline
 
-As of Plan 45 completion on 2026-05-17:
+As of Plan 50 completion on 2026-05-18:
 
-- `npm test` passes — 276 tests across 22 unit test files.
+- `npm test` passes — 290/292 tests across 23 unit test files. 2 pre-existing failures in `guided-project-solutions.test.js` (strategy-brain full-team-tactics); not caused by recent changes.
+- `npm run test:browser:smoke` passes — 64/64 tests, ~60s, `workers: 2`.
+- `npm run test:browser` passes — 111/111 tests, ~2m30s, `workers: 1`.
 - `npm run build` passes.
 - Build output still warns that Blockly is both dynamically and statically imported, preventing the intended chunk split.
 - Build output still warns that minified chunks exceed 500 kB.

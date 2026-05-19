@@ -20,8 +20,9 @@ This note does NOT own:
 |---|---|
 | `src/render/p5App.js` | Boots the p5 instance, owns the frame loop, routes keyboard input, calls render functions. |
 | `src/render/drawBoard.js` | Draws the grid, territory zones, barriers, target cells, and the game-over overlay. |
+| `src/render/effects.js` | Draws active-runner glow plus transient Area Freeze pulse and affected-runner flash. |
 | `src/render/drawEntities.js` | Draws runners, flags, and frozen/active state visuals using p5 text/glyph calls. |
-| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, and animation state. |
+| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, frozen countdown badge, and animation state. |
 | `src/entities/Flag.js` | Owns the flag glyph and position. |
 | `src/entities/Barrier.js` | Owns the barrier glyph and ownership state. |
 
@@ -48,6 +49,7 @@ The p5 canvas owns the game grid, entities, and in-canvas overlays. Everything e
 | Runner, flag, and barrier glyphs | p5 canvas (`drawEntities.js`) via entity classes |
 | Game-over overlay (end-of-match) | p5 canvas (`drawBoard.js` `drawGameOverOverlay()`) |
 | Level goal highlight (blue target cell) | p5 canvas (driven by `getLevelGoalCell(app)` from level metadata) |
+| Area Freeze pulse, affected-runner flash, frozen countdown badge | p5 canvas (`effects.js`, `Runner.js`) driven by `state.areaFreezeEffect` and frozen runner state |
 | Score display, mode label | DOM (`src/ui/scoreboard.js`) |
 | Play/reset button, controls | DOM (`src/ui/controls.js`, `src/ui/gameStateUI.js`) |
 | Tutorial spotlight and overlays | DOM (`src/ui/tutorialOverlay.js`), positioned relative to canvas |
@@ -70,6 +72,7 @@ Runners, flags, and barriers are rendered as emoji glyphs using p5's `text()` fu
 Runner-specific conventions:
 - Runners facing right-to-left (team 2, `playDirection === -1`) are mirrored using `translate()` + `scale(-1, 1)` so their emoji appears to face left.
 - Frozen runners render with a distinct glyph or visual state set by the entity class.
+- Frozen runners also render a small countdown badge near the runner, while successful Area Freeze actions briefly add a board pulse and affected-runner flash on the canvas.
 - Animation state (position interpolation between cells) is owned by the entity class and read by the render layer.
 
 The render layer does not own game state. It reads from `app.state` and entity objects; it does not write to them. Rule-level changes (position updates, flag pickup, freeze) happen in `src/core/`, not in `src/render/`.

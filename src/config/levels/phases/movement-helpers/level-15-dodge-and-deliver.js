@@ -66,7 +66,7 @@ export default {
       opponent: {
         playDirection: -1,
         runners: [
-          { slot: "npc1", gridX: 7, gridY: 3, cpuBehavior: NPC_BEHAVIORS.GUIDED_STAY_STILL },
+          { slot: "npc1", gridX: 7, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_STAY_STILL },
           { slot: "npc2", gridX: 8, gridY: 6, cpuBehavior: NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY }
         ]
       }

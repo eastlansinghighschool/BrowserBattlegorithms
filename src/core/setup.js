@@ -197,6 +197,7 @@ export function initializeMatch(app) {
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;
+  state.areaFreezeEffect = null;
   applySetupBarriers(state);
   syncHumanTurnBehaviorVisuals(state);
 }
@@ -228,6 +229,7 @@ export function initializeDisplayState(app) {
   state.mainGameState = MAIN_GAME_STATES.SETUP;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;
+  state.areaFreezeEffect = null;
   syncHumanTurnBehaviorVisuals(state);
 }
 
@@ -241,6 +243,7 @@ export function resetRound(state) {
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;
+  state.areaFreezeEffect = null;
 }
 
 export function startGame(app) {

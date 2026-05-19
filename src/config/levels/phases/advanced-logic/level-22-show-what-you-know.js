@@ -51,7 +51,7 @@ export default {
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG, MOVE_TOWARD_TARGETS.MY_BASE],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 36 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 56 },
   tutorialSteps: [
     {
       id: "show-what-you-know-challenge",
@@ -75,7 +75,7 @@ export default {
         playDirection: -1,
         runners: [
           { slot: "npc1", gridX: 7, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
-          { slot: "npc2", gridX: 8, gridY: 5, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
+          { slot: "npc2", gridX: 8, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_STAY_STILL },
           { slot: "npc3", gridX: 9, gridY: 7, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
         ]
       }

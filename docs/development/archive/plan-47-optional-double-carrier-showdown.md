@@ -4,7 +4,7 @@
 
 - Packet id: plan-47
 - Packet title: Optional Double-Carrier Showdown Guided Level
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-18
 - Packet type: implementation / guided-level / curriculum / tests

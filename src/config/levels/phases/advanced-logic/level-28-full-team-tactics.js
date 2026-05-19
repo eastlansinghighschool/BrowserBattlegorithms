@@ -16,7 +16,7 @@ export default {
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
-  humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
+  humanTurnBehavior: HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT,
   project: createProjectMetadata(STRATEGY_BRAIN_PROJECT, 6, { isCapstone: true }),
   toolboxBlockTypes: [...ADVANCED_CAPSTONE_BLOCKS],
   sensorObjectTypes: [
@@ -38,8 +38,8 @@ export default {
   ],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG, MOVE_TOWARD_TARGETS.MY_BASE],
   initialBlocklyXml: STARTER_EVENT_XML,
-  winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 40 },
+  winCondition: { type: "team_scores_point", teamId: 1 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 60 },
   tutorialSteps: [
     {
       id: "full-team-tactics-last-solo",
@@ -50,20 +50,19 @@ export default {
     {
       id: "full-team-tactics-next",
       title: "What Comes Next",
-      body: "You have written programs that sense, decide, and use special actions. The next challenge asks you to do this for two allies at once, using the same shared program.",
+      body: "You have written programs that sense, decide, and use special actions. The next challenge asks you to do this for three enemies at once, but now with your ally as a teammate to your human runner.",
       targetSelector: "#blockly-region"
     }
   ],
   setupOverrides: {
     pointsToWin: 1,
-    autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     teams: {
       player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 1, gridY: 4 }] },
       opponent: {
         playDirection: -1, runners: [
           { slot: "npc1", gridX: 8, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY },
           { slot: "npc2", gridX: 6, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY },
-          { slot: "npc3", gridX: 9, gridY: 4, cpuBehavior: NPC_BEHAVIORS.GUIDED_RANDOM_MOVE_ONLY }
+          { slot: "npc3", gridX: 9, gridY: 2 }
         ]
       }
     },

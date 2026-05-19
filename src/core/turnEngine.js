@@ -18,7 +18,7 @@ import {
   TURN_STATES
 } from "../config/constants.js";
 import { createQueuedHumanAction } from "./actions.js";
-import { isAreaFreezeReady, markAreaFreezeUsed } from "./areaFreeze.js";
+import { buildAreaFreezeEffect, isAreaFreezeReady, markAreaFreezeUsed } from "./areaFreeze.js";
 import { resolveCollision } from "./collisions.js";
 import {
   getBarrierAtCell,
@@ -151,10 +151,10 @@ function snapRunnerToCell(runner, gridX, gridY) {
 
 function applyAreaFreeze(state, actionRunner) {
   if (!isAreaFreezeReady(state, actionRunner.team)) {
-    return false;
+    return null;
   }
 
-  let frozeAnyone = false;
+  const affectedRunners = [];
   for (const candidate of state.allRunners) {
     if (candidate.team === actionRunner.team || candidate.isFrozen) {
       continue;
@@ -162,12 +162,19 @@ function applyAreaFreeze(state, actionRunner) {
     const distance = Math.abs(candidate.gridX - actionRunner.gridX) + Math.abs(candidate.gridY - actionRunner.gridY);
     if (distance <= AREA_FREEZE_RADIUS) {
       candidate.setFrozen(AREA_FREEZE_DURATION_TURNS);
-      frozeAnyone = true;
+      affectedRunners.push(candidate);
     }
   }
 
   markAreaFreezeUsed(state, actionRunner.team);
-  return frozeAnyone;
+  return buildAreaFreezeEffect(
+    {
+      currentTurnNumber: state.currentTurnNumber,
+      startedAtMs: Date.now()
+    },
+    actionRunner,
+    affectedRunners
+  );
 }
 
 export function handlePlayerInput(app, runner, actionData) {
@@ -501,7 +508,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
         actionCompletedImmediately = true;
         break;
       }
-      applyAreaFreeze(state, actionRunner);
+      state.areaFreezeEffect = applyAreaFreeze(state, actionRunner);
       playSound(state, "freeze");
       actionOutcome = "freeze_applied";
       actionCompletedImmediately = true;

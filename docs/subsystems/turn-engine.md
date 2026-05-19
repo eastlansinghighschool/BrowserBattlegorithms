@@ -60,6 +60,8 @@ The shared helper contract is:
 
 Blockly readiness blocks, the freeze action itself, and free-play CPU logic all use that shared helper so the UI and runtime cannot disagree about whether the resource is ready.
 
+When a freeze succeeds, the turn engine also records a transient `state.areaFreezeEffect` snapshot with the caster cell, affected runner cells, radius, and effect timing. Render code reads that snapshot for the board pulse and affected-runner flash; it does not decide who was frozen.
+
 ## Bounce vs illegal vs skipped
 
 These three outcomes look similar at the surface but are distinct:

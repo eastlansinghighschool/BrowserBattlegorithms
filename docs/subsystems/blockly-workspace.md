@@ -6,6 +6,7 @@ This note owns:
 - Workspace lifecycle: how XML is loaded, reset, and preserved across level transitions and mode switches.
 - Storage key map: the full list of `localStorage` keys used by Blockly-related persistence.
 - Ignored-block vs disabled-block semantics and the execution-hint warning lifecycle.
+- Current block inventory and Blockly execution-model rules, including the first-action-only turn contract.
 - Project-shared workspace behavior and how it differs from ordinary guided-level persistence.
 - Undo/redo wrapping and `hideChaff()` coordination.
 
@@ -95,6 +96,26 @@ Toolbox breadth is controlled per level kind:
 - Challenge/synthesis levels: same toolbox as the previous non-challenge level; no new blocks introduced.
 - Project levels: toolbox is intentionally broad from project start. UI copy and the project callout focus attention without hiding carried-code blocks. The broad toolbox must survive backward navigation within the arc.
 - Free Play: full sandbox block set, including blocks not available in any guided level.
+
+## Current block inventory
+
+The current Blockly catalog is the canonical authored block set for this game. The rules note points here rather than duplicating the block list.
+
+- Actions: `On Each Turn`, `Move Forward`, `Move Backward`, `Move Up`, `Move Down`, `Move Randomly`, `Stay Still`, `Jump Forward`, `Place Barrier`, `Move Toward [Enemy Flag / My Base / Human Runner / Closest Enemy]`, `Use Area Freeze`.
+- Conditions: `If [Object] is [Relation]`, `If [Object] is [Relation] / Else`, `If I have enemy flag`, `If enemy is in front`, `If barrier is in front`, `If I can jump`, `If I can place barrier`, `If Area Freeze is ready`, `Is enemy within [1/2/3] steps?`, `Is [My Runner / Enemy Flag / My Base] on [My Side / Enemy Side] of map?`, `Die roll (1-6) > [1/2/3/4/5]`.
+- Logic: `If [boolean]`, `If [boolean] / else`, `AND`, `OR`, `NOT`.
+- Values and sensing: typed numbers, runner index, distance to target, random roll, playDirection, `My X`, `My Y`, `Enemy Flag X`, `Enemy Flag Y`, and `My Base X`, `My Base Y`.
+- Free Play exposes the broader sandbox, while guided levels scope the toolbox to the current lesson and prior mastered concepts.
+
+## Execution model
+
+Student programs start from a required `On Each Turn` block.
+Only blocks attached beneath that event are part of the program chain, and only the first reachable action under that chain executes each turn.
+Any additional sequential action blocks are intentionally ignored and should be visually marked as such so beginners are not misled.
+Unattached blocks elsewhere in the workspace are also ignored and should be visually indicated as inactive.
+`Move Toward [Target]` is a one-step helper, not full pathfinding.
+The advanced campaign allows one Blockly workspace to control multiple allied runners, with `runner index` used to assign different jobs inside one shared program.
+Readiness checks such as `If I can jump`, `If I can place barrier`, and `If Area Freeze is ready` are ordinary condition blocks, not special-cased execution paths.
 
 ## Ignored blocks vs disabled blocks
 

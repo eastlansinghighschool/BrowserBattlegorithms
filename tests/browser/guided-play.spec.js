@@ -7,6 +7,7 @@ import {
   loadWorkspaceXml,
   waitForHeavyReady
 } from "./helpers.js";
+import { AREA_FREEZE_DURATION_TURNS } from "../../src/config/constants.js";
 
 clearStorageBeforeEach(test);
 
@@ -198,6 +199,58 @@ test("guided keyboard-practice level wires Team 1 movement through the shared ha
   expect(keyResult.currentTurnState).toBe("PROCESSING_ACTION");
   expect(keyResult.targetGridX).toBeGreaterThan(before.x);
   expect(keyResult.targetGridY).toBe(before.y);
+});
+
+test("a successful freeze records render-ready effect state for the board pulse and badge", async ({ page }) => {
+  await page.goto("/");
+  await waitForHeavyReady(page);
+  const effectState = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
+    hooks.startLevel("freeze-the-lane");
+
+    const state = hooks.app.state;
+    const actor = state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+    const enemy = state.allRunners.find((runner) => runner.team === 2 && !runner.isFrozen);
+    actor.gridX = 5;
+    actor.gridY = 4;
+    enemy.gridX = 6;
+    enemy.gridY = 4;
+    state.mainGameState = "RUNNING";
+    state.currentTurnState = "PROCESSING_ACTION";
+    state.activeRunnerIndex = state.allRunners.indexOf(actor);
+    state.currentTurnNumber = 12;
+    state.queuedActionForCurrentRunner = {
+      runner: actor,
+      actionType: "FREEZE_OPPONENTS",
+      targetGridX: actor.gridX,
+      targetGridY: actor.gridY
+    };
+    hooks.processTurn();
+
+    return {
+      effect: state.areaFreezeEffect ? {
+        casterRunnerId: state.areaFreezeEffect.casterRunnerId,
+        casterCell: state.areaFreezeEffect.casterCell,
+        radius: state.areaFreezeEffect.radius,
+        affectedRunners: state.areaFreezeEffect.affectedRunners,
+        durationMs: state.areaFreezeEffect.durationMs
+      } : null,
+      enemyFrozen: enemy.isFrozen,
+      frozenTurnsRemaining: enemy.frozenTurnsRemaining,
+      cooldownTurn: state.teamAreaFreezeNextAvailableTurn[1]
+    };
+  });
+
+  expect(effectState.effect).not.toBeNull();
+  expect(effectState.effect.casterRunnerId).toBe("runner_1_AI_AllyP1");
+  expect(effectState.effect.casterCell).toEqual({ x: 5, y: 4 });
+  expect(effectState.effect.radius).toBe(2);
+  expect(effectState.effect.affectedRunners.length).toBeGreaterThan(0);
+  expect(effectState.effect.affectedRunners[0].frozenTurnsRemaining).toBe(AREA_FREEZE_DURATION_TURNS);
+  expect(effectState.enemyFrozen).toBe(true);
+  expect(effectState.frozenTurnsRemaining).toBe(AREA_FREEZE_DURATION_TURNS);
+  expect(effectState.cooldownTurn).toBe(22);
 });
 
 test("a representative advanced teamwork level can pass through the visible guided flow", async ({ page }) => {

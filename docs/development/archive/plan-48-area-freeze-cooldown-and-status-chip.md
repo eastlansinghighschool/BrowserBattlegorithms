@@ -4,7 +4,7 @@
 
 - Packet id: plan-48
 - Packet title: Area Freeze Cooldown And Status Chip
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-18
 - Packet type: implementation / rules / UI / docs / tests

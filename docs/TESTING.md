@@ -18,23 +18,43 @@ These tests focus on:
 
 ## Browser Tests
 
-- `npm run test:browser`
+The Playwright browser suite is split into two tiers:
 
-Playwright tests cover:
+### Smoke — frequent validation
+
+- `npm run test:browser:smoke` — fast subset (~65 tests, ~60s, `workers: 2`)
+
+Run this after most changes. Covers:
 
 - startup shell, welcome chooser, and lazy-load placeholders
-- guided tutorial overlay behavior and level-picker interaction
-- guided start/reset/next-level flow and HUD behavior
+- guided play progression, tutorial demos, special-action flow, keyboard-practice flow, and a representative advanced level
 - actual keyboard input in representative guided and PvP scenarios
-- panel collapse, Blockly resizing, and desktop workspace size controls
 - free-play setup controls for mode, team size, and map selection
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical
-- Local Storage persistence across reload for guided and free-play programs
-- sound preference persistence and malformed XML import feedback
 - help-link behavior and standalone help-page navigation
 - usage export flow, admin page file review, and integrity verification
 - dev-only unlock-all-levels toggle behavior and production bundle exclusion
+- narration controls blocked by tutorial scrim (accessibility contract)
+
+### Extended — full matrix
+
+- `npm run test:browser` or `npm run test:browser:extended` — complete suite (~111 tests, ~2m30s, `workers: 1`)
+
+Run before releases or after changes to persistence, modal focus, dev harness, or workspace versioning. Adds:
+
+- `guided-ui.spec.js` — broad guided UI matrix, including level picker, HUD, panel collapse, Blockly resizing, and desktop workspace size controls (~19s)
+- `persistence.spec.js` — full file pipeline and private export edge cases (~19s)
+- `modal-stability.spec.js` — focus-stability matrix with fixed waits (~11s)
+- `dev-guided-level-link.spec.js` — dev harness, contains long waits (~8s)
+- `workspace-starter-versioning.spec.js` — localStorage versioning edge cases
+- `blockly-trace-playback.spec.js` — timing-sensitive animation test (CPU-contention flake at `workers: 2`; runs only at `workers: 1`)
+
+### Focus/accessibility
+
+- `npm run test:browser:focus` — narration, modal stability, key-capture, ARIA narration tests
+
+Targeted run for accessibility or UI focus-management changes.
 
 ## Regression Harness
 
@@ -47,4 +67,6 @@ Playwright tests cover:
 - Browser tests now focus on student-visible journeys and breakable UI transitions, not exhaustive authored-level or engine-detail assertions.
 - Blockly workspace loading for tests still uses a narrow test hook to avoid brittle drag-and-drop automation for most scenarios.
 - Authored level contracts, toolbox gates, engine invariants, and decision-selection details belong in `npm run test:unit` unless the learner can directly see the behavior in the browser.
-- Release validation should include `npm test`, `npm run build`, and `npm run test:browser` before shipping or deploying.
+- Release validation should include `npm test`, `npm run build`, and `npm run test:browser` (full extended suite) before shipping or deploying.
+- Routine packet validation can use `npm run test:browser:smoke` for faster feedback.
+- `workers: 2` is stable for the smoke suite; the full suite runs at `workers: 1` because `blockly-trace-playback.spec.js` has CPU-contention timing sensitivity under parallelism.
