@@ -725,6 +725,12 @@ export function processTurnActions(app, p) {
     return;
   }
 
+  if (state.currentTurnState === TURN_STATES.PROCESSING_ACTION && !state.queuedActionForCurrentRunner) {
+    state.currentTurnState = TURN_STATES.AWAITING_INPUT;
+    sync(app);
+    return;
+  }
+
   if (state.currentTurnState === TURN_STATES.PROCESSING_ACTION && state.queuedActionForCurrentRunner) {
     if (state.queuedActionForCurrentRunner.runner === runner) {
       executeQueuedAction(app, runner, state.queuedActionForCurrentRunner);
