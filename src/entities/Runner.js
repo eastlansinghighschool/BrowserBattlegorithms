@@ -2,8 +2,14 @@ import {
   BASE_ANIMATION_SPEED,
   CELL_SIZE
 } from "../config/constants.js";
-import { easeInOutQuad } from "../render/animation.js";
-import { drawAreaFreezeRunnerFlash, drawFrozenCountdownBadge } from "../render/effects.js";
+import { easeInOutQuad, getJumpAnimationProgressIncrement, getJumpArcOffset, getJumpArcProgress } from "../render/animation.js";
+import {
+  drawAreaFreezeRunnerFlash,
+  drawFrozenCountdownBadge,
+  drawJumpDropShadow,
+  drawJumpTakeoffLines,
+  prefersReducedMotion
+} from "../render/effects.js";
 import { resolveRunnerDisplayEmoji, shouldMirrorRunnerEmoji } from "../render/runnerVisuals.js";
 
 export class Runner {
@@ -15,6 +21,7 @@ export class Runner {
     this.pixelX = this.gridX * CELL_SIZE;
     this.pixelY = this.gridY * CELL_SIZE;
     this.isMoving = false;
+    this.isJumping = false;
     this.animationProgress = 0;
     this.isBouncing = false;
     this.bounceProgress = 0;
@@ -26,6 +33,15 @@ export class Runner {
     this.bounceOriginPixelY = this.pixelY;
     this.bounceMidPixelX = this.pixelX;
     this.bounceMidPixelY = this.pixelY;
+    this.jumpOriginGridX = this.gridX;
+    this.jumpOriginGridY = this.gridY;
+    this.jumpOriginPixelX = this.pixelX;
+    this.jumpOriginPixelY = this.pixelY;
+    this.jumpGroundPixelX = this.pixelX;
+    this.jumpGroundPixelY = this.pixelY;
+    this.jumpMidPixelX = this.pixelX;
+    this.jumpMidPixelY = this.pixelY;
+    this.animationCompletionType = null;
     this.team = team;
     this.isHumanControlled = isHumanControlled;
     this.isNPC = isNPC;
@@ -51,12 +67,15 @@ export class Runner {
     this.isFrozen = true;
     this.frozenTurnsRemaining = turns;
     this.isMoving = false;
+    this.isJumping = false;
+    this.jumpFailedReversal = false;
     this.isBouncing = false;
     this.animationProgress = 0;
     this.bounceProgress = 0;
     this.pixelX = this.gridX * CELL_SIZE;
     this.pixelY = this.gridY * CELL_SIZE;
     this.isGracePeriod = false;
+    this.animationCompletionType = null;
   }
 
   display(p, state = null) {
@@ -64,8 +83,11 @@ export class Runner {
     const centerX = this.pixelX + CELL_SIZE / 2;
     const centerY = this.pixelY + CELL_SIZE / 2;
     const freezeEffect = state?.areaFreezeEffect || null;
+    const jumpProgress = this.animationProgress;
 
     p.push();
+    drawJumpDropShadow(p, this, jumpProgress);
+    drawJumpTakeoffLines(p, this, jumpProgress);
     drawAreaFreezeRunnerFlash(p, this, freezeEffect);
     p.fill(0);
     p.textAlign(p.CENTER, p.CENTER);
@@ -122,6 +144,7 @@ export class Runner {
     this.targetPixelY = this.pixelY;
     this.hasEnemyFlag = false;
     this.isMoving = false;
+    this.isJumping = false;
     this.animationProgress = 0;
     this.isBouncing = false;
     this.bounceProgress = 0;
@@ -133,20 +156,68 @@ export class Runner {
     this.guidedVerticalPatrolDirection = null;
     this.activeBarrierId = null;
     this.isGracePeriod = false;
+    this.animationCompletionType = null;
+    this.jumpFailedReversal = false;
+    this.jumpOriginGridX = this.gridX;
+    this.jumpOriginGridY = this.gridY;
+    this.jumpOriginPixelX = this.pixelX;
+    this.jumpOriginPixelY = this.pixelY;
+    this.jumpGroundPixelX = this.pixelX;
+    this.jumpGroundPixelY = this.pixelY;
+    this.jumpMidPixelX = this.pixelX;
+    this.jumpMidPixelY = this.pixelY;
   }
 
   startJumpAnimation(targetGridX, targetGridY) {
-    if (this.isMoving || this.isBouncing || this.isFrozen || !this.canJump) {
+    if (this.isMoving || this.isJumping || this.isBouncing || this.isFrozen || !this.canJump) {
       return false;
     }
     this.targetGridX = targetGridX;
     this.targetGridY = targetGridY;
     this.targetPixelX = targetGridX * CELL_SIZE;
     this.targetPixelY = targetGridY * CELL_SIZE;
-    this.pixelX = this.gridX * CELL_SIZE;
-    this.pixelY = this.gridY * CELL_SIZE;
+    this.jumpOriginGridX = this.gridX;
+    this.jumpOriginGridY = this.gridY;
+    this.jumpOriginPixelX = this.gridX * CELL_SIZE;
+    this.jumpOriginPixelY = this.gridY * CELL_SIZE;
+    this.jumpGroundPixelX = this.jumpOriginPixelX;
+    this.jumpGroundPixelY = this.jumpOriginPixelY;
+    this.jumpMidPixelX = this.jumpOriginPixelX + (this.targetPixelX - this.jumpOriginPixelX) * 0.5;
+    this.jumpMidPixelY = this.jumpOriginPixelY + (this.targetPixelY - this.jumpOriginPixelY) * 0.5;
+    this.pixelX = this.jumpOriginPixelX;
+    this.pixelY = this.jumpOriginPixelY;
     this.isMoving = true;
+    this.isJumping = true;
+    this.jumpFailedReversal = false;
     this.animationProgress = 0;
+    this.animationCompletionType = null;
+    this.canJump = false;
+    return true;
+  }
+
+  startFailedJumpAnimation(attemptedTargetGridX, attemptedTargetGridY) {
+    if (this.isMoving || this.isJumping || this.isBouncing || this.isFrozen) {
+      return false;
+    }
+    this.targetGridX = attemptedTargetGridX;
+    this.targetGridY = attemptedTargetGridY;
+    this.targetPixelX = attemptedTargetGridX * CELL_SIZE;
+    this.targetPixelY = attemptedTargetGridY * CELL_SIZE;
+    this.jumpOriginGridX = this.gridX;
+    this.jumpOriginGridY = this.gridY;
+    this.jumpOriginPixelX = this.gridX * CELL_SIZE;
+    this.jumpOriginPixelY = this.gridY * CELL_SIZE;
+    this.jumpGroundPixelX = this.jumpOriginPixelX;
+    this.jumpGroundPixelY = this.jumpOriginPixelY;
+    this.jumpMidPixelX = this.jumpOriginPixelX + (this.targetPixelX - this.jumpOriginPixelX) * 0.5;
+    this.jumpMidPixelY = this.jumpOriginPixelY + (this.targetPixelY - this.jumpOriginPixelY) * 0.5;
+    this.pixelX = this.jumpOriginPixelX;
+    this.pixelY = this.jumpOriginPixelY;
+    this.isMoving = true;
+    this.isJumping = true;
+    this.jumpFailedReversal = true;
+    this.animationProgress = 0;
+    this.animationCompletionType = null;
     this.canJump = false;
     return true;
   }
@@ -162,6 +233,9 @@ export class Runner {
     this.pixelX = this.gridX * CELL_SIZE;
     this.pixelY = this.gridY * CELL_SIZE;
     this.isMoving = true;
+    this.isJumping = false;
+    this.jumpFailedReversal = false;
+    this.animationCompletionType = null;
     this.animationProgress = 0;
     return true;
   }
@@ -171,6 +245,9 @@ export class Runner {
       return;
     }
     this.isBouncing = true;
+    this.isJumping = false;
+    this.jumpFailedReversal = false;
+    this.animationCompletionType = null;
     this.bounceProgress = 0;
     this.bounceOriginPixelX = this.gridX * CELL_SIZE;
     this.bounceOriginPixelY = this.gridY * CELL_SIZE;
@@ -187,7 +264,61 @@ export class Runner {
 
   updateAnimation(animationSpeedFactor, p) {
     let animationCompletedThisFrame = false;
-    const currentFrameSpeed = BASE_ANIMATION_SPEED * animationSpeedFactor;
+    const currentFrameSpeed = this.isJumping
+      ? getJumpAnimationProgressIncrement(animationSpeedFactor)
+      : BASE_ANIMATION_SPEED * animationSpeedFactor;
+
+    if (this.isJumping) {
+      this.animationProgress += currentFrameSpeed;
+      const reducedMotion = prefersReducedMotion();
+      const jumpProgress = Math.min(1, this.animationProgress);
+
+      if (this.jumpFailedReversal) {
+        const travelProgress = Math.sin(jumpProgress * Math.PI);
+        const groundPixelX = p.lerp(this.jumpOriginPixelX, this.jumpMidPixelX, travelProgress);
+        const groundPixelY = p.lerp(this.jumpOriginPixelY, this.jumpMidPixelY, travelProgress);
+        this.jumpGroundPixelX = groundPixelX;
+        this.jumpGroundPixelY = groundPixelY;
+        this.pixelX = groundPixelX;
+        this.pixelY = groundPixelY + getJumpArcOffset(jumpProgress, reducedMotion ? 0.2 : 0.6);
+      } else {
+        const arcProgress = getJumpArcProgress(jumpProgress);
+        const easedProgress = easeInOutQuad(arcProgress);
+        const groundPixelX = p.lerp(this.jumpOriginPixelX, this.targetPixelX, easedProgress);
+        const groundPixelY = p.lerp(this.jumpOriginPixelY, this.targetPixelY, easedProgress);
+        this.jumpGroundPixelX = groundPixelX;
+        this.jumpGroundPixelY = groundPixelY;
+        this.pixelX = groundPixelX;
+        this.pixelY = groundPixelY + getJumpArcOffset(jumpProgress, reducedMotion ? 0.3 : 1.0);
+      }
+
+      if (this.animationProgress >= 1) {
+        this.animationProgress = 1;
+        if (this.jumpFailedReversal) {
+          this.gridX = this.jumpOriginGridX;
+          this.gridY = this.jumpOriginGridY;
+          this.pixelX = this.jumpOriginPixelX;
+          this.pixelY = this.jumpOriginPixelY;
+          this.jumpGroundPixelX = this.jumpOriginPixelX;
+          this.jumpGroundPixelY = this.jumpOriginPixelY;
+          this.animationCompletionType = "jump_failed";
+        } else {
+          this.gridX = this.targetGridX;
+          this.gridY = this.targetGridY;
+          this.pixelX = this.targetPixelX;
+          this.pixelY = this.targetPixelY;
+          this.jumpGroundPixelX = this.targetPixelX;
+          this.jumpGroundPixelY = this.targetPixelY;
+          this.animationCompletionType = "jump_success";
+        }
+        this.isMoving = false;
+        this.isJumping = false;
+        this.jumpFailedReversal = false;
+        animationCompletedThisFrame = true;
+      }
+
+      return animationCompletedThisFrame;
+    }
 
     if (this.isMoving) {
       this.animationProgress += currentFrameSpeed;
@@ -199,6 +330,7 @@ export class Runner {
         this.gridX = this.targetGridX;
         this.gridY = this.targetGridY;
         this.isMoving = false;
+        this.animationCompletionType = "move";
         animationCompletedThisFrame = true;
       } else {
         this.pixelX = p.lerp(this.gridX * CELL_SIZE, this.targetPixelX, easedProgress);
@@ -218,6 +350,7 @@ export class Runner {
         this.pixelY = this.bounceOriginPixelY;
         this.isBouncing = false;
         this.bounceProgress = 0;
+        this.animationCompletionType = "bounce";
         animationCompletedThisFrame = true;
       }
     }

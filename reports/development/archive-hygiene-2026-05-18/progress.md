@@ -51,3 +51,29 @@ Plan 49 completed later on 2026-05-18. It was archived using the same guidance.
 - `npm test`: passed, `292/292`
 - `npm run build`: passed successfully (clean, no new errors)
 - `git status` check: verified moved file shows as tracked rename (`R`)
+
+---
+
+## Third pass — Plans 50, 51, and 52 (same date)
+
+Plans 50, 51, and 52 completed later on 2026-05-18. They were archived using the same guidance.
+
+### Moved files
+
+- `docs/development/archive/plan-50-browser-test-suite-hygiene.md`
+- `docs/development/archive/plan-51-game-specification-restructure.md`
+- `docs/development/archive/plan-52-jump-forward-animation-and-flair.md`
+
+### README changes
+
+- Removed Plans 51 and 52 from Active Packets.
+- Updated Plan 50's link path in the Completed Packets table to point to the `archive/` directory.
+- Added Plans 51 and 52 to the Completed Packets table in sequence order with updated archive links.
+- Updated statuses to `complete` in both the README and respective packet files.
+
+### Validation
+
+- README link sweep: passed (all links resolve correctly)
+- `npm test`: passed, `297/297`
+- `npm run build`: passed successfully (clean, no new errors)
+- `git status` check: verified moved files show as tracked renames (`R`)

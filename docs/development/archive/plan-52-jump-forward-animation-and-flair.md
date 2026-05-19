@@ -4,7 +4,7 @@
 
 - Packet id: plan-52
 - Packet title: Jump Forward Animation and Flair
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-18
 - Packet type: implementation / visual / audio / source-code / tests

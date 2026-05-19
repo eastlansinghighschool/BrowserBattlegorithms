@@ -62,6 +62,13 @@ export function playSound(state, soundId) {
       tone(260, 140, 0.035, "triangle");
       tone(190, 180, 0.02, "sine");
       break;
+    case "jump-takeoff":
+      tone(200, 80, 0.03, "triangle");
+      tone(380, 60, 0.025, "triangle");
+      break;
+    case "jump-land":
+      tone(100, 60, 0.04, "square");
+      break;
     case "flag-pickup":
       tone(440, 90, 0.03, "square");
       tone(554, 110, 0.025, "square");

@@ -55,6 +55,7 @@ export function createInitialState() {
     teamAreaFreezeUsed: { 1: false, 2: false },
     teamAreaFreezeNextAvailableTurn: { 1: 1, 2: 1 },
     areaFreezeEffect: null,
+    activeJumpLandingDust: null,
     pointsToWin: POINTS_TO_WIN,
     currentModeView: GAME_VIEW_MODES.GUIDED_LEVELS,
     levels: [],

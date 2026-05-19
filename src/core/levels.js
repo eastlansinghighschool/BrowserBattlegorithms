@@ -265,6 +265,7 @@ export function getLevelStateSnapshot(app) {
     predictionForCurrentLevel: state.predictionForCurrentLevel ? { ...state.predictionForCurrentLevel } : null,
     goalBurstEffect: state.goalBurstEffect ? { ...state.goalBurstEffect } : null,
     areaFreezeEffect: state.areaFreezeEffect ? structuredClone(state.areaFreezeEffect) : null,
+    activeJumpLandingDust: state.activeJumpLandingDust ? { ...state.activeJumpLandingDust } : null,
     activeTutorial: state.activeTutorial ? {
       key: state.activeTutorial.key,
       currentIndex: state.activeTutorial.currentIndex

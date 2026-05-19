@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 // Smoke browser suite — fast, representative coverage for frequent validation.
 // Runs at workers: 2 because this file set has no timing-sensitive animation tests.
 //
-// Extended suite: `npm run test:browser` (all 111 tests, workers: 1, stable).
+// Extended suite: `npm run test:browser` (all 113 tests, workers: 1, stable).
 // Focus/accessibility suite: `npm run test:browser:focus`
 //
 // Files excluded from smoke (moved to extended):
@@ -13,6 +13,8 @@ import { defineConfig } from "@playwright/test";
 //   dev-guided-level-link.spec.js — dev harness, contains waitForTimeout(3500) (~8s)
 //   workspace-starter-versioning.spec.js — versioning edge cases (localStorage pre-seeding)
 //   blockly-trace-playback.spec.js — timing-sensitive animation test (CPU-contention flake at workers: 2)
+//
+// Smoke also includes jump-animation.spec.js because it is short and student-visible.
 
 export default defineConfig({
   testDir: "./tests/browser",
@@ -28,7 +30,8 @@ export default defineConfig({
     "**/admin.spec.js",
     "**/dev-unlock.spec.js",
     "**/workspace-reset-button.spec.js",
-    "**/prediction-levels.spec.js"
+    "**/prediction-levels.spec.js",
+    "**/jump-animation.spec.js"
   ],
   workers: 2,
   use: {

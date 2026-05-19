@@ -9,11 +9,14 @@ import {
   GLOW_STROKE_WEIGHT
 } from "../config/constants.js";
 import { getTeamGlowColors } from "../core/teams.js";
+import { getJumpTakeoffLineOpacity } from "./animation.js";
 
 const AREA_FREEZE_PULSE_COLOR = [220, 245, 255];
 const AREA_FREEZE_FLASH_COLOR = [190, 230, 255];
+const JUMP_DUST_COLOR = [170, 180, 190];
+const JUMP_TAKEOFF_COLOR = [150, 160, 170];
 
-function prefersReducedMotion() {
+export function prefersReducedMotion() {
   return typeof window !== "undefined" &&
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -158,6 +161,100 @@ export function drawAreaFreezeRunnerFlash(p, runner, effect) {
     );
   }
 
+  p.pop();
+}
+
+export function drawJumpDropShadow(p, runner, jumpProgress) {
+  if (!runner?.isJumping) {
+    return;
+  }
+
+  const reducedMotion = prefersReducedMotion();
+  const groundPixelX = Number.isFinite(Number(runner.jumpGroundPixelX)) ? Number(runner.jumpGroundPixelX) : runner.pixelX;
+  const groundPixelY = Number.isFinite(Number(runner.jumpGroundPixelY)) ? Number(runner.jumpGroundPixelY) : runner.pixelY;
+  const progress = Number.isFinite(Number(jumpProgress)) ? Math.min(1, Math.max(0, Number(jumpProgress))) : 0;
+  const heightRatio = reducedMotion
+    ? 0
+    : Math.min(1, Math.abs((groundPixelY ?? runner.pixelY) - runner.pixelY) / CELL_SIZE);
+  const shadowScale = reducedMotion ? 0.78 : 1 - (heightRatio * 0.42) + (Math.abs(0.5 - progress) * 0.02);
+  const shadowAlpha = reducedMotion ? 100 : Math.max(70, Math.round(150 - (heightRatio * 70)));
+
+  p.push();
+  p.noStroke();
+  p.fill(40, 48, 60, shadowAlpha);
+  p.ellipse(
+    groundPixelX + CELL_SIZE / 2,
+    groundPixelY + CELL_SIZE - 8,
+    CELL_SIZE * shadowScale,
+    CELL_SIZE * (0.23 + shadowScale * 0.15)
+  );
+  p.pop();
+}
+
+export function drawJumpTakeoffLines(p, runner, jumpProgress) {
+  if (!runner?.isJumping || !Number.isFinite(Number(jumpProgress)) || jumpProgress >= 0.25) {
+    return;
+  }
+
+  const reducedMotion = prefersReducedMotion();
+  if (reducedMotion && jumpProgress > 0) {
+    return;
+  }
+
+  const opacity = reducedMotion ? 1 : getJumpTakeoffLineOpacity(jumpProgress);
+  if (opacity <= 0) {
+    return;
+  }
+
+  const originPixelX = Number.isFinite(Number(runner.jumpOriginPixelX)) ? Number(runner.jumpOriginPixelX) : runner.pixelX;
+  const originPixelY = Number.isFinite(Number(runner.jumpOriginPixelY)) ? Number(runner.jumpOriginPixelY) : runner.pixelY;
+  const strokeWeight = reducedMotion ? 2.5 : 2;
+  const lineLengths = [0.18, 0.24, 0.3];
+  const lineAlpha = Math.round(170 * opacity);
+
+  p.push();
+  p.stroke(JUMP_TAKEOFF_COLOR[0], JUMP_TAKEOFF_COLOR[1], JUMP_TAKEOFF_COLOR[2], lineAlpha);
+  p.strokeWeight(strokeWeight);
+  p.noFill();
+
+  const centerX = originPixelX + CELL_SIZE / 2;
+  const centerY = originPixelY + CELL_SIZE - 11;
+  for (const direction of [-1, 1]) {
+    for (let index = 0; index < lineLengths.length; index += 1) {
+      const length = CELL_SIZE * lineLengths[index] * (reducedMotion ? 1 : opacity);
+      const verticalOffset = index * 2.5;
+      p.line(
+        centerX + (direction * 4),
+        centerY - verticalOffset,
+        centerX + (direction * (4 + length)),
+        centerY - verticalOffset
+      );
+    }
+  }
+
+  p.pop();
+}
+
+export function drawJumpLandingDust(p, cellX, cellY, ringProgress) {
+  if (!Number.isFinite(Number(cellX)) || !Number.isFinite(Number(cellY))) {
+    return;
+  }
+
+  const progress = Number.isFinite(Number(ringProgress)) ? Math.min(1, Math.max(0, Number(ringProgress))) : 0;
+  const reducedMotion = prefersReducedMotion();
+  if (reducedMotion && progress > 0.12) {
+    return;
+  }
+
+  const radius = reducedMotion ? CELL_SIZE * 0.6 : CELL_SIZE * (0.22 + (progress * 1.02));
+  const alpha = reducedMotion ? 115 : Math.max(0, Math.round(145 - (progress * 145)));
+  const weight = reducedMotion ? 2 : 2.5;
+
+  p.push();
+  p.noFill();
+  p.stroke(JUMP_DUST_COLOR[0], JUMP_DUST_COLOR[1], JUMP_DUST_COLOR[2], alpha);
+  p.strokeWeight(weight);
+  p.circle(cellX * CELL_SIZE + CELL_SIZE / 2, cellY * CELL_SIZE + CELL_SIZE / 2, radius);
   p.pop();
 }
 

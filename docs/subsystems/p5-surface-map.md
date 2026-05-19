@@ -20,9 +20,9 @@ This note does NOT own:
 |---|---|
 | `src/render/p5App.js` | Boots the p5 instance, owns the frame loop, routes keyboard input, calls render functions. |
 | `src/render/drawBoard.js` | Draws the grid, territory zones, barriers, target cells, and the game-over overlay. |
-| `src/render/effects.js` | Draws active-runner glow plus transient Area Freeze pulse and affected-runner flash. |
+| `src/render/effects.js` | Draws active-runner glow, transient Area Freeze pulse / flash, and jump shadow / takeoff / landing effects. |
 | `src/render/drawEntities.js` | Draws runners, flags, and frozen/active state visuals using p5 text/glyph calls. |
-| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, frozen countdown badge, and animation state. |
+| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, frozen countdown badge, and move / jump animation state. |
 | `src/entities/Flag.js` | Owns the flag glyph and position. |
 | `src/entities/Barrier.js` | Owns the barrier glyph and ownership state. |
 
@@ -76,6 +76,27 @@ Runner-specific conventions:
 - Animation state (position interpolation between cells) is owned by the entity class and read by the render layer.
 
 The render layer does not own game state. It reads from `app.state` and entity objects; it does not write to them. Rule-level changes (position updates, flag pickup, freeze) happen in `src/core/`, not in `src/render/`.
+
+## Jump visuals
+
+Jump Forward has its own visual signature so the action reads as a leap rather than a slide. The core pieces are:
+
+- **Arc offset** — `Runner.js` tracks jump state and computes the body position for the jump arc. The visible emoji follows the arc while the base ground position remains available for the shadow.
+- **Drop shadow** — `src/render/effects.js` draws the ground-level shadow under the jump path.
+- **Converging takeoff lines** — `src/render/effects.js` draws the short anticipation lines at the takeoff cell.
+- **Landing dust ring** — `src/core/turnEngine.js` publishes `state.activeJumpLandingDust` for a brief board-level landing ring, and `src/render/p5App.js` passes that snapshot to `src/render/effects.js`.
+
+Timeline:
+
+- `0.0 - 0.15` — anticipation. The runner stays at the takeoff cell while the takeoff lines appear.
+- `0.15 - 1.0` — the jump arc runs. The runner lifts above the grid, travels forward, and returns to the board on landing.
+- `1.0` — successful landing. The dust ring appears at the landing cell.
+
+The failed-jump reversal path is separate from `startBounceAnimation()`. Failed jumps use a partial arc out to the midpoint and then back to the origin cell, while failed moves still use the ordinary bounce path.
+
+There is a minimum jump-duration floor so the arc cannot collapse into a near-instant hop at very high animation speeds.
+
+Reduced motion keeps the jump distinct without extra flourish: the arc amplitude is smaller, the shadow stays static, the takeoff lines render as a single-frame cue, and the landing dust becomes a single-frame circle.
 
 ## Game-over overlay
 

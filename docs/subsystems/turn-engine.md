@@ -62,6 +62,8 @@ Blockly readiness blocks, the freeze action itself, and free-play CPU logic all 
 
 When a freeze succeeds, the turn engine also records a transient `state.areaFreezeEffect` snapshot with the caster cell, affected runner cells, radius, and effect timing. Render code reads that snapshot for the board pulse and affected-runner flash; it does not decide who was frozen.
 
+When a jump lands successfully, the turn engine also records a transient `state.activeJumpLandingDust` snapshot with the landing cell and effect timing. Render code reads that snapshot for the landing dust ring; it does not decide that the jump succeeded.
+
 ## Bounce vs illegal vs skipped
 
 These three outcomes look similar at the surface but are distinct:

@@ -35,7 +35,7 @@ It supports classroom play, ally coordination, and strategic reasoning through s
 - The team setup determines which runner is controlled directly and which runners share the ally program.
 - Runners start in their own territory rather than in the middle of the map.
 - A tabletop player can model the board using tokens for runners, flags, barriers, and jails.
-- Jails appear in the lower corners and stay open for pathfinding while remaining functionally blocked.
+- Jails appear in the lower corners as visually designated cells; they do not add a separate movement rule unless a map also marks them as a wall or barrier.
 - A team's base area is the place where its own flag starts and where an enemy flag must be returned to score.
 - Board size, team size, points to win, and similar knobs are configurable per mode or level.
 - The map does not regenerate during a match.
@@ -75,7 +75,6 @@ The entities below are the persistent objects that the rules move around and upd
 - Barrier placement and removal are how the game creates short-lived map puzzles.
 
 ### Special actions
-- Traps are not part of Browser Battlegorithms.
 - Area Freeze is the only team special action.
 - The special-action slot is team-wide, not tied to one specific runner.
 - Special actions are resources, so the team must decide when spending them is worth it.
@@ -89,6 +88,13 @@ This section is the canonical order of play for a single runner turn.
 - Human runners choose with keyboard input.
 - AI allies and free-play CPU runners choose through the same action pipeline via their mode.
 - The engine resolves the chosen action, then applies movement legality, collisions, flag pickup, and scoring.
+- Movement legality is checked before any move, jump, barrier, or collision is finalized.
+- A blocked move bounces if the target cell is off-board, a wall, a barrier, the runner's own home-flag cell while that flag is still at base, an active friendly runner, or a frozen opposing runner.
+- A target cell with an active opposing runner creates an immediate collision instead of a bounce.
+- Jump Forward uses the same landing-cell legality as movement, ignores the intermediate cell, and consumes the jump resource when attempted.
+- Place Barrier can place only in the cell directly forward, only when barrier resource is available, and only if that cell is on-board and not occupied by a wall, barrier, runner, or home flag at base.
+- Stay Still may remove a barrier directly forward and restore that barrier owner's placement resource.
+- A runner picks up the enemy flag when it successfully ends movement on that flag's cell and the flag is not already carried.
 - Successful moves may animate.
 - Blocked moves bounce back.
 - Illegal no-op actions consume the turn without movement.
@@ -111,10 +117,10 @@ Each runner may execute only one action per turn.
 - Move Forward / Backward / Up / Down: team-relative move actions used by Blockly.
 - Move Randomly: choose a legal cardinal move.
 - Move Toward [target]: take one step toward the chosen target without full pathfinding.
-- Jump Forward: move two cells forward if jump is available.
-- Place Barrier: place a barrier in front if the cell is valid and barrier is available.
+- Jump Forward: move two cells forward if jump is available; it ignores the intermediate cell and uses the same landing-cell legality as movement.
+- Place Barrier: place a barrier directly in front if barrier is available and that cell is valid.
 - Stay Still: do nothing for the turn.
-- Stay Still can also remove a barrier directly in front of the runner.
+- Stay Still can also remove a barrier directly in front of the runner and restore that barrier owner's placement resource.
 - Use Area Freeze: if the team power is ready, freeze opposing runners in range and start the cooldown.
 - The action set is mode-agnostic even when the input medium differs.
 - Move Up / Down / Left / Right are the screen-keyboard actions a human runner uses.
@@ -122,6 +128,8 @@ Each runner may execute only one action per turn.
 - Jump Forward and Place Barrier each consume a limited resource until the next reset or removal.
 - Move Toward is a helper action, not a full pathfinder.
 - Use Area Freeze targets the caster's location and then affects opposing runners within range around it.
+- Movement fails or bounces when the target cell is off-board, a wall, a barrier, the runner's own home-flag cell while that flag is still at base, an active friendly runner, or a frozen opposing runner.
+- An active opposing runner in the target cell creates an immediate collision.
 - The first reachable Blockly action under `On Each Turn` is the one that matters for execution.
 - Any later sequential Blockly action is ignored by the engine.
 - Free-play CPU modes still choose from the same underlying action family.

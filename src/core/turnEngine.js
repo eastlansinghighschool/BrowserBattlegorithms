@@ -146,7 +146,10 @@ function snapRunnerToCell(runner, gridX, gridY) {
   runner.targetPixelX = runner.pixelX;
   runner.targetPixelY = runner.pixelY;
   runner.isMoving = false;
+  runner.isJumping = false;
   runner.isBouncing = false;
+  runner.jumpFailedReversal = false;
+  runner.animationCompletionType = null;
 }
 
 function applyAreaFreeze(state, actionRunner) {
@@ -175,6 +178,17 @@ function applyAreaFreeze(state, actionRunner) {
     actionRunner,
     affectedRunners
   );
+}
+
+function createJumpLandingDustEffect(state, runner) {
+  const startedAtMs = Date.now();
+  return {
+    effectKey: `${state.currentTurnNumber}-${runner.id}-${startedAtMs}`,
+    startedAtMs,
+    durationMs: 150,
+    cellX: runner.gridX,
+    cellY: runner.gridY
+  };
 }
 
 export function handlePlayerInput(app, runner, actionData) {
@@ -354,6 +368,7 @@ function recordFreePlayGameOver(app) {
 function handleActionCompletion(app, completedRunner) {
   const { state } = app;
   const carriedFlagBefore = completedRunner.hasEnemyFlag;
+  const skipPostMoveConsequences = completedRunner.animationCompletionType === "jump_failed";
   const lastActionType = state.runnerActionHistory?.[completedRunner.id]?.at(-1) || null;
   app.usageTracker?.recordTurnActionCompleted?.({
     runnerId: completedRunner.id,
@@ -367,7 +382,7 @@ function handleActionCompletion(app, completedRunner) {
     completedRunner.isGracePeriod = false;
   }
 
-  if (!completedRunner.isBouncing) {
+  if (!completedRunner.isBouncing && !skipPostMoveConsequences) {
     checkForFlagPickup(state, completedRunner);
     if (!carriedFlagBefore && completedRunner.hasEnemyFlag) {
       playSound(state, "flag-pickup");
@@ -545,8 +560,13 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
           { x: targetGridX, y: targetGridY },
           getBlockedOrBouncedReason(state, targetGridX, targetGridY, null)
         );
-        actionRunner.startBounceAnimation(targetGridX, targetGridY);
-        actionResolvedAndAnimating = true;
+        if (isJump && actionRunner.startFailedJumpAnimation(targetGridX, targetGridY)) {
+          playSound(state, "jump-takeoff");
+          actionResolvedAndAnimating = true;
+        } else {
+          actionRunner.startBounceAnimation(targetGridX, targetGridY);
+          actionResolvedAndAnimating = true;
+        }
       } else {
         const runnerInTargetCell = getRunnerAtCell(targetGridX, targetGridY, state.allRunners, actionRunner.id);
         if (runnerInTargetCell) {
@@ -561,8 +581,13 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
               { x: targetGridX, y: targetGridY },
               "runner_collision_bounce"
             );
-            actionRunner.startBounceAnimation(targetGridX, targetGridY);
-            actionResolvedAndAnimating = true;
+            if (isJump && actionRunner.startFailedJumpAnimation(targetGridX, targetGridY)) {
+              playSound(state, "jump-takeoff");
+              actionResolvedAndAnimating = true;
+            } else {
+              actionRunner.startBounceAnimation(targetGridX, targetGridY);
+              actionResolvedAndAnimating = true;
+            }
           } else {
             const outcome = resolveCollision(
               state,
@@ -582,7 +607,10 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
           }
         } else {
           if (isJump) {
-            actionRunner.startJumpAnimation(targetGridX, targetGridY);
+            if (actionRunner.startJumpAnimation(targetGridX, targetGridY)) {
+              playSound(state, "jump-takeoff");
+              actionOutcome = "jumped";
+            }
           } else {
             actionRunner.startMoveAnimation(targetGridX, targetGridY);
           }
@@ -706,10 +734,16 @@ export function processTurnActions(app, p) {
     }
   }
 
-  if (state.currentTurnState === TURN_STATES.ANIMATING && (runner.isMoving || runner.isBouncing)) {
+  if (state.currentTurnState === TURN_STATES.ANIMATING && (runner.isMoving || runner.isJumping || runner.isBouncing)) {
     const animationComplete = runner.updateAnimation(state.animationSpeedFactor, p);
     if (animationComplete) {
+      const completedAnimationType = runner.animationCompletionType;
+      if (completedAnimationType === "jump_success") {
+        state.activeJumpLandingDust = createJumpLandingDustEffect(state, runner);
+        playSound(state, "jump-land");
+      }
       handleActionCompletion(app, runner);
+      runner.animationCompletionType = null;
     }
   }
 }

@@ -22,7 +22,7 @@ The Playwright browser suite is split into two tiers:
 
 ### Smoke — frequent validation
 
-- `npm run test:browser:smoke` — fast subset (~65 tests, ~60s, `workers: 2`)
+- `npm run test:browser:smoke` — fast subset (~66 tests, ~60s, `workers: 2`)
 
 Run this after most changes. Covers:
 
@@ -32,6 +32,7 @@ Run this after most changes. Covers:
 - free-play setup controls for mode, team size, and map selection
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical
+- student-visible jump flair coverage for Jump Forward arc and blocked-jump reversal
 - help-link behavior and standalone help-page navigation
 - usage export flow, admin page file review, and integrity verification
 - dev-only unlock-all-levels toggle behavior and production bundle exclusion
@@ -39,7 +40,7 @@ Run this after most changes. Covers:
 
 ### Extended — full matrix
 
-- `npm run test:browser` or `npm run test:browser:extended` — complete suite (~111 tests, ~2m30s, `workers: 1`)
+- `npm run test:browser` or `npm run test:browser:extended` — complete suite (~113 tests, ~2m30s, `workers: 1`)
 
 Run before releases or after changes to persistence, modal focus, dev harness, or workspace versioning. Adds:
 
@@ -70,3 +71,4 @@ Targeted run for accessibility or UI focus-management changes.
 - Release validation should include `npm test`, `npm run build`, and `npm run test:browser` (full extended suite) before shipping or deploying.
 - Routine packet validation can use `npm run test:browser:smoke` for faster feedback.
 - `workers: 2` is stable for the smoke suite; the full suite runs at `workers: 1` because `blockly-trace-playback.spec.js` has CPU-contention timing sensitivity under parallelism.
+- `jump-animation.spec.js` is included in smoke because it is short, learner-visible, and exercises the jump contract without timing-sensitive broad UI coverage.

@@ -4,7 +4,7 @@ import { processTurnActions } from "../core/turnEngine.js";
 import { getLevelGoalCell } from "../core/levels.js";
 import { drawGrid, drawMapElements } from "./drawBoard.js";
 import { drawBarriers, drawFlags, drawGameOverOverlay, drawHumanPlayerLabels, drawRunners } from "./drawEntities.js";
-import { drawActiveRunnerGlow, drawAreaFreezePulse } from "./effects.js";
+import { drawActiveRunnerGlow, drawAreaFreezePulse, drawJumpLandingDust } from "./effects.js";
 import { handleKeyInput } from "../ui/controls.js";
 
 function isBlocklyKeyboardFocusActive() {
@@ -69,6 +69,14 @@ export function initializeP5App(app) {
       drawMapElements(p, app.state.gameMap);
       drawGrid(p);
       drawLevelGoal(p, app);
+      if (app.state.activeJumpLandingDust) {
+        const dust = app.state.activeJumpLandingDust;
+        const elapsedMs = Math.max(0, Date.now() - dust.startedAtMs);
+        const ringProgress = dust.durationMs > 0 ? Math.min(1, elapsedMs / dust.durationMs) : 1;
+        if (elapsedMs < dust.durationMs) {
+          drawJumpLandingDust(p, dust.cellX, dust.cellY, ringProgress);
+        }
+      }
       drawAreaFreezePulse(p, app);
       drawActiveRunnerGlow(p, app.state);
       drawFlags(p, app.state);
