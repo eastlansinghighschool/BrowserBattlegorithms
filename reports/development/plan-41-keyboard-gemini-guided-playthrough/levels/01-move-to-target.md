@@ -1,0 +1,21 @@
+# L01 Level 1: Move to Target
+
+- Result: pass
+- Attempts: 1
+- Approximate time: 10 minutes
+- Main strategy tried: Assembled a simple Blockly routine by nesting the "Move Forward" block inside the "On Each Turn" block, then started execution.
+- Keyboard Blockly workflow: usable with friction
+- Keyboard friction details: 
+  - Standard focus states on the main board buttons and control tabs have minimal styling, making visual tracking of focused elements difficult.
+  - Blockly keyboard navigation (standard Blockly shortcuts) was partially functional, but without custom cursor styling or explicit hotkey labels, standard students would struggle to discover it or use it smoothly without falling back to a pointer device.
+- Mouse fallback used: yes, used standard mouse interactions/actions to snap the "Move Forward" block into the "On Each Turn" trigger block in the workspace.
+- Confusing copy or UI: None. The introductory 3-step modal is beautiful and extremely clear.
+- Toolbox sufficiency: Perfect; contains exactly what is required for the level.
+- Badge/project/capstone signal clarity: N/A
+- Win/loss feedback clarity: High. Instantly displays "Level passed | Turn: 3 | Level 1: Move to Target" and highlights the "Next Level" button.
+- Turn-limit impression: N/A, very fair.
+- AP CSA transfer signal observed: Introduces event-driven "On Each Turn" step execution, which aligns perfectly with method call loops and repetitive state checks.
+- Likely student blocker: None for general students, but highly problematic for accessibility-dependent students due to focus indicators and Blockly keyboard navigation learning curve.
+- Browser-agent-specific blocker: Keyboard-only control requires highly precise coordinate clicks or manual AST-level focus manipulation because visual keyboard shortcuts/markers were not explicitly highlighted.
+- Recommended action: keyboard-nav repair / dev-guided layout repair
+- Notes: High-quality visual polish, smooth animations, and highly readable modal dialogs make for an outstanding student onboarding experience.

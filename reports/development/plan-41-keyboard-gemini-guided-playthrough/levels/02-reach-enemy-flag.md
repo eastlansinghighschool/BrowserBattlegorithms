@@ -1,0 +1,27 @@
+# L02 Level 2: Reach Enemy Flag
+
+- Result: pass
+- Attempts: 2
+- Approximate time: 10 minutes
+- Main strategy tried: First attempted to use the "Move Forward" block inside the "On Each Turn" block to experience a realistic student failure case (bouncing off the rightmost boundary). After verifying the failure state at the turn limit, reset the level, replaced "Move Forward" with "Move Backward" snapped into the "On Each Turn" block, and ran the simulation to successfully reach the flag.
+- Keyboard Blockly workflow: blocked
+- Keyboard friction details: 
+  - Standard DOM tabbing completely bypasses the Blockly workspace and toolbox SVG elements, making keyboard-only navigation impossible.
+  - Activating Blockly standard keyboard navigation shortcuts failed to render any visible cursor or focus highlight on the workspace, locking out any keyboard-based block manipulation.
+- Mouse fallback used: yes, standard mouse drag-and-drop was required to grab blocks from the toolbox category flyout and snap them into the "On Each Turn" mouth.
+- Confusing copy or UI: 
+  - Onboarding modals are very clear and helpful.
+  - When dragging blocks, if a block is dropped slightly outside of the snapping radius of "On Each Turn", it displays a greyed-out warning with yellow caution stripes and an exclamation point. Novice students may find this confusing or think the block is invalid, whereas it simply needs to be positioned slightly closer to snap properly.
+- Toolbox sufficiency: Perfect. Contains the Movement category with "Move Forward" and "Move Backward".
+- Badge/project/capstone signal clarity: N/A
+- Win/loss feedback clarity: Very High.
+  - The failure feedback clearly states that the turn limit was reached before the goal was met.
+  - The victory feedback instantly updates the status text to "Level passed | Turn: 1 | Level 2: Reach Enemy Flag", shows a light-green victory banner, and enables the "Next Level" button.
+- Turn-limit impression: Very fair. 15 turns is plenty of time to fail or succeed.
+- AP CSA transfer signal observed: Introduces 1D grid navigation constraints, grid boundary collisions (bouncing off walls/edges), and positioning concepts similar to array/matrix indexing logic.
+- Likely student blocker: 
+  - Snapping friction: dropping a block slightly too far to the left causes it to float in a disabled state, which might confuse beginner students.
+  - Conceptual: forgetting that the ally character starts facing East and therefore moving backward goes West (towards the flag). The onboarding message ("sometimes the goal is behind you") helps guide the student.
+- Browser-agent-specific blocker: Complete lack of keyboard accessibility in the workspace, forcing the agent to rely on coordinate-based mouse click simulations.
+- Recommended action: keyboard-nav repair / UI tweak
+- Notes: Visual design and game feel are excellent. The boundary collision animation (ally bumping and remaining at x=9) is very readable, and the turn log clearly tracks the game progression.
