@@ -201,5 +201,5 @@ test("wrong-runner scoring at index jobs also forces a failed level result at ga
   assert.equal(forcedEvent.payload.levelId, "index-jobs");
   assert.equal(forcedEvent.payload.scoringTeam, wrongRunner.team);
   assert.equal(forcedEvent.payload.winConditionType, "runner_reaches_enemy_flag");
-  assert.equal(forcedEvent.payload.winConditionRunnerId, "runner_1_AI_AllyP1");
+  assert.equal(forcedEvent.payload.winConditionRunnerId, "runner_1_AI_AllyP1_2");
 });
