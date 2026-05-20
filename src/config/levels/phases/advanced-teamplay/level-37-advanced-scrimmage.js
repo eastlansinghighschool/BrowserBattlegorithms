@@ -44,6 +44,6 @@ export default {
         ]
       }
     },
-    flags: { opponent: { gridX: 8, gridY: 3 } }
+    flags: { opponent: { gridX: 11, gridY: 4 } }
   }
 };
