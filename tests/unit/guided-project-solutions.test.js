@@ -33,6 +33,8 @@ const PROJECT_ORDER = [
     expectedToolboxes: TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS,
     cumulativeExceptions: {
       "one-program-two-allies": "The cumulative Team Strategy Script checkpoint keeps the later role-composition shape instead of recreating the exact first-step attack/support timing.",
+      "index-jobs": "The cumulative Team Strategy Script checkpoint assigns index 0 as the primary attacker; level 30 places index 0 near the enemy flag, causing it to intercept before index 1 can score.",
+      "closest-enemy-defender": "The cumulative Team Strategy Script checkpoint sends index 1 forward rather than toward the closest enemy; the repositioned NPCs on the player's side reach the player's flag and alter midfield state before index 0 can score within the turn limit.",
       "first-two-defend": "The cumulative Team Strategy Script checkpoint keeps the later role split rather than matching the earlier defender timing exactly.",
       "escort-the-carrier": "The cumulative Team Strategy Script checkpoint uses the later role-composition shape and does not fully recreate the escort-specific pathing setup.",
       "jump-team": "The cumulative Team Strategy Script checkpoint keeps the later role structure instead of re-specializing for the isolated jump lesson.",

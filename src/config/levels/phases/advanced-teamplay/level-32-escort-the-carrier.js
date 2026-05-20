@@ -7,7 +7,7 @@ export default {
   id: "escort-the-carrier",
   title: "Level 32: Escort The Carrier",
   description: "Combine teammate-has-flag with runner index to send one ally home and another into support mode.",
-  introText: "The lead ally starts with the flag already, so the shared script has to recognize carrier state immediately and assign support from the same program.",
+  introText: "The lead ally starts with the flag already and should move back to base.  The other ally should move forward to support.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

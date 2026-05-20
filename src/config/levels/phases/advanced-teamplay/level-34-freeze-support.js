@@ -7,7 +7,7 @@ export default {
   id: "freeze-support",
   title: "Level 34: Freeze Support",
   description: "One ally spends the freeze while another keeps advancing.",
-  introText: "The strongest team plays are role-based. In this level, one ally is the freezer and one is the runner, both driven by the same shared script.",
+  introText: "In this level, the lower ally is the freezer and the ally in line with the enemy flag runs to get it.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

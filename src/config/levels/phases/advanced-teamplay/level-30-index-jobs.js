@@ -7,7 +7,7 @@ export default {
   id: "index-jobs",
   title: "Level 30: Index Jobs",
   description: "Use runner index comparisons so one ally attacks and the other patrols upward.",
-  introText: "The shared script is getting a job system. Runner index decides which ally attacks and which ally should peel upward instead of stealing the job.",
+  introText: "The shared script is getting a job system. One ally is already pushing deep into enemy territory. Have that runner move out of the way, and send the other runner to score.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -15,7 +15,7 @@ export default {
   toolboxBlockTypes: [...TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS],
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG],
   initialBlocklyXml: STARTER_EVENT_XML,
-  winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
+  winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1_2" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
     { id: "level-28-index-compare", title: "Compare The Index", body: "You can compare runner index to a number to choose different branches for different allies. That is how the shared script starts assigning jobs.", targetSelector: "#blockly-region" },
@@ -25,7 +25,7 @@ export default {
     pointsToWin: 1,
     autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     teams: {
-      player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 1, gridY: 5 }, { slot: "ally2", gridX: 7, gridY: 5 }] },
+      player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 1 }, { slot: "ally", gridX: 7, gridY: 5 }, { slot: "ally2", gridX: 1, gridY: 5 }] },
       opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 }, { slot: "npc2", gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }] }
     },
     flags: { opponent: { gridX: 10, gridY: 5 } }

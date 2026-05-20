@@ -7,7 +7,7 @@ export default {
   id: "closest-enemy-defender",
   title: "Level 33: Closest Enemy Defender",
   description: "One ally attacks while another uses closest-enemy targeting as a defender.",
-  introText: "This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side. The shared script is starting to split attack and defense work.",
+  introText: "This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side. The shared script is starting to split attack and defense.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -25,8 +25,19 @@ export default {
     pointsToWin: 1,
     autoStayHumanRunnerIds: ["runner_1_HumanP1"],
     teams: {
-      player: { playDirection: 1, runners: [{ slot: "human", gridX: 1, gridY: 7 }, { slot: "ally", gridX: 1, gridY: 4 }, { slot: "ally2", gridX: 1, gridY: 2 }] },
-      opponent: { playDirection: -1, runners: [{ slot: "npc1", gridX: 8, gridY: 1 }, { slot: "npc2", gridX: 10, gridY: 1 }] }
+      player: {
+        playDirection: 1, runners: [
+          { slot: "human", gridX: 1, gridY: 7 },
+          { slot: "ally", gridX: 1, gridY: 4 },
+          { slot: "ally2", gridX: 6, gridY: 2 }
+        ]
+      },
+      opponent: {
+        playDirection: -1, runners: [
+          { slot: "npc1", gridX: 4, gridY: 2 },
+          { slot: "npc2", gridX: 3, gridY: 2 }
+        ]
+      }
     },
     flagOverrides: {
       2: { gridX: 8, gridY: 4 }
