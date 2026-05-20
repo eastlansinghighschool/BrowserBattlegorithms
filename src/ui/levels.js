@@ -14,7 +14,7 @@ import {
   getSensorObjectLabel,
   getSensorRelationLabel
 } from "../ai/blockly/blocks.js";
-import { renderControlRows } from "./keycaps.js";
+import { renderKeycaps } from "./keycaps.js";
 import {
   renderProjectBadge,
   renderProjectIndicator,
@@ -83,6 +83,20 @@ function describeGoal(app, level) {
       : "Stage on defense first, then support the carrier after the human picks up the flag.";
   }
   return "Complete the challenge.";
+}
+
+function renderCompactControlRows(rows = []) {
+  return `
+    <div class="control-keylist">
+      ${rows.map((row) => `
+        <div class="control-keyrow">
+          <span class="control-keylabel">${escapeHtml(row.label)}</span>
+          <span class="control-keycaps-pill">${renderKeycaps(row.keys)}</span>
+          <span class="sr-only">${escapeHtml(row.label)}: ${escapeHtml(row.description)}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 function getStoredLessonPanelCollapsed() {
@@ -409,16 +423,16 @@ function renderFreePlayOptions(app) {
     <details class="lesson-disclosure" open>
       <summary>Controls</summary>
       <div class="lesson-disclosure-content">
-        <p class="lesson-support-note">Two-player free play uses one keyboard. Each team has its own movement and ability keys.</p>
+        <p class="lesson-support-note">Two-player free play uses one keyboard.</p>
         <p><strong>Player 1</strong></p>
-        ${renderControlRows([
+        ${renderCompactControlRows([
           { label: "Move", keys: ["W", "A", "S", "D"], description: "move on the board" },
           { label: "Jump", keys: ["F"], description: "jump forward" },
           { label: "Barrier", keys: ["B"], description: "place a barrier" },
           { label: "Stay", keys: ["X"], description: "stay still" }
         ])}
         <p><strong>Player 2</strong></p>
-        ${renderControlRows([
+        ${renderCompactControlRows([
           { label: "Move", keys: ["O", "K", "L", ";"], description: "move on the board" },
           { label: "Jump", keys: ["M"], description: "jump forward" },
           { label: "Barrier", keys: ["I"], description: "place a barrier" },

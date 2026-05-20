@@ -17,7 +17,7 @@ test("free play shows Team 2 controls with a semicolon keycap in the options pan
   await chooseFreePlay(page);
 
   await expect(page.locator("#level-panel")).toContainText("Player 2");
-  const team2MoveRow = page.locator("#level-panel .control-chip-row").filter({ hasText: "Move" }).nth(1);
+  const team2MoveRow = page.locator("#level-panel .control-keyrow").filter({ hasText: "Move" }).nth(1);
   await expect(team2MoveRow).toContainText("O");
   await expect(team2MoveRow).toContainText("K");
   await expect(team2MoveRow).toContainText("L");

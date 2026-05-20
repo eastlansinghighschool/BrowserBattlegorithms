@@ -4,7 +4,7 @@
 
 - Packet id: plan-58
 - Packet title: Runner Index Badges
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-19
 - Packet type: implementation / visual / source-code / tests

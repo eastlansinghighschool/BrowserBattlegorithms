@@ -47,6 +47,46 @@
   color: #40515a;
 }
 
+.control-keylist {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.control-keyrow {
+  display: grid;
+  grid-template-columns: minmax(4.8rem, auto) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 10px;
+}
+
+.control-keylabel {
+  font-weight: 700;
+  color: #24404a;
+}
+
+.control-keycaps-pill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(36, 64, 74, 0.16);
+  background: #f8fbff;
+  box-shadow: 0 1px 2px rgba(30, 43, 51, 0.08);
+}
+
+.control-keycaps-pill .app-keycaps {
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+.control-keycaps-pill .app-keycap {
+  min-width: 1.55em;
+  padding: 1px 6px;
+  font-size: 0.86rem;
+}
+
 .lesson-panel-collapse-shell {
   display: flex;
   justify-content: center;
