@@ -17,8 +17,8 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 60](plan-60-level-readiness-engine.md) | ready | Extract scattered guided-level validation knowledge into a reusable per-level readiness engine with deterministic JSON output and a CLI entry point. |
 | [Plan 61](plan-61-level-readiness-agent-prompt-renderer.md) | complete | Render Plan 60 readiness results into deterministic Markdown repair prompts for implementation agents, with fact/recommendation separation and validation commands. |
 | [Plan 62](plan-62-local-dev-level-workbench-shell.md) | complete | Add a local-dev-only, read-only level workbench shell that displays readiness checks, level context, and generated agent prompts. |
-| [Plan 63](plan-63-reference-solution-runner-panel.md) | ready | Extend the workbench with a reference/project-solution runner panel showing pass/fail evidence, result reasons, and trace tails. |
-| [Plan 64](plan-64-scratch-blockly-preview-and-mutation-prompt.md) | ready | Add an isolated scratch Blockly preview to the workbench so candidate solutions can be run and turned into fixture-update prompts without filesystem writes. |
+| [Plan 63](plan-63-reference-solution-runner-panel.md) | complete | Extend the workbench with a reference/project-solution runner panel showing pass/fail evidence, result reasons, and trace tails. |
+| [Plan 64](plan-64-scratch-blockly-preview-and-mutation-prompt.md) | complete | Add an isolated scratch Blockly preview to the workbench so candidate solutions can be run and turned into fixture-update prompts without filesystem writes. |
 
 ### Completed Packets
 

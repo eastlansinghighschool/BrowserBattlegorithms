@@ -1,20 +1,45 @@
 import { formatLevelReadinessPrompt } from "../dev/levelReadinessPrompt.js";
 import { loadWorkbenchData } from "./workbenchData.js";
+import { buildWorkbenchRunPanelModel } from "./workbenchRunPanel.js";
+import { formatWorkbenchMutationPrompt } from "./workbenchMutationPrompt.js";
+import { createWorkbenchScratchController } from "./workbenchScratch.js";
 
 const levelSelect = document.getElementById("levelSelect");
 const selectionMeta = document.getElementById("selectionMeta");
 const loadStatus = document.getElementById("loadStatus");
 const contextPanel = document.getElementById("contextPanel");
 const checksPanel = document.getElementById("checksPanel");
+const runSummary = document.getElementById("runSummary");
+const runOutput = document.getElementById("runOutput");
+const runReferenceButton = document.getElementById("runReferenceButton");
+const copyRunButton = document.getElementById("copyRunButton");
+const scratchStatus = document.getElementById("scratchStatus");
+const scratchFixtureLabel = document.getElementById("scratchFixtureLabel");
+const scratchTargetSelect = document.getElementById("scratchTargetSelect");
+const scratchTargetWrap = document.getElementById("scratchTargetWrap");
+const scratchComparison = document.getElementById("scratchComparison");
+const loadScratchCanonicalButton = document.getElementById("loadScratchCanonicalButton");
+const applyScratchXmlButton = document.getElementById("applyScratchXmlButton");
+const runScratchButton = document.getElementById("runScratchButton");
+const generateMutationPromptButton = document.getElementById("generateMutationPromptButton");
+const copyScratchXmlButton = document.getElementById("copyScratchXmlButton");
+const mutationPromptOutput = document.getElementById("mutationPromptOutput");
+const copyMutationPromptButton = document.getElementById("copyMutationPromptButton");
+const selectMutationPromptButton = document.getElementById("selectMutationPromptButton");
 const validationPanel = document.getElementById("validationPanel");
 const promptOutput = document.getElementById("promptOutput");
 const copyPromptButton = document.getElementById("copyPromptButton");
 const selectPromptButton = document.getElementById("selectPromptButton");
+const scratchBlocklyHost = document.getElementById("scratchBlocklyHost");
+const scratchXmlOutput = document.getElementById("scratchXmlOutput");
 
 const state = {
   data: null,
   currentResult: null,
-  loading: false
+  loading: false,
+  scratchController: null,
+  scratchSnapshot: null,
+  mutationPromptText: ""
 };
 
 function escapeHtml(str) {
@@ -226,13 +251,310 @@ function renderValidationPanel(result) {
   `;
 }
 
+function renderRunPanel(result) {
+  const model = buildWorkbenchRunPanelModel(result);
+  const badgeClass = model.status || "not_run";
+  runSummary.innerHTML = `
+    <span class="wb-badge" data-status="${escapeHtml(badgeClass)}">${escapeHtml(statusLabel(model.status))}</span>
+    ${escapeHtml(model.summary || "No run available.")}
+  `;
+  runOutput.value = model.copyText || "";
+  runReferenceButton.disabled = false;
+  copyRunButton.disabled = false;
+}
+
 function renderPrompt(result) {
   promptOutput.value = formatLevelReadinessPrompt(result);
+}
+
+function getScratchTargetKind(result) {
+  if (!result) {
+    return null;
+  }
+  if (result.project) {
+    const value = scratchTargetSelect?.value || "";
+    return value === "step" || value === "final" ? value : null;
+  }
+  return "reference";
+}
+
+function getScratchFixtureDescriptor(result, targetKind) {
+  if (!result || !targetKind) {
+    return null;
+  }
+  if (result.project) {
+    if (targetKind === "step") {
+      return {
+        kind: "step",
+        label: "Project step fixture",
+        path: result.fixtures?.project?.step?.path || null,
+        exists: Boolean(result.fixtures?.project?.step?.exists)
+      };
+    }
+    if (targetKind === "final") {
+      return {
+        kind: "final",
+        label: "Project final fixture",
+        path: result.fixtures?.project?.final?.path || null,
+        exists: Boolean(result.fixtures?.project?.final?.exists)
+      };
+    }
+    return null;
+  }
+  if (targetKind !== "reference") {
+    return null;
+  }
+  return {
+    kind: "reference",
+    label: "Reference fixture",
+    path: result.fixtures?.referenceSolution?.path || null,
+    exists: Boolean(result.fixtures?.referenceSolution?.exists)
+  };
+}
+
+function getCanonicalScratchRun(result, targetKind) {
+  if (!result || !targetKind) {
+    return null;
+  }
+  const normalize = (runtime) => {
+    if (!runtime) {
+      return null;
+    }
+    return {
+      status:
+        runtime.result === "PASSED"
+          ? "pass"
+          : runtime.result === "FAILED"
+            ? "fail"
+            : "not_run",
+      turnCount: Number.isFinite(runtime.turnCount) ? runtime.turnCount : null,
+      finalTurnState: runtime.finalTurnState || null,
+      mainGameState: runtime.mainGameState || null,
+      lastLevelResultReason: runtime.lastLevelResultReason || null,
+      traceTail: Array.isArray(runtime.traceTail) ? runtime.traceTail : [],
+      eventTail: Array.isArray(runtime.eventTail) ? runtime.eventTail : [],
+      documentedException: runtime.documentedException || null
+    };
+  };
+  if (result.project) {
+    if (targetKind === "step") {
+      return normalize(result.runtime?.step || null);
+    }
+    if (targetKind === "final") {
+      return normalize(result.runtime?.final || null);
+    }
+    return null;
+  }
+  if (targetKind !== "reference") {
+    return null;
+  }
+  return normalize(result.runtime?.reference || null);
+}
+
+function compareRuns(left, right) {
+  if (!left || !right) {
+    return null;
+  }
+  return (
+    left.status === right.status &&
+    left.turnCount === right.turnCount &&
+    left.finalTurnState === right.finalTurnState &&
+    left.mainGameState === right.mainGameState &&
+    left.lastLevelResultReason === right.lastLevelResultReason
+  );
+}
+
+function renderScratchComparison() {
+  if (!scratchComparison) {
+    return;
+  }
+  const result = state.currentResult;
+  const snapshot = state.scratchSnapshot;
+  if (!result || !snapshot) {
+    scratchComparison.innerHTML = "<p class=\"wb-toolbar-meta\">Select a level to load the scratch workspace.</p>";
+    return;
+  }
+
+  const targetKind = getScratchTargetKind(result);
+  const targetDescriptor = getScratchFixtureDescriptor(result, targetKind);
+  const canonicalRun = getCanonicalScratchRun(result, targetKind);
+  const scratchRun = snapshot.scratchRun;
+  const comparison = compareRuns(scratchRun, canonicalRun);
+  const targetLabel = targetDescriptor?.label || "Choose a fixture target";
+  const targetPath = targetDescriptor?.path || "(missing)";
+  const scratchLine = scratchRun
+    ? `${statusLabel(scratchRun.status)} | ${Number.isFinite(scratchRun.turnCount) ? `${scratchRun.turnCount} turn${scratchRun.turnCount === 1 ? "" : "s"}` : "turn count missing"}${scratchRun.lastLevelResultReason ? ` | ${scratchRun.lastLevelResultReason}` : ""}`
+    : "Not run";
+  const canonicalLine = canonicalRun
+    ? `${statusLabel(canonicalRun.status)} | ${Number.isFinite(canonicalRun.turnCount) ? `${canonicalRun.turnCount} turn${canonicalRun.turnCount === 1 ? "" : "s"}` : "turn count missing"}${canonicalRun.lastLevelResultReason ? ` | ${canonicalRun.lastLevelResultReason}` : ""}`
+    : "Not applicable";
+  const compareLine =
+    comparison === null
+      ? "Comparison unavailable until a fixture target is chosen."
+      : comparison
+        ? "Scratch result matches the canonical target."
+        : "Scratch result differs from the canonical target.";
+
+  scratchComparison.innerHTML = `
+    <div class="wb-group">
+      <table class="wb-meta-table">
+        <tbody>
+          <tr><th scope="row">Target</th><td>${escapeHtml(targetLabel)}</td></tr>
+          <tr><th scope="row">Target path</th><td><code>${escapeHtml(targetPath)}</code></td></tr>
+          <tr><th scope="row">Scratch</th><td>${escapeHtml(scratchLine)}</td></tr>
+          <tr><th scope="row">Canonical</th><td>${escapeHtml(canonicalLine)}</td></tr>
+          <tr><th scope="row">Match</th><td>${escapeHtml(compareLine)}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderMutationPrompt() {
+  if (!mutationPromptOutput) {
+    return;
+  }
+  mutationPromptOutput.value = state.mutationPromptText || "";
+}
+
+function updateScratchTargetControls(result) {
+  if (!scratchTargetSelect || !scratchTargetWrap || !loadScratchCanonicalButton) {
+    return;
+  }
+
+  const isProject = Boolean(result?.project);
+  const selectedTargetKind = state.scratchSnapshot?.targetKind || (isProject ? "" : "reference");
+  scratchTargetWrap.hidden = !isProject;
+  scratchTargetSelect.innerHTML = "";
+
+  if (!isProject) {
+    const referenceOption = document.createElement("option");
+    referenceOption.value = "reference";
+    referenceOption.textContent = "Reference fixture";
+    scratchTargetSelect.appendChild(referenceOption);
+    scratchTargetSelect.value = "reference";
+    loadScratchCanonicalButton.textContent = "Load reference fixture";
+    return;
+  }
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Choose project fixture…";
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  scratchTargetSelect.appendChild(placeholder);
+
+  const stepOption = document.createElement("option");
+  stepOption.value = "step";
+  stepOption.textContent = "Project step fixture";
+  scratchTargetSelect.appendChild(stepOption);
+
+  const finalOption = document.createElement("option");
+  finalOption.value = "final";
+  finalOption.textContent = "Project final fixture";
+  scratchTargetSelect.appendChild(finalOption);
+  scratchTargetSelect.value = selectedTargetKind === "step" || selectedTargetKind === "final" ? selectedTargetKind : "";
+  loadScratchCanonicalButton.textContent = "Load canonical fixture";
+}
+
+function renderScratchPanel() {
+  const result = state.currentResult;
+  const snapshot = state.scratchSnapshot;
+
+  if (!scratchStatus || !scratchFixtureLabel || !scratchComparison || !runScratchButton || !generateMutationPromptButton) {
+    return;
+  }
+
+  if (!result || !snapshot) {
+    scratchStatus.textContent = "Select a level to begin.";
+    scratchFixtureLabel.textContent = "";
+    scratchComparison.innerHTML = "<p class=\"wb-toolbar-meta\">Scratch workspace is not ready yet.</p>";
+    runScratchButton.disabled = true;
+    generateMutationPromptButton.disabled = true;
+    if (loadScratchCanonicalButton) {
+      loadScratchCanonicalButton.disabled = true;
+    }
+    if (applyScratchXmlButton) {
+      applyScratchXmlButton.disabled = true;
+    }
+    if (copyScratchXmlButton) {
+      copyScratchXmlButton.disabled = true;
+    }
+    return;
+  }
+
+  updateScratchTargetControls(result);
+  const targetKind = getScratchTargetKind(result);
+  const targetDescriptor = getScratchFixtureDescriptor(result, targetKind);
+  const canUseTarget = Boolean(targetDescriptor && targetDescriptor.exists);
+  const statusBits = [];
+  statusBits.push(snapshot.loadedFrom === "canonical" ? "Canonical XML loaded" : "Starter XML loaded");
+  if (snapshot.xmlError) {
+    statusBits.push(`XML error: ${snapshot.xmlError}`);
+  }
+  if (!targetKind) {
+    statusBits.push("Choose a project fixture target before loading canonical XML or generating a prompt.");
+  }
+  scratchStatus.textContent = statusBits.join(" | ");
+  scratchFixtureLabel.textContent = targetDescriptor
+    ? `${targetDescriptor.label}${targetDescriptor.path ? ` · ${targetDescriptor.path}` : ""}`
+    : result.project
+      ? "Choose step or final fixture before comparing scratch XML."
+      : "Reference fixture";
+
+  const enableActions = canUseTarget || targetKind === "reference";
+  if (loadScratchCanonicalButton) {
+    loadScratchCanonicalButton.disabled = !enableActions;
+  }
+  if (applyScratchXmlButton) {
+    applyScratchXmlButton.disabled = !snapshot.level;
+  }
+  if (copyScratchXmlButton) {
+    copyScratchXmlButton.disabled = !snapshot.level;
+  }
+
+  const canGeneratePrompt = Boolean(snapshot.scratchRun && targetDescriptor?.path && snapshot.scratchRun.status !== "not_run");
+  const canRunScratch = Boolean(snapshot.level && canUseTarget);
+  runScratchButton.disabled = !canRunScratch;
+  generateMutationPromptButton.disabled = !canGeneratePrompt;
+  renderScratchComparison();
+  renderMutationPrompt();
 }
 
 function renderSelectionMeta(result) {
   const counts = checkCounts(result.checks);
   selectionMeta.textContent = `${result.title} | ${counts.fail} fail, ${counts.warning} warning${counts.warning === 1 ? "" : "s"}, ${counts.pass} pass`;
+}
+
+function buildMutationPromptText() {
+  const result = state.currentResult;
+  const snapshot = state.scratchSnapshot;
+  if (!result || !snapshot?.scratchRun) {
+    return "";
+  }
+  const targetKind = getScratchTargetKind(result);
+  const targetDescriptor = getScratchFixtureDescriptor(result, targetKind);
+  if (!targetDescriptor) {
+    return "";
+  }
+  const canonicalRun = getCanonicalScratchRun(result, targetKind);
+  const extraDoNotTouchFiles = result.project
+    ? targetKind === "step"
+      ? [result.fixtures?.project?.final?.path]
+      : [result.fixtures?.project?.step?.path]
+    : [];
+
+  return formatWorkbenchMutationPrompt({
+    levelId: result.levelId,
+    title: result.title,
+    sourcePath: result.sourcePath,
+    fixtureTarget: targetDescriptor,
+    scratchXmlText: snapshot.xmlText,
+    scratchRun: snapshot.scratchRun,
+    canonicalRun,
+    validationCommands: result.validationCommands,
+    extraDoNotTouchFiles
+  });
 }
 
 async function updateSelectedLevel(levelId) {
@@ -244,12 +566,19 @@ async function updateSelectedLevel(levelId) {
   loadStatus.textContent = `Rendering ${levelId}…`;
   try {
     const result = await state.data.getResult(levelId);
+    const level = state.data.getLevel(levelId);
     state.currentResult = result;
     renderSelectionMeta(result);
     renderContextPanel(result);
     renderChecksPanel(result);
+    renderRunPanel(result);
     renderValidationPanel(result);
     renderPrompt(result);
+    state.mutationPromptText = "";
+    renderMutationPrompt();
+    if (state.scratchController && level) {
+      state.scratchController.setLevel(level, { targetKind: result.project ? null : "reference" });
+    }
     loadStatus.textContent = `Loaded ${result.title} (${result.levelId})`;
   } catch (error) {
     console.error(error);
@@ -257,8 +586,17 @@ async function updateSelectedLevel(levelId) {
     loadStatus.textContent = message;
     contextPanel.innerHTML = `<p class="wb-toolbar-meta">${escapeHtml(message)}</p>`;
     checksPanel.innerHTML = "";
+    runSummary.innerHTML = "";
+    runOutput.value = "";
     validationPanel.innerHTML = "";
     promptOutput.value = "";
+    state.scratchSnapshot = null;
+    state.mutationPromptText = "";
+    renderScratchPanel();
+    renderMutationPrompt();
+    if (scratchStatus) {
+      scratchStatus.textContent = "";
+    }
   } finally {
     state.loading = false;
   }
@@ -282,6 +620,110 @@ selectPromptButton.addEventListener("click", () => {
   loadStatus.textContent = "Prompt selected.";
 });
 
+runReferenceButton.addEventListener("click", () => {
+  if (state.loading) {
+    return;
+  }
+  void updateSelectedLevel(levelSelect.value);
+});
+
+copyRunButton.addEventListener("click", async () => {
+  const text = runOutput.value || "";
+  try {
+    await navigator.clipboard.writeText(text);
+    loadStatus.textContent = "Run evidence copied to clipboard.";
+  } catch {
+    runOutput.focus();
+    runOutput.select();
+    loadStatus.textContent = "Run evidence selected for manual copy.";
+  }
+});
+
+scratchTargetSelect?.addEventListener("change", () => {
+  if (!state.scratchController) {
+    return;
+  }
+  state.scratchController.setTargetKind(scratchTargetSelect.value || null);
+  state.mutationPromptText = "";
+  renderScratchPanel();
+});
+
+loadScratchCanonicalButton?.addEventListener("click", async () => {
+  if (!state.currentResult || !state.scratchController || !state.data) {
+    return;
+  }
+  const targetKind = getScratchTargetKind(state.currentResult);
+  const descriptor = await state.data.getFixtureDescriptor(state.currentResult.levelId, targetKind);
+  if (!descriptor) {
+    loadStatus.textContent = "Choose a fixture target before loading canonical XML.";
+    return;
+  }
+  state.scratchController.loadCanonicalXml(descriptor.xmlText);
+  state.mutationPromptText = "";
+  renderScratchPanel();
+  loadStatus.textContent = `Loaded ${descriptor.label}.`;
+});
+
+applyScratchXmlButton?.addEventListener("click", () => {
+  if (!state.scratchController) {
+    return;
+  }
+  const result = state.scratchController.applyEditorXml();
+  state.mutationPromptText = "";
+  renderScratchPanel();
+  loadStatus.textContent = result?.ok ? "Scratch XML applied." : result?.error || "Scratch XML could not be applied.";
+});
+
+runScratchButton?.addEventListener("click", () => {
+  if (!state.scratchController) {
+    return;
+  }
+  const runtime = state.scratchController.runScratch();
+  state.mutationPromptText = "";
+  renderScratchPanel();
+  loadStatus.textContent = runtime ? "Scratch solution run complete." : "Scratch solution could not run.";
+});
+
+generateMutationPromptButton?.addEventListener("click", () => {
+  const promptText = buildMutationPromptText();
+  state.mutationPromptText = promptText;
+  renderMutationPrompt();
+  loadStatus.textContent = promptText ? "Mutation prompt generated." : "Scratch candidate is not ready for a mutation prompt yet.";
+});
+
+copyScratchXmlButton?.addEventListener("click", async () => {
+  if (!scratchXmlOutput) {
+    return;
+  }
+  const text = scratchXmlOutput.value || "";
+  try {
+    await navigator.clipboard.writeText(text);
+    loadStatus.textContent = "Scratch XML copied to clipboard.";
+  } catch {
+    scratchXmlOutput.focus();
+    scratchXmlOutput.select();
+    loadStatus.textContent = "Scratch XML selected for manual copy.";
+  }
+});
+
+copyMutationPromptButton?.addEventListener("click", async () => {
+  const text = mutationPromptOutput?.value || "";
+  try {
+    await navigator.clipboard.writeText(text);
+    loadStatus.textContent = "Mutation prompt copied to clipboard.";
+  } catch {
+    mutationPromptOutput?.focus();
+    mutationPromptOutput?.select();
+    loadStatus.textContent = "Mutation prompt selected for manual copy.";
+  }
+});
+
+selectMutationPromptButton?.addEventListener("click", () => {
+  mutationPromptOutput?.focus();
+  mutationPromptOutput?.select();
+  loadStatus.textContent = "Mutation prompt selected.";
+});
+
 levelSelect.addEventListener("change", () => {
   void updateSelectedLevel(levelSelect.value);
 });
@@ -290,6 +732,15 @@ async function start() {
   try {
     loadStatus.textContent = "Loading workbench data…";
     state.data = await loadWorkbenchData();
+    state.scratchController = createWorkbenchScratchController({
+      hostElement: scratchBlocklyHost,
+      xmlTextareaElement: scratchXmlOutput,
+      onChange(snapshot) {
+        state.scratchSnapshot = snapshot;
+        state.mutationPromptText = "";
+        renderScratchPanel();
+      }
+    });
 
     for (const option of state.data.levelOptions) {
       const opt = document.createElement("option");
@@ -300,6 +751,7 @@ async function start() {
 
     const defaultLevelId = state.data.levelOptions[0]?.id || "";
     levelSelect.value = defaultLevelId;
+    renderScratchPanel();
     loadStatus.textContent = "Workbench ready.";
     if (!defaultLevelId) {
       loadStatus.textContent = "No guided levels were found.";

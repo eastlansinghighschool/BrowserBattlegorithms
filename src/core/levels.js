@@ -51,6 +51,9 @@ function loadPersistedGuidedProgression() {
 }
 
 function savePersistedGuidedProgression(state) {
+  if (state.suppressProgressPersistence) {
+    return;
+  }
   if (!hasBrowserLocalStorage()) {
     return;
   }
@@ -70,6 +73,9 @@ function savePersistedGuidedProgression(state) {
 }
 
 function applyPersistedGuidedProgression(state) {
+  if (state.suppressProgressPersistence) {
+    return;
+  }
   const persisted = loadPersistedGuidedProgression();
   if (!persisted) {
     return;
@@ -432,7 +438,9 @@ export function completeLevel(app, result, reason, options = {}) {
     if (nextLevelId && state.levelProgress[nextLevelId] === LEVEL_STATUS.LOCKED) {
       state.levelProgress[nextLevelId] = LEVEL_STATUS.AVAILABLE;
     }
-    savePersistedGuidedProgression(state);
+    if (!state.suppressProgressPersistence) {
+      savePersistedGuidedProgression(state);
+    }
   }
 
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];

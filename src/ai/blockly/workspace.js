@@ -48,7 +48,7 @@ class NavigationDeferringToolbox extends Blockly.Toolbox {
   }
 }
 
-function buildToolboxXml(blockTypes) {
+export function buildToolboxXml(blockTypes) {
   const blockLibrary = getBlockLibrary();
   const categories = new Map();
   for (const blockType of blockTypes) {

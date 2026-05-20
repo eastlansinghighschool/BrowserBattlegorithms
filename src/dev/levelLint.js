@@ -1,1 +1,1 @@
-export { runWorkbenchLint as runLevelLint } from "../workbench/workbenchLint.js";
+export * from "./levelLintCore.js";

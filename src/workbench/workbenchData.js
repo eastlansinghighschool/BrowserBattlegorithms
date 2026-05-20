@@ -1,5 +1,6 @@
 import { getLevelDefinitions } from "../config/levels.js";
 import { GUIDED_LEVEL_MANIFEST } from "../config/levels/manifest.js";
+import { runLevelLint } from "../dev/levelLint.js";
 
 const WORKBENCH_CONTEXT_PROMISE_KEY = Symbol.for("bba.workbench.contextPromise");
 const WORKBENCH_ASSET_TEXT_PROMISE_KEY = Symbol.for("bba.workbench.assetTextPromise");
@@ -124,10 +125,53 @@ async function loadProjectFixturesForLevel(level, projectFixturesByPath) {
   };
 }
 
+function loadProjectFixtureIndex(projectFixturesByPath) {
+  const byProjectId = new Map();
+
+  for (const [filePath, xmlText] of projectFixturesByPath.entries()) {
+    const match = filePath.match(/^tests\/unit\/fixtures\/guided-project-solutions\/([^/]+)\/(step-(\d+)|final)\.xml$/);
+    if (!match) {
+      continue;
+    }
+
+    const projectId = match[1];
+    const projectEntry = byProjectId.get(projectId) || {
+      stepFixtures: new Map(),
+      finalFixture: null
+    };
+
+    if (match[2] === "final") {
+      projectEntry.finalFixture = { xmlText, filePath };
+    } else {
+      projectEntry.stepFixtures.set(Number(match[3]), { xmlText, filePath });
+    }
+
+    byProjectId.set(projectId, projectEntry);
+  }
+
+  return byProjectId;
+}
+
+function getLevelFixtureTargetOptions(level) {
+  if (!level) {
+    return [];
+  }
+  if (level.project?.id) {
+    return [
+      { value: "step", label: "Project step fixture" },
+      { value: "final", label: "Project final fixture" }
+    ];
+  }
+  if (level.levelKind === "prediction" || level.humanTurnBehavior === "WAIT_FOR_INPUT") {
+    return [];
+  }
+  return [{ value: "reference", label: "Reference fixture" }];
+}
+
 async function loadWorkbenchShellContext() {
   if (!globalThis[WORKBENCH_CONTEXT_PROMISE_KEY]) {
     globalThis[WORKBENCH_CONTEXT_PROMISE_KEY] = (async () => {
-      const levels = getLevelDefinitions();
+      const levels = getLevelDefinitions().map((level) => structuredClone(level));
       return {
         levels,
         levelById: new Map(levels.map((level) => [level.id, level]))
@@ -138,44 +182,51 @@ async function loadWorkbenchShellContext() {
   return globalThis[WORKBENCH_CONTEXT_PROMISE_KEY];
 }
 
-async function loadWorkbenchReadinessContext(shellContext, levelId) {
-  if (!shellContext.readinessContextPromises) {
-    shellContext.readinessContextPromises = new Map();
-  }
-  if (!shellContext.readinessContextPromises.has(levelId)) {
-    shellContext.readinessContextPromises.set(levelId, (async () => {
+async function loadWorkbenchReadinessContext(shellContext) {
+  if (!shellContext.readinessContextPromise) {
+    shellContext.readinessContextPromise = (async () => {
       const { buildLevelReadinessResultFromContext } = await import("../dev/levelReadiness.js");
-      const { runLevelLint } = await import("../dev/levelLint.js");
-      const level = shellContext.levelById.get(levelId);
       const [levelSourcePathById, assetTextMaps] = await Promise.all([
         loadLevelSourcePathMap(),
         loadWorkbenchAssetTextMaps()
       ]);
       const { conceptMatrixMarkdownByPath, referenceSolutionsByPath, projectFixturesByPath } = assetTextMaps;
       const conceptMatrixMarkdown = conceptMatrixMarkdownByPath.get("docs/GUIDED_LEVEL_CONCEPT_MATRIX.md") || "";
-      const referenceSolution = await loadReferenceSolutionForLevel(level, referenceSolutionsByPath);
-      const projectFixturesById = await loadProjectFixturesForLevel(level, projectFixturesByPath);
       const conceptMatrixRows = parseConceptMatrixRows(conceptMatrixMarkdown || "");
-      const selectedLevel = {
+      const levels = shellContext.levels.map((level) => ({
         ...level,
         sourcePath: levelSourcePathById.get(level.id) || null
-      };
+      }));
+      const levelById = new Map(levels.map((level) => [level.id, level]));
+      const referenceSolutionsByLevelId = new Map();
+      const projectFixturesById = loadProjectFixtureIndex(projectFixturesByPath);
+
+      for (const level of levels) {
+        const referenceSolution = await loadReferenceSolutionForLevel(level, referenceSolutionsByPath);
+        if (referenceSolution) {
+          referenceSolutionsByLevelId.set(level.id, referenceSolution);
+        }
+      }
+
       const lintDiagnostics = runLevelLint({
-        levels: [selectedLevel],
-        referenceSolutionsByLevelId: referenceSolution ? new Map([[level.id, referenceSolution]]) : new Map()
+        levels,
+        conceptMatrix: conceptMatrixRows,
+        referenceSolutionsByLevelId
       });
+
       return {
         buildLevelReadinessResultFromContext,
-        levelSourcePathById,
+        levels,
+        levelById,
         conceptMatrixRows,
-        referenceSolutionsByLevelId: referenceSolution ? new Map([[level.id, referenceSolution]]) : new Map(),
+        referenceSolutionsByLevelId,
         projectFixturesById,
         lintDiagnostics
       };
-    })());
+    })();
   }
 
-  return shellContext.readinessContextPromises.get(levelId);
+  return shellContext.readinessContextPromise;
 }
 
 function getLevelSelectionOptions(levels) {
@@ -195,26 +246,76 @@ function getLevelSelectionOptions(levels) {
 export async function loadWorkbenchData() {
   const shellContext = await loadWorkbenchShellContext();
   const levelOptions = getLevelSelectionOptions(shellContext.levels);
+
   return {
     context: shellContext,
     levelOptions,
+    getLevel(levelId) {
+      const level = shellContext.levelById.get(levelId) || null;
+      return level ? structuredClone(level) : null;
+    },
+    async getFixtureTargetOptions(levelId) {
+      const level = shellContext.levelById.get(levelId) || null;
+      return getLevelFixtureTargetOptions(level);
+    },
+    async getFixtureDescriptor(levelId, targetKind = null) {
+      const readinessContext = await loadWorkbenchReadinessContext(shellContext);
+      const level = readinessContext.levelById.get(levelId) || null;
+      if (!level) {
+        return null;
+      }
+      if (level.project?.id) {
+        if (!targetKind) {
+          return null;
+        }
+        const projectFixtures = readinessContext.projectFixturesById.get(level.project.id) || null;
+        if (!projectFixtures) {
+          return null;
+        }
+        if (targetKind === "step") {
+          const stepFixture = projectFixtures.stepFixtures.get(level.project.step) || null;
+          return stepFixture
+            ? {
+                kind: "step",
+                label: "Project step fixture",
+                path: stepFixture.filePath,
+                xmlText: stepFixture.xmlText,
+                exists: true
+              }
+            : null;
+        }
+        if (targetKind === "final") {
+          const finalFixture = projectFixtures.finalFixture || null;
+          return finalFixture
+            ? {
+                kind: "final",
+                label: "Project final fixture",
+                path: finalFixture.filePath,
+                xmlText: finalFixture.xmlText,
+                exists: true
+              }
+            : null;
+        }
+        return null;
+      }
+
+      if (targetKind && targetKind !== "reference") {
+        return null;
+      }
+      const referenceSolution = readinessContext.referenceSolutionsByLevelId.get(level.id) || null;
+      return referenceSolution
+        ? {
+            kind: "reference",
+            label: "Reference fixture",
+            path: referenceSolution.filePath,
+            xmlText: referenceSolution.xmlText,
+            exists: true
+          }
+        : null;
+    },
     async getResult(levelId) {
-      const readinessContext = await loadWorkbenchReadinessContext(shellContext, levelId);
-      const level = shellContext.levelById.get(levelId);
-      return readinessContext.buildLevelReadinessResultFromContext(levelId, {
-        ...shellContext,
-        levels: shellContext.levels.map((candidate) => ({
-          ...candidate,
-          sourcePath: candidate.id === level.id ? readinessContext.levelSourcePathById.get(candidate.id) || null : candidate.sourcePath || null
-        })),
-        levelById: new Map(shellContext.levels.map((candidate) => [candidate.id, {
-          ...candidate,
-          sourcePath: candidate.id === level.id ? readinessContext.levelSourcePathById.get(candidate.id) || null : candidate.sourcePath || null
-        }])),
-        ...readinessContext,
-        referenceSolutionsByLevelId: readinessContext.referenceSolutionsByLevelId,
-        projectFixturesById: readinessContext.projectFixturesById
-      });
+      const readinessContext = await loadWorkbenchReadinessContext(shellContext);
+      return readinessContext.buildLevelReadinessResultFromContext(levelId, readinessContext);
     }
   };
 }

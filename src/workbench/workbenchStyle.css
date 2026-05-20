@@ -161,6 +161,10 @@ a {
   margin-bottom: 0.75rem;
 }
 
+.wb-run-card {
+  grid-column: 1 / -1;
+}
+
 .wb-actions {
   display: flex;
   gap: 0.45rem;
@@ -324,6 +328,26 @@ a {
   font-size: 0.86rem;
 }
 
+.wb-run-summary {
+  margin: 0 0 0.7rem;
+  color: var(--wb-muted);
+  font-size: 0.95rem;
+}
+
+.wb-run-output {
+  width: 100%;
+  min-height: 18rem;
+  resize: vertical;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 139, 147, 0.35);
+  background: #fff;
+  color: var(--wb-text);
+  padding: 0.85rem;
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
 .wb-prompt-card {
   grid-column: 1 / -1;
 }
@@ -342,6 +366,54 @@ a {
   line-height: 1.45;
 }
 
+.wb-scratch-card,
+.wb-mutation-prompt-card {
+  grid-column: 1 / -1;
+}
+
+.wb-scratch-meta {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.wb-scratch-target .wb-selector-label {
+  max-width: 28rem;
+}
+
+.wb-scratch-comparison {
+  margin-bottom: 0.75rem;
+}
+
+.wb-scratch-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(20rem, 0.85fr);
+  gap: 0.85rem;
+  align-items: start;
+}
+
+.wb-scratch-blockly {
+  height: 30rem;
+  border: 1px solid rgba(125, 139, 147, 0.35);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.wb-scratch-xml {
+  width: 100%;
+  min-height: 30rem;
+  resize: vertical;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 139, 147, 0.35);
+  background: #fff;
+  color: var(--wb-text);
+  padding: 0.85rem;
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
 @media (max-width: 1100px) {
   .wb-grid {
     grid-template-columns: 1fr;
@@ -349,6 +421,10 @@ a {
 
   .wb-prompt-card {
     grid-column: auto;
+  }
+
+  .wb-scratch-layout {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -19,6 +19,10 @@ function assertCheckShape(check) {
   assert.ok(Array.isArray(check.relatedFiles));
 }
 
+function getLintEvidence(result) {
+  return result.checks.find((check) => check.id === "lint-diagnostics")?.evidence || {};
+}
+
 test("ordinary level readiness result includes the expected shape and passing reference run", async () => {
   const result = await buildLevelReadinessResult("dodge-and-deliver");
 
@@ -35,6 +39,9 @@ test("ordinary level readiness result includes the expected shape and passing re
   assert.ok(result.runtime.reference.turnCount > 0);
   assert.ok(result.runtime.reference.lastLevelResultReason);
   assert.ok(result.runtime.reference.traceTail.length > 0);
+  assert.ok(result.runtime.reference.eventTail.length > 0);
+  assert.equal(typeof result.runtime.reference.finalTurnState, "string");
+  assert.equal(typeof result.runtime.reference.mainGameState, "string");
   assert.equal(result.checks.some((check) => check.id === "reference-runtime" && check.status === "pass"), true);
   assert.equal(result.checks.some((check) => check.id === "lint-diagnostics"), true);
   assert.equal(result.validationCommands.some((entry) => entry.command.includes("--json")), true);
@@ -61,6 +68,10 @@ test("project level readiness reports documented exception metadata", async () =
   assert.equal(result.runtime.kind, "project");
   assert.equal(result.runtime.step.documentedException.length > 0, true);
   assert.equal(result.runtime.final.documentedException.length > 0, true);
+  assert.ok(result.runtime.step.eventTail.length > 0);
+  assert.ok(result.runtime.final.eventTail.length > 0);
+  assert.equal(typeof result.runtime.step.finalTurnState, "string");
+  assert.equal(typeof result.runtime.final.mainGameState, "string");
   assert.equal(result.checks.some((check) => check.id === "reference-runtime"), false);
   assert.equal(result.checks.find((check) => check.id === "project-step-runtime")?.status, "warning");
   assert.equal(result.checks.find((check) => check.id === "project-final-runtime")?.status, "warning");
@@ -74,6 +85,35 @@ test("human-input or prediction levels mark reference-run checks not applicable"
   assert.equal(result.runtime.kind, "not_applicable");
   assert.equal(result.checks.find((check) => check.id === "reference-runtime")?.status, "not_applicable");
   assert.equal(result.checks.find((check) => check.id === "toolbox-reference-compatibility")?.status, "not_applicable");
+});
+
+test("readiness lint evidence matches the canonical lint contract for baseline-warning levels", async () => {
+  const moveTowardFlag = await buildLevelReadinessResult("move-toward-flag");
+  const showWhatYouKnow = await buildLevelReadinessResult("show-what-you-know");
+  const prediction25 = await buildLevelReadinessResult("prediction-25");
+  const advancedScrimmage = await buildLevelReadinessResult("advanced-scrimmage");
+
+  const moveTowardEvidence = getLintEvidence(moveTowardFlag);
+  assert.equal(Boolean(moveTowardEvidence["win-condition-requires-named-mechanic"]), true);
+  assert.equal(Boolean(moveTowardEvidence["reference-solution-toolbox-compatibility"]), false);
+
+  const showWhatYouKnowEvidence = getLintEvidence(showWhatYouKnow);
+  assert.equal(Boolean(showWhatYouKnowEvidence["challenge-introduces-no-new-block"]), true);
+
+  const prediction25Evidence = getLintEvidence(prediction25);
+  assert.equal(Boolean(prediction25Evidence["sensor-relation-policy"]), true);
+
+  const advancedScrimmageEvidence = getLintEvidence(advancedScrimmage);
+  assert.equal(Boolean(advancedScrimmageEvidence["reference-solution-toolbox-compatibility"]), false);
+});
+
+test("readiness JSON keeps paths repo-relative and slash-normalized", async () => {
+  const result = await buildLevelReadinessResult("move-toward-flag");
+  const json = JSON.stringify(result);
+
+  assert.equal(/C:\\|\/Users\/|C:\/AI\/BrowserBattlegorithms/.test(json), false);
+  assert.match(result.sourcePath, /^src\/config\/levels\//);
+  assert.ok(result.checks.every((check) => check.relatedFiles.every((filePath) => !/^([A-Za-z]:\\|\/Users\/|C:\/AI\/BrowserBattlegorithms)/.test(filePath))));
 });
 
 test("unknown level ids fail clearly with nearby suggestions", async () => {

@@ -11,7 +11,7 @@
       <div>
         <p class="wb-eyebrow">Local development tool</p>
         <h1 class="wb-title">Level Workbench</h1>
-        <p class="wb-subtitle">Read-only level context, readiness checks, and repair prompt generation.</p>
+        <p class="wb-subtitle">Read-only level context, readiness checks, scratch candidate preview, and repair prompt generation.</p>
       </div>
       <nav class="wb-nav" aria-label="Workbench links">
         <a href="/" class="wb-link">Game</a>
@@ -38,6 +38,57 @@
         <article class="wb-card">
           <h2 class="wb-card-title">Readiness Checks</h2>
           <div id="checksPanel" class="wb-panel-body"></div>
+        </article>
+
+        <article class="wb-card wb-run-card">
+          <div class="wb-card-header">
+            <h2 class="wb-card-title">Canonical Solution Run</h2>
+            <div class="wb-actions">
+              <button type="button" class="wb-button" id="runReferenceButton">Run selected solution</button>
+              <button type="button" class="wb-button wb-button-secondary" id="copyRunButton">Copy evidence</button>
+            </div>
+          </div>
+          <p id="runSummary" class="wb-run-summary"></p>
+          <textarea id="runOutput" class="wb-run-output" readonly spellcheck="false" aria-label="Canonical solution run evidence"></textarea>
+        </article>
+
+        <article class="wb-card wb-scratch-card">
+          <div class="wb-card-header">
+            <h2 class="wb-card-title">Scratch Blockly Preview</h2>
+            <div class="wb-actions">
+              <button type="button" class="wb-button" id="loadScratchCanonicalButton">Load reference fixture</button>
+              <button type="button" class="wb-button wb-button-secondary" id="applyScratchXmlButton">Apply XML</button>
+              <button type="button" class="wb-button" id="runScratchButton">Run scratch solution</button>
+              <button type="button" class="wb-button wb-button-secondary" id="generateMutationPromptButton">Generate mutation prompt</button>
+              <button type="button" class="wb-button wb-button-secondary" id="copyScratchXmlButton">Copy XML</button>
+            </div>
+          </div>
+          <div class="wb-scratch-meta">
+            <div class="wb-toolbar-meta" id="scratchStatus" aria-live="polite"></div>
+            <div class="wb-toolbar-meta" id="scratchFixtureLabel"></div>
+            <div class="wb-scratch-target" id="scratchTargetWrap">
+              <label class="wb-selector-label" for="scratchTargetSelect">
+                Fixture target
+                <select id="scratchTargetSelect" class="wb-select"></select>
+              </label>
+            </div>
+          </div>
+          <div class="wb-scratch-comparison" id="scratchComparison"></div>
+          <div class="wb-scratch-layout">
+            <div id="scratchBlocklyHost" class="wb-scratch-blockly" aria-label="Scratch Blockly workspace"></div>
+            <textarea id="scratchXmlOutput" class="wb-scratch-xml" spellcheck="false" aria-label="Scratch Blockly XML"></textarea>
+          </div>
+        </article>
+
+        <article class="wb-card wb-prompt-card wb-mutation-prompt-card">
+          <div class="wb-card-header">
+            <h2 class="wb-card-title">Mutation Prompt</h2>
+            <div class="wb-actions">
+              <button type="button" class="wb-button" id="copyMutationPromptButton">Copy prompt</button>
+              <button type="button" class="wb-button wb-button-secondary" id="selectMutationPromptButton">Select text</button>
+            </div>
+          </div>
+          <textarea id="mutationPromptOutput" class="wb-prompt" readonly spellcheck="false" aria-label="Generated mutation prompt"></textarea>
         </article>
 
         <article class="wb-card wb-prompt-card">

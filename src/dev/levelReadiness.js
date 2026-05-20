@@ -17,7 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
 const LEVEL_INDEX_PATH = path.join(REPO_ROOT, "src/config/levels/index.js");
-const CONCEPT_MATRIX_PATH = path.join(REPO_ROOT, "docs/GUIDED_LEVEL_CONCEPT_MATRIX.md");
+const CONCEPT_MATRIX_PATH = "docs/GUIDED_LEVEL_CONCEPT_MATRIX.md";
 const REFERENCE_SOLUTIONS_DIR = path.join(REPO_ROOT, "tests/unit/fixtures/guided-reference-solutions");
 const PROJECT_SOLUTIONS_DIR = path.join(REPO_ROOT, "tests/unit/fixtures/guided-project-solutions");
 const TRACE_TAIL_LENGTH = 8;
@@ -251,6 +251,10 @@ async function loadReadinessContext() {
   return readinessContextPromise;
 }
 
+export async function loadLevelReadinessContext() {
+  return loadReadinessContext();
+}
+
 function makeCheck({
   id,
   label,
@@ -297,7 +301,15 @@ function makeTraceTail(trace = [], tailLength = TRACE_TAIL_LENGTH) {
   return trace.slice(Math.max(0, trace.length - tailLength)).map((entry) => ({ ...entry }));
 }
 
-function createSeededRandom(seedText) {
+function makeEventTail(eventTail = [], tailLength = TRACE_TAIL_LENGTH) {
+  return eventTail.slice(Math.max(0, eventTail.length - tailLength)).map((entry) => ({
+    kind: entry.kind,
+    turn: entry.turn,
+    payload: entry.payload && typeof entry.payload === "object" ? { ...entry.payload } : {}
+  }));
+}
+
+export function createSeededRandom(seedText) {
   let seed = 0;
   for (let index = 0; index < seedText.length; index += 1) {
     seed = (seed * 31 + seedText.charCodeAt(index)) >>> 0;
@@ -312,6 +324,7 @@ function createReadinessApp(xmlText, { randomFn = null } = {}) {
   registerBattleBlocklyBlocks();
   const app = createApp();
   app.blocklyWorkspace = new Blockly.Workspace();
+  app.state.suppressProgressPersistence = true;
   app.hooks.getAIAllyAction = (runnerOverride = null) => {
     const runner =
       runnerOverride ||
@@ -329,6 +342,8 @@ function runLevelSimulation(level, xmlText, { randomFn = null } = {}) {
   loadWorkspaceXml(app, xmlText);
 
   const trace = [];
+  const eventTail = [];
+  let lastEventLogSignature = null;
   for (let tick = 0; tick < MAX_SIMULATION_TICKS; tick += 1) {
     const activeRunner = app.state.allRunners[app.state.activeRunnerIndex];
     trace.push({
@@ -346,6 +361,23 @@ function runLevelSimulation(level, xmlText, { randomFn = null } = {}) {
         return start + (end - start) * amount;
       }
     });
+    const currentEventLog = Array.isArray(app.state.lastTurnEventLog) ? app.state.lastTurnEventLog : [];
+    if (currentEventLog.length > 0) {
+      const currentSignature = JSON.stringify(currentEventLog);
+      if (currentSignature !== lastEventLogSignature) {
+        lastEventLogSignature = currentSignature;
+        for (const event of currentEventLog) {
+          eventTail.push({
+            kind: event.kind,
+            turn: event.turn,
+            payload: event.payload && typeof event.payload === "object" ? { ...event.payload } : {}
+          });
+        }
+        while (eventTail.length > TRACE_TAIL_LENGTH) {
+          eventTail.shift();
+        }
+      }
+    }
   }
 
   return {
@@ -353,8 +385,15 @@ function runLevelSimulation(level, xmlText, { randomFn = null } = {}) {
     turnCount: app.state.currentTurnNumber,
     lastLevelResultReason: app.state.lastLevelResultReason || null,
     traceTail: makeTraceTail(trace),
+    eventTail: makeEventTail(eventTail),
+    finalTurnState: app.state.currentTurnState,
+    mainGameState: app.state.mainGameState,
     finalState: app.state
   };
+}
+
+export function simulateLevelXml(level, xmlText, options = {}) {
+  return runLevelSimulation(level, xmlText, options);
 }
 
 function findConceptMatrixRow(level, conceptMatrixRows) {
@@ -790,7 +829,10 @@ export function buildLevelReadinessResultFromContext(levelId, context, options =
           result: null,
           turnCount: null,
           lastLevelResultReason: null,
-          traceTail: []
+          traceTail: [],
+          eventTail: [],
+          finalTurnState: null,
+          mainGameState: null
         }
       };
       const sim = runLevelSimulation(level, ref.xmlText);
@@ -798,6 +840,9 @@ export function buildLevelReadinessResultFromContext(levelId, context, options =
       runtime.reference.turnCount = sim.turnCount;
       runtime.reference.lastLevelResultReason = sim.lastLevelResultReason;
       runtime.reference.traceTail = sim.traceTail;
+      runtime.reference.eventTail = sim.eventTail;
+      runtime.reference.finalTurnState = sim.finalTurnState;
+      runtime.reference.mainGameState = sim.mainGameState;
     }
   } else if (level.project?.id) {
     const projectId = level.project.id;
@@ -821,6 +866,9 @@ export function buildLevelReadinessResultFromContext(levelId, context, options =
         turnCount: sim.turnCount,
         lastLevelResultReason: sim.lastLevelResultReason,
         traceTail: sim.traceTail,
+        eventTail: sim.eventTail,
+        finalTurnState: sim.finalTurnState,
+        mainGameState: sim.mainGameState,
         documentedException: projectPolicy?.stepExceptions?.[level.id] || null
       };
     }
@@ -834,6 +882,9 @@ export function buildLevelReadinessResultFromContext(levelId, context, options =
         turnCount: sim.turnCount,
         lastLevelResultReason: sim.lastLevelResultReason,
         traceTail: sim.traceTail,
+        eventTail: sim.eventTail,
+        finalTurnState: sim.finalTurnState,
+        mainGameState: sim.mainGameState,
         documentedException: projectPolicy?.cumulativeExceptions?.[level.id] || null
       };
     }

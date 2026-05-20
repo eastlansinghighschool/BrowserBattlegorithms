@@ -23,7 +23,7 @@ The Playwright browser suite is split into two tiers:
 
 ### Smoke — frequent validation
 
-- `npm run test:browser:smoke` — fast subset (~78 tests, ~60s, `workers: 2`)
+- `npm run test:browser:smoke` — fast subset (~83 tests, ~60s, `workers: 2`)
 
 Run this after most changes. Covers:
 
@@ -35,7 +35,7 @@ Run this after most changes. Covers:
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical
 - student-visible jump flair coverage for Jump Forward arc and blocked-jump reversal
-- local-dev workbench shell coverage for dev gating, readiness display, prompt rendering, and storage isolation
+- local-dev workbench shell coverage for dev gating, readiness display, canonical-solution run evidence, scratch candidate preview, mutation prompt rendering, and storage isolation
 - help-link behavior and standalone help-page navigation
 - usage export flow, admin page file review, and integrity verification
 - dev-only unlock-all-levels toggle behavior and production bundle exclusion
@@ -43,7 +43,7 @@ Run this after most changes. Covers:
 
 ### Extended — full matrix
 
-- `npm run test:browser` or `npm run test:browser:extended` — complete suite (~113 tests, ~2m30s, `workers: 1`)
+- `npm run test:browser` or `npm run test:browser:extended` — complete suite (~130 tests, ~2m30s, `workers: 1`)
 
 Run before releases or after changes to persistence, modal focus, dev harness, or workspace versioning. Adds:
 
