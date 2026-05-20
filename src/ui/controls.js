@@ -11,6 +11,7 @@ import {
 } from "../config/constants.js";
 import { enterFreePlay, goToNextLevel, startLevel, resetCurrentLevel, getCurrentLevel } from "../core/levels.js";
 import { resetGameToSetup, startGame } from "../core/setup.js";
+import { toggleGameplayPause } from "../core/gameplayPause.js";
 import { handlePlayerInput } from "../core/turnEngine.js";
 import { playSound, setSoundEnabled } from "./sound.js";
 import { setBlocklyPanelSize } from "./blocklyLayout.js";
@@ -79,6 +80,49 @@ function setExportModalPrivateFieldsVisibility(fieldsElement, checkboxElement) {
     return;
   }
   fieldsElement.hidden = !checkboxElement.checked;
+}
+
+function isGameplayPauseShortcutBlocked(app) {
+  if (
+    app.state.showModePicker ||
+    app.state.activeTutorial ||
+    app.state.mainGameState !== MAIN_GAME_STATES.RUNNING ||
+    app.state.currentTurnState === TURN_STATES.GAME_OVER
+  ) {
+    return true;
+  }
+
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  if (document.querySelector(".program-modal[aria-hidden='false']")) {
+    return true;
+  }
+
+  const activeElement = document.activeElement;
+  if (!activeElement) {
+    return false;
+  }
+
+  if (typeof activeElement.closest === "function") {
+    if (
+      activeElement.closest("#blockly-region") ||
+      activeElement.closest("#shortcuts") ||
+      activeElement.closest(".blocklyWidgetDiv") ||
+      activeElement.closest(".blocklyDropDownDiv")
+    ) {
+      return true;
+    }
+  }
+
+  if (typeof activeElement.matches === "function") {
+    return activeElement.matches(
+      "input, textarea, select, [contenteditable='true'], [role='slider']"
+    );
+  }
+
+  return false;
 }
 
 export function bindControls(app) {
@@ -352,6 +396,7 @@ export function bindControls(app) {
   app.hooks.syncNarrationControls = syncTurnLogToggle;
 
   const playResetButton = document.getElementById("playResetButton");
+  const pauseResumeButton = document.getElementById("pauseResumeButton");
   const showTutorialButton = document.getElementById("showTutorialButton");
   const nextLevelButton = document.getElementById("nextLevelButton");
   if (playResetButton) {
@@ -378,6 +423,15 @@ export function bindControls(app) {
         enterFreePlay(app);
       }
       app.syncUi();
+    });
+  }
+
+  if (pauseResumeButton) {
+    pauseResumeButton.addEventListener("click", () => {
+      const result = toggleGameplayPause(app);
+      if (result !== "ignored") {
+        app.syncUi();
+      }
     });
   }
 
@@ -806,6 +860,12 @@ export function handleKeyInput(app, rawKey) {
   }
 
   const state = app.state;
+  if (key === "p") {
+    if (isGameplayPauseShortcutBlocked(app)) {
+      return false;
+    }
+    return toggleGameplayPause(app) !== "ignored";
+  }
   if (state.activeTutorial) {
     return false;
   }

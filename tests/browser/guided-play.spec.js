@@ -201,6 +201,62 @@ test("guided keyboard-practice level wires Team 1 movement through the shared ha
   expect(keyResult.targetGridY).toBe(before.y);
 });
 
+test("guided play shows the pause control and resumes from a clean waiting boundary", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await waitForHeavyReady(page);
+  await dismissTutorial(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
+    hooks.startLevel("human-runner-practice");
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+  });
+
+  const pauseButton = page.locator("#pauseResumeButton");
+  await expect(pauseButton).toBeVisible();
+  await expect(pauseButton).toHaveAccessibleName("Pause game (P)");
+
+  await pauseButton.click();
+  await expect(pauseButton).toHaveAccessibleName("Resume game (P)");
+
+  const pausedState = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const beforeTurn = hooks.app.state.currentTurnNumber;
+    hooks.processTurn();
+    hooks.processTurn();
+    return {
+      gameplayPaused: hooks.app.state.gameplayPaused,
+      pauseRequested: hooks.app.state.pauseRequested,
+      currentTurnNumber: hooks.app.state.currentTurnNumber,
+      currentTurnState: hooks.app.state.currentTurnState,
+      beforeTurn
+    };
+  });
+
+  expect(pausedState.gameplayPaused).toBe(true);
+  expect(pausedState.pauseRequested).toBe(false);
+  expect(pausedState.currentTurnNumber).toBe(pausedState.beforeTurn);
+  expect(pausedState.currentTurnState).toBe("AWAITING_INPUT");
+
+  await pauseButton.click();
+  await expect(pauseButton).toHaveAccessibleName("Pause game (P)");
+
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "ANIMATING";
+    hooks.app.state.gameplayPaused = false;
+    hooks.app.state.pauseRequested = true;
+    hooks.app.syncUi();
+  });
+  await expect(pauseButton).toBeDisabled();
+  await expect(pauseButton).toHaveAccessibleName("Pausing after this runner (P)");
+});
+
 test("a successful freeze records render-ready effect state for the board pulse and badge", async ({ page }) => {
   await page.goto("/");
   await waitForHeavyReady(page);

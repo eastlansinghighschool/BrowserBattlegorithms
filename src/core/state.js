@@ -53,6 +53,8 @@ export function createInitialState() {
     traceEmptyHintVisible: false,
     teamScores: { 1: 0, 2: 0 },
     lastScoringTeam: null,
+    gameplayPaused: false,
+    pauseRequested: false,
     // Legacy debug flag only; readiness is derived from teamAreaFreezeNextAvailableTurn via isAreaFreezeReady().
     teamAreaFreezeUsed: { 1: false, 2: false },
     teamAreaFreezeNextAvailableTurn: { 1: 1, 2: 1 },

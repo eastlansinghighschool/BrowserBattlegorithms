@@ -51,6 +51,16 @@ Three variables together describe the active UI context. They are independent; r
 
 Guided Levels hide import/export; see [file-pipelines.md](./file-pipelines.md) for the rationale.
 
+## Pause / resume control
+
+`src/ui/gameStateUI.js` also owns the icon-only pause/resume button that sits immediately to the right of `#playResetButton` in both Guided Levels and Free Play. The button is only visible while a live match is running, and it hides while the mode chooser, tutorials, pass/fail overlays, or game-over state are active.
+
+- **Running and not paused**: shows a pause icon, accessible label `Pause game (P)`, and tooltip/title `Pause game (P)`.
+- **Pending pause**: shows a pause icon, accessible label `Pausing after this runner (P)`, tooltip/title `Pausing after this runner (P)`, and is disabled until the current runner finishes.
+- **Paused**: shows a play icon, accessible label `Resume game (P)`, and tooltip/title `Resume game (P)`.
+
+The guarded `P` shortcut uses the same pause/resume helper as the button. It is ignored while a modal, Blockly editing surface, mode chooser, or tutorial overlay is active, and it never changes `currentModeView` or `mainGameState`.
+
 ## Play/reset button labels
 
 `src/ui/gameStateUI.js` sets button text based on mode and game state:
@@ -116,6 +126,7 @@ These signals are driven by project metadata and local storage. They are not Blo
 - **Assuming import/export controls exist in Guided Levels.** They are hidden. Code that calls export helpers should guard on mode.
 - **Confusing the mode-chooser overlay with tutorial-step overlays.** The chooser is first-run only and blocks all UI; tutorial steps are level-specific and skippable.
 - **`goalBurstEffect` is not mode state.** The score-burst visual is driven by a transient core state field, not by `currentModeView`. Do not add mode-guarding around burst logic.
+- **Pause is not a mode.** The pause button and `P` shortcut should not mutate `currentModeView`, `mainGameState`, or turn-state enums just to encode pause state.
 - **Tutorial seen-state is separate from level progress.** Clearing `bba:guided-level-progress` does not reset which tutorials the student has seen.
 
 ## Related

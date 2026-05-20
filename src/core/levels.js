@@ -15,6 +15,7 @@ import {
 } from "../config/constants.js";
 import { createInitialLevelProgress, getLevelDefinitions } from "../config/levels.js";
 import { initializeDisplayState, initializeMatch, syncHumanTurnBehaviorVisuals } from "./setup.js";
+import { clearGameplayPauseState } from "./gameplayPause.js";
 import { createRandomizedFreePlayTeamSetup, getGameModeForFreePlayMode, getTeamFlagHome } from "./teams.js";
 import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
@@ -229,6 +230,7 @@ export function initializeLevelState(app) {
   state.currentLevelStartTurnNumber = null;
   state.lastLevelResultReason = null;
   state.predictionForCurrentLevel = null;
+  clearGameplayPauseState(state);
   state.currentToolboxBlockTypes = [];
   state.humanTurnBehavior = HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
   const currentLevel = findCurrentLevel(state);
@@ -292,6 +294,7 @@ export function enterGuidedMode(app) {
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];
   state.currentLevelStartTurnNumber = null;
   state.humanTurnBehavior = currentLevel?.humanTurnBehavior || HUMAN_TURN_BEHAVIORS.AUTO_SKIP;
+  clearGameplayPauseState(state);
   app.usageTracker?.recordModeEntered?.(state.currentModeView, {
     levelId: state.currentLevelId,
     mapKey: state.currentMapKey
@@ -322,6 +325,7 @@ export function enterFreePlay(app) {
   state.activeLevelResult = LEVEL_RESULT.NONE;
   state.lastLevelResultReason = null;
   state.currentLevelStartTurnNumber = null;
+  clearGameplayPauseState(state);
   initializeDisplayState(app);
   app.usageTracker?.recordModeEntered?.(state.currentModeView, {
     freePlayMode: state.freePlayMode,
@@ -407,6 +411,7 @@ export function completeLevel(app, result, reason, options = {}) {
   }
   state.activeLevelResult = result;
   state.lastLevelResultReason = reason;
+  clearGameplayPauseState(state);
   if (state.predictionForCurrentLevel?.levelId === state.currentLevelId) {
     state.predictionForCurrentLevel.lockedAt = "result_shown";
   }

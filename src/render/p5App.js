@@ -96,6 +96,9 @@ export function initializeP5App(app) {
       }
 
       const handled = handleKeyInput(app, p.key);
+      if (handled) {
+        app.syncUi();
+      }
       return handled === true ? false : undefined;
     };
   });

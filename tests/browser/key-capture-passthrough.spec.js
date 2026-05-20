@@ -274,6 +274,32 @@ test("Blockly focus does not queue a human action during a running turn", async 
   });
 });
 
+test("Blockly focus blocks the pause shortcut during a running turn", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.showModePicker = false;
+    hooks.startLevel("human-runner-practice");
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+    hooks.app.p5Instance?.noLoop?.();
+  });
+
+  await page.locator("#blocklyDiv").click();
+  await page.keyboard.press("p");
+
+  const after = await page.evaluate(() => ({
+    gameplayPaused: window.__BBA_TEST_HOOKS__.app.state.gameplayPaused,
+    pauseRequested: window.__BBA_TEST_HOOKS__.app.state.pauseRequested
+  }));
+
+  expect(after.gameplayPaused).toBe(false);
+  expect(after.pauseRequested).toBe(false);
+});
+
 test("guided keyboard-practice level accepts the Team 1 D key through the real browser event pipeline", async ({ page }) => {
   await page.goto("/");
   await chooseGuided(page);

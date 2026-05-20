@@ -19,6 +19,7 @@ import {
 } from "../config/constants.js";
 import { createQueuedHumanAction } from "./actions.js";
 import { buildAreaFreezeEffect, isAreaFreezeReady, markAreaFreezeUsed } from "./areaFreeze.js";
+import { applyPendingGameplayPauseAtBoundary } from "./gameplayPause.js";
 import { resolveCollision } from "./collisions.js";
 import {
   getBarrierAtCell,
@@ -429,6 +430,7 @@ function handleActionCompletion(app, completedRunner) {
       finalizeCompletedTurn(app);
       clearBlocklyTracePlayback(app);
       resetRound(state);
+      applyPendingGameplayPauseAtBoundary(app);
       sync(app);
       return;
     }
@@ -460,6 +462,7 @@ function handleActionCompletion(app, completedRunner) {
     sync(app);
     return;
   }
+  applyPendingGameplayPauseAtBoundary(app);
   sync(app);
 }
 
@@ -637,8 +640,17 @@ export function processTurnActions(app, p) {
     return;
   }
 
+  if (state.gameplayPaused) {
+    return;
+  }
+
   const runner = state.allRunners[state.activeRunnerIndex];
   if (!runner) {
+    return;
+  }
+
+  if (applyPendingGameplayPauseAtBoundary(app)) {
+    sync(app);
     return;
   }
 

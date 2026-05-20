@@ -181,6 +181,22 @@
   flex-wrap: wrap;
 }
 
+#instructions .primary-inline-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  padding: 0;
+}
+
+#instructions .app-inline-icon-button-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 #instructions button,
 .level-panel-header button,
 .level-mode-toggle button,

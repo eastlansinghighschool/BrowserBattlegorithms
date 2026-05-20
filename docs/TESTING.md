@@ -29,6 +29,7 @@ Run this after most changes. Covers:
 - startup shell, welcome chooser, and lazy-load placeholders
 - guided play progression, tutorial demos, special-action flow, keyboard-practice flow, and a representative advanced level
 - actual keyboard input in representative guided and PvP scenarios
+- live pause/resume coverage in Guided Levels and Free Play, including the guarded `P` shortcut
 - free-play setup controls for mode, team size, and map selection
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical

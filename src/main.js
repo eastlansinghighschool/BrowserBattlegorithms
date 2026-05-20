@@ -8,7 +8,7 @@ import { announceLastTurn, initializeNarrationState, syncTurnNarration } from ".
 import { announceCoachingMoments, initializeCoachingState, syncCoachingNarration } from "./ui/coachingNarration.js";
 import { cancelSpeech, initVoiceNarration } from "./ui/voiceNarration.js";
 import { updateScoreDisplay } from "./ui/scoreboard.js";
-import { setPlayButtonState } from "./ui/gameStateUI.js";
+import { setPlayButtonState, setPauseButtonState } from "./ui/gameStateUI.js";
 import {
   configureFreePlay,
   enterFreePlay,
@@ -197,6 +197,7 @@ app.syncUi = () => {
   app.hooks.syncCoachingNarration?.(app);
   updateScoreDisplay(app);
   setPlayButtonState(app);
+  setPauseButtonState(app);
   renderLevelPanel(app);
   renderBlocklyPanel(app);
   if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {

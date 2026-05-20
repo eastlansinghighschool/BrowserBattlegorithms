@@ -1,8 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AI_ACTION_TYPES, LEVEL_RESULT, MAIN_GAME_STATES } from "../../src/config/constants.js";
+import { AI_ACTION_TYPES, LEVEL_RESULT, MAIN_GAME_STATES, TURN_STATES } from "../../src/config/constants.js";
 import { createApp } from "../../src/core/state.js";
-import { evaluateLevelProgress, initializeLevelState, startLevel } from "../../src/core/levels.js";
+import { evaluateLevelProgress, initializeLevelState, resetCurrentLevel, startLevel } from "../../src/core/levels.js";
+import {
+  applyPendingGameplayPauseAtBoundary,
+  requestGameplayPause,
+  toggleGameplayPause
+} from "../../src/core/gameplayPause.js";
 import { checkForFlagPickup, checkForScoring } from "../../src/core/scoring.js";
 import { processTurnActions } from "../../src/core/turnEngine.js";
 
@@ -70,9 +75,92 @@ test("PROCESSING_ACTION without a queued action recovers to the next readable tu
   assert.equal(human.isFrozen, true);
 });
 
+test("pause requests apply immediately at a human input boundary and resume clears them", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const human = app.state.allRunners.find((runner) => runner.isHumanControlled);
+  assert.ok(human, "expected a human runner");
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = TURN_STATES.AWAITING_INPUT;
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(human);
+
+  const pauseResult = requestGameplayPause(app);
+  assert.equal(pauseResult, "paused");
+  assert.equal(app.state.gameplayPaused, true);
+  assert.equal(app.state.pauseRequested, false);
+
+  const resumeResult = toggleGameplayPause(app);
+  assert.equal(resumeResult, "resumed");
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, false);
+});
+
+test("reset and start clear stale gameplay pause flags", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  app.state.gameplayPaused = true;
+  app.state.pauseRequested = true;
+  resetCurrentLevel(app);
+
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, false);
+
+  app.state.gameplayPaused = true;
+  app.state.pauseRequested = true;
+  startLevel(app, "human-runner-practice");
+
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, false);
+});
+
+test("pending pause waits for a moving runner to finish and then applies at the next boundary", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const human = app.state.allRunners.find((runner) => runner.isHumanControlled);
+  assert.ok(human, "expected a human runner");
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = TURN_STATES.ANIMATING;
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(human);
+
+  const pendingResult = requestGameplayPause(app);
+  assert.equal(pendingResult, "pending");
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, true);
+
+  const appliedWhileMoving = applyPendingGameplayPauseAtBoundary(app);
+  assert.equal(appliedWhileMoving, false);
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, true);
+
+  app.state.currentTurnState = TURN_STATES.AWAITING_INPUT;
+  const appliedAtBoundary = applyPendingGameplayPauseAtBoundary(app);
+  assert.equal(appliedAtBoundary, true);
+
+  assert.equal(app.state.gameplayPaused, true);
+  assert.equal(app.state.pauseRequested, false);
+
+  const pausedTurnState = app.state.currentTurnState;
+  const pausedTurnNumber = app.state.currentTurnNumber;
+
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(app.state.currentTurnState, pausedTurnState);
+  assert.equal(app.state.currentTurnNumber, pausedTurnNumber);
+});
+
 test("wrong-runner scoring at level 29 forces a failed level result at game over", () => {
   const app = createApp();
   initializeLevelState(app);
+  app.state.gameplayPaused = true;
+  app.state.pauseRequested = true;
 
   const { wrongRunner } = scoreWithWrongRunner(app, "one-program-two-allies");
 
@@ -80,6 +168,8 @@ test("wrong-runner scoring at level 29 forces a failed level result at game over
   assert.equal(app.state.currentTurnState, "SETUP_DISPLAY");
   assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
   assert.equal(app.state.lastLevelResultReason, GAME_OVER_SAFETY_NET_REASON);
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, false);
 
   const forcedEvent = app.state.lastTurnEventLog.find((event) => event.kind === "level.forcedFailedAtGameOver");
   assert.ok(forcedEvent, "expected a forced-fail event to be logged");
@@ -95,12 +185,16 @@ test("wrong-runner scoring at level 29 forces a failed level result at game over
 test("wrong-runner scoring at index jobs also forces a failed level result at game over", () => {
   const app = createApp();
   initializeLevelState(app);
+  app.state.gameplayPaused = true;
+  app.state.pauseRequested = true;
 
   const { wrongRunner } = scoreWithWrongRunner(app, "index-jobs");
 
   assert.equal(app.state.mainGameState, MAIN_GAME_STATES.GAME_OVER);
   assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
   assert.equal(app.state.lastLevelResultReason, GAME_OVER_SAFETY_NET_REASON);
+  assert.equal(app.state.gameplayPaused, false);
+  assert.equal(app.state.pauseRequested, false);
 
   const forcedEvent = app.state.lastTurnEventLog.find((event) => event.kind === "level.forcedFailedAtGameOver");
   assert.ok(forcedEvent, "expected a forced-fail event to be logged");

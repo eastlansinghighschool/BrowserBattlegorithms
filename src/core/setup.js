@@ -5,6 +5,7 @@ import {
   TURN_STATES
 } from "../config/constants.js";
 import { resetAreaFreezeState } from "./areaFreeze.js";
+import { clearGameplayPauseState } from "./gameplayPause.js";
 import { Flag } from "../entities/Flag.js";
 import { Barrier } from "../entities/Barrier.js";
 import { Runner } from "../entities/Runner.js";
@@ -190,6 +191,7 @@ export function initializeMatch(app) {
   state.lastTurnEventLog = [];
   state.lastTurnNarrationText = "";
   state.lastCoachingText = "";
+  clearGameplayPauseState(state);
   state.lastBlocklyTrace = null;
   state.classifierRecurrenceState.perLevelAttempt = {};
   state.classifierRecurrenceState.perMatch = {};
@@ -200,6 +202,7 @@ export function initializeMatch(app) {
   state.goalBurstEffect = null;
   state.areaFreezeEffect = null;
   state.activeJumpLandingDust = null;
+  clearGameplayPauseState(state);
   applySetupBarriers(state);
   syncHumanTurnBehaviorVisuals(state);
 }
@@ -234,6 +237,7 @@ export function initializeDisplayState(app) {
   state.goalBurstEffect = null;
   state.areaFreezeEffect = null;
   state.activeJumpLandingDust = null;
+  clearGameplayPauseState(state);
   syncHumanTurnBehaviorVisuals(state);
 }
 

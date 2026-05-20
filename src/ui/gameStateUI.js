@@ -1,6 +1,80 @@
 import { GAME_VIEW_MODES, LEVEL_RESULT } from "../config/constants.js";
 import { getCurrentLevel, getNextAvailableLevelId } from "../core/levels.js";
 
+function getPauseButtonIcon(state) {
+  if (state.pauseRequested) {
+    return `
+      <svg class="app-inline-icon-button-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 5h3v14H8z" />
+        <path d="M13 5h3v14h-3z" />
+      </svg>
+    `;
+  }
+
+  if (state.gameplayPaused) {
+    return `
+      <svg class="app-inline-icon-button-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 5v14l10-7z" />
+      </svg>
+    `;
+  }
+
+  return `
+    <svg class="app-inline-icon-button-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 5v14" />
+      <path d="M16 5v14" />
+    </svg>
+  `;
+}
+
+function setPauseButtonAccessibility(button, state) {
+  if (state.pauseRequested) {
+    button.setAttribute("aria-label", "Pausing after this runner (P)");
+    button.setAttribute("title", "Pausing after this runner (P)");
+    button.setAttribute("aria-pressed", "false");
+    button.disabled = true;
+    return;
+  }
+
+  if (state.gameplayPaused) {
+    button.setAttribute("aria-label", "Resume game (P)");
+    button.setAttribute("title", "Resume game (P)");
+    button.setAttribute("aria-pressed", "true");
+    button.disabled = false;
+    return;
+  }
+
+  button.setAttribute("aria-label", "Pause game (P)");
+  button.setAttribute("title", "Pause game (P)");
+  button.setAttribute("aria-pressed", "false");
+  button.disabled = false;
+}
+
+export function setPauseButtonState(app) {
+  const button = document.getElementById("pauseResumeButton");
+  if (!button) {
+    return;
+  }
+
+  if (
+    app.state.showModePicker ||
+    app.state.activeTutorial ||
+    app.state.mainGameState !== "RUNNING" ||
+    app.state.currentTurnState === "GAME_OVER" ||
+    app.state.activeLevelResult === LEVEL_RESULT.PASSED ||
+    app.state.activeLevelResult === LEVEL_RESULT.FAILED
+  ) {
+    button.hidden = true;
+    button.style.display = "none";
+    return;
+  }
+
+  button.hidden = false;
+  button.style.display = "";
+  button.innerHTML = getPauseButtonIcon(app.state);
+  setPauseButtonAccessibility(button, app.state);
+}
+
 export function setPlayButtonState(app) {
   const button = document.getElementById("playResetButton");
   const tutorialButton = document.getElementById("showTutorialButton");

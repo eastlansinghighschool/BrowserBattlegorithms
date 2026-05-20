@@ -194,3 +194,34 @@ test("Team 2 keyboard movement works in PvP including the semicolon move key", a
 
   expect(after.x).toBeGreaterThan(before.x);
 });
+
+test("free play pause and resume work with the P shortcut", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+  await page.locator('select[data-action="free-play-mode"]').selectOption("PVCPU_EASY");
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+    hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+  });
+
+  const pauseButton = page.locator("#pauseResumeButton");
+  await expect(pauseButton).toBeVisible();
+  await expect(pauseButton).toHaveAccessibleName("Pause game (P)");
+  await pauseButton.focus();
+
+  await page.keyboard.press("p");
+  await expect(pauseButton).toHaveAccessibleName("Resume game (P)");
+  await page.keyboard.press("p");
+  await expect(pauseButton).toHaveAccessibleName("Pause game (P)");
+
+  const state = await page.evaluate(() => ({
+    gameplayPaused: window.__BBA_TEST_HOOKS__.app.state.gameplayPaused,
+    pauseRequested: window.__BBA_TEST_HOOKS__.app.state.pauseRequested
+  }));
+
+  expect(state.gameplayPaused).toBe(false);
+  expect(state.pauseRequested).toBe(false);
+});

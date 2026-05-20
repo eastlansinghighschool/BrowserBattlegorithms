@@ -18,6 +18,7 @@ This note does NOT own:
 | File | Role |
 |---|---|
 | `src/core/turnEngine.js` | Main turn loop: activates runners, resolves queued actions, advances the sequence. |
+| `src/core/gameplayPause.js` | Gameplay pause/resume helpers and pending-pause boundary decisions. |
 | `src/core/actions.js` | Action family definitions (move, jump, barrier place/remove, freeze, stay still). |
 | `src/core/areaFreeze.js` | Shared Area Freeze cooldown helpers (`isAreaFreezeReady`, `getAreaFreezeTurnsRemaining`, `markAreaFreezeUsed`). |
 | `src/core/movement.js` | Target cell translation, board-blocking checks, bounce logic. |
@@ -46,6 +47,19 @@ Each runner's turn follows this sequence. Steps are not flat; each can branch or
 Human input goes through the same engine pipeline as AI input. There is no parallel human-resolution path.
 
 The trace pause does not consume an extra turn, does not change collision/scoring/level-completion outcomes, and is cleared on reset, level switch, mode switch, workspace reload, game-over, threshold-crossing upward, and PvP team tab switch.
+
+## Gameplay pause / resume
+
+Gameplay pause is a live-match UI state, not a new turn-state enum. `src/core/gameplayPause.js` owns the helper contract and `src/core/turnEngine.js` applies it at clean runner boundaries only.
+
+- `gameplayPaused` halts `processTurnActions()` entirely until resumed.
+- `pauseRequested` remembers a pause request that arrived during an in-progress runner turn.
+- A pause request applies immediately only when the active runner is already waiting for human input.
+- Otherwise, the request becomes pending and takes effect after the current runner's turn fully completes, before the next runner begins planning or auto-skipping.
+- Pending pause does not cancel queued actions, trace data, scoring, collisions, jump landing effects, or freeze effects.
+- Resume clears both pause flags and returns the engine to normal live processing.
+
+Pause is separate from the trace pause above and separate from the Plan 28 and Plan 55 safety nets. Those safety nets repair invalid turn or level states; gameplay pause simply asks the engine to wait at the next clean boundary.
 
 ## Area Freeze cooldown
 

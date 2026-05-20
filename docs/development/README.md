@@ -13,7 +13,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
 | [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
-| [Plan 59](plan-59-turn-boundary-pause-resume.md) | ready | Icon-only pause/resume control beside Start/Reset or Play/Reset, with guarded `P` shortcut. Pause applies immediately only at human input waits or otherwise becomes pending until the current runner completes, preserving animation/action resolution and Plan 28/55 safety nets. |
+| [Plan 59](plan-59-turn-boundary-pause-resume.md) | complete | Icon-only pause/resume control beside Start/Reset or Play/Reset, with guarded `P` shortcut. Pause applies immediately only at human input waits or otherwise becomes pending until the current runner completes, preserving animation/action resolution and Plan 28/55 safety nets. |
 
 ### Completed Packets
 
