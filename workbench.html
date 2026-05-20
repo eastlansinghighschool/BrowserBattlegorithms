@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level Workbench – Browser Battlegorithms</title>
+    <link rel="stylesheet" href="./src/workbench/workbenchStyle.css">
+  </head>
+  <body class="wb-body">
+    <header class="wb-header">
+      <div>
+        <p class="wb-eyebrow">Local development tool</p>
+        <h1 class="wb-title">Level Workbench</h1>
+        <p class="wb-subtitle">Read-only level context, readiness checks, and repair prompt generation.</p>
+      </div>
+      <nav class="wb-nav" aria-label="Workbench links">
+        <a href="/" class="wb-link">Game</a>
+        <a href="./admin.html" class="wb-link">Usage Analyzer</a>
+      </nav>
+    </header>
+
+    <main class="wb-main">
+      <section class="wb-toolbar" aria-label="Level selector">
+        <label class="wb-selector-label" for="levelSelect">
+          Guided level
+          <select id="levelSelect" class="wb-select"></select>
+        </label>
+        <div class="wb-toolbar-meta" id="selectionMeta" aria-live="polite"></div>
+        <p class="wb-load-status" id="loadStatus">Loading workbench data…</p>
+      </section>
+
+      <section class="wb-grid" aria-label="Workbench panels">
+        <article class="wb-card">
+          <h2 class="wb-card-title">Level Context</h2>
+          <div id="contextPanel" class="wb-panel-body"></div>
+        </article>
+
+        <article class="wb-card">
+          <h2 class="wb-card-title">Readiness Checks</h2>
+          <div id="checksPanel" class="wb-panel-body"></div>
+        </article>
+
+        <article class="wb-card wb-prompt-card">
+          <div class="wb-card-header">
+            <h2 class="wb-card-title">Agent Prompt</h2>
+            <div class="wb-actions">
+              <button type="button" class="wb-button" id="copyPromptButton">Copy prompt</button>
+              <button type="button" class="wb-button wb-button-secondary" id="selectPromptButton">Select text</button>
+            </div>
+          </div>
+          <textarea id="promptOutput" class="wb-prompt" readonly spellcheck="false" aria-label="Generated agent prompt"></textarea>
+        </article>
+
+        <article class="wb-card">
+          <h2 class="wb-card-title">Validation</h2>
+          <div id="validationPanel" class="wb-panel-body"></div>
+        </article>
+      </section>
+    </main>
+    <script type="module" src="./src/workbench/workbenchApp.js"></script>
+  </body>
+</html>

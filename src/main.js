@@ -324,6 +324,19 @@ window.__BBA_TEST_HOOKS__ = {
 };
 
 if (import.meta.env.DEV) {
+  const workbenchLink = document.createElement("a");
+  workbenchLink.href = "./workbench.html";
+  workbenchLink.className = "app-help-link";
+  workbenchLink.setAttribute("aria-label", "Open level workbench (local dev only)");
+  workbenchLink.setAttribute("title", "Level Workbench (local dev only)");
+  workbenchLink.innerHTML = `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;flex:0 0 auto">
+    <rect x="3" y="4" width="18" height="14" rx="2"/>
+    <path d="M3 9h18"/>
+    <path d="M8 4v14"/>
+    <path d="M15 4v14"/>
+  </svg>`;
+  document.querySelector(".app-header-actions")?.prepend(workbenchLink);
+
   const adminLink = document.createElement("a");
   adminLink.href = "./admin.html";
   adminLink.className = "app-help-link";

@@ -14,6 +14,7 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 - `src/ui/`: score display, DOM controls, setup/run UI state, overlays, sound
 - `src/usage/`: usage event tracking and export pipeline
 - `src/admin/`: local-only admin page for teacher usage-file review (excluded from GitHub Pages build)
+- `src/workbench/`: local-only level workbench shell for readiness inspection and prompt generation (excluded from GitHub Pages build)
 - `src/crypto/`: Web Crypto helpers for private Free Play program file encryption
 - `src/startup/`: async loading coordination for the Blockly editor and board renderer
 - `tests/unit/helpers/`: small builders and fixtures for Node/browser tests

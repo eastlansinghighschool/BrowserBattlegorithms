@@ -1265,7 +1265,10 @@ export async function main({
   return { diagnostics, exitCode };
 }
 
-const isDirectExecution = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+const isDirectExecution =
+  typeof process !== "undefined" &&
+  process.argv?.[1] &&
+  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
 
 if (isDirectExecution) {
   main()

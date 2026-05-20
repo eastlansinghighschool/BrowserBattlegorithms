@@ -11,6 +11,7 @@ Status values are limited to `shipped`, `out of scope`, `queued — A`, `queued 
 | Turn trace debugger / execution highlighting | multiple | shipped | Implemented across [Plan 25a](../archive/plan-25a-blockly-trace-collection.md), [Plan 25b](../archive/plan-25b-blockly-trace-playback.md), and [Plan 29](../archive/plan-29-trace-visual-refinement.md). |
 | Accessibility board narration / classroom display pass | multiple | queued — A | The current queue prioritizes narrated board state first; keyboard-only and contrast layers follow later. |
 | Level authoring contract linter | codex | queued — A | Developer-side curriculum linter; see Plan 34 in the packet index. |
+| Local level readiness workbench / editor roadmap | codex | queued — A | MVP packet sequence is Plans 60-64; deferred editor work is summarized in [level-workbench-deferred-editor-roadmap.md](level-workbench-deferred-editor-roadmap.md). |
 | Teacher playtest / classroom timing kit | codex | queued — A | Teacher-facing pacing, intervention prompts, and AP CSA discussion themes; see Plan 33 in the packet index. |
 | AP CSA bridge / Java preview cards | multiple | queued — B | Read-only Java-style preview of the current Blockly logic for AP CSA transfer. |
 | Prediction-first checkpoints | multiple | queued — B | Ask the student to predict before running; the packet number is not assigned yet. |

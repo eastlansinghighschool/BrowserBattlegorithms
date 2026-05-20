@@ -1,0 +1,369 @@
+:root {
+  --wb-bg: #f4efe3;
+  --wb-surface: #fffdf8;
+  --wb-surface-alt: #f7f3ea;
+  --wb-border: #c9c1b0;
+  --wb-border-strong: #7d8b93;
+  --wb-text: #24313a;
+  --wb-muted: #62717c;
+  --wb-accent: #4f7a4d;
+  --wb-accent-strong: #375b35;
+  --wb-warning: #ad7b19;
+  --wb-error: #b14545;
+  --wb-info: #3c6d9e;
+  --wb-shadow: 0 12px 30px rgba(34, 42, 48, 0.12);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top right, rgba(79, 122, 77, 0.12), transparent 26%),
+    radial-gradient(circle at bottom left, rgba(60, 109, 158, 0.08), transparent 24%),
+    var(--wb-bg);
+  color: var(--wb-text);
+}
+
+body.wb-body {
+  padding: 1rem;
+}
+
+a {
+  color: inherit;
+}
+
+.wb-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 253, 248, 0.92);
+  border: 1px solid var(--wb-border);
+  border-radius: 18px;
+  box-shadow: var(--wb-shadow);
+  margin-bottom: 1rem;
+}
+
+.wb-eyebrow {
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: var(--wb-muted);
+}
+
+.wb-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw, 2.1rem);
+}
+
+.wb-subtitle {
+  margin: 0.35rem 0 0;
+  max-width: 60ch;
+  color: var(--wb-muted);
+}
+
+.wb-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.wb-link,
+.wb-button,
+.wb-select {
+  border: 1px solid var(--wb-border-strong);
+  border-radius: 999px;
+  background: linear-gradient(#ffffff, #f0ece2);
+  color: var(--wb-text);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.wb-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.85rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.wb-main {
+  display: grid;
+  gap: 1rem;
+}
+
+.wb-toolbar,
+.wb-card {
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--wb-border);
+  border-radius: 18px;
+  box-shadow: var(--wb-shadow);
+}
+
+.wb-toolbar {
+  padding: 0.9rem 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.wb-selector-label {
+  display: grid;
+  gap: 0.35rem;
+  max-width: min(100%, 36rem);
+  font-weight: 700;
+}
+
+.wb-select {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  font: inherit;
+}
+
+.wb-toolbar-meta {
+  color: var(--wb-muted);
+  font-size: 0.93rem;
+}
+
+.wb-load-status {
+  margin: 0;
+  color: var(--wb-accent-strong);
+  font-size: 0.95rem;
+}
+
+.wb-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.05fr);
+  align-items: start;
+}
+
+.wb-card {
+  padding: 1rem;
+}
+
+.wb-card-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.2rem;
+}
+
+.wb-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.wb-actions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.wb-button {
+  padding: 0.5rem 0.8rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.wb-button-secondary {
+  background: linear-gradient(#f8f7f3, #ebeadf);
+  color: var(--wb-muted);
+}
+
+.wb-panel-body {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.wb-meta-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.wb-meta-table th,
+.wb-meta-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.35rem 0.4rem 0.35rem 0;
+  border-bottom: 1px solid rgba(125, 139, 147, 0.18);
+}
+
+.wb-meta-table th {
+  width: 12rem;
+  color: var(--wb-muted);
+  font-weight: 700;
+}
+
+.wb-code {
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  background: var(--wb-surface-alt);
+  border: 1px solid rgba(125, 139, 147, 0.25);
+  border-radius: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.88rem;
+}
+
+.wb-group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.wb-group-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.wb-group-title[data-status="fail"] {
+  color: var(--wb-error);
+}
+
+.wb-group-title[data-status="warning"] {
+  color: var(--wb-warning);
+}
+
+.wb-group-title[data-status="pass"] {
+  color: var(--wb-accent);
+}
+
+.wb-group-title[data-status="not_applicable"] {
+  color: var(--wb-muted);
+}
+
+.wb-check-list,
+.wb-command-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.wb-check-item,
+.wb-command-item {
+  padding: 0.7rem 0.75rem;
+  border: 1px solid rgba(125, 139, 147, 0.25);
+  border-radius: 12px;
+  background: var(--wb-surface-alt);
+}
+
+.wb-check-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.wb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.wb-badge[data-status="fail"] {
+  color: var(--wb-error);
+  background: rgba(177, 69, 69, 0.09);
+}
+
+.wb-badge[data-status="warning"] {
+  color: var(--wb-warning);
+  background: rgba(173, 123, 25, 0.09);
+}
+
+.wb-badge[data-status="pass"] {
+  color: var(--wb-accent);
+  background: rgba(79, 122, 77, 0.09);
+}
+
+.wb-badge[data-status="not_applicable"] {
+  color: var(--wb-muted);
+  background: rgba(98, 113, 124, 0.08);
+}
+
+.wb-check-message {
+  margin: 0;
+  color: var(--wb-text);
+}
+
+.wb-check-details {
+  margin-top: 0.45rem;
+}
+
+.wb-check-details summary {
+  cursor: pointer;
+  color: var(--wb-info);
+}
+
+.wb-check-files,
+.wb-check-evidence {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+  color: var(--wb-muted);
+}
+
+.wb-check-files code,
+.wb-command-item code,
+.wb-mono {
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.86rem;
+}
+
+.wb-prompt-card {
+  grid-column: 1 / -1;
+}
+
+.wb-prompt {
+  width: 100%;
+  min-height: 28rem;
+  resize: vertical;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 139, 147, 0.35);
+  background: #fff;
+  color: var(--wb-text);
+  padding: 0.85rem;
+  font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1100px) {
+  .wb-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wb-prompt-card {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  body.wb-body {
+    padding: 0.75rem;
+  }
+
+  .wb-header,
+  .wb-toolbar,
+  .wb-card {
+    border-radius: 14px;
+  }
+
+  .wb-header {
+    flex-direction: column;
+  }
+}

@@ -14,6 +14,11 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
 | [Plan 59](plan-59-turn-boundary-pause-resume.md) | complete | Icon-only pause/resume control beside Start/Reset or Play/Reset, with guarded `P` shortcut. Pause applies immediately only at human input waits or otherwise becomes pending until the current runner completes, preserving animation/action resolution and Plan 28/55 safety nets. |
+| [Plan 60](plan-60-level-readiness-engine.md) | ready | Extract scattered guided-level validation knowledge into a reusable per-level readiness engine with deterministic JSON output and a CLI entry point. |
+| [Plan 61](plan-61-level-readiness-agent-prompt-renderer.md) | complete | Render Plan 60 readiness results into deterministic Markdown repair prompts for implementation agents, with fact/recommendation separation and validation commands. |
+| [Plan 62](plan-62-local-dev-level-workbench-shell.md) | complete | Add a local-dev-only, read-only level workbench shell that displays readiness checks, level context, and generated agent prompts. |
+| [Plan 63](plan-63-reference-solution-runner-panel.md) | ready | Extend the workbench with a reference/project-solution runner panel showing pass/fail evidence, result reasons, and trace tails. |
+| [Plan 64](plan-64-scratch-blockly-preview-and-mutation-prompt.md) | ready | Add an isolated scratch Blockly preview to the workbench so candidate solutions can be run and turned into fixture-update prompts without filesystem writes. |
 
 ### Completed Packets
 

@@ -8,6 +8,13 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     base: process.env.BASE_PATH || "/",
+    resolve: {
+      alias: {
+        "node:fs/promises": resolve(__dirname, "src/shims/nodeFsPromises.js"),
+        "node:path": resolve(__dirname, "src/shims/nodePath.js"),
+        "node:url": resolve(__dirname, "src/shims/nodeUrl.js")
+      }
+    },
     define: {
       "import.meta.env.VITE_APP_VERSION": JSON.stringify(packageJson.version)
     },

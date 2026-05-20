@@ -12,6 +12,7 @@ These tests focus on:
 - authored guided-level contracts, unlock matrices, and content metadata
 - Blockly interpreter semantics and execution-hint behavior
 - condition and generic sensor evaluation
+- level readiness CLI output and per-level readiness reports
 - reference solution existence and solvability across the guided campaign
 - free-play-only toolbox, random-move, and Area Freeze contracts
 - pure display and keyboard-mapping logic
@@ -22,7 +23,7 @@ The Playwright browser suite is split into two tiers:
 
 ### Smoke — frequent validation
 
-- `npm run test:browser:smoke` — fast subset (~66 tests, ~60s, `workers: 2`)
+- `npm run test:browser:smoke` — fast subset (~78 tests, ~60s, `workers: 2`)
 
 Run this after most changes. Covers:
 
@@ -34,6 +35,7 @@ Run this after most changes. Covers:
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical
 - student-visible jump flair coverage for Jump Forward arc and blocked-jump reversal
+- local-dev workbench shell coverage for dev gating, readiness display, prompt rendering, and storage isolation
 - help-link behavior and standalone help-page navigation
 - usage export flow, admin page file review, and integrity verification
 - dev-only unlock-all-levels toggle behavior and production bundle exclusion
@@ -58,6 +60,15 @@ Run before releases or after changes to persistence, modal focus, dev harness, o
 
 Targeted run for accessibility or UI focus-management changes.
 
+## Level Readiness CLI
+
+- `npm run level:readiness -- --level <levelId>` — human-readable readiness summary for one guided level
+- `npm run level:readiness -- --level <levelId> --json` — machine-readable readiness result
+- `npm run level:readiness -- --level <levelId> --prompt` — deterministic Markdown repair prompt for an implementation agent
+- `--json` and `--prompt` are mutually exclusive; the command fails clearly if both are supplied.
+
+Use this when you need a deterministic per-level health check that combines concept-matrix agreement, lint diagnostics, fixture availability, and representative runtime checks.
+
 ## Regression Harness
 
 `tests/regression/` contains an end-to-end usage-pipeline harness. It simulates student profiles, exports usage files, post-processes timestamps, runs the CLI analyzer, and uploads results to `admin.html`. Output files under `tests/regression/output/` and `tests/regression/screenshots/` are generated artifacts — not committed source fixtures. See [`docs/subsystems/usage-and-admin.md`](./subsystems/usage-and-admin.md).
@@ -72,4 +83,4 @@ Targeted run for accessibility or UI focus-management changes.
 - Release validation should include `npm test`, `npm run build`, and `npm run test:browser` (full extended suite) before shipping or deploying.
 - Routine packet validation can use `npm run test:browser:smoke` for faster feedback.
 - `workers: 2` is stable for the smoke suite; the full suite runs at `workers: 1` because `blockly-trace-playback.spec.js` has CPU-contention timing sensitivity under parallelism.
-- `jump-animation.spec.js` is included in smoke because it is short, learner-visible, and exercises the jump contract without timing-sensitive broad UI coverage.
+- `jump-animation.spec.js` and `workbench.spec.js` are included in smoke because they are short, learner/dev-visible, and exercise local-only entrypoints without timing-sensitive broad UI coverage.
