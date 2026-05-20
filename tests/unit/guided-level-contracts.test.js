@@ -722,7 +722,7 @@ test("project metadata is preserved on the authored project levels and surfaced 
   });
   assert.equal(levels.find((entry) => entry.id === "one-program-two-allies").project.isStart, true);
   assert.equal(levels.find((entry) => entry.id === "advanced-scrimmage").project.isCapstone, true);
-  assert.equal(levels.find((entry) => entry.id === "barrier-specialist").failureCondition.maxTurns, 10);
+  assert.equal(levels.find((entry) => entry.id === "barrier-specialist").failureCondition.maxTurns, 13);
   assert.equal(levels.find((entry) => entry.id === "jump-team").failureCondition.maxTurns, 15);
 
   assert.equal(levels.find((entry) => entry.id === "show-what-you-know").project, null);
