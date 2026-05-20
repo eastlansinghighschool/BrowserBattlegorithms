@@ -16,7 +16,10 @@ const AREA_FREEZE_FLASH_COLOR = [190, 230, 255];
 const JUMP_DUST_COLOR = [170, 180, 190];
 const JUMP_TAKEOFF_COLOR = [150, 160, 170];
 
-export function prefersReducedMotion() {
+export function prefersReducedMotion(state = null) {
+  if (state && state.lowMotionOverride) {
+    return true;
+  }
   return typeof window !== "undefined" &&
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -86,7 +89,7 @@ export function drawAreaFreezePulse(p, app) {
     return;
   }
 
-  const reducedMotion = prefersReducedMotion();
+  const reducedMotion = prefersReducedMotion(app?.state);
   const elapsedMs = Math.max(0, Date.now() - effect.startedAtMs);
   if (elapsedMs >= effect.durationMs) {
     return;
@@ -117,7 +120,7 @@ export function drawAreaFreezePulse(p, app) {
   p.pop();
 }
 
-export function drawAreaFreezeRunnerFlash(p, runner, effect) {
+export function drawAreaFreezeRunnerFlash(p, runner, effect, state = null) {
   if (!effect || !runner || !Array.isArray(effect.affectedRunners)) {
     return;
   }
@@ -127,7 +130,7 @@ export function drawAreaFreezeRunnerFlash(p, runner, effect) {
     return;
   }
 
-  const reducedMotion = prefersReducedMotion();
+  const reducedMotion = prefersReducedMotion(state);
   const elapsedMs = Math.max(0, Date.now() - effect.startedAtMs);
   if (elapsedMs >= effect.durationMs) {
     return;
@@ -164,12 +167,12 @@ export function drawAreaFreezeRunnerFlash(p, runner, effect) {
   p.pop();
 }
 
-export function drawJumpDropShadow(p, runner, jumpProgress) {
+export function drawJumpDropShadow(p, runner, jumpProgress, state = null) {
   if (!runner?.isJumping) {
     return;
   }
 
-  const reducedMotion = prefersReducedMotion();
+  const reducedMotion = prefersReducedMotion(state);
   const groundPixelX = Number.isFinite(Number(runner.jumpGroundPixelX)) ? Number(runner.jumpGroundPixelX) : runner.pixelX;
   const groundPixelY = Number.isFinite(Number(runner.jumpGroundPixelY)) ? Number(runner.jumpGroundPixelY) : runner.pixelY;
   const progress = Number.isFinite(Number(jumpProgress)) ? Math.min(1, Math.max(0, Number(jumpProgress))) : 0;
@@ -191,12 +194,12 @@ export function drawJumpDropShadow(p, runner, jumpProgress) {
   p.pop();
 }
 
-export function drawJumpTakeoffLines(p, runner, jumpProgress) {
+export function drawJumpTakeoffLines(p, runner, jumpProgress, state = null) {
   if (!runner?.isJumping || !Number.isFinite(Number(jumpProgress)) || jumpProgress >= 0.25) {
     return;
   }
 
-  const reducedMotion = prefersReducedMotion();
+  const reducedMotion = prefersReducedMotion(state);
   if (reducedMotion && jumpProgress > 0) {
     return;
   }
@@ -235,13 +238,13 @@ export function drawJumpTakeoffLines(p, runner, jumpProgress) {
   p.pop();
 }
 
-export function drawJumpLandingDust(p, cellX, cellY, ringProgress) {
+export function drawJumpLandingDust(p, cellX, cellY, ringProgress, state = null) {
   if (!Number.isFinite(Number(cellX)) || !Number.isFinite(Number(cellY))) {
     return;
   }
 
   const progress = Number.isFinite(Number(ringProgress)) ? Math.min(1, Math.max(0, Number(ringProgress))) : 0;
-  const reducedMotion = prefersReducedMotion();
+  const reducedMotion = prefersReducedMotion(state);
   if (reducedMotion && progress > 0.12) {
     return;
   }
@@ -258,16 +261,19 @@ export function drawJumpLandingDust(p, cellX, cellY, ringProgress) {
   p.pop();
 }
 
-export function drawFrozenCountdownBadge(p, runner) {
+export function drawFrozenCountdownBadge(p, runner, state = null) {
+  if (state && state.showFrozenBadges === false) {
+    return;
+  }
   if (!runner?.isFrozen) {
     return;
   }
 
   const remainingTurns = Number(runner.frozenTurnsRemaining);
   const badgeText = Number.isFinite(remainingTurns) ? `❄ ${remainingTurns}` : "❄";
-  const badgeX = runner.pixelX + 3;
-  const badgeY = runner.pixelY + CELL_SIZE - 17;
   const badgeHeight = 14;
+  const badgeX = runner.pixelX + 3;
+  const badgeY = runner.pixelY + CELL_SIZE - badgeHeight - 3; // lower-left — does not overlap the upper-left index badge
   const textSize = 9;
   let badgeWidth = Math.max(18, badgeText.length * 6 + 8);
   if (typeof p.textWidth === "function") {
@@ -293,4 +299,89 @@ export function drawFrozenCountdownBadge(p, runner) {
   p.textAlign(p.LEFT, p.CENTER);
   p.text(badgeText, badgeX + 4, badgeY + badgeHeight / 2 + 0.5);
   p.pop();
+}
+
+export function drawIndexLabel(p, x, y, side, index, colors) {
+  const badgeWidth = 14;
+  const badgeHeight = 14;
+  const textSize = 9;
+
+  p.push();
+  p.textSize(textSize);
+  p.textStyle(p.BOLD);
+
+  // Background: team-tinted color at ~50% opacity
+  p.noStroke();
+  p.fill(colors[0], colors[1], colors[2], 128);
+  p.rect(x, y, badgeWidth, badgeHeight, 4);
+
+  // Border: thin 0.75px white at ~50% opacity
+  p.stroke(255, 255, 255, 128);
+  p.strokeWeight(0.75);
+  p.noFill();
+  p.rect(x, y, badgeWidth, badgeHeight, 4);
+
+  // Label: white at ~85% opacity, centered
+  p.fill(255, 255, 255, 217);
+  p.noStroke();
+  p.textAlign(p.CENTER, p.CENTER);
+  p.text(String(index), x + badgeWidth / 2, y + badgeHeight / 2 + 0.5);
+  p.pop();
+}
+
+export function drawRunnerLabelBadge(p, runner, state) {
+  if (state?.showRunnerIndexBadges !== true) {
+    return;
+  }
+  if (!runner) {
+    return;
+  }
+
+  // 1. Resolve side (for future extensions if needed)
+  const side = runner.team === 1 ? "ally" : "enemy";
+
+  // 2. Resolve index — single namespace per team.
+  //    Code-controlled allies use their allyIndex (0, 1, 2, …).
+  //    Runners without allyIndex (humans, NPCs) are numbered after the allyIndex range,
+  //    so every runner on the same side has a unique badge number.
+  let index = null;
+  if (typeof runner.allyIndex === "number" && Number.isFinite(runner.allyIndex)) {
+    index = runner.allyIndex;
+  } else if (state?.allRunners) {
+    const allyCount = state.allRunners.filter(
+      (r) => r.team === runner.team && typeof r.allyIndex === "number" && Number.isFinite(r.allyIndex)
+    ).length;
+    const nonAllyRunners = state.allRunners.filter(
+      (r) => r.team === runner.team && (typeof r.allyIndex !== "number" || !Number.isFinite(r.allyIndex))
+    );
+    const nonAllyIndex = nonAllyRunners.indexOf(runner);
+    if (nonAllyIndex !== -1) {
+      index = allyCount + nonAllyIndex;
+    }
+  }
+
+  if (index === null) {
+    console.warn(`Could not resolve index for runner: ${runner.id}`);
+    return;
+  }
+
+  // 3. Resolve colors
+  const teamColors = getTeamGlowColors(state, runner.team);
+  const colors = teamColors ? teamColors.stroke : [128, 128, 128];
+
+  // 4. Calculate position: upper-left by default so the index badge renders above the
+  //    runner's feet and avoids covering the head sprite for tall badge text (e.g. "999").
+  //    The frozen countdown badge occupies the lower-left, so there is no overlap.
+  //    Human-controlled runners shift to the cell midline to avoid overlapping the
+  //    "P1"/"P2" label drawn at pixelX+2, pixelY+2 by drawHumanPlayerLabels (PvP only).
+  const badgeHeight = 14;
+  const badgeX = runner.pixelX + 3;
+  let badgeY = runner.pixelY + 3; // upper-left
+
+  if (runner.isHumanControlled) {
+    badgeY = runner.pixelY + (CELL_SIZE - badgeHeight) / 2; // midline
+  }
+
+  // 5. Delegate rendering
+  drawIndexLabel(p, badgeX, badgeY, side, index, colors);
 }

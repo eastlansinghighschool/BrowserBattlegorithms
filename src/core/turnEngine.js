@@ -741,7 +741,7 @@ export function processTurnActions(app, p) {
   }
 
   if (state.currentTurnState === TURN_STATES.ANIMATING && (runner.isMoving || runner.isJumping || runner.isBouncing)) {
-    const animationComplete = runner.updateAnimation(state.animationSpeedFactor, p);
+    const animationComplete = runner.updateAnimation(state.animationSpeedFactor, p, state);
     if (animationComplete) {
       const completedAnimationType = runner.animationCompletionType;
       if (completedAnimationType === "jump_success") {

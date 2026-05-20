@@ -1,0 +1,67 @@
+#cell-inspector-tooltip {
+  position: fixed;
+  z-index: 10000;
+  background-color: hsla(222, 25%, 10%, 0.95);
+  color: #f8fafc;
+  border: 1px solid hsla(217, 16%, 30%, 0.6);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: none;
+  max-width: 280px;
+  min-width: 165px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top left;
+}
+
+#cell-inspector-tooltip[hidden] {
+  display: none !important;
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.cell-inspector-line {
+  font-weight: 600;
+  color: #38bdf8; /* Sleek light blue accent */
+  margin-bottom: 4px;
+}
+
+.cell-inspector-line:not(:first-child) {
+  margin-top: 6px;
+  border-top: 1px solid hsla(217, 16%, 30%, 0.4);
+  padding-top: 4px;
+}
+
+.cell-inspector-subline {
+  font-weight: 400;
+  color: #e2e8f0; /* Off-white text */
+  padding-left: 8px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Debounced screen reader helper styling */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #cell-inspector-tooltip {
+    transition: none !important;
+  }
+}

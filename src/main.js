@@ -2,6 +2,7 @@ import { createApp } from "./core/state.js";
 import { initializeDisplayState } from "./core/setup.js";
 import { bindControls, handleKeyInput } from "./ui/controls.js";
 import { bindGoalBurstOverlay, renderGoalBurstOverlay } from "./ui/goalBurstOverlay.js";
+import { initCellInspectorOverlay } from "./ui/cellInspectorOverlay.js";
 import { initializeSoundState } from "./ui/sound.js";
 import { announceLastTurn, initializeNarrationState, syncTurnNarration } from "./ui/narration.js";
 import { announceCoachingMoments, initializeCoachingState, syncCoachingNarration } from "./ui/coachingNarration.js";
@@ -34,6 +35,7 @@ import {
   updateSpotlight
 } from "./ui/tutorialOverlay.js";
 import { startHeavyBoot, retryBoardLoad, retryEditorLoad, whenHeavySystemsReady } from "./startup/loaders.js";
+import { drawRunnerLabelBadge } from "./render/effects.js";
 
 const app = createApp();
 initializeUsageTracking(app);
@@ -207,6 +209,7 @@ app.syncUi = () => {
   renderGoalBurstOverlay(app);
   updateSpotlight(app);
   renderTutorialOverlay(app);
+  app.hooks.refreshCellInspector?.();
 };
 
 initializeLevelState(app);
@@ -220,6 +223,7 @@ initVoiceNarration(app);
 bindGoalBurstOverlay(app);
 bindLevelPanel(app);
 bindTutorialOverlay(app);
+initCellInspectorOverlay(app);
 initializeDisplayState(app);
 app.syncUi();
 startHeavyBoot(app);
@@ -287,6 +291,33 @@ window.__BBA_TEST_HOOKS__ = {
     const handled = handleKeyInput(app, key);
     app.syncUi();
     return handled;
+  },
+  // Calls drawRunnerLabelBadge against a spy p5 and returns the recorded draw calls.
+  // Used by browser tests to verify badge rendering without canvas pixel sampling.
+  testDrawRunnerLabelBadge: (runnerId) => {
+    const runner = app.state.allRunners.find((r) => r.id === runnerId);
+    if (!runner) {
+      return null;
+    }
+    const calls = [];
+    const spy = {
+      CENTER: "CENTER", LEFT: "LEFT", BOLD: "BOLD", CLOSE: "CLOSE",
+      push: () => spy,
+      pop: () => spy,
+      fill: (...args) => { calls.push({ method: "fill", args }); return spy; },
+      noFill: () => spy,
+      stroke: () => spy,
+      noStroke: () => spy,
+      strokeWeight: () => spy,
+      textAlign: () => spy,
+      textSize: () => spy,
+      textStyle: () => spy,
+      rect: (...args) => { calls.push({ method: "rect", args }); return spy; },
+      text: (...args) => { calls.push({ method: "text", args }); return spy; },
+      textWidth: (v) => String(v).length * 6
+    };
+    drawRunnerLabelBadge(spy, runner, app.state);
+    return calls;
   },
   app
 };

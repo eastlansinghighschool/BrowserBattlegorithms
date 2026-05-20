@@ -20,9 +20,9 @@ This note does NOT own:
 |---|---|
 | `src/render/p5App.js` | Boots the p5 instance, owns the frame loop, routes keyboard input, calls render functions. |
 | `src/render/drawBoard.js` | Draws the grid, territory zones, barriers, target cells, and the game-over overlay. |
-| `src/render/effects.js` | Draws active-runner glow, transient Area Freeze pulse / flash, and jump shadow / takeoff / landing effects. |
+| `src/render/effects.js` | Draws active-runner glow, transient Area Freeze pulse / flash, jump shadow / takeoff / landing effects, and runner index badges. |
 | `src/render/drawEntities.js` | Draws runners, flags, and frozen/active state visuals using p5 text/glyph calls. |
-| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, frozen countdown badge, and move / jump animation state. |
+| `src/entities/Runner.js` | Owns the runner glyph, mirror logic, frozen countdown badge, runner index badge drawing, and move / jump animation state. |
 | `src/entities/Flag.js` | Owns the flag glyph and position. |
 | `src/entities/Barrier.js` | Owns the barrier glyph and ownership state. |
 
@@ -54,8 +54,9 @@ The p5 canvas owns the game grid, entities, and in-canvas overlays. Everything e
 | Play/reset button, controls | DOM (`src/ui/controls.js`, `src/ui/gameStateUI.js`) |
 | Tutorial spotlight and overlays | DOM (`src/ui/tutorialOverlay.js`), positioned relative to canvas |
 | Goal burst visual effect | DOM (`src/ui/goalBurstOverlay.js`), positioned using canvas bounding box |
+| Cell inspector tooltip | DOM (`src/ui/cellInspectorOverlay.js`), positioned using pointer coords or cell coords |
 
-Canvas-adjacent DOM overlays like `goalBurstOverlay.js` use `getBoundingClientRect()` on the canvas container to position themselves. They reposition on scroll and resize events. They are not p5 features.
+Canvas-adjacent DOM overlays like `goalBurstOverlay.js` and `cellInspectorOverlay.js` use `getBoundingClientRect()` on the canvas container to position themselves. They reposition on scroll and resize events. They are not p5 features.
 
 ## Keyboard input routing
 
@@ -73,6 +74,7 @@ Runner-specific conventions:
 - Runners facing right-to-left (team 2, `playDirection === -1`) are mirrored using `translate()` + `scale(-1, 1)` so their emoji appears to face left.
 - Frozen runners render with a distinct glyph or visual state set by the entity class.
 - Frozen runners also render a small countdown badge near the runner, while successful Area Freeze actions briefly add a board pulse and affected-runner flash on the canvas.
+- Runners can render a team-colored numeric index badge (starting at 0 for allies, and falling back to stable order-of-creation list index for enemies and humans). These badges shift position when a runner is frozen or human-controlled to avoid label overlap.
 - Animation state (position interpolation between cells) is owned by the entity class and read by the render layer.
 
 The render layer does not own game state. It reads from `app.state` and entity objects; it does not write to them. Rule-level changes (position updates, flag pickup, freeze) happen in `src/core/`, not in `src/render/`.
@@ -105,7 +107,7 @@ Reduced motion keeps the jump distinct without extra flourish: the arc amplitude
 ## Common traps
 
 - **Putting game logic in a draw function.** Draw functions run every frame. Logic that should run once per turn belongs in the tick path.
-- **Assuming canvas-adjacent DOM overlays are p5 features.** `goalBurstOverlay.js` and `tutorialOverlay.js` are DOM nodes positioned relative to the canvas; they are not part of the p5 sketch.
+- **Assuming canvas-adjacent DOM overlays are p5 features.** `goalBurstOverlay.js`, `cellInspectorOverlay.js`, and `tutorialOverlay.js` are DOM nodes positioned relative to the canvas; they are not part of the p5 sketch.
 - **Adding UI controls to `keyPressed()`.** That callback is for in-game runner actions. DOM controls use DOM listeners.
 - **Mirroring entity rendering logic in the turn engine.** The render layer reads entity state; it does not update it. Visual-only changes (glyph selection, color) stay in `src/render/` or entity classes.
 

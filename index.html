@@ -29,6 +29,18 @@
               <path d="m5 16 4-4 4 3 6-8" />
             </svg>
           </button>
+          <button
+            id="settingsButton"
+            class="app-header-icon-button"
+            type="button"
+            aria-label="Open settings"
+            title="Open settings"
+          >
+            <svg class="app-header-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </button>
           <a id="helpLink" class="app-help-link" href="./help.html" target="_blank" rel="noopener" aria-label="Open Help">
             ?
           </a>
@@ -55,34 +67,18 @@
             <button id="nextLevelButton" style="padding: 10px 20px; font-size: 16px; display: none;">Next Level</button>
           </div>
           <div id="game-controls" style="margin-top: 10px; padding: 10px; background-color: #fff; border-radius: 8px; text-align: center;">
-            <label>Game Speed:</label>
-            <input type="range" id="speedSlider" min="1" max="20" value="10" style="vertical-align: middle;">
-            <span id="speedValue" style="margin-left: 10px;">Normal</span>
+            <div class="game-speed-row">
+              <div class="game-speed-controls">
+                <label for="speedSlider">Game Speed:</label>
+                <input type="range" id="speedSlider" min="1" max="20" value="10" style="vertical-align: middle;">
+                <span id="speedValue" style="margin-left: 10px;">Normal</span>
+              </div>
+              <div id="areaFreezeStatus" class="area-freeze-status" hidden></div>
+            </div>
             <p id="scoreDisplay" style="margin-top:10px; font-weight: bold;">Turn: 1 | Scores: T1: 0 - T2: 0 (Win at 2)</p>
-            <div id="areaFreezeStatus" class="area-freeze-status" hidden></div>
-            <div class="turn-log-toggle">
-              <input id="turnLogToggle" type="checkbox" aria-labelledby="turnLogToggleLabel">
-              <span id="turnLogToggleLabel">Show Turn Log</span>
-            </div>
             <p id="board-narration-strip" class="board-narration-strip" hidden></p>
-            <div class="turn-log-toggle">
-              <input id="coachingModeToggle" type="checkbox" aria-labelledby="coachingModeToggleLabel">
-              <span id="coachingModeToggleLabel">Coaching Mode</span>
-            </div>
             <p id="board-coaching-strip" class="board-coaching-strip" hidden></p>
             <div id="board-coaching" class="board-narration" aria-live="polite" aria-atomic="true"></div>
-            <div class="turn-log-toggle">
-              <input id="voiceNarrationToggle" type="checkbox" aria-labelledby="voiceNarrationToggleLabel">
-              <span id="voiceNarrationToggleLabel">Voice Narration</span>
-            </div>
-            <div id="voice-controls" class="voice-controls" hidden>
-              <label class="voice-controls-label">Speed:
-                <input type="range" id="voiceRateSlider" min="0.75" max="1.5" step="0.05" value="1">
-              </label>
-              <label class="voice-controls-label">Voice:
-                <select id="voicePicker" aria-label="Select voice"></select>
-              </label>
-            </div>
           </div>
         </div>
       </main>
@@ -165,7 +161,6 @@
               </svg>
             </button>
           </div>
-          <button id="soundToggleButton" type="button">Sound: On</button>
           <input id="importWorkspaceInput" type="file" accept=".xml,.json,text/xml,application/json" hidden>
         </div>
         <div id="programExportModal" class="program-modal" hidden aria-hidden="true">
@@ -206,6 +201,63 @@
             <div class="program-modal-actions">
               <button type="button" data-private-import-action="cancel">Cancel</button>
               <button type="button" data-private-import-action="confirm">Import File</button>
+            </div>
+          </div>
+        </div>
+        <div id="settingsModal" class="program-modal" hidden aria-hidden="true">
+          <div class="program-modal-backdrop" data-settings-action="cancel"></div>
+          <div class="program-modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsModalTitle">
+            <h3 id="settingsModalTitle">Settings</h3>
+            <div class="settings-modal-scrollable">
+              <label class="program-modal-check">
+                <input id="soundToggleCheckbox" type="checkbox">
+                Sound effects (game sounds)
+              </label>
+              <label class="program-modal-check">
+                <input id="turnLogToggle" type="checkbox">
+                Show Turn Log strip on board
+              </label>
+              <label class="program-modal-check">
+                <input id="coachingModeToggle" type="checkbox">
+                Show Coaching messages
+              </label>
+              <label class="program-modal-check">
+                <input id="voiceNarrationToggle" type="checkbox">
+                Voice Narration (TTS)
+              </label>
+              <div id="voiceSettingsFields" class="program-modal-fields" style="margin-left: 20px;" hidden>
+                <label>Voice speed
+                  <input type="range" id="voiceRateSlider" min="0.75" max="1.5" step="0.05" value="1">
+                </label>
+                <label>Speech voice
+                  <select id="voicePicker" aria-label="Select voice"></select>
+                </label>
+              </div>
+              <hr class="settings-separator" />
+              <label class="program-modal-check">
+                <input id="lowMotionToggleCheckbox" type="checkbox">
+                Low-motion override (subtler visual effects)
+              </label>
+              <label class="program-modal-check">
+                <input id="runnerMovementToggleCheckbox" type="checkbox">
+                Runner movement animations (sliding)
+              </label>
+              <label class="program-modal-check">
+                <input id="runnerJumpingToggleCheckbox" type="checkbox">
+                Runner jumping animations (parabolic arc)
+              </label>
+              <label class="program-modal-check">
+                <input id="frozenBadgesToggleCheckbox" type="checkbox">
+                Show frozen countdown badges
+              </label>
+              <label class="program-modal-check">
+                <input id="runnerIndexBadgesToggleCheckbox" type="checkbox">
+                Show runner-index badges
+              </label>
+            </div>
+            <p class="settings-modal-note">Note: Blockly editor block sound preferences will change on next page reload.</p>
+            <div class="program-modal-actions">
+              <button type="button" data-settings-action="cancel">Close</button>
             </div>
           </div>
         </div>

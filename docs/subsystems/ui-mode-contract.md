@@ -102,6 +102,14 @@ On project levels (L23-L28 `strategy-brain`, L29-L37 `team-strategy-script`), ad
 
 These signals are driven by project metadata and local storage. They are not Blockly state.
 
+## Settings Gear Modal Panel (Plan 57)
+
+`src/ui/preferences.js` and `src/ui/controls.js` manage the consolidated Settings modal (`#settingsModal`) which is opened via the `#settingsButton` gear icon in the app header. This modal replaces all legacy inline toggles and includes:
+- Consolidates sound, turn log visibility, coaching mode, and voice narration controls.
+- Adds new accommodation settings: low-motion override, runner movement animations, runner jumping animations, show frozen badges, and show runner-index badges.
+- Persistence is handled globally using `localStorage` with a `bba:settings:*` prefix.
+- Keyboard accessibility is maintained with focus trap, ESC closing, and returning focus to the gear button upon dismissal.
+
 ## Common traps
 
 - **Reading only `currentModeView`** will miss PvP vs PvCPU distinctions. Always check `freePlayMode` when the behavior differs between free-play sub-modes.

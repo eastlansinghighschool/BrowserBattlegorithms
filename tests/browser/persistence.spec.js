@@ -73,12 +73,18 @@ test("sound preference persists across a page reload", async ({ page }) => {
   await page.goto("/");
   await chooseFreePlay(page);
 
-  await page.getByRole("button", { name: "Sound: On" }).click();
-  await expect(page.getByRole("button", { name: "Sound: Off" })).toBeVisible();
+  const settingsBtn = page.locator("#settingsButton");
+  await settingsBtn.click();
+
+  const soundCheckbox = page.locator("#soundToggleCheckbox");
+  await expect(soundCheckbox).toBeChecked();
+  await soundCheckbox.uncheck();
+  await expect(soundCheckbox).not.toBeChecked();
 
   await page.reload();
   await chooseFreePlay(page);
-  await expect(page.getByRole("button", { name: "Sound: Off" })).toBeVisible();
+  await page.locator("#settingsButton").click();
+  await expect(page.locator("#soundToggleCheckbox")).not.toBeChecked();
 });
 
 test("usage tracker persists across a page reload", async ({ page }) => {

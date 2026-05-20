@@ -8,6 +8,7 @@ import {
   drawFrozenCountdownBadge,
   drawJumpDropShadow,
   drawJumpTakeoffLines,
+  drawRunnerLabelBadge,
   prefersReducedMotion
 } from "../render/effects.js";
 import { resolveRunnerDisplayEmoji, shouldMirrorRunnerEmoji } from "../render/runnerVisuals.js";
@@ -86,9 +87,9 @@ export class Runner {
     const jumpProgress = this.animationProgress;
 
     p.push();
-    drawJumpDropShadow(p, this, jumpProgress);
-    drawJumpTakeoffLines(p, this, jumpProgress);
-    drawAreaFreezeRunnerFlash(p, this, freezeEffect);
+    drawJumpDropShadow(p, this, jumpProgress, state);
+    drawJumpTakeoffLines(p, this, jumpProgress, state);
+    drawAreaFreezeRunnerFlash(p, this, freezeEffect, state);
     p.fill(0);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(CELL_SIZE * 0.7);
@@ -114,7 +115,8 @@ export class Runner {
       p.pop();
     }
 
-    drawFrozenCountdownBadge(p, this);
+    drawFrozenCountdownBadge(p, this, state);
+    drawRunnerLabelBadge(p, this, state);
   }
 
   pickupFlag(flag) {
@@ -262,7 +264,7 @@ export class Runner {
     this.pixelY = this.bounceOriginPixelY;
   }
 
-  updateAnimation(animationSpeedFactor, p) {
+  updateAnimation(animationSpeedFactor, p, state = null) {
     let animationCompletedThisFrame = false;
     const currentFrameSpeed = this.isJumping
       ? getJumpAnimationProgressIncrement(animationSpeedFactor)
@@ -270,7 +272,7 @@ export class Runner {
 
     if (this.isJumping) {
       this.animationProgress += currentFrameSpeed;
-      const reducedMotion = prefersReducedMotion();
+      const reducedMotion = prefersReducedMotion(state);
       const jumpProgress = Math.min(1, this.animationProgress);
 
       if (this.jumpFailedReversal) {
@@ -292,7 +294,7 @@ export class Runner {
         this.pixelY = groundPixelY + getJumpArcOffset(jumpProgress, reducedMotion ? 0.3 : 1.0);
       }
 
-      if (this.animationProgress >= 1) {
+      if (this.animationProgress >= 1 || (state && state.runnerJumpingAnimations === false)) {
         this.animationProgress = 1;
         if (this.jumpFailedReversal) {
           this.gridX = this.jumpOriginGridX;
@@ -323,7 +325,7 @@ export class Runner {
     if (this.isMoving) {
       this.animationProgress += currentFrameSpeed;
       const easedProgress = easeInOutQuad(this.animationProgress);
-      if (this.animationProgress >= 1) {
+      if (this.animationProgress >= 1 || (state && state.runnerMovementAnimations === false)) {
         this.animationProgress = 1;
         this.pixelX = this.targetPixelX;
         this.pixelY = this.targetPixelY;
@@ -339,19 +341,19 @@ export class Runner {
     } else if (this.isBouncing) {
       this.bounceProgress += currentFrameSpeed * 2;
       const easedBounceProgress = easeInOutQuad(this.bounceProgress);
-      if (this.bounceProgress < 0.5) {
-        this.pixelX = p.lerp(this.bounceOriginPixelX, this.bounceMidPixelX, easedBounceProgress * 2);
-        this.pixelY = p.lerp(this.bounceOriginPixelY, this.bounceMidPixelY, easedBounceProgress * 2);
-      } else if (this.bounceProgress < 1) {
-        this.pixelX = p.lerp(this.bounceMidPixelX, this.bounceOriginPixelX, (easedBounceProgress - 0.5) * 2);
-        this.pixelY = p.lerp(this.bounceMidPixelY, this.bounceOriginPixelY, (easedBounceProgress - 0.5) * 2);
-      } else {
+      if (this.bounceProgress >= 1 || (state && state.runnerMovementAnimations === false)) {
         this.pixelX = this.bounceOriginPixelX;
         this.pixelY = this.bounceOriginPixelY;
         this.isBouncing = false;
         this.bounceProgress = 0;
         this.animationCompletionType = "bounce";
         animationCompletedThisFrame = true;
+      } else if (this.bounceProgress < 0.5) {
+        this.pixelX = p.lerp(this.bounceOriginPixelX, this.bounceMidPixelX, easedBounceProgress * 2);
+        this.pixelY = p.lerp(this.bounceOriginPixelY, this.bounceMidPixelY, easedBounceProgress * 2);
+      } else if (this.bounceProgress < 1) {
+        this.pixelX = p.lerp(this.bounceMidPixelX, this.bounceOriginPixelX, (easedBounceProgress - 0.5) * 2);
+        this.pixelY = p.lerp(this.bounceMidPixelY, this.bounceOriginPixelY, (easedBounceProgress - 0.5) * 2);
       }
     }
 

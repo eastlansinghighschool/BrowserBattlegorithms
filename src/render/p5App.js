@@ -84,6 +84,7 @@ export function initializeP5App(app) {
       drawRunners(p, app.state);
       drawHumanPlayerLabels(p, app.state);
       drawGameOverOverlay(p, app.state);
+      app.hooks.refreshCellInspector?.();
     };
 
     p.keyPressed = (event) => {

@@ -4,7 +4,7 @@
 
 - Packet id: plan-56
 - Packet title: Cell Inspector Tooltip
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-19
 - Packet type: implementation / accessibility / UI / source-code / tests

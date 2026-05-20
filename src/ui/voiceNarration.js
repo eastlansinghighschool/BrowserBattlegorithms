@@ -5,9 +5,7 @@
 
 import { setNarrationDucking } from "./sound.js";
 
-const STORAGE_KEY_ENABLED = "bba:voice-narration-enabled";
-const STORAGE_KEY_RATE = "bba:voice-narration-rate";
-const STORAGE_KEY_VOICE = "bba:voice-narration-voice";
+import { loadPreference, savePreference, parseBoolean, parseFloatPref, parseString, PREF_KEYS } from "./preferences.js";
 
 // Module-level state (reset only by calling initVoiceNarration again).
 let hasGestured = false;
@@ -57,9 +55,7 @@ export function getAvailableVoices() {
 
 export function setVoiceEnabled(enabled) {
   voiceEnabled = Boolean(enabled);
-  if (hasWindowStorage()) {
-    window.localStorage.setItem(STORAGE_KEY_ENABLED, `${voiceEnabled}`);
-  }
+  savePreference(PREF_KEYS.VOICE_NARRATION_ENABLED, voiceEnabled);
   if (!voiceEnabled) {
     cancelSpeech();
   }
@@ -68,16 +64,12 @@ export function setVoiceEnabled(enabled) {
 export function setVoiceRate(rate) {
   const parsed = Number(rate);
   voiceRate = Number.isFinite(parsed) ? Math.max(0.75, Math.min(1.5, parsed)) : 1.0;
-  if (hasWindowStorage()) {
-    window.localStorage.setItem(STORAGE_KEY_RATE, `${voiceRate}`);
-  }
+  savePreference(PREF_KEYS.VOICE_NARRATION_RATE, voiceRate);
 }
 
 export function setVoiceUri(uri) {
   selectedVoiceUri = uri || "";
-  if (hasWindowStorage()) {
-    window.localStorage.setItem(STORAGE_KEY_VOICE, selectedVoiceUri);
-  }
+  savePreference(PREF_KEYS.VOICE_NARRATION_VOICE, selectedVoiceUri);
 }
 
 // Cancel any in-flight or queued speech. Restores aria-live and clears ducking.
@@ -135,13 +127,10 @@ export function speak(text, liveRegionId) {
 export function initVoiceNarration(app) {
   if (!hasSpeechSynthesis()) return;
 
-  if (hasWindowStorage()) {
-    const stored = window.localStorage.getItem(STORAGE_KEY_ENABLED);
-    voiceEnabled = stored === "true";
-    const storedRate = window.localStorage.getItem(STORAGE_KEY_RATE);
-    voiceRate = storedRate ? Math.max(0.75, Math.min(1.5, parseFloat(storedRate))) : 1.0;
-    selectedVoiceUri = window.localStorage.getItem(STORAGE_KEY_VOICE) || "";
-  }
+  voiceEnabled = loadPreference(PREF_KEYS.VOICE_NARRATION_ENABLED, false, parseBoolean);
+  voiceRate = loadPreference(PREF_KEYS.VOICE_NARRATION_RATE, 1.0, parseFloatPref);
+  voiceRate = Math.max(0.75, Math.min(1.5, voiceRate));
+  selectedVoiceUri = loadPreference(PREF_KEYS.VOICE_NARRATION_VOICE, "", parseString);
 
   const docLang = typeof document !== "undefined"
     ? (document.documentElement.lang || "").split("-")[0]

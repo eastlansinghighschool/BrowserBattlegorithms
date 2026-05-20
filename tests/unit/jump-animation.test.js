@@ -161,3 +161,47 @@ test("reduced-motion jump visuals stay static for the shadow and one-frame cue f
     assert.equal(dustHidden.calls.some((call) => call.method === "circle"), false);
   });
 });
+
+test("movement animations toggle snap-to-target instantly when disabled", () => {
+  const runner = new Runner(2, 4, 1, false, "move-snap");
+  runner.startMoveAnimation(3, 4);
+
+  const stateWithAnimationsDisabled = {
+    runnerMovementAnimations: false
+  };
+
+  const completed = runner.updateAnimation(1, {
+    lerp(start, end, amount) {
+      return start + (end - start) * amount;
+    }
+  }, stateWithAnimationsDisabled);
+
+  assert.equal(completed, true);
+  assert.equal(runner.isMoving, false);
+  assert.equal(runner.gridX, 3);
+  assert.equal(runner.gridY, 4);
+  assert.equal(runner.pixelX, 3 * CELL_SIZE);
+  assert.equal(runner.pixelY, 4 * CELL_SIZE);
+});
+
+test("jumping animations toggle snap-to-target instantly when disabled", () => {
+  const runner = new Runner(2, 4, 1, false, "jump-snap");
+  runner.startJumpAnimation(4, 4);
+
+  const stateWithJumpingDisabled = {
+    runnerJumpingAnimations: false
+  };
+
+  const completed = runner.updateAnimation(1, {
+    lerp(start, end, amount) {
+      return start + (end - start) * amount;
+    }
+  }, stateWithJumpingDisabled);
+
+  assert.equal(completed, true);
+  assert.equal(runner.isJumping, false);
+  assert.equal(runner.gridX, 4);
+  assert.equal(runner.gridY, 4);
+  assert.equal(runner.pixelX, 4 * CELL_SIZE);
+  assert.equal(runner.pixelY, 4 * CELL_SIZE);
+});

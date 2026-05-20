@@ -8,5 +8,6 @@
 @import "./components/loading.css";
 @import "./components/lesson-panel.css";
 @import "./components/overlays.css";
+@import "./components/cellInspector.css";
 @import "./components/controls.css";
 @import "./components/responsive.css";

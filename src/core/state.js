@@ -13,6 +13,7 @@ import {
   POINTS_TO_WIN,
   TURN_STATES
 } from "../config/constants.js";
+import { loadPreference, parseBoolean, PREF_KEYS } from "../ui/preferences.js";
 
 export function createInitialState() {
   return {
@@ -23,7 +24,7 @@ export function createInitialState() {
     currentTurnEventLog: [],
     lastTurnEventLog: [],
     lastTurnNarrationText: "",
-    narrationVisibleStrip: false,
+    narrationVisibleStrip: loadPreference(PREF_KEYS.TURN_LOG_VISIBLE, false, parseBoolean),
     activeRunnerIndex: 0,
     currentTurnNumber: 1,
     currentTurnState: TURN_STATES.SETUP_DISPLAY,
@@ -87,7 +88,7 @@ export function createInitialState() {
     activeTutorial: null,
     spotlightRect: null,
     goalBurstEffect: null,
-    soundEnabled: true,
+    soundEnabled: loadPreference(PREF_KEYS.SOUND_ENABLED, true, parseBoolean),
     showModePicker: true,
     shellReady: false,
     editorReady: false,
@@ -101,7 +102,12 @@ export function createInitialState() {
     runnerActionHistory: {},
     lastBlocklyTrace: null,
     classifierRecurrenceState: { counters: {}, perLevelAttempt: {}, perMatch: {} },
-    coachingModeEnabled: false,
+    coachingModeEnabled: loadPreference(PREF_KEYS.COACHING_MODE_ENABLED, false, parseBoolean),
+    lowMotionOverride: loadPreference(PREF_KEYS.LOW_MOTION_OVERRIDE, false, parseBoolean),
+    runnerMovementAnimations: loadPreference(PREF_KEYS.RUNNER_MOVEMENT_ANIMATIONS, true, parseBoolean),
+    runnerJumpingAnimations: loadPreference(PREF_KEYS.RUNNER_JUMPING_ANIMATIONS, true, parseBoolean),
+    showFrozenBadges: loadPreference(PREF_KEYS.SHOW_FROZEN_BADGES, true, parseBoolean),
+    showRunnerIndexBadges: loadPreference(PREF_KEYS.SHOW_RUNNER_INDEX_BADGES, false, parseBoolean),
     lastCoachingText: ""
   };
 }

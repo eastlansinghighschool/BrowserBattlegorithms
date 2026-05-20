@@ -1,25 +1,7 @@
 import { LEVEL_RESULT, MAIN_GAME_STATES } from "../config/constants.js";
 import { speak as speakVoiceNarration } from "./voiceNarration.js";
 
-const NARRATION_VISIBLE_STRIP_STORAGE_KEY = "bba:narration-visible-strip";
-
-function hasWindowStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
-}
-
-function readStoredNarrationPreference() {
-  if (!hasWindowStorage()) {
-    return false;
-  }
-  return window.localStorage.getItem(NARRATION_VISIBLE_STRIP_STORAGE_KEY) === "true";
-}
-
-function writeStoredNarrationPreference(enabled) {
-  if (!hasWindowStorage()) {
-    return;
-  }
-  window.localStorage.setItem(NARRATION_VISIBLE_STRIP_STORAGE_KEY, `${Boolean(enabled)}`);
-}
+import { loadPreference, savePreference, parseBoolean, PREF_KEYS } from "./preferences.js";
 
 function toCellLabel(cell) {
   if (!cell || typeof cell.x !== "number" || typeof cell.y !== "number") {
@@ -235,13 +217,13 @@ function formatLevelResultSentence(context) {
 }
 
 export function initializeNarrationState(state) {
-  state.narrationVisibleStrip = readStoredNarrationPreference();
+  state.narrationVisibleStrip = loadPreference(PREF_KEYS.TURN_LOG_VISIBLE, false, parseBoolean);
   state.lastTurnNarrationText = "";
 }
 
 export function setNarrationVisibleStrip(state, enabled) {
   state.narrationVisibleStrip = Boolean(enabled);
-  writeStoredNarrationPreference(state.narrationVisibleStrip);
+  savePreference(PREF_KEYS.TURN_LOG_VISIBLE, state.narrationVisibleStrip);
 }
 
 /**

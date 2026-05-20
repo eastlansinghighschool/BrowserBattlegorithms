@@ -14,7 +14,7 @@ import { classifyTurn } from "../ai/learningMoments.js";
 import { getRunnerLabel } from "./narration.js";
 import { speak as speakVoiceCoaching } from "./voiceNarration.js";
 
-const COACHING_STORAGE_KEY = "bba:coaching-mode-enabled";
+import { loadPreference, savePreference, parseBoolean, PREF_KEYS } from "./preferences.js";
 
 // Kinds that only show during slow-trace mode (trace playback active).
 const SLOW_TRACE_ONLY = new Set(["no_action_selected"]);
@@ -162,32 +162,14 @@ export function computeCoachingText(app) {
   return "";
 }
 
-// ─── Persistence ─────────────────────────────────────────────────────────────
-
-function hasWindowStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
-}
-
-function readStoredCoachingPreference() {
-  if (!hasWindowStorage()) return false;
-  return window.localStorage.getItem(COACHING_STORAGE_KEY) === "true";
-}
-
-function writeStoredCoachingPreference(enabled) {
-  if (!hasWindowStorage()) return;
-  window.localStorage.setItem(COACHING_STORAGE_KEY, `${Boolean(enabled)}`);
-}
-
-// ─── Public: init / set ──────────────────────────────────────────────────────
-
 export function initializeCoachingState(state) {
-  state.coachingModeEnabled = readStoredCoachingPreference();
+  state.coachingModeEnabled = loadPreference(PREF_KEYS.COACHING_MODE_ENABLED, false, parseBoolean);
   state.lastCoachingText = "";
 }
 
 export function setCoachingModeEnabled(state, enabled) {
   state.coachingModeEnabled = Boolean(enabled);
-  writeStoredCoachingPreference(state.coachingModeEnabled);
+  savePreference(PREF_KEYS.COACHING_MODE_ENABLED, state.coachingModeEnabled);
 }
 
 // ─── Public: DOM sync / announce ─────────────────────────────────────────────

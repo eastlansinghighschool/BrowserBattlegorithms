@@ -1,0 +1,26 @@
+# Task Progress - Plan 56: Cell Inspector Tooltip
+
+- `[x]` Step 0: Discovery & Verification (Verify Property Names)
+- `[x]` Step 1: Content Builder Pure Function & Unit Tests
+  - `[x]` Write `buildInspectorLines` in `src/ui/cellInspectorOverlay.js`
+  - `[x]` Write `tests/unit/cell-inspector.test.js`
+  - `[x]` Confirm tests pass green with `npm test`
+- `[x]` Step 2: DOM Overlay Implementation
+  - `[x]` Implement `initCellInspectorOverlay` in `src/ui/cellInspectorOverlay.js`
+  - `[x]` Dynamically construct tooltip and a11y mirror nodes
+  - `[x]` Hook into `app.syncUi` in `src/main.js`
+- `[x]` Step 3: Event Listeners (Pointer Events & ESC)
+  - `[x]` Register `pointermove`, `pointerdown`, and `pointerleave` on `#canvas-container`
+  - `[x]` Handle `Escape` key inside `handleKeyInput` in `src/ui/controls.js`
+- `[x]` Step 4: Accessibility & Styling
+  - `[x]` Debounced `aria-live` mirror announcements
+  - `[x]` Styling in `src/assets/styles/components/cellInspector.css`
+  - `[x]` Import style in `src/assets/styles/style.css`
+- `[x]` Step 5: Verification & Full Tests
+  - `[x]` Run full unit tests (`npm test`)
+  - `[x]` Implement Playwright smoke spec `tests/browser/cell-inspector.spec.js`
+  - `[x]` Run full Playwright browser smoke test suite (`npm run test:browser:smoke`)
+  - `[x]` Run build (`npm run build`)
+- `[x]` Step 6: Documentation & Final Report
+  - `[x]` Update `docs/subsystems/p5-surface-map.md`
+  - `[x]` Write final progress report

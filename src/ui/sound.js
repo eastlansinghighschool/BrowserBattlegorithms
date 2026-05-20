@@ -1,4 +1,4 @@
-const SOUND_PREF_KEY = "bba:sound-enabled";
+import { loadPreference, savePreference, parseBoolean, PREF_KEYS } from "./preferences.js";
 
 let audioContext = null;
 let duckGain = 1.0;
@@ -38,19 +38,12 @@ function tone(frequency, durationMs, volume = 0.03, type = "sine") {
 }
 
 export function initializeSoundState(state) {
-  let enabled = true;
-  if (typeof window !== "undefined" && window.localStorage) {
-    const stored = window.localStorage.getItem(SOUND_PREF_KEY);
-    enabled = stored === null ? true : stored === "true";
-  }
-  state.soundEnabled = enabled;
+  state.soundEnabled = loadPreference(PREF_KEYS.SOUND_ENABLED, true, parseBoolean);
 }
 
 export function setSoundEnabled(state, enabled) {
   state.soundEnabled = Boolean(enabled);
-  if (typeof window !== "undefined" && window.localStorage) {
-    window.localStorage.setItem(SOUND_PREF_KEY, `${state.soundEnabled}`);
-  }
+  savePreference(PREF_KEYS.SOUND_ENABLED, state.soundEnabled);
 }
 
 export function playSound(state, soundId) {

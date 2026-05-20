@@ -123,6 +123,7 @@ test("the visible turn log strip is hidden by default and appears when enabled",
   const toggle = page.locator("#turnLogToggle");
 
   await expect(strip).toBeHidden();
+  await page.locator("#settingsButton").click();
   await expect(toggle).toBeVisible();
   await toggle.evaluate((element) => {
     element.checked = true;
@@ -140,6 +141,7 @@ test("the visible turn log strip is hidden by default and appears when enabled",
     hooks.app.syncUi();
   });
 
+  await page.locator("#settingsButton").click();
   await expect(page.locator("#turnLogToggle")).toBeChecked();
 });
 

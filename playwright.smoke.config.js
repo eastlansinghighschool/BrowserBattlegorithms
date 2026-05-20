@@ -31,7 +31,10 @@ export default defineConfig({
     "**/dev-unlock.spec.js",
     "**/workspace-reset-button.spec.js",
     "**/prediction-levels.spec.js",
-    "**/jump-animation.spec.js"
+    "**/jump-animation.spec.js",
+    "**/cell-inspector.spec.js",
+    "**/settings-gear.spec.js",
+    "**/runner-index-badge.spec.js"
   ],
   workers: 2,
   use: {

@@ -50,6 +50,22 @@
   width: calc(12 * 50px);
 }
 
+.game-speed-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.game-speed-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .board-narration {
   position: absolute;
   width: 1px;
@@ -79,12 +95,12 @@
 }
 
 .area-freeze-status {
-  margin: 10px auto 0;
+  margin: 0;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  width: min(100%, 540px);
+  width: auto;
 }
 
 .area-freeze-status[hidden] {

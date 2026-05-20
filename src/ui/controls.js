@@ -18,6 +18,7 @@ import { dismissProjectStartCallout } from "./projectSignifiers.js";
 import { setNarrationVisibleStrip } from "./narration.js";
 import { setCoachingModeEnabled } from "./coachingNarration.js";
 import { getAvailableVoices, isVoiceEnabled, setVoiceEnabled, setVoiceRate, setVoiceUri } from "./voiceNarration.js";
+import { loadPreference, savePreference, parseString, parseFloatPref, PREF_KEYS } from "./preferences.js";
 import {
   decryptPrivateProgramXml,
   encryptPrivateProgramXml,
@@ -102,13 +103,20 @@ export function bindControls(app) {
   const privateImportModalSummary = document.getElementById("privateImportModalSummary");
   const privateImportPassword = document.getElementById("privateImportPassword");
   const privateImportModalMessage = document.getElementById("privateImportModalMessage");
-  const soundToggleButton = document.getElementById("soundToggleButton");
-  const turnLogToggle = document.getElementById("turnLogToggle");
-  const coachingModeToggle = document.getElementById("coachingModeToggle");
-  const voiceNarrationToggle = document.getElementById("voiceNarrationToggle");
-  const voiceControlsPanel = document.getElementById("voice-controls");
-  const voiceRateSlider = document.getElementById("voiceRateSlider");
-  const voicePicker = document.getElementById("voicePicker");
+  const settingsButton = document.getElementById("settingsButton");
+  const settingsModal = document.getElementById("settingsModal");
+  const soundToggleCheckbox = document.getElementById("soundToggleCheckbox");
+  const turnLogToggleCheckbox = document.getElementById("turnLogToggle");
+  const coachingModeToggleCheckbox = document.getElementById("coachingModeToggle");
+  const voiceNarrationToggleCheckbox = document.getElementById("voiceNarrationToggle");
+  const voiceSettingsFields = document.getElementById("voiceSettingsFields");
+  const voiceRateSliderInside = document.getElementById("voiceRateSlider");
+  const voicePickerInside = document.getElementById("voicePicker");
+  const lowMotionToggleCheckbox = document.getElementById("lowMotionToggleCheckbox");
+  const runnerMovementToggleCheckbox = document.getElementById("runnerMovementToggleCheckbox");
+  const runnerJumpingToggleCheckbox = document.getElementById("runnerJumpingToggleCheckbox");
+  const frozenBadgesToggleCheckbox = document.getElementById("frozenBadgesToggleCheckbox");
+  const runnerIndexBadgesToggleCheckbox = document.getElementById("runnerIndexBadgesToggleCheckbox");
   const blocklyProgramTabs = document.getElementById("blockly-program-tabs");
   const blocklySizeControls = document.getElementById("blockly-size-controls");
   const blocklyRegion = document.getElementById("blockly-region");
@@ -333,11 +341,11 @@ export function bindControls(app) {
   };
 
   const syncTurnLogToggle = () => {
-    if (turnLogToggle) {
-      turnLogToggle.checked = Boolean(app.state.narrationVisibleStrip);
+    if (turnLogToggleCheckbox) {
+      turnLogToggleCheckbox.checked = Boolean(app.state.narrationVisibleStrip);
     }
-    if (coachingModeToggle) {
-      coachingModeToggle.checked = Boolean(app.state.coachingModeEnabled);
+    if (coachingModeToggleCheckbox) {
+      coachingModeToggleCheckbox.checked = Boolean(app.state.coachingModeEnabled);
     }
   };
 
@@ -574,79 +582,181 @@ export function bindControls(app) {
     });
   }
 
-  if (soundToggleButton) {
-    const syncSoundButton = () => {
-      soundToggleButton.textContent = `Sound: ${app.state.soundEnabled ? "On" : "Off"}`;
-    };
-    soundToggleButton.addEventListener("click", () => {
-      setSoundEnabled(app.state, !app.state.soundEnabled);
-      syncSoundButton();
-      playSound(app.state, "flag-pickup");
-    });
-    syncSoundButton();
-  }
+  const openSettingsModal = () => {
+    if (!settingsModal) return;
+    settingsModal.hidden = false;
+    settingsModal.setAttribute("aria-hidden", "false");
+    document.addEventListener("keydown", handleSettingsModalKeydown);
+    
+    soundToggleCheckbox.checked = Boolean(app.state.soundEnabled);
+    turnLogToggleCheckbox.checked = Boolean(app.state.narrationVisibleStrip);
+    coachingModeToggleCheckbox.checked = Boolean(app.state.coachingModeEnabled);
+    voiceNarrationToggleCheckbox.checked = isVoiceEnabled();
+    voiceSettingsFields.hidden = !isVoiceEnabled();
+    voiceRateSliderInside.value = loadPreference(PREF_KEYS.VOICE_NARRATION_RATE, 1.0, parseFloatPref);
+    populateVoicePickerInside();
+    voicePickerInside.value = loadPreference(PREF_KEYS.VOICE_NARRATION_VOICE, "", parseString);
 
-  if (turnLogToggle) {
-    turnLogToggle.addEventListener("change", () => {
-      setNarrationVisibleStrip(app.state, turnLogToggle.checked);
-      syncTurnLogToggle();
-      app.syncUi();
-    });
-    syncTurnLogToggle();
-  }
+    lowMotionToggleCheckbox.checked = Boolean(app.state.lowMotionOverride);
+    runnerMovementToggleCheckbox.checked = Boolean(app.state.runnerMovementAnimations);
+    runnerJumpingToggleCheckbox.checked = Boolean(app.state.runnerJumpingAnimations);
+    frozenBadgesToggleCheckbox.checked = Boolean(app.state.showFrozenBadges);
+    runnerIndexBadgesToggleCheckbox.checked = Boolean(app.state.showRunnerIndexBadges);
 
-  if (coachingModeToggle) {
-    coachingModeToggle.addEventListener("change", () => {
-      setCoachingModeEnabled(app.state, coachingModeToggle.checked);
-      syncTurnLogToggle();
-      app.syncUi();
-    });
-    syncTurnLogToggle();
-  }
-
-  const syncVoiceControls = () => {
-    const enabled = isVoiceEnabled();
-    if (voiceNarrationToggle) voiceNarrationToggle.checked = enabled;
-    if (voiceControlsPanel) voiceControlsPanel.hidden = !enabled;
+    const focusable = settingsModal.querySelectorAll("input, select, button");
+    if (focusable.length > 0) {
+      focusable[0].focus();
+    }
   };
 
-  const populateVoicePicker = () => {
-    if (!voicePicker) return;
+  const closeSettingsModal = () => {
+    if (!settingsModal) return;
+    document.removeEventListener("keydown", handleSettingsModalKeydown);
+    settingsModal.hidden = true;
+    settingsModal.setAttribute("aria-hidden", "true");
+    if (settingsButton) {
+      settingsButton.focus();
+    }
+  };
+
+  // Single keydown handler attached only while the settings modal is open.
+  // Handles both Tab focus-trap cycling and ESC-to-close in one place,
+  // eliminating the two permanent parallel document listeners that existed before.
+  const handleSettingsModalKeydown = (event) => {
+    const key = event.key;
+    if (key === "Escape" || key === "Esc") {
+      closeSettingsModal();
+      event.preventDefault();
+      return;
+    }
+    if (key === "Tab") {
+      const focusable = Array.from(settingsModal.querySelectorAll("input, select, button"));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey) {
+        if (document.activeElement === first) {
+          last.focus();
+          event.preventDefault();
+        }
+      } else {
+        if (document.activeElement === last) {
+          first.focus();
+          event.preventDefault();
+        }
+      }
+    }
+  };
+
+  const populateVoicePickerInside = () => {
+    if (!voicePickerInside) return;
     const voices = getAvailableVoices();
-    const current = voicePicker.value;
-    voicePicker.innerHTML = "";
+    const current = voicePickerInside.value;
+    voicePickerInside.innerHTML = "";
     const defaultOption = document.createElement("option");
     defaultOption.value = "";
     defaultOption.textContent = "Default";
-    voicePicker.appendChild(defaultOption);
+    voicePickerInside.appendChild(defaultOption);
     for (const v of voices) {
       const option = document.createElement("option");
       option.value = v.voiceURI;
       option.textContent = `${v.name} (${v.lang})`;
-      voicePicker.appendChild(option);
+      voicePickerInside.appendChild(option);
     }
-    voicePicker.value = current || "";
+    voicePickerInside.value = current || loadPreference(PREF_KEYS.VOICE_NARRATION_VOICE, "", parseString);
   };
 
-  app.hooks.populateVoicePicker = populateVoicePicker;
+  app.hooks.populateVoicePicker = populateVoicePickerInside;
 
-  if (voiceNarrationToggle) {
-    voiceNarrationToggle.addEventListener("change", () => {
-      setVoiceEnabled(voiceNarrationToggle.checked);
-      syncVoiceControls();
-    });
-    syncVoiceControls();
-  }
-
-  if (voiceRateSlider) {
-    voiceRateSlider.addEventListener("input", () => {
-      setVoiceRate(Number(voiceRateSlider.value));
+  if (settingsButton) {
+    settingsButton.addEventListener("click", () => {
+      openSettingsModal();
     });
   }
 
-  if (voicePicker) {
-    voicePicker.addEventListener("change", () => {
-      setVoiceUri(voicePicker.value);
+  if (settingsModal) {
+    settingsModal.addEventListener("click", (event) => {
+      const action = event.target.closest("[data-settings-action]")?.dataset.settingsAction;
+      if (action === "cancel") {
+        closeSettingsModal();
+      }
+    });
+  }
+
+  if (soundToggleCheckbox) {
+    soundToggleCheckbox.addEventListener("change", () => {
+      setSoundEnabled(app.state, soundToggleCheckbox.checked);
+      playSound(app.state, "flag-pickup");
+    });
+  }
+
+  if (turnLogToggleCheckbox) {
+    turnLogToggleCheckbox.addEventListener("change", () => {
+      setNarrationVisibleStrip(app.state, turnLogToggleCheckbox.checked);
+      app.syncUi();
+    });
+  }
+
+  if (coachingModeToggleCheckbox) {
+    coachingModeToggleCheckbox.addEventListener("change", () => {
+      setCoachingModeEnabled(app.state, coachingModeToggleCheckbox.checked);
+      app.syncUi();
+    });
+  }
+
+  if (voiceNarrationToggleCheckbox) {
+    voiceNarrationToggleCheckbox.addEventListener("change", () => {
+      setVoiceEnabled(voiceNarrationToggleCheckbox.checked);
+      voiceSettingsFields.hidden = !voiceNarrationToggleCheckbox.checked;
+    });
+  }
+
+  if (voiceRateSliderInside) {
+    voiceRateSliderInside.addEventListener("input", () => {
+      setVoiceRate(Number(voiceRateSliderInside.value));
+    });
+  }
+
+  if (voicePickerInside) {
+    voicePickerInside.addEventListener("change", () => {
+      setVoiceUri(voicePickerInside.value);
+    });
+  }
+
+  if (lowMotionToggleCheckbox) {
+    lowMotionToggleCheckbox.addEventListener("change", () => {
+      app.state.lowMotionOverride = lowMotionToggleCheckbox.checked;
+      savePreference(PREF_KEYS.LOW_MOTION_OVERRIDE, app.state.lowMotionOverride);
+      app.syncUi();
+    });
+  }
+
+  if (runnerMovementToggleCheckbox) {
+    runnerMovementToggleCheckbox.addEventListener("change", () => {
+      app.state.runnerMovementAnimations = runnerMovementToggleCheckbox.checked;
+      savePreference(PREF_KEYS.RUNNER_MOVEMENT_ANIMATIONS, app.state.runnerMovementAnimations);
+    });
+  }
+
+  if (runnerJumpingToggleCheckbox) {
+    runnerJumpingToggleCheckbox.addEventListener("change", () => {
+      app.state.runnerJumpingAnimations = runnerJumpingToggleCheckbox.checked;
+      savePreference(PREF_KEYS.RUNNER_JUMPING_ANIMATIONS, app.state.runnerJumpingAnimations);
+    });
+  }
+
+  if (frozenBadgesToggleCheckbox) {
+    frozenBadgesToggleCheckbox.addEventListener("change", () => {
+      app.state.showFrozenBadges = frozenBadgesToggleCheckbox.checked;
+      savePreference(PREF_KEYS.SHOW_FROZEN_BADGES, app.state.showFrozenBadges);
+      app.syncUi();
+    });
+  }
+
+  if (runnerIndexBadgesToggleCheckbox) {
+    runnerIndexBadgesToggleCheckbox.addEventListener("change", () => {
+      app.state.showRunnerIndexBadges = runnerIndexBadgesToggleCheckbox.checked;
+      savePreference(PREF_KEYS.SHOW_RUNNER_INDEX_BADGES, app.state.showRunnerIndexBadges);
+      app.syncUi();
     });
   }
 
@@ -685,6 +795,16 @@ export function bindControls(app) {
 }
 
 export function handleKeyInput(app, rawKey) {
+  const key = `${rawKey || ""}`.toLowerCase();
+  if (key === "escape" || key === "esc") {
+    if (typeof app.hooks.unpinCellInspector === "function") {
+      const handled = app.hooks.unpinCellInspector();
+      if (handled) {
+        return true;
+      }
+    }
+  }
+
   const state = app.state;
   if (state.activeTutorial) {
     return false;
@@ -698,7 +818,6 @@ export function handleKeyInput(app, rawKey) {
     return false;
   }
 
-  const key = `${rawKey || ""}`.toLowerCase();
   let actionData = {};
   let validKeyPress = false;
 

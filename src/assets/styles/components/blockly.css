@@ -393,3 +393,29 @@
     stroke-opacity: 1 !important;
   }
 }
+
+/* Settings modal custom additions */
+#settingsButton {
+  min-width: 34px;
+}
+
+.settings-modal-scrollable {
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
+.settings-separator {
+  border: 0;
+  border-top: 1px solid rgba(36, 64, 74, 0.12);
+  margin: 4px 0;
+}
+
+.settings-modal-note {
+  font-size: 0.82rem;
+  color: #666;
+  margin: 0;
+}

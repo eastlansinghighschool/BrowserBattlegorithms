@@ -1,0 +1,13 @@
+- `[x]` Inspect current state of inline toggles, sound button, and prefersReducedMotion callers. List exact IDs and call sites in the progress report.
+- `[x]` Build the preferences helper (`src/ui/preferences.js`) and its unit tests (`tests/unit/preferences.test.js`).
+- `[x]` Migrate `state.soundEnabled`, `narrationVisibleStrip`, `coachingModeEnabled`, and voice narration settings to use the preferences helper.
+- `[x]` Add settings toggles to state default initialization using correct defaults.
+- `[x]` Add the Settings gear button and `#settingsModal` markup to `index.html`. Remove old inline toggles and the sound button.
+- `[x]` Bind settings modal open/close actions, Escape key handling, and the focus trap in `src/ui/controls.js`.
+- `[x]` Wire the toggles inside `#settingsModal` to update state and save preferences.
+- `[x]` Plumb `state` into `prefersReducedMotion(state)` and update all visual effect sites in `src/render/effects.js` and `src/render/p5App.js`.
+- `[x]` Plumb runner snapping behavior into `Runner.updateAnimation` based on movement and jumping toggle states, and write unit tests.
+- `[ ]` Add the browser smoke spec (`tests/browser/settings-gear.spec.js`).
+- `[ ]` Update documentation (`ui-mode-contract.md`).
+- `[ ]` Verify everything compiles, all unit and smoke tests pass.
+- `[ ]` Write the final progress report and walkthrough.
