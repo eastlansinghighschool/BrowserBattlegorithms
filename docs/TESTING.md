@@ -54,6 +54,8 @@ Run before releases or after changes to persistence, modal focus, dev harness, o
 - `workspace-starter-versioning.spec.js` — localStorage versioning edge cases
 - `blockly-trace-playback.spec.js` — timing-sensitive animation test (CPU-contention flake at `workers: 2`; runs only at `workers: 1`)
 
+CI currently runs the smoke and focus tiers separately. The full extended suite is optional for routine CI and is best used for pre-release validation or when you have changed browser-heavy paths and want the exhaustive matrix.
+
 ### Focus/accessibility
 
 - `npm run test:browser:focus` — narration, modal stability, key-capture, ARIA narration tests

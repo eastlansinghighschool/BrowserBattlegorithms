@@ -45,8 +45,11 @@ jobs:
       - name: Build production site for test preview
         run: npm run build
 
-      - name: Run browser tests against preview build
-        run: npm run test:browser
+      - name: Run browser smoke tests against preview build
+        run: npm run test:browser:smoke
+
+      - name: Run browser focus tests against preview build
+        run: npm run test:browser:focus
 
       - name: Build production site for GitHub Pages
         env:
