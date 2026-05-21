@@ -23,7 +23,7 @@ The Playwright browser suite is split into two tiers:
 
 ### Smoke — frequent validation
 
-- `npm run test:browser:smoke` — fast subset (~83 tests, ~60s, `workers: 2`)
+- `npm run test:browser:smoke` — fast subset (~78 tests, ~60s, `workers: 2`)
 
 Run this after most changes. Covers:
 
@@ -35,7 +35,6 @@ Run this after most changes. Covers:
 - PvP free-play team tab switching and separate programs per side
 - free-play mode smoke coverage for PvP, PvCPU Easy, and PvCPU Tactical
 - student-visible jump flair coverage for Jump Forward arc and blocked-jump reversal
-- local-dev workbench shell coverage for dev gating, readiness display, canonical-solution run evidence, scratch candidate preview, mutation prompt rendering, and storage isolation
 - help-link behavior and standalone help-page navigation
 - usage export flow, admin page file review, and integrity verification
 - dev-only unlock-all-levels toggle behavior and production bundle exclusion
@@ -55,6 +54,7 @@ Run before releases or after changes to persistence, modal focus, dev harness, o
 - `blockly-trace-playback.spec.js` — timing-sensitive animation test (CPU-contention flake at `workers: 2`; runs only at `workers: 1`)
 
 CI currently runs the smoke and focus tiers separately. The full extended suite is optional for routine CI and is best used for pre-release validation or when you have changed browser-heavy paths and want the exhaustive matrix.
+The local-dev workbench suite is also optional and should be run directly with `npm run test:browser:workbench` when you are changing the workbench or the readiness/prompt pipeline.
 
 ### Focus/accessibility
 
@@ -85,4 +85,5 @@ Use this when you need a deterministic per-level health check that combines conc
 - Release validation should include `npm test`, `npm run build`, and `npm run test:browser` (full extended suite) before shipping or deploying.
 - Routine packet validation can use `npm run test:browser:smoke` for faster feedback.
 - `workers: 2` is stable for the smoke suite; the full suite runs at `workers: 1` because `blockly-trace-playback.spec.js` has CPU-contention timing sensitivity under parallelism.
-- `jump-animation.spec.js` and `workbench.spec.js` are included in smoke because they are short, learner/dev-visible, and exercise local-only entrypoints without timing-sensitive broad UI coverage.
+- `jump-animation.spec.js` remains in smoke because it is short and learner-visible.
+- `workbench.spec.js` is kept out of smoke so the local-dev workbench boot path does not slow or destabilize routine CI; use `npm run test:browser:workbench` for targeted validation.

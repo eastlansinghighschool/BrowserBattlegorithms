@@ -14,8 +14,8 @@ import { defineConfig } from "@playwright/test";
 //   workspace-starter-versioning.spec.js — versioning edge cases (localStorage pre-seeding)
 //   blockly-trace-playback.spec.js — timing-sensitive animation test (CPU-contention flake at workers: 2)
 //
-// Smoke also includes jump-animation.spec.js and workbench.spec.js because they are short,
-// learner/dev-visible, and exercise local-only entrypoints without timing-sensitive coverage.
+// Smoke also includes jump-animation.spec.js because it is short, learner-visible,
+// and exercises a local-only entrypoint without timing-sensitive broad UI coverage.
 
 export default defineConfig({
   testDir: "./tests/browser",
@@ -33,7 +33,6 @@ export default defineConfig({
     "**/workspace-reset-button.spec.js",
     "**/prediction-levels.spec.js",
     "**/jump-animation.spec.js",
-    "**/workbench.spec.js",
     "**/cell-inspector.spec.js",
     "**/settings-gear.spec.js",
     "**/runner-index-badge.spec.js"

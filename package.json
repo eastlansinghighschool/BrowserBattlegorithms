@@ -14,6 +14,7 @@
     "test:browser": "playwright test",
     "test:browser:smoke": "playwright test --config=playwright.smoke.config.js --reporter=line",
     "test:browser:extended": "playwright test --reporter=line",
+    "test:browser:workbench": "playwright test tests/browser/workbench.spec.js --reporter=line",
     "test:browser:focus": "playwright test tests/browser/modal-stability.spec.js tests/browser/aria-narration.spec.js tests/browser/narration-controls-during-tutorial.spec.js tests/browser/key-capture-passthrough.spec.js --reporter=line",
     "analyze:usage": "node scripts/analyze-usage-files.js",
     "test:regression": "npx playwright test --config=tests/regression/playwright.config.js"
