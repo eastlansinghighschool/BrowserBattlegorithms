@@ -24,6 +24,7 @@ import {
   getSensorRelationOptionLabels,
   getToolboxBlockTypesForMode,
   isConditionBlockType,
+  isBooleanValueBlockType,
   registerBattleBlocklyBlocks
 } from "./blocks.js";
 import { setAllowedMoveTowardTargets, setAllowedSensorOptions } from "./blocks.js";
@@ -429,6 +430,15 @@ function getConditionDescriptor(block) {
   if (block.type === BLOCK_TYPES.BOOLEAN_AREA_FREEZE_READY) {
     return { type: BLOCK_TYPES.IF_AREA_FREEZE_READY };
   }
+  if (block.type === BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED) {
+    return { type: BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED };
+  }
+  if (block.type === BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR) {
+    return {
+      type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR,
+      turns: block.getFieldValue("TURNS")
+    };
+  }
   if (block.type === BLOCK_TYPES.BOOLEAN_TEAMMATE_HAS_FLAG) {
     return { type: BLOCK_TYPES.IF_TEAMMATE_HAS_FLAG };
   }
@@ -520,15 +530,43 @@ function evaluateBlocklyBooleanValue(state, runner, block, collector = null) {
     return false;
   }
 
+  if (block.type === BLOCK_TYPES.VALUE_COMPARE) {
+    const left = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "LEFT"), collector);
+    const right = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "RIGHT"), collector);
+    let result = false;
+    switch (block.getFieldValue("OPERATOR")) {
+      case ADVANCED_COMPARE_OPERATORS.EQ:
+        result = left === right;
+        break;
+      case ADVANCED_COMPARE_OPERATORS.NEQ:
+        result = left !== right;
+        break;
+      case ADVANCED_COMPARE_OPERATORS.LT:
+        result = left < right;
+        break;
+      case ADVANCED_COMPARE_OPERATORS.LTE:
+        result = left <= right;
+        break;
+      case ADVANCED_COMPARE_OPERATORS.GT:
+        result = left > right;
+        break;
+      case ADVANCED_COMPARE_OPERATORS.GTE:
+        result = left >= right;
+        break;
+      default:
+        result = false;
+        break;
+    }
+    recordTraceStep(collector, block, "comparison", { result, numericLeft: left, numericRight: right });
+    return result;
+  }
+
   if (
-    block.type === BLOCK_TYPES.BOOLEAN_SENSOR_MATCHES ||
-    block.type === BLOCK_TYPES.BOOLEAN_HAVE_ENEMY_FLAG ||
-    block.type === BLOCK_TYPES.BOOLEAN_CAN_JUMP ||
-    block.type === BLOCK_TYPES.BOOLEAN_CAN_PLACE_BARRIER ||
-    block.type === BLOCK_TYPES.BOOLEAN_AREA_FREEZE_READY ||
-    block.type === BLOCK_TYPES.BOOLEAN_TEAMMATE_HAS_FLAG ||
-    block.type === BLOCK_TYPES.BOOLEAN_ON_MY_SIDE ||
-    block.type === BLOCK_TYPES.BOOLEAN_ON_ENEMY_SIDE
+    isBooleanValueBlockType(block.type) &&
+    block.type !== BLOCK_TYPES.VALUE_COMPARE &&
+    block.type !== BLOCK_TYPES.LOGIC_AND &&
+    block.type !== BLOCK_TYPES.LOGIC_OR &&
+    block.type !== BLOCK_TYPES.LOGIC_NOT
   ) {
     const result = evaluateCondition(state, runner, getConditionDescriptor(block));
     recordTraceStep(collector, block, "condition", { result });
@@ -563,37 +601,6 @@ function evaluateBlocklyBooleanValue(state, runner, block, collector = null) {
     recordTraceStep(collector, block, "boolean", { result });
     return result;
   }
-  if (block.type === BLOCK_TYPES.VALUE_COMPARE) {
-    const left = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "LEFT"), collector);
-    const right = evaluateBlocklyNumberValue(state, runner, getValueChildBlock(block, "RIGHT"), collector);
-    let result = false;
-    switch (block.getFieldValue("OPERATOR")) {
-      case ADVANCED_COMPARE_OPERATORS.EQ:
-        result = left === right;
-        break;
-      case ADVANCED_COMPARE_OPERATORS.NEQ:
-        result = left !== right;
-        break;
-      case ADVANCED_COMPARE_OPERATORS.LT:
-        result = left < right;
-        break;
-      case ADVANCED_COMPARE_OPERATORS.LTE:
-        result = left <= right;
-        break;
-      case ADVANCED_COMPARE_OPERATORS.GT:
-        result = left > right;
-        break;
-      case ADVANCED_COMPARE_OPERATORS.GTE:
-        result = left >= right;
-        break;
-      default:
-        result = false;
-        break;
-    }
-    recordTraceStep(collector, block, "comparison", { result, numericLeft: left, numericRight: right });
-    return result;
-  }
-
   return false;
 }
 

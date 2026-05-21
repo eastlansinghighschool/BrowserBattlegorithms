@@ -168,6 +168,8 @@ export const BLOCK_TYPES = {
   BOOLEAN_CAN_JUMP: "battlegorithms_boolean_can_jump",
   BOOLEAN_CAN_PLACE_BARRIER: "battlegorithms_boolean_can_place_barrier",
   BOOLEAN_AREA_FREEZE_READY: "battlegorithms_boolean_area_freeze_ready",
+  BOOLEAN_LAST_MOVE_BLOCKED: "battlegorithms_boolean_last_move_blocked",
+  BOOLEAN_NOT_MOVED_FOR: "battlegorithms_boolean_not_moved_for",
   BOOLEAN_TEAMMATE_HAS_FLAG: "battlegorithms_boolean_teammate_has_flag",
   BOOLEAN_ON_MY_SIDE: "battlegorithms_boolean_on_my_side",
   BOOLEAN_ON_ENEMY_SIDE: "battlegorithms_boolean_on_enemy_side",

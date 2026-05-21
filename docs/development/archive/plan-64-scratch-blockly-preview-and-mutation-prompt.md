@@ -4,7 +4,7 @@
 
 - Packet id: plan-64
 - Packet title: Scratch Blockly Preview And Mutation Prompt
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-20
 - Packet type: implementation / frontend / Blockly / developer tooling / testing

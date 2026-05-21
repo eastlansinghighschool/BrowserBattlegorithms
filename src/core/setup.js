@@ -6,6 +6,7 @@ import {
 } from "../config/constants.js";
 import { resetAreaFreezeState } from "./areaFreeze.js";
 import { clearGameplayPauseState } from "./gameplayPause.js";
+import { resetRecentMovementState } from "./recentMovement.js";
 import { Flag } from "../entities/Flag.js";
 import { Barrier } from "../entities/Barrier.js";
 import { Runner } from "../entities/Runner.js";
@@ -91,6 +92,8 @@ function applyRunnerSetup(runner, teamConfig, runnerSpec) {
   if (runnerSpec.isFrozen) {
     runner.setFrozen(runnerSpec.frozenTurnsRemaining || 1);
   }
+
+  resetRecentMovementState(runner);
 }
 
 function buildRunnersFromTeams(state) {

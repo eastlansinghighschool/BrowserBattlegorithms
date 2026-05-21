@@ -728,3 +728,18 @@ test("project metadata is preserved on the authored project levels and surfaced 
   assert.equal(levels.find((entry) => entry.id === "show-what-you-know").project, null);
   assert.equal(GUIDED_LEVEL_MANIFEST.find((entry) => entry.id === "show-what-you-know").project, null);
 });
+
+test("guided toolbox allowlists keep recent-state free-play booleans out of every guided level", () => {
+  const app = { state: { currentModeView: GAME_VIEW_MODES.GUIDED_LEVELS } };
+  const offendingLevels = getLevelDefinitions()
+    .filter((level) => {
+      const toolboxBlockTypes = getToolboxBlockTypesForMode(app, level);
+      return (
+        toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED) ||
+        toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR)
+      );
+    })
+    .map((level) => level.id);
+
+  assert.deepEqual(offendingLevels, []);
+});

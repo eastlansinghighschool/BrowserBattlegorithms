@@ -4,7 +4,7 @@
 
 - Packet id: plan-59
 - Packet title: Turn-Boundary Pause / Resume
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-19
 - Packet type: implementation / UI / accessibility / turn-engine / tests

@@ -75,6 +75,30 @@ test("PROCESSING_ACTION without a queued action recovers to the next readable tu
   assert.equal(human.isFrozen, true);
 });
 
+test("frozen runner turns count as not moved but not blocked", () => {
+  const app = createApp();
+  app.hooks.getAIAllyAction = () => ({ type: AI_ACTION_TYPES.STAY_STILL });
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const human = app.state.allRunners.find((runner) => runner.isHumanControlled);
+  assert.ok(human, "expected a human runner");
+
+  human.setFrozen(1);
+  human.recentMovementState.lastMoveWasBlocked = true;
+  human.recentMovementState.consecutiveTurnsWithoutMovement = 0;
+  const humanRunnerIndex = app.state.allRunners.indexOf(human);
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = TURN_STATES.AWAITING_INPUT;
+  app.state.activeRunnerIndex = humanRunnerIndex;
+
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(human.recentMovementState.lastMoveWasBlocked, false);
+  assert.equal(human.recentMovementState.consecutiveTurnsWithoutMovement, 1);
+  assert.equal(human.isFrozen, false);
+});
+
 test("pause requests apply immediately at a human input boundary and resume clears them", () => {
   const app = createApp();
   initializeLevelState(app);

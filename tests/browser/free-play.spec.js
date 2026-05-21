@@ -25,6 +25,17 @@ test("free play shows Team 2 controls with a semicolon keycap in the options pan
   await expect(page.locator("#blockly-region")).not.toContainText("Player 2");
 });
 
+test("free play Advanced toolbox exposes the recent-state boolean blocks", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+
+  await page.getByRole("treeitem", { name: "Advanced" }).click();
+  const flyout = page.locator(".blocklyToolboxFlyout");
+
+  await expect(flyout).toContainText("my last move was blocked");
+  await expect(flyout).toContainText("I have not moved for");
+});
+
 test("free play PvP uses separate program tabs that preserve different team programs", async ({ page }) => {
   await page.goto("/");
   await chooseFreePlay(page);
@@ -193,6 +204,65 @@ test("Team 2 keyboard movement works in PvP including the semicolon move key", a
   });
 
   expect(after.x).toBeGreaterThan(before.x);
+});
+
+test("free play recent-state booleans drive the expected branch choice", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+
+  await loadWorkspaceXml(
+    page,
+    buildSolutionXml(`
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_boolean_last_move_blocked"></block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_move_backward"></block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_forward"></block>
+        </statement>
+      </block>
+    `)
+  );
+
+  const blockedAction = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const runner = hooks.getState().allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
+    runner.recentMovementState.lastMoveWasBlocked = true;
+    runner.recentMovementState.consecutiveTurnsWithoutMovement = 3;
+    return hooks.getAIAllyAction(runner);
+  });
+  expect(blockedAction.type).toBe("MOVE_BACKWARD");
+
+  await loadWorkspaceXml(
+    page,
+    buildSolutionXml(`
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_boolean_not_moved_for">
+            <field name="TURNS">2</field>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_move_backward"></block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_forward"></block>
+        </statement>
+      </block>
+    `)
+  );
+
+  const quietAction = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const runner = hooks.getState().allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
+    runner.recentMovementState.lastMoveWasBlocked = false;
+    runner.recentMovementState.consecutiveTurnsWithoutMovement = 2;
+    return hooks.getAIAllyAction(runner);
+  });
+  expect(quietAction.type).toBe("MOVE_BACKWARD");
 });
 
 test("free play pause and resume work with the P shortcut", async ({ page }) => {

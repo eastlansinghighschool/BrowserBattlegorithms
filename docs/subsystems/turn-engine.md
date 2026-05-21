@@ -21,6 +21,7 @@ This note does NOT own:
 | `src/core/gameplayPause.js` | Gameplay pause/resume helpers and pending-pause boundary decisions. |
 | `src/core/actions.js` | Action family definitions (move, jump, barrier place/remove, freeze, stay still). |
 | `src/core/areaFreeze.js` | Shared Area Freeze cooldown helpers (`isAreaFreezeReady`, `getAreaFreezeTurnsRemaining`, `markAreaFreezeUsed`). |
+| `src/core/recentMovement.js` | Runner-local recent-movement state helpers for blocked-move and no-move streak checks. |
 | `src/core/movement.js` | Target cell translation, board-blocking checks, bounce logic. |
 | `src/core/conditions.js` | Sensor and condition evaluation consumed by Blockly block execution. |
 | `src/core/scoring.js` | Flag pickup, score increment, `GAME_OVER` transitions, round reset trigger. |
@@ -78,6 +79,15 @@ Blockly readiness blocks, the freeze action itself, and free-play CPU logic all 
 When a freeze succeeds, the turn engine also records a transient `state.areaFreezeEffect` snapshot with the caster cell, affected runner cells, radius, and effect timing. Render code reads that snapshot for the board pulse and affected-runner flash; it does not decide who was frozen.
 
 When a jump lands successfully, the turn engine also records a transient `state.activeJumpLandingDust` snapshot with the landing cell and effect timing. Render code reads that snapshot for the landing dust ring; it does not decide that the jump succeeded.
+
+## Runner recent movement state
+
+Runner recent movement state is a runner-local, match-scoped helper used by Free Play's read-only Advanced boolean blocks. The runtime tracks two pieces of information for each runner:
+
+- whether the most recent attempted movement action was blocked, bounced, illegal, or failed without changing cells
+- how many consecutive own turns ended without the runner changing cells
+
+`src/core/recentMovement.js` owns the helper contract, and `src/core/turnEngine.js` updates it only when a runner turn starts and finishes. `Runner.resetToInitial()` clears it, so level start, round reset, and display-state rebuilds all reset the state automatically. The helper never persists to storage and never changes movement, collision, or scoring rules.
 
 ## Bounce vs illegal vs skipped
 
@@ -141,6 +151,7 @@ This is a separate safety net from the `PROCESSING_ACTION` recovery in `src/core
 - **Conflating round reset and level reset.** Round reset is automatic after scoring. Level reset is a user action that re-enters the level.
 - **Expecting extra Blockly blocks to cause errors.** The engine reads the first action from the program each turn; extra blocks are silently ignored.
 - **Assuming grace period prevents all collision effects.** Grace period skips the freeze, but the loser is still displaced and drops their flag.
+- **Treating recent movement state like author-authored variables.** The runner-memory helper is read-only game state, not a player variable, and it resets with match setup and round reset.
 
 ## Related
 

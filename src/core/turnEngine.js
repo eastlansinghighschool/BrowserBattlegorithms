@@ -21,6 +21,7 @@ import { createQueuedHumanAction } from "./actions.js";
 import { buildAreaFreezeEffect, isAreaFreezeReady, markAreaFreezeUsed } from "./areaFreeze.js";
 import { applyPendingGameplayPauseAtBoundary } from "./gameplayPause.js";
 import { resolveCollision } from "./collisions.js";
+import { beginRecentMovementTurn, finalizeRecentMovementTurn, queueRecentMovementOutcome } from "./recentMovement.js";
 import {
   getBarrierAtCell,
   getForwardCell,
@@ -57,6 +58,7 @@ function ensureTurnStarted(state, runner) {
     return;
   }
 
+  beginRecentMovementTurn(runner);
   emit(state, "turn.started", {
     runnerId: runner.id,
     runnerTeam: runner.team,
@@ -342,6 +344,7 @@ function advanceToNextRunner(app) {
 }
 
 function handleFrozenRunnerTurn(app, runner) {
+  queueRecentMovementOutcome(runner, AI_ACTION_TYPES.STAY_STILL, "skipped_frozen");
   runner.frozenTurnsRemaining -= 1;
   if (runner.frozenTurnsRemaining <= 0) {
     runner.isFrozen = false;
@@ -368,6 +371,7 @@ function recordFreePlayGameOver(app) {
 
 function handleActionCompletion(app, completedRunner) {
   const { state } = app;
+  finalizeRecentMovementTurn(completedRunner);
   const carriedFlagBefore = completedRunner.hasEnemyFlag;
   const skipPostMoveConsequences = completedRunner.animationCompletionType === "jump_failed";
   const lastActionType = state.runnerActionHistory?.[completedRunner.id]?.at(-1) || null;
@@ -624,6 +628,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
   }
 
   state.queuedActionForCurrentRunner = null;
+  queueRecentMovementOutcome(actionRunner, actionType, actionOutcome);
   emitActionResolved(state, actionRunner, actionType, actionOutcome);
   if (actionCompletedImmediately) {
     handleActionCompletion(app, actionRunner);

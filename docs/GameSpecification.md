@@ -50,10 +50,11 @@ The entities below are the persistent objects that the rules move around and upd
 - Each runner belongs to a team and has a grid position.
 - A runner may be human-controlled, ally-controlled, or NPC-controlled depending on the mode.
 - Runners inherit their forward direction from their team setup.
-- Runners track enemy-flag state, frozen state, frozen-turn countdown, jump availability, and barrier availability.
+- Runners track enemy-flag state, frozen state, frozen-turn countdown, jump availability, barrier availability, and recent own-turn movement state.
 - The human runner is the direct-input runner for that team.
 - Ally runners may share one Blockly program, so a single strategy can coordinate several bodies.
 - Frozen runners still occupy space and cannot act until they thaw.
+- Recent own-turn movement state is read-only from Free Play's Advanced boolean blocks and resets on setup, level start, and round reset.
 - A runner's team identity is what ties together its direction, base, and scoring side.
 - The runner list and the flag list are the active state a match keeps track of from turn to turn.
 
@@ -112,6 +113,7 @@ This section is the canonical order of play for a single runner turn.
 Human-controlled runners use keyboard input; AI allies select from the same action set through Blockly programs, and the current block inventory is documented in the Blockly workspace subsystem note.
 Each runner may execute only one action per turn.
 - The difference between human and AI control is input path, not the underlying action rules.
+- Free Play also exposes a small set of read-only Advanced boolean checks for a runner's recent own-turn movement state, but guided levels do not expose those blocks.
 
 - Move: step one cell in a cardinal direction.
 - Move Forward / Backward / Up / Down: team-relative move actions used by Blockly.

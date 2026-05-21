@@ -27,6 +27,8 @@ test("free play keeps full toolbox access and leaves level progress intact", () 
   assert.ok(toolbox.includes(BLOCK_TYPES.FREEZE_OPPONENTS));
   assert.ok(toolbox.includes(BLOCK_TYPES.IF_CAN_JUMP_ELSE));
   assert.ok(toolbox.includes(BLOCK_TYPES.IF_AREA_FREEZE_READY_ELSE));
+  assert.ok(toolbox.includes(BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED));
+  assert.ok(toolbox.includes(BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR));
   assert.equal(app.state.levelProgress["move-to-target"], LEVEL_STATUS.PASSED);
   assert.equal(app.state.teams[1].playDirection, -1);
   assert.equal(app.state.teams[2].playDirection, 1);

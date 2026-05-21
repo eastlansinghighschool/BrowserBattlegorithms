@@ -4,7 +4,7 @@
 
 - Packet id: plan-61
 - Packet title: Level Readiness Agent Prompt Renderer
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-20
 - Packet type: implementation / developer tooling / testing

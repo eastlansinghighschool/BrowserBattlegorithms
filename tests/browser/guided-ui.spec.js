@@ -120,6 +120,17 @@ test("Blockly warning bubbles stay open while the user opens a toolbox category"
   await expect(page.locator(".blocklyToolboxFlyout")).toBeVisible();
 });
 
+test("guided toolboxes keep the recent-state free-play booleans out of view", async ({ page }) => {
+  await page.goto("/");
+  await chooseGuided(page);
+  await dismissTutorial(page);
+
+  const toolboxTypes = await page.evaluate(() => window.__BBA_TEST_HOOKS__.getAvailableToolboxBlockTypes());
+
+  expect(toolboxTypes).not.toContain("battlegorithms_boolean_last_move_blocked");
+  expect(toolboxTypes).not.toContain("battlegorithms_boolean_not_moved_for");
+});
+
 test("guided level picker shows the current level and lets the learner browse ahead", async ({ page }) => {
   await page.goto("/");
   await chooseGuided(page);

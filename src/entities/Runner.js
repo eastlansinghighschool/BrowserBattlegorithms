@@ -2,6 +2,7 @@ import {
   BASE_ANIMATION_SPEED,
   CELL_SIZE
 } from "../config/constants.js";
+import { resetRecentMovementState } from "../core/recentMovement.js";
 import { easeInOutQuad, getJumpAnimationProgressIncrement, getJumpArcOffset, getJumpArcProgress } from "../render/animation.js";
 import {
   drawAreaFreezeRunnerFlash,
@@ -168,6 +169,7 @@ export class Runner {
     this.jumpGroundPixelY = this.pixelY;
     this.jumpMidPixelX = this.pixelX;
     this.jumpMidPixelY = this.pixelY;
+    resetRecentMovementState(this);
   }
 
   startJumpAnimation(targetGridX, targetGridY) {

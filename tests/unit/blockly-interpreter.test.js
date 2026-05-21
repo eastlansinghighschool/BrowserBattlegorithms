@@ -2,10 +2,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { AI_ACTION_TYPES, BLOCK_TYPES, MOVE_TOWARD_TARGETS } from "../../src/config/constants.js";
 import { buildMatch } from "./helpers/builders.js";
-import { getFirstRunnableAction, updateBlocklyExecutionHints } from "../../src/ai/blockly/workspace.js";
+import { getFirstRunnableAction, getFirstRunnableActionWithTrace, updateBlocklyExecutionHints } from "../../src/ai/blockly/workspace.js";
 import { translateActionDecision } from "../../src/core/movement.js";
 import { buildBlocklyAppWithXml } from "./helpers/testHarness.js";
 import { buildSolutionXml } from "./fixtures/guidedReferenceSolutions.js";
+
+function traceFields(trace) {
+  return trace.map((step) => ({
+    blockType: step.blockType,
+    kind: step.kind,
+    result: step.result,
+    numericLeft: step.numericLeft,
+    numericRight: step.numericRight,
+    runnerId: step.runnerId,
+    runnerTeam: step.runnerTeam
+  }));
+}
 
 test("advanced boolean and number inputs stay enabled when attached under If [boolean]", () => {
   const app = buildBlocklyAppWithXml(buildSolutionXml(`
@@ -199,6 +211,105 @@ test("generic sensor if block can use distance relations", () => {
   assert.equal(action.type, "MOVE_UP_SCREEN");
 });
 
+test("Blockly logic and comparison branches evaluate both operands before selecting the freeze action", () => {
+  const app = buildBlocklyAppWithXml(`
+    <xml xmlns="https://developers.google.com/blockly/xml">
+      <block type="battlegorithms_on_each_turn" x="24" y="24">
+        <next>
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_logic_and">
+                <value name="LEFT">
+                  <block type="battlegorithms_value_compare">
+                    <value name="LEFT">
+                      <block type="battlegorithms_value_distance_to_target">
+                        <field name="TARGET">CLOSEST_ENEMY</field>
+                      </block>
+                    </value>
+                    <field name="OPERATOR">LTE</field>
+                    <value name="RIGHT">
+                      <block type="battlegorithms_value_number">
+                        <field name="VALUE">2</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_boolean_area_freeze_ready"></block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_freeze_opponents"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_move_forward"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </xml>
+  `);
+  const match = buildMatch();
+  app.state = match.state;
+  const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  actor.gridX = 6;
+  actor.gridY = 4;
+  const enemy = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isFrozen);
+  enemy.gridX = 7;
+  enemy.gridY = 3;
+
+  const traced = getFirstRunnableActionWithTrace(app, actor);
+  assert.equal(traced.action.type, "FREEZE_OPPONENTS");
+  assert.deepEqual(traceFields(traced.trace).slice(0, 5), [
+    {
+      blockType: "battlegorithms_value_distance_to_target",
+      kind: "value",
+      result: 2,
+      numericLeft: undefined,
+      numericRight: undefined,
+      runnerId: "runner_1_AI_AllyP1",
+      runnerTeam: 1
+    },
+    {
+      blockType: "battlegorithms_value_compare",
+      kind: "comparison",
+      result: true,
+      numericLeft: 2,
+      numericRight: 2,
+      runnerId: "runner_1_AI_AllyP1",
+      runnerTeam: 1
+    },
+    {
+      blockType: "battlegorithms_boolean_area_freeze_ready",
+      kind: "condition",
+      result: true,
+      numericLeft: undefined,
+      numericRight: undefined,
+      runnerId: "runner_1_AI_AllyP1",
+      runnerTeam: 1
+    },
+    {
+      blockType: "battlegorithms_logic_and",
+      kind: "boolean",
+      result: true,
+      numericLeft: undefined,
+      numericRight: undefined,
+      runnerId: "runner_1_AI_AllyP1",
+      runnerTeam: 1
+    },
+    {
+      blockType: "battlegorithms_if_boolean_else",
+      kind: "condition",
+      result: true,
+      numericLeft: undefined,
+      numericRight: undefined,
+      runnerId: "runner_1_AI_AllyP1",
+      runnerTeam: 1
+    }
+  ]);
+});
+
 test("new free-play if/else blocks choose readiness and teammate branches correctly", () => {
   const app = buildBlocklyAppWithXml(`
     <xml xmlns="https://developers.google.com/blockly/xml">
@@ -259,6 +370,66 @@ test("new free-play if/else blocks choose readiness and teammate branches correc
   assert.equal(action.type, "MOVE_DOWN_SCREEN");
   human.hasEnemyFlag = true;
   action = getFirstRunnableAction(teammateApp, actor);
+  assert.equal(action.type, "MOVE_BACKWARD");
+});
+
+test("recent-state boolean blocks drive Blockly branches", () => {
+  const blockedApp = buildBlocklyAppWithXml(`
+    <xml xmlns="https://developers.google.com/blockly/xml">
+      <block type="battlegorithms_on_each_turn" x="24" y="24">
+        <next>
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_boolean_last_move_blocked"></block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_move_backward"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_move_forward"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </xml>
+  `);
+  const blockedMatch = buildMatch();
+  blockedApp.state = blockedMatch.state;
+  const blockedActor = blockedApp.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  blockedActor.recentMovementState.lastMoveWasBlocked = true;
+  blockedActor.recentMovementState.consecutiveTurnsWithoutMovement = 3;
+
+  let action = getFirstRunnableAction(blockedApp, blockedActor);
+  assert.equal(action.type, "MOVE_BACKWARD");
+
+  const quietApp = buildBlocklyAppWithXml(`
+    <xml xmlns="https://developers.google.com/blockly/xml">
+      <block type="battlegorithms_on_each_turn" x="24" y="24">
+        <next>
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_boolean_not_moved_for">
+                <field name="TURNS">2</field>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_move_backward"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_move_forward"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </xml>
+  `);
+  const quietMatch = buildMatch();
+  quietApp.state = quietMatch.state;
+  const quietActor = quietApp.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  quietActor.recentMovementState.lastMoveWasBlocked = false;
+  quietActor.recentMovementState.consecutiveTurnsWithoutMovement = 2;
+
+  action = getFirstRunnableAction(quietApp, quietActor);
   assert.equal(action.type, "MOVE_BACKWARD");
 });
 

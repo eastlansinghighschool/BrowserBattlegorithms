@@ -190,6 +190,13 @@ const COUNT_WITHIN_DISTANCE_OPTIONS = [
   ["6", "6"]
 ];
 
+const RECENT_MOVEMENT_TURN_OPTIONS = [
+  ["2", "2"],
+  ["3", "3"],
+  ["4", "4"],
+  ["5", "5"]
+];
+
 const FULL_SENSOR_RELATION_OPTIONS = [
   ["directly in front", SENSOR_RELATION_TYPES.DIRECTLY_IN_FRONT],
   ["directly behind", SENSOR_RELATION_TYPES.DIRECTLY_BEHIND],
@@ -330,6 +337,18 @@ const BOOLEAN_VALUE_LIBRARY = {
     color: "%{BKY_LOGIC_HUE}",
     label: "Area Freeze is ready",
     tooltip: "Returns true when this team's Area Freeze is ready now."
+  },
+  [BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED]: {
+    category: "Advanced",
+    color: "%{BKY_LOGIC_HUE}",
+    label: "my last move was blocked",
+    tooltip: "Returns true when this runner's most recent movement was blocked or bounced."
+  },
+  [BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR]: {
+    category: "Advanced",
+    color: "%{BKY_LOGIC_HUE}",
+    label: "I have not moved for",
+    tooltip: "Returns true when this runner has ended the chosen number of turns without changing cells."
   },
   [BLOCK_TYPES.BOOLEAN_TEAMMATE_HAS_FLAG]: {
     category: "Advanced",
@@ -510,6 +529,11 @@ export function registerBattleBlocklyBlocks() {
             .appendField(new Blockly.FieldDropdown(() => getSensorObjectOptions()), "OBJECT")
             .appendField("is")
             .appendField(new Blockly.FieldDropdown(() => getSensorRelationOptions()), "RELATION");
+        } else if (type === BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR) {
+          this.appendDummyInput()
+            .appendField("I have not moved for")
+            .appendField(new Blockly.FieldDropdown(RECENT_MOVEMENT_TURN_OPTIONS), "TURNS")
+            .appendField("turns");
         } else if (type === BLOCK_TYPES.LOGIC_AND || type === BLOCK_TYPES.LOGIC_OR) {
           this.appendValueInput("LEFT").setCheck("Boolean");
           this.appendValueInput("RIGHT").setCheck("Boolean").appendField(config.label);
@@ -657,6 +681,10 @@ export function setAllowedMoveTowardTargets(targetTypes = []) {
 
 export function isConditionBlockType(blockType) {
   return Boolean(CONDITION_BLOCK_LIBRARY[blockType] || blockType === BLOCK_TYPES.IF_BOOLEAN || blockType === BLOCK_TYPES.IF_BOOLEAN_ELSE);
+}
+
+export function isBooleanValueBlockType(blockType) {
+  return Boolean(BOOLEAN_VALUE_LIBRARY[blockType]);
 }
 
 export function getBlockDisplayLabel(blockType) {
