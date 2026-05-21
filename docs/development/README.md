@@ -13,6 +13,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
 | [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
+| [Plan 66](plan-66-browser-test-tier-cost-cleanup.md) | ready | Clean up browser test tier drift and Playwright cost: move local-dev workbench out of smoke, add targeted tooling scripts, reduce smoke/focus duplication, and document the revised validation policy without deleting coverage. |
 
 ### Completed Packets
 
@@ -110,12 +111,15 @@ Loose backlog triage and unnumbered future packet ideas live in [future-directio
 
 ## Current Validation Baseline
 
-As of Plan 50 completion on 2026-05-18:
+As of Plan 66 completion on 2026-05-21:
 
-- `npm test` passes — 290/292 tests across 23 unit test files. 2 pre-existing failures in `guided-project-solutions.test.js` (strategy-brain full-team-tactics); not caused by recent changes.
-- `npm run test:browser:smoke` passes — 64/64 tests, ~60s, `workers: 2`.
-- `npm run test:browser` passes — 111/111 tests, ~2m30s, `workers: 1`.
+- `npm test` passes — 361/361 tests.
+- `npm run test:browser:smoke` passes — 60/60 tests, ~40-50s, `workers: 2`.
+- `npm run test:browser:focus` passes — 5/5 tests, ~30s, `workers: 1`.
+- `npm run test:browser:tooling` passes — 21/21 tests, ~25-30s, `workers: 1`.
+- `npm run test:browser` passes — 126/126 tests, ~2m10s, `workers: 1`.
 - `npm run build` passes.
+- `npm run test:browser:workbench` is deferred/manual and currently known failing until the lazy-boot packet lands.
 - Build output still warns that Blockly is both dynamically and statically imported, preventing the intended chunk split.
 - Build output still warns that minified chunks exceed 500 kB.
 - Plan 39 (voice narration) requires a manual smoke pass in a real browser; automated TTS audibility is not assertable from the unit suite.

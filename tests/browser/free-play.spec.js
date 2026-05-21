@@ -324,6 +324,7 @@ test("free play pause and resume work with the P shortcut", async ({ page }) => 
     hooks.app.state.currentTurnState = "AWAITING_INPUT";
     const human = hooks.app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
     hooks.app.state.activeRunnerIndex = hooks.app.state.allRunners.indexOf(human);
+    hooks.app.syncUi();
   });
 
   const pauseButton = page.locator("#pauseResumeButton");

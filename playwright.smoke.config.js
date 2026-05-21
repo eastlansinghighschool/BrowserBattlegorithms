@@ -3,8 +3,9 @@ import { defineConfig } from "@playwright/test";
 // Smoke browser suite — fast, representative coverage for frequent validation.
 // Runs at workers: 2 because this file set has no timing-sensitive animation tests.
 //
-// Extended suite: `npm run test:browser` (all 113 tests, workers: 1, stable).
+// Release suite: `npm run test:browser` / `npm run test:browser:extended` (126 tests, workers: 1, stable, excludes deferred workbench).
 // Focus/accessibility suite: `npm run test:browser:focus`
+// Tooling suite: `npm run test:browser:tooling`
 //
 // Files excluded from smoke (moved to extended):
 //   guided-ui.spec.js           — broad guided UI matrix (~19s)
@@ -13,8 +14,11 @@ import { defineConfig } from "@playwright/test";
 //   dev-guided-level-link.spec.js — dev harness, contains waitForTimeout(3500) (~8s)
 //   workspace-starter-versioning.spec.js — versioning edge cases (localStorage pre-seeding)
 //   blockly-trace-playback.spec.js — timing-sensitive animation test (CPU-contention flake at workers: 2)
+//   admin.spec.js                — local usage admin matrix
+//   dev-unlock.spec.js           — local-dev unlock toggle matrix
+//   workbench.spec.js            — local-dev readiness/workbench shell and scratch tooling (deferred/manual)
 //
-// Smoke also includes jump-animation.spec.js because it is short, learner-visible,
+// Smoke includes jump-animation.spec.js because it is short, learner-visible,
 // and exercises a local-only entrypoint without timing-sensitive broad UI coverage.
 
 export default defineConfig({
@@ -25,11 +29,8 @@ export default defineConfig({
     "**/free-play.spec.js",
     "**/key-capture-passthrough.spec.js",
     "**/aria-narration.spec.js",
-    "**/narration-controls-during-tutorial.spec.js",
     "**/blockly-keyboard-navigation.spec.js",
     "**/help.spec.js",
-    "**/admin.spec.js",
-    "**/dev-unlock.spec.js",
     "**/workspace-reset-button.spec.js",
     "**/prediction-levels.spec.js",
     "**/jump-animation.spec.js",
