@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, "..", "..");
+const REPO_ROOT_NAME = path.basename(REPO_ROOT);
 
 const DEFAULT_REQUIRED_READING = [
   "docs/development/00-mini-packet-agent-starting-prompt.md",
@@ -38,11 +39,20 @@ function toRepoRelative(filePath) {
     }
   }
 
-  if (path.isAbsolute(candidate)) {
-    candidate = path.relative(REPO_ROOT, candidate);
+  const normalizedCandidate = candidate.replace(/\\/g, "/");
+  if (path.isAbsolute(candidate) || path.win32.isAbsolute(candidate)) {
+    const repoMarker = `/${REPO_ROOT_NAME}/`;
+    const repoIndex = normalizedCandidate.lastIndexOf(repoMarker);
+    if (repoIndex !== -1) {
+      candidate = normalizedCandidate.slice(repoIndex + repoMarker.length);
+    } else if (normalizedCandidate.endsWith(`/${REPO_ROOT_NAME}`)) {
+      candidate = "";
+    } else {
+      candidate = path.relative(REPO_ROOT, candidate);
+    }
   }
 
-  return candidate.split(path.sep).join("/");
+  return candidate.replace(/\\/g, "/");
 }
 
 function sanitizeValue(value) {
