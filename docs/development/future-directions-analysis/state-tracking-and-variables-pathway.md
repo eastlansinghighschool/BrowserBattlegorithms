@@ -7,7 +7,7 @@ Date: 2026-05-21
 
 Browser Battlegorithms intentionally avoids becoming a full Java course in the browser. Students should learn sequencing, boolean reasoning, comparisons, runner roles, local sensing, and decentralized coordination before the Java version opens the door to richer state and object design.
 
-Plan 65 is the first narrow experiment in this direction: Free Play-only composable boolean blocks for recent runner state, without user-authored variables.
+Plan 65 is the first narrow experiment in this direction: Free Play-only composable boolean blocks for recent runner state, without user-authored variables, including a stuck-in-a-small-area detector alongside blocked-move and no-move streak checks.
 
 ## Design Principle
 
@@ -37,6 +37,7 @@ These are closest to the current browser model.
 
 - `my last move was blocked`
 - `I have not moved for [N] turns`
+- `I have been stuck for [N] turns`
 - `I moved last turn`
 - `my last action was [move / jump / barrier / freeze / stay still]`
 - `my last action succeeded`
@@ -164,9 +165,9 @@ Potential future levels should be optional at first.
   - Student task: use blocked-move feedback to switch to a vertical fallback.
 
 - **Optional Lab: Stuck For Three Turns**
-  - New idea: `I have not moved for [N] turns`
+  - New idea: `I have been stuck for [N] turns`
   - Board: runner can be boxed by barrier/wall interactions.
-  - Student task: after a no-movement streak, choose a different action.
+  - Student task: after a local stuck streak, choose a different action.
 
 - **Optional Lab: Random As Fallback**
   - New idea: combine stuck condition with `Move Randomly`

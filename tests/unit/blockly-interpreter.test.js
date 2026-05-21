@@ -433,6 +433,53 @@ test("recent-state boolean blocks drive Blockly branches", () => {
   assert.equal(action.type, "MOVE_BACKWARD");
 });
 
+test("stuck recent-state boolean works inside If [boolean] and logical composition", () => {
+  const app = buildBlocklyAppWithXml(`
+    <xml xmlns="https://developers.google.com/blockly/xml">
+      <block type="battlegorithms_on_each_turn" x="24" y="24">
+        <next>
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_logic_or">
+                <value name="LEFT">
+                  <block type="battlegorithms_logic_not">
+                    <value name="VALUE">
+                      <block type="battlegorithms_boolean_last_move_blocked"></block>
+                    </value>
+                  </block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_boolean_stuck_for">
+                    <field name="TURNS">3</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_move_backward"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_move_forward"></block>
+            </statement>
+          </block>
+        </next>
+      </block>
+    </xml>
+  `);
+  const match = buildMatch();
+  app.state = match.state;
+  const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  actor.recentMovementState.lastMoveWasBlocked = true;
+  actor.recentMovementState.recentEndPositions = [
+    { gridX: 4, gridY: 3 },
+    { gridX: 5, gridY: 3 },
+    { gridX: 4, gridY: 3 }
+  ];
+
+  const action = getFirstRunnableAction(app, actor);
+  assert.equal(action.type, "MOVE_BACKWARD");
+});
+
 test("condition blocks without an action body fall through safely", () => {
   const app = buildBlocklyAppWithXml(`
     <xml xmlns="https://developers.google.com/blockly/xml">

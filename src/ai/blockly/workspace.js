@@ -439,6 +439,12 @@ function getConditionDescriptor(block) {
       turns: block.getFieldValue("TURNS")
     };
   }
+  if (block.type === BLOCK_TYPES.BOOLEAN_STUCK_FOR) {
+    return {
+      type: BLOCK_TYPES.BOOLEAN_STUCK_FOR,
+      turns: block.getFieldValue("TURNS")
+    };
+  }
   if (block.type === BLOCK_TYPES.BOOLEAN_TEAMMATE_HAS_FLAG) {
     return { type: BLOCK_TYPES.IF_TEAMMATE_HAS_FLAG };
   }

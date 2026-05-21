@@ -12,6 +12,8 @@ const MOVEMENT_ACTION_TYPES = new Set([
   AI_ACTION_TYPES.JUMP_FORWARD
 ]);
 
+const RECENT_POSITION_HISTORY_LIMIT = 5;
+
 function ensureRecentMovementState(runner) {
   if (!runner) {
     return null;
@@ -31,7 +33,8 @@ export function createRecentMovementState() {
     pendingActionType: null,
     pendingActionOutcome: null,
     lastMoveWasBlocked: false,
-    consecutiveTurnsWithoutMovement: 0
+    consecutiveTurnsWithoutMovement: 0,
+    recentEndPositions: []
   };
 }
 
@@ -91,6 +94,13 @@ export function finalizeRecentMovementTurn(runner) {
     : Number.isFinite(state.consecutiveTurnsWithoutMovement)
       ? state.consecutiveTurnsWithoutMovement + 1
       : 1;
+  if (!Array.isArray(state.recentEndPositions)) {
+    state.recentEndPositions = [];
+  }
+  state.recentEndPositions.push({ gridX: endGridX, gridY: endGridY });
+  if (state.recentEndPositions.length > RECENT_POSITION_HISTORY_LIMIT) {
+    state.recentEndPositions.splice(0, state.recentEndPositions.length - RECENT_POSITION_HISTORY_LIMIT);
+  }
   state.turnStartGridX = null;
   state.turnStartGridY = null;
   state.pendingActionType = null;
@@ -109,4 +119,33 @@ export function hasRunnerNotMovedForTurns(runner, turns) {
   }
 
   return Number(runner?.recentMovementState?.consecutiveTurnsWithoutMovement ?? 0) >= threshold;
+}
+
+export function hasRunnerBeenStuckForTurns(runner, turns) {
+  const threshold = Math.floor(Number(turns));
+  if (!runner || !Number.isFinite(threshold) || threshold < 1) {
+    return false;
+  }
+
+  const positions = runner?.recentMovementState?.recentEndPositions;
+  if (!Array.isArray(positions) || positions.length < threshold) {
+    return false;
+  }
+
+  const window = positions.slice(-threshold);
+  const oldest = window[0];
+  if (!oldest || !Number.isFinite(Number(oldest.gridX)) || !Number.isFinite(Number(oldest.gridY))) {
+    return false;
+  }
+
+  const oldestX = Number(oldest.gridX);
+  const oldestY = Number(oldest.gridY);
+  return window.every((position) => {
+    const gridX = Number(position?.gridX);
+    const gridY = Number(position?.gridY);
+    if (!Number.isFinite(gridX) || !Number.isFinite(gridY)) {
+      return false;
+    }
+    return Math.abs(gridX - oldestX) + Math.abs(gridY - oldestY) <= 2;
+  });
 }

@@ -170,6 +170,7 @@ export const BLOCK_TYPES = {
   BOOLEAN_AREA_FREEZE_READY: "battlegorithms_boolean_area_freeze_ready",
   BOOLEAN_LAST_MOVE_BLOCKED: "battlegorithms_boolean_last_move_blocked",
   BOOLEAN_NOT_MOVED_FOR: "battlegorithms_boolean_not_moved_for",
+  BOOLEAN_STUCK_FOR: "battlegorithms_boolean_stuck_for",
   BOOLEAN_TEAMMATE_HAS_FLAG: "battlegorithms_boolean_teammate_has_flag",
   BOOLEAN_ON_MY_SIDE: "battlegorithms_boolean_on_my_side",
   BOOLEAN_ON_ENEMY_SIDE: "battlegorithms_boolean_on_enemy_side",

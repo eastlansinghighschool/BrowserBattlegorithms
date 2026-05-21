@@ -81,6 +81,7 @@ test("recent movement booleans track blocked attempts, no-move streaks, and rese
 
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED), true);
   assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR, turns: 2 }), false);
+  assert.equal(actor.recentMovementState.recentEndPositions.length, 1);
 
   beginRecentMovementTurn(actor);
   queueRecentMovementOutcome(actor, AI_ACTION_TYPES.STAY_STILL, "stayed");
@@ -88,15 +89,26 @@ test("recent movement booleans track blocked attempts, no-move streaks, and rese
 
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED), false);
   assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR, turns: 2 }), true);
+  assert.equal(actor.recentMovementState.recentEndPositions.length, 2);
 
-  actor.gridX = 5;
+  actor.setFrozen(2);
   beginRecentMovementTurn(actor);
-  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_FORWARD, "moved");
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.STAY_STILL, "skipped_frozen");
   finalizeRecentMovementTurn(actor);
 
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED), false);
   assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR, turns: 3 }), true);
-  assert.equal(actor.recentMovementState.consecutiveTurnsWithoutMovement, 3);
+  assert.equal(actor.recentMovementState.recentEndPositions.length, 3);
+
+  beginRecentMovementTurn(actor);
+  actor.gridX = 5;
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_FORWARD, "moved");
+  finalizeRecentMovementTurn(actor);
+
+  assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED), false);
+  assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR, turns: 3 }), false);
+  assert.equal(actor.recentMovementState.consecutiveTurnsWithoutMovement, 0);
+  assert.equal(actor.recentMovementState.recentEndPositions.length, 4);
 
   actor.gridX = 6;
   beginRecentMovementTurn(actor);
@@ -107,6 +119,7 @@ test("recent movement booleans track blocked attempts, no-move streaks, and rese
   assert.equal(evaluateCondition(app.state, actor, BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED), false);
   assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR, turns: 2 }), false);
   assert.equal(actor.recentMovementState.consecutiveTurnsWithoutMovement, 0);
+  assert.equal(actor.recentMovementState.recentEndPositions.length, 5);
 
   actor.recentMovementState.lastMoveWasBlocked = true;
   actor.recentMovementState.consecutiveTurnsWithoutMovement = 4;
@@ -114,6 +127,42 @@ test("recent movement booleans track blocked attempts, no-move streaks, and rese
 
   assert.equal(actor.recentMovementState.lastMoveWasBlocked, false);
   assert.equal(actor.recentMovementState.consecutiveTurnsWithoutMovement, 0);
+  assert.deepEqual(actor.recentMovementState.recentEndPositions, []);
+});
+
+test("recent movement stuck windows track local loops and clear when the runner leaves the area", () => {
+  const app = buildMatch();
+  const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+
+  actor.gridX = 4;
+  actor.gridY = 3;
+
+  beginRecentMovementTurn(actor);
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_FORWARD, "moved");
+  actor.gridX = 5;
+  finalizeRecentMovementTurn(actor);
+
+  beginRecentMovementTurn(actor);
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_BACKWARD, "moved");
+  actor.gridX = 4;
+  finalizeRecentMovementTurn(actor);
+
+  assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_STUCK_FOR, turns: 3 }), false);
+
+  beginRecentMovementTurn(actor);
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_FORWARD, "moved");
+  actor.gridX = 5;
+  finalizeRecentMovementTurn(actor);
+
+  assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_STUCK_FOR, turns: 3 }), true);
+
+  beginRecentMovementTurn(actor);
+  queueRecentMovementOutcome(actor, AI_ACTION_TYPES.MOVE_FORWARD, "moved");
+  actor.gridX = 8;
+  finalizeRecentMovementTurn(actor);
+
+  assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_STUCK_FOR, turns: 3 }), false);
+  assert.equal(evaluateCondition(app.state, actor, { type: BLOCK_TYPES.BOOLEAN_STUCK_FOR, turns: 4 }), false);
 });
 
 test("generic sensor evaluation supports barrier, edge or wall, enemy flag, and human runner relations", () => {

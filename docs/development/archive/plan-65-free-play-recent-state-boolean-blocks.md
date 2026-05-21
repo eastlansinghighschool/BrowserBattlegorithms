@@ -22,7 +22,7 @@
 
 ## Packet Summary
 
-Goal: Add a small, curated state-tracking bridge in Free Play by exposing composable Advanced boolean blocks that let a runner react when its own recent turn outcomes show no movement or a blocked move.
+Goal: Add a small, curated state-tracking bridge in Free Play by exposing composable Advanced boolean blocks that let a runner react when its own recent turn outcomes show no movement, a blocked move, or a small-area stuck pattern.
 
 Why this packet exists:
 
@@ -108,6 +108,7 @@ In scope:
 - Add a runner-local record of recent movement outcomes for the current match.
 - Add a boolean value block for `my last move was blocked`.
 - Add a boolean value block for `I have not moved for [N] turns`, with a small dropdown such as `2`, `3`, `4`, `5`.
+- Add a boolean value block for `I have been stuck for [N] turns`, with a small dropdown such as `3`, `4`, `5`.
 - Make both blocks appear only in the Free Play Advanced toolbox for now.
 - Allow the blocks to plug into existing composable boolean contexts.
 - Add tests that prove guided toolboxes do not expose the blocks.
@@ -169,6 +170,8 @@ Constraints:
 - `my last move was blocked` should only mean the runner attempted a movement/jump action and it was blocked, bounced, illegal, or failed. It should not become true merely because the runner chose `Stay Still`, was frozen, or used an unavailable non-move resource.
 - Successful move and successful jump should clear the no-movement counter and clear the last-move-blocked flag.
 - Successful non-move actions that do not change cell, such as placing a barrier or Area Freeze, may increment "not moved" but should not set `last move was blocked`.
+- `I have not moved for [N] turns` should mean the runner ended the chosen number of turns in the same cell without changing cells.
+- `I have been stuck for [N] turns` should mean the runner ended the chosen number of turns with every recorded end position in the window staying within Manhattan distance 2 of the oldest position in that window.
 
 Expected artifact:
 
@@ -178,9 +181,10 @@ Expected artifact:
 
 Required behavior:
 
-- Add two composable Advanced boolean value blocks:
+- Add three composable Advanced boolean value blocks:
   - `my last move was blocked`
   - `I have not moved for [N] turns`
+  - `I have been stuck for [N] turns`
 - The threshold block should use a dropdown, not a freeform number field, for initial clarity.
 - Both blocks must output Boolean and plug into existing `If [boolean]`, `and`, `or`, and `not` blocks.
 
@@ -234,6 +238,9 @@ Add or update unit tests for:
 - Stay Still and frozen skip can increment the "not moved" counter but do not set last-move-blocked.
 - Successful barrier or Area Freeze can count as not moved but does not set last-move-blocked.
 - The no-movement counter resets after a successful cell-changing move/jump.
+- A runner that alternates between adjacent cells in the threshold window returns true for `I have been stuck for [N] turns`.
+- A runner that leaves the small local area within the threshold window returns false for `I have been stuck for [N] turns`.
+- A runner that has not accumulated enough completed own turns returns false for `I have been stuck for [N] turns`.
 - Runner recent-state fields reset on setup/round reset.
 - Blockly boolean evaluation returns expected values for the new blocks.
 - Free Play toolbox includes the new Advanced blocks.

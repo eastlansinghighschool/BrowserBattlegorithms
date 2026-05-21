@@ -129,6 +129,7 @@ test("guided toolboxes keep the recent-state free-play booleans out of view", as
 
   expect(toolboxTypes).not.toContain("battlegorithms_boolean_last_move_blocked");
   expect(toolboxTypes).not.toContain("battlegorithms_boolean_not_moved_for");
+  expect(toolboxTypes).not.toContain("battlegorithms_boolean_stuck_for");
 });
 
 test("guided level picker shows the current level and lets the learner browse ahead", async ({ page }) => {

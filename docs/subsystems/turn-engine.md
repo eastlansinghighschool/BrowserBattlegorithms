@@ -87,6 +87,8 @@ Runner recent movement state is a runner-local, match-scoped helper used by Free
 - whether the most recent attempted movement action was blocked, bounced, illegal, or failed without changing cells
 - how many consecutive own turns ended without the runner changing cells
 
+It also keeps a short window of completed turn-end positions so `I have been stuck for [N] turns` can detect bounded local movement in a small area rather than goal-relative progress.
+
 `src/core/recentMovement.js` owns the helper contract, and `src/core/turnEngine.js` updates it only when a runner turn starts and finishes. `Runner.resetToInitial()` clears it, so level start, round reset, and display-state rebuilds all reset the state automatically. The helper never persists to storage and never changes movement, collision, or scoring rules.
 
 ## Bounce vs illegal vs skipped

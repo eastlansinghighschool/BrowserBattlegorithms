@@ -54,7 +54,7 @@ The entities below are the persistent objects that the rules move around and upd
 - The human runner is the direct-input runner for that team.
 - Ally runners may share one Blockly program, so a single strategy can coordinate several bodies.
 - Frozen runners still occupy space and cannot act until they thaw.
-- Recent own-turn movement state is read-only from Free Play's Advanced boolean blocks and resets on setup, level start, and round reset.
+- Recent own-turn movement state is read-only from Free Play's Advanced boolean blocks and resets on setup, level start, and round reset. It includes whether the runner's last movement was blocked, how long it has gone without changing cells, and whether it has been stuck in a small local area for several turns.
 - A runner's team identity is what ties together its direction, base, and scoring side.
 - The runner list and the flag list are the active state a match keeps track of from turn to turn.
 
@@ -113,7 +113,7 @@ This section is the canonical order of play for a single runner turn.
 Human-controlled runners use keyboard input; AI allies select from the same action set through Blockly programs, and the current block inventory is documented in the Blockly workspace subsystem note.
 Each runner may execute only one action per turn.
 - The difference between human and AI control is input path, not the underlying action rules.
-- Free Play also exposes a small set of read-only Advanced boolean checks for a runner's recent own-turn movement state, but guided levels do not expose those blocks.
+- Free Play also exposes a small set of read-only Advanced boolean checks for a runner's recent own-turn movement state, including `my last move was blocked`, `I have not moved for [N] turns`, and `I have been stuck for [N] turns`, but guided levels do not expose those blocks.
 
 - Move: step one cell in a cardinal direction.
 - Move Forward / Backward / Up / Down: team-relative move actions used by Blockly.

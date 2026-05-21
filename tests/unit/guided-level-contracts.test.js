@@ -736,7 +736,8 @@ test("guided toolbox allowlists keep recent-state free-play booleans out of ever
       const toolboxBlockTypes = getToolboxBlockTypesForMode(app, level);
       return (
         toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_LAST_MOVE_BLOCKED) ||
-        toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR)
+        toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR) ||
+        toolboxBlockTypes.includes(BLOCK_TYPES.BOOLEAN_STUCK_FOR)
       );
     })
     .map((level) => level.id);

@@ -34,6 +34,7 @@ test("free play Advanced toolbox exposes the recent-state boolean blocks", async
 
   await expect(flyout).toContainText("my last move was blocked");
   await expect(flyout).toContainText("I have not moved for");
+  await expect(flyout).toContainText("I have been stuck for");
 });
 
 test("free play PvP uses separate program tabs that preserve different team programs", async ({ page }) => {
@@ -263,6 +264,54 @@ test("free play recent-state booleans drive the expected branch choice", async (
     return hooks.getAIAllyAction(runner);
   });
   expect(quietAction.type).toBe("MOVE_BACKWARD");
+});
+
+test("free play stuck recent-state blocks can drive a boolean branch", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+
+  await loadWorkspaceXml(
+    page,
+    buildSolutionXml(`
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_logic_or">
+            <value name="LEFT">
+              <block type="battlegorithms_logic_not">
+                <value name="VALUE">
+                  <block type="battlegorithms_boolean_last_move_blocked"></block>
+                </value>
+              </block>
+            </value>
+            <value name="RIGHT">
+              <block type="battlegorithms_boolean_stuck_for">
+                <field name="TURNS">3</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_move_backward"></block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_move_forward"></block>
+        </statement>
+      </block>
+    `)
+  );
+
+  const stuckAction = await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    const runner = hooks.getState().allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
+    runner.recentMovementState.lastMoveWasBlocked = true;
+    runner.recentMovementState.recentEndPositions = [
+      { gridX: 4, gridY: 3 },
+      { gridX: 5, gridY: 3 },
+      { gridX: 4, gridY: 3 }
+    ];
+    return hooks.getAIAllyAction(runner);
+  });
+  expect(stuckAction.type).toBe("MOVE_BACKWARD");
 });
 
 test("free play pause and resume work with the P shortcut", async ({ page }) => {

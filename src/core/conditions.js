@@ -8,7 +8,7 @@ import {
   SENSOR_RELATION_TYPES
 } from "../config/constants.js";
 import { isAreaFreezeReady } from "./areaFreeze.js";
-import { didRunnerLastMoveGetBlocked, hasRunnerNotMovedForTurns } from "./recentMovement.js";
+import { didRunnerLastMoveGetBlocked, hasRunnerBeenStuckForTurns, hasRunnerNotMovedForTurns } from "./recentMovement.js";
 import { getBarrierAtCell, getForwardCell, getRunnerAtCell } from "./movement.js";
 import { isOnHomeSide } from "./teams.js";
 
@@ -232,6 +232,10 @@ export function evaluateCondition(state, runner, condition) {
 
   if (descriptor.type === BLOCK_TYPES.BOOLEAN_NOT_MOVED_FOR) {
     return hasRunnerNotMovedForTurns(runner, descriptor.turns);
+  }
+
+  if (descriptor.type === BLOCK_TYPES.BOOLEAN_STUCK_FOR) {
+    return hasRunnerBeenStuckForTurns(runner, descriptor.turns);
   }
 
   if (

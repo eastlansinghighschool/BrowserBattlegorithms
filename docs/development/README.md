@@ -81,7 +81,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 62](archive/plan-62-local-dev-level-workbench-shell.md) | complete | Add a local-dev-only, read-only level workbench shell that displays readiness checks, level context, and generated agent prompts. |
 | [Plan 63](archive/plan-63-reference-solution-runner-panel.md) | complete | Extend the workbench with a reference/project-solution runner panel showing pass/fail evidence, result reasons, and trace tails. |
 | [Plan 64](archive/plan-64-scratch-blockly-preview-and-mutation-prompt.md) | complete | Add an isolated scratch Blockly preview to the workbench so candidate solutions can be run and turned into fixture-update prompts without filesystem writes. |
-| [Plan 65](archive/plan-65-free-play-recent-state-boolean-blocks.md) | complete | Add Free Play-only composable Advanced boolean blocks for recent runner state: last move blocked and not moved for N turns. |
+| [Plan 65](archive/plan-65-free-play-recent-state-boolean-blocks.md) | complete | Add Free Play-only composable Advanced boolean blocks for recent runner state: last move blocked, not moved for N turns, and stuck for N turns. |
 
 
 ## Future Directions
