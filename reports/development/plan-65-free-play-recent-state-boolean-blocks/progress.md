@@ -29,6 +29,9 @@ The packet adds a small runner-local recent-movement helper, wires it through th
 - `docs/GameSpecification.md`
 - `docs/subsystems/blockly-workspace.md`
 - `docs/subsystems/turn-engine.md`
+- `docs/development/README.md`
+- `docs/development/archive/plan-65-free-play-recent-state-boolean-blocks.md`
+- `docs/development/future-directions-analysis/analysis-index.md`
 - `docs/development/future-directions-analysis/state-tracking-and-variables-pathway.md`
 
 ## Validation

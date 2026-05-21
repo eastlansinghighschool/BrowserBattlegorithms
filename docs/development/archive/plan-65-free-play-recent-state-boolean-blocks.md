@@ -4,7 +4,7 @@
 
 - Packet id: plan-65
 - Packet title: Free Play Recent-State Boolean Blocks
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation / Blockly / testing / docs
