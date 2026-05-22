@@ -22,7 +22,9 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 72](plan-72-free-play-per-point-turn-limit.md) | complete | Add a Free Play per-point turn-limit dropdown, defaulting to 100 turns, that resets stalemated rounds with no score. |
 | [Plan 73](plan-73-guided-level-dossier-generator.md) | complete | Generate factual per-level guided dossiers and a summary index so later curriculum analysis can consume packaged evidence instead of raw source spelunking. |
 | [Plan 74](plan-74-guided-reference-behavior-evidence.md) | complete | Generate deterministic reference-run and NPC/enemy behavior evidence for guided levels, linked to the complexity-audit dossier set. |
-| [Plan 75](plan-75-guided-level-complexity-audit.md) | ready | Repeatable orchestration-grade scan that consumes Plan 73/74 evidence to produce model-specific guided-level complexity audits for later comparison. |
+| [Plan 75](plan-75-guided-level-complexity-audit.md) | complete | Repeatable orchestration-grade scan that consumes Plan 73/74 evidence to produce model-specific guided-level complexity audits for later comparison. Codex and Claude audits landed under `reports/development/guided-level-complexity-audit/model-audits/`. |
+| [Plan 76](plan-76-guided-level-complexity-audit-synthesis.md) | complete | Repeatable orchestration-grade synthesis that compares Plan 75 model audits without smoothing disagreement, producing model-specific comparison artifacts for owner triage. Codex, Claude Opus, and Gemini syntheses landed under `reports/development/guided-level-complexity-audit/syntheses/`. |
+| [Plan 77](plan-77-pre-challenge-22-compound-condition-uplift.md) | ready | Add one compound condition to the named lesson at `jump-if-ready`, `stay-still-can-do-something`, `my-side-their-side`, and `freeze-the-lane` so each level still introduces its primary concept but the win condition requires that concept paired with one previously taught idea. Closes the largest documented cliff (Challenge 22) using nested `if`/`if-else` only — no Advanced boolean operators introduced. |
 
 ### Completed Packets
 
