@@ -41,7 +41,7 @@ Each runner's turn follows this sequence. Steps are not flat; each can branch or
 5. Movement, collision, barrier, and freeze legality are checked.
 6. Runner finishes the action or bounces back to origin.
 7. Flag pickup is checked at the destination cell.
-8. Scoring is checked: if the runner returned the enemy flag to base, a point is scored.
+8. Scoring is checked: if the runner returned the enemy flag to base and that runner's own team's flag is at home, a point is scored. If the runner is at base with the enemy flag but their own flag is away, scoring is blocked — a `score.blocked` event is emitted, the runner keeps the enemy flag, and the turn continues without a round reset. Only the completed runner is checked; no scan of other runners happens.
 9. If guided mode, level-completion conditions may be evaluated.
 10. Engine either resets the round, ends the game, or advances to the next runner.
 
@@ -130,11 +130,13 @@ The old Java percent-chance collision rule is not used here. The "defender alway
 
 These three events are related but distinct and can happen independently:
 
-- **Scoring** (`scoring.js`): a runner returns the enemy flag to their team's base. The team score increments. A round reset immediately follows: all runners return to their start positions, flags reset. The match continues.
+- **Scoring** (`scoring.js`): a runner returns the enemy flag to their team's base while their own flag is also at home. The team score increments. A round reset immediately follows: all runners return to their start positions, flags reset. The match continues.
+- **Blocked scoring** (`scoring.js`): a runner is at their team's base with the enemy flag, but their own flag is not at home. No point is scored, no round reset occurs, and the runner keeps the enemy flag. A `score.blocked` event is emitted. The runner can score on a later turn once their own flag returns home. The engine does not scan other runners for parked carriers when a flag returns home; each runner is evaluated only during its own completed turn.
+- **No-score round reset (Free Play turn limit)**: in Free Play mode only, when the per-point turn limit is set and the number of turns elapsed since the last round reset reaches the limit, the round resets with no score. Team scores are preserved. Runners, flags, and barriers reset through the same `resetRound` path used after scoring. The check fires at the same turn boundary where `currentTurnNumber` increments (i.e., after the last runner in the round advances). The `freePlayRoundStartTurn` field tracks when the current round began; it is reset to `currentTurnNumber` on every `resetRound` call. When `freePlayPointTurnLimit` is `null`, the limit is disabled.
 - **Game over**: when a team reaches the win threshold during a scoring check, `GAME_OVER` state is set. The match ends and the end-state overlay appears.
 - **Level completion** (guided mode only): after a scoring event, the engine evaluates whether the guided level's win condition is satisfied. A level may require scoring a specific number of points or other conditions, and it may also fail if one or more authored failure conditions are met, such as the opposing team scoring first or a turn cap being exceeded. Older authored levels still use the singular `failureCondition` field, while newer levels may author a `failureConditions` array. Level pass or fail triggers the level-result overlay and enables the Next Level button.
 - **Stateful guided goals**: a small number of guided levels may track an authored staging phase before a later support phase. Those levels still use the same turn pipeline; the win condition simply remembers which phase the player reached and evaluates the final support square after the teammate acquires the flag.
-- **Round reset ≠ level reset**: a round reset happens automatically after scoring and preserves workspace state. A level reset re-enters the current level from scratch using the persisted workspace.
+- **Round reset ≠ level reset**: a round reset happens automatically after scoring (or after the Free Play turn limit is reached). It preserves workspace state. A level reset re-enters the current level from scratch using the persisted workspace.
 
 A single score event can trigger all three in sequence: increment score → evaluate game-over → if guided, evaluate level completion.
 
@@ -154,6 +156,9 @@ This is a separate safety net from the `PROCESSING_ACTION` recovery in `src/core
 - **Expecting extra Blockly blocks to cause errors.** The engine reads the first action from the program each turn; extra blocks are silently ignored.
 - **Assuming grace period prevents all collision effects.** Grace period skips the freeze, but the loser is still displaced and drops their flag.
 - **Treating recent movement state like author-authored variables.** The runner-memory helper is read-only game state, not a player variable, and it resets with match setup and round reset.
+- **Expecting a parked carrier to auto-score when the own flag returns home.** Blocked scoring does not create a deferred trigger. The carrier scores only during its own completed turn, not as a side effect of another runner returning the own flag.
+- **Assuming the Free Play turn limit applies to guided levels.** The `freePlayPointTurnLimit` check is gated on `currentModeView === FREE_PLAY`. Guided level turn limits are separate authored properties in each level's config.
+- **Treating the no-score round reset as a score event.** It resets the round state but neither increments team scores nor emits a scoring event. `lastScoringTeam` remains `null` after the reset.
 
 ## Related
 

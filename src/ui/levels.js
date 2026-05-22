@@ -400,6 +400,19 @@ function renderFreePlayOptions(app) {
     .map((option) => `<option value="${option.key}" ${option.key === app.state.freePlayMapKey ? "selected" : ""}>${escapeHtml(option.label)}</option>`)
     .join("");
 
+  const TURN_LIMIT_OPTIONS = [
+    { value: "none", label: "No limit" },
+    { value: "60", label: "60 turns" },
+    { value: "100", label: "100 turns" },
+    { value: "150", label: "150 turns" },
+    { value: "200", label: "200 turns" }
+  ];
+  const currentLimitValue = app.state.freePlayPointTurnLimit == null ? "none" : String(app.state.freePlayPointTurnLimit);
+  const turnLimitOptions = TURN_LIMIT_OPTIONS
+    .map(({ value, label }) => `<option value="${value}" ${value === currentLimitValue ? "selected" : ""}>${escapeHtml(label)}</option>`)
+    .join("");
+  const currentLimitLabel = TURN_LIMIT_OPTIONS.find(({ value }) => value === currentLimitValue)?.label || "100 turns";
+
   const currentMapLabel = FREE_PLAY_MAP_OPTIONS.find((option) => option.key === app.state.freePlayMapKey)?.label || app.state.freePlayMapKey;
   const programSummary = app.state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER
     ? `Editing Team ${app.state.activeBlocklyTeamTab || 1} Program`
@@ -416,9 +429,12 @@ function renderFreePlayOptions(app) {
       <label>Map
         <select data-action="free-play-map">${mapOptions}</select>
       </label>
+      <label>Point turn limit
+        <select data-action="free-play-turn-limit">${turnLimitOptions}</select>
+      </label>
     </div>
     <p class="student-lesson-goal">Build a sandbox match, then test ideas with humans, program-controlled allies, and CPU teams.</p>
-    <p class="lesson-inline-list"><strong>Current setup:</strong> ${escapeHtml(getFreePlayModeLabel(app.state.freePlayMode))} | ${escapeHtml(currentMapLabel)} | ${escapeHtml(`${app.state.freePlayTeamSize} runners per side`)}</p>
+    <p class="lesson-inline-list"><strong>Current setup:</strong> ${escapeHtml(getFreePlayModeLabel(app.state.freePlayMode))} | ${escapeHtml(currentMapLabel)} | ${escapeHtml(`${app.state.freePlayTeamSize} runners per side`)} | ${escapeHtml(currentLimitLabel)} per point</p>
     <p class="lesson-inline-list"><strong>Program panel:</strong> ${escapeHtml(programSummary)}</p>
     <details class="lesson-disclosure" open>
       <summary>Controls</summary>
@@ -516,6 +532,9 @@ export function bindLevelPanel(app) {
       configureFreePlay(app, { freePlayTeamSize: Number(target.value) });
     } else if (target.dataset.action === "free-play-map") {
       configureFreePlay(app, { freePlayMapKey: target.value });
+    } else if (target.dataset.action === "free-play-turn-limit") {
+      const limitValue = target.value === "none" ? null : Number(target.value);
+      configureFreePlay(app, { freePlayPointTurnLimit: limitValue });
     } else {
       return;
     }

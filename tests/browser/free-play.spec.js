@@ -10,6 +10,26 @@ test("free play setup panel exposes mode, team size, and map selectors", async (
   await expect(page.locator('select[data-action="free-play-mode"]')).toBeVisible();
   await expect(page.locator('select[data-action="free-play-team-size"]')).toBeVisible();
   await expect(page.locator('select[data-action="free-play-map"]')).toBeVisible();
+  const turnLimitSelect = page.locator('select[data-action="free-play-turn-limit"]');
+  await expect(turnLimitSelect).toBeVisible();
+  await expect(turnLimitSelect).toHaveValue("100");
+
+  const selectedTurnLimitLabel = await turnLimitSelect.evaluate((select) => select.selectedOptions[0]?.textContent?.trim());
+  expect(selectedTurnLimitLabel).toBe("100 turns");
+
+  const turnLimitOptions = await turnLimitSelect.locator("option").evaluateAll((options) =>
+    options.map((option) => ({
+      value: option.getAttribute("value"),
+      label: option.textContent?.trim()
+    }))
+  );
+  expect(turnLimitOptions).toEqual([
+    { value: "none", label: "No limit" },
+    { value: "60", label: "60 turns" },
+    { value: "100", label: "100 turns" },
+    { value: "150", label: "150 turns" },
+    { value: "200", label: "200 turns" }
+  ]);
 });
 
 test("free play shows Team 2 controls with a semicolon keycap in the options panel", async ({ page }) => {
@@ -107,10 +127,15 @@ test("free play selectors update the visible setup summary and rebuild the match
   await page.locator('select[data-action="free-play-mode"]').selectOption("PVCPU_TACTICAL");
   await page.locator('select[data-action="free-play-team-size"]').selectOption("5");
   await page.locator('select[data-action="free-play-map"]').selectOption("midfieldPressure");
+  await page.locator('select[data-action="free-play-turn-limit"]').selectOption("none");
 
   await expect(page.locator("#level-panel")).toContainText("Player vs CPU (Tactical)");
   await expect(page.locator("#level-panel")).toContainText("5 runners per side");
   await expect(page.locator("#level-panel")).toContainText("Midfield Pressure");
+  await expect(page.locator("#level-panel")).toContainText("No limit per point");
+
+  await page.locator('select[data-action="free-play-turn-limit"]').selectOption("60");
+  await expect(page.locator("#level-panel")).toContainText("60 turns per point");
 
   const runnerCounts = await page.evaluate(() => {
     const runners = window.__BBA_TEST_HOOKS__.app.state.allRunners;
@@ -122,6 +147,24 @@ test("free play selectors update the visible setup summary and rebuild the match
 
   expect(runnerCounts.playerTeam).toBe(5);
   expect(runnerCounts.cpuTeam).toBe(5);
+});
+
+test("free play scoreboard shows the point reset countdown near the limit", async ({ page }) => {
+  await page.goto("/");
+  await chooseFreePlay(page);
+
+  await page.evaluate(() => {
+    const hooks = window.__BBA_TEST_HOOKS__;
+    hooks.app.state.mainGameState = "RUNNING";
+    hooks.app.state.currentTurnState = "AWAITING_INPUT";
+    hooks.app.state.currentModeView = "FREE_PLAY";
+    hooks.app.state.freePlayPointTurnLimit = 100;
+    hooks.app.state.freePlayRoundStartTurn = 1;
+    hooks.app.state.currentTurnNumber = 91;
+    hooks.app.syncUi();
+  });
+
+  await expect(page.locator("#scoreDisplay")).toContainText("Point resets in 10 turns");
 });
 
 test("free play shows the Area Freeze chip for the active team and both teams in PvP", async ({ page }) => {

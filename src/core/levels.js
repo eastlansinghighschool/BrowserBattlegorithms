@@ -465,6 +465,9 @@ export function configureFreePlay(app, updates = {}) {
   state.freePlayMode = updates.freePlayMode ?? state.freePlayMode ?? DEFAULT_FREE_PLAY_MODE;
   state.freePlayTeamSize = updates.freePlayTeamSize ?? state.freePlayTeamSize ?? DEFAULT_FREE_PLAY_TEAM_SIZE;
   state.freePlayMapKey = updates.freePlayMapKey ?? state.freePlayMapKey ?? DEFAULT_MAP_KEY;
+  state.freePlayPointTurnLimit = Object.prototype.hasOwnProperty.call(updates, "freePlayPointTurnLimit")
+    ? updates.freePlayPointTurnLimit
+    : (state.freePlayPointTurnLimit ?? 100);
   state.activeBlocklyTeamTab = updates.activeBlocklyTeamTab ?? (
     state.freePlayMode === FREE_PLAY_MODES.PLAYER_VS_PLAYER ? (state.activeBlocklyTeamTab || 1) : 1
   );

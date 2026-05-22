@@ -36,6 +36,8 @@ export function createInitialState() {
     freePlayMode: DEFAULT_FREE_PLAY_MODE,
     freePlayTeamSize: DEFAULT_FREE_PLAY_TEAM_SIZE,
     freePlayMapKey: DEFAULT_MAP_KEY,
+    freePlayPointTurnLimit: 100,
+    freePlayRoundStartTurn: 1,
     activeBlocklyTeamTab: 1,
     freePlayPrograms: {
       player: "",

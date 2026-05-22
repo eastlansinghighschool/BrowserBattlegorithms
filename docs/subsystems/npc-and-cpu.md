@@ -75,11 +75,20 @@ These are two separate systems with different tuning goals. They share no code p
 - Chases the enemy flag or returns home when carrying it.
 - Uses the shared `pathing.js` helper.
 - Mostly deterministic once the state is fixed.
+The full decision order for `FREE_PLAY_TACTICAL_ATTACKER` is:
+1. **Rut escape (Plan 70):** If `hasRunnerBeenStuckForTurns(runner, 4)`, pick a legal cardinal move whose destination avoids the recent position set.
+2. **Blocked-scoring recovery (Plan 69):** If carrying the enemy flag but own flag is away, chase the runner holding the own flag; use Area Freeze if they are in range.
+3. **Carrier freeze (Plan 71):** If carrying the enemy flag, freeze is ready, and the nearest unfrozen enemy is within `AREA_FREEZE_RADIUS`, fire freeze.
+4. **Jump if useful (Plan 71):** If `canJump` is true, the jump landing is legal, and jumping reduces Manhattan distance to the current target, choose `JUMP_FORWARD`.
+5. **Normal pathing:** `calculateMoveTowardsTarget` toward the current target.
+6. **Barrier-blocked stay-still:** If forward cell has a barrier and pathing returned `STAY_STILL`, stay still.
+7. **Random fallback:** `getRandomLegalFallbackMove` biased toward target.
 
 **`FREE_PLAY_TACTICAL_DEFENDER`:**
 - Protects the home side, freezes nearby threats, repositions near a defense cell.
 - Uses the shared `pathing.js` helper.
 - Mostly deterministic once the state is fixed.
+- **Rut escape (Plan 70):** Checked first. Same `hasRunnerBeenStuckForTurns(runner, 4)` guard as the attacker. Calls `getRutEscapeAction` when stuck; returns to normal defender logic once the condition clears. No Plan 71 changes to the defender — existing freeze-near-carrier and barrier-at-defense-cell behavior is preserved.
 
 Role assignment (attacker vs defender) is derived from the free-play mode during team setup, not at runtime decision time.
 
@@ -124,6 +133,9 @@ This hook exists specifically because `FREE_PLAY_EASY` is designed to be random 
 - **Expecting CPU role to be chosen per-turn.** Roles are assigned at setup time via team configuration.
 - **Adding randomness to guided NPC behaviors.** Guided NPCs are teaching aids; unpredictable behavior makes levels harder to reason about and harder to test.
 - **Confusing guided challenge exceptions with Free Play Easy.** `FREE_PLAY_EASY` still means broad random legal action choice in Free Play. Level-specific guided behaviors should be named and documented separately.
+- **Expecting the tactical attacker to stall at base when scoring is blocked.** Since Plan 69, the attacker switches to chasing the enemy runner who holds its own team's flag rather than looping at the scoring cell. This is Free Play behavior only — guided NPCs are unaffected.
+- **Expecting the tactical attacker to always move before considering jump or freeze.** Since Plan 71, jump and carrier freeze are checked before the normal pathing step. Jump fires only when landing reduces distance to target; carrier freeze fires only when an unfrozen enemy is within `AREA_FREEZE_RADIUS` and freeze is ready.
+- **Assuming rut detection is a global-turn counter.** The rut check uses `hasRunnerBeenStuckForTurns` from `src/core/recentMovement.js`, which reads the runner's own `recentEndPositions` history. It is independent of global turn numbers and resets automatically when the runner moves out of the stuck area.
 
 ## Related
 

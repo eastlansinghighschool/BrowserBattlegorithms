@@ -93,6 +93,7 @@ function buildNarrationContext(eventLog, state) {
   const pickupEvent = eventLog.find((event) => event.kind === "flag.pickedUp") || null;
   const dropEvent = eventLog.find((event) => event.kind === "flag.dropped") || null;
   const scoreEvent = eventLog.find((event) => event.kind === "team.scored") || null;
+  const scoreBlockedEvent = eventLog.find((event) => event.kind === "score.blocked") || null;
   const resourceUnavailable = eventLog.find((event) => event.kind === "resource.unavailable") || null;
   const levelResult = eventLog.find((event) => event.kind === "level.result") || null;
   const turnNumber = runnerStartedEvent?.turn ?? eventLog[0]?.turn ?? 0;
@@ -116,6 +117,7 @@ function buildNarrationContext(eventLog, state) {
         )
       }
     } : null,
+    scoreBlockedEvent,
     resourceUnavailable,
     levelResult
   };
@@ -203,6 +205,15 @@ function formatScoreSentence(context) {
   return `${context.runnerLabel} returned the enemy flag to base. ${teamLabel} scored. Score ${newScore} to ${otherScore}.`;
 }
 
+function formatScoreBlockedSentence(context) {
+  if (!context.scoreBlockedEvent) {
+    return "";
+  }
+  const blockedTeam = context.scoreBlockedEvent.payload?.blockedTeam;
+  const teamLabel = blockedTeam ? `Team ${blockedTeam}` : "A team";
+  return `${teamLabel} reached base with the enemy flag, but their own flag is away.`;
+}
+
 function formatLevelResultSentence(context) {
   if (!context.levelResult) {
     return "";
@@ -248,6 +259,7 @@ export function formatTurnNarration(eventLog) {
   const pickupSentence = formatPickupSentence(context);
   const dropSentence = formatDropSentence(context);
   const scoreSentence = formatScoreSentence(context);
+  const scoreBlockedSentence = formatScoreBlockedSentence(context);
   const levelResultSentence = formatLevelResultSentence(context);
 
   if (resourceSentence) {
@@ -264,6 +276,9 @@ export function formatTurnNarration(eventLog) {
   }
   if (scoreSentence) {
     sentence += ` ${scoreSentence}`;
+  }
+  if (scoreBlockedSentence) {
+    sentence += ` ${scoreBlockedSentence}`;
   }
   if (levelResultSentence) {
     sentence += ` ${levelResultSentence}`;

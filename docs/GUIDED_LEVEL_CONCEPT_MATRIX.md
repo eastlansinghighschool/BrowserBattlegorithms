@@ -49,7 +49,7 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | Bug Hunt: Role Split | Trace the roles | debugging checkpoint; overlapping ally jobs | repair the runner-index branch split | Levels 23-36 |
 | **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
 | Optional Lab: Move Randomly | randomness in action choice | randomness in action | `Move Randomly` | movement basics |
-| Optional Lab: Double Carrier Showdown | carrier vulnerability under pressure | carrier vulnerability, runner index roles, teammate flag pressure | `runner index`, `teammate-has-flag`, `Move Toward` | Levels 19, 29-37 and the carrier collision rule |
+| Optional Lab: Double Carrier Showdown | own-flag-home scoring; escort and intercept coordination | scoring is blocked when own flag is away; carrier interception unblocks the score; runner index roles | `runner index`, `teammate-has-flag`, `Move Toward` | Levels 19, 29-37, the carrier collision rule, and the own-flag-home scoring rule |
 
 Note: the Strategy Brain project arc also makes `count-within` available in the toolbox from Level 23 onward. The block is additive rather than a separately taught lesson, so the matrix still treats the first authored count-and-threshold lesson as future work.
 

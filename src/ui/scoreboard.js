@@ -79,7 +79,7 @@ export function updateScoreDisplay(app) {
     updateAreaFreezeStatus(app);
     return;
   }
-  const { currentTurnNumber, teamScores, pointsToWin, currentModeView, activeLevelResult, currentLevelId, levels } = app.state;
+  const { currentTurnNumber, teamScores, pointsToWin, currentModeView, activeLevelResult, currentLevelId, levels, freePlayPointTurnLimit, freePlayRoundStartTurn } = app.state;
   const isPvP = app.state.freePlayMode === "PVP";
   const label1 = isPvP ? "P1" : "Team 1";
   const label2 = isPvP ? "P2" : "Team 2";
@@ -95,6 +95,13 @@ export function updateScoreDisplay(app) {
         ? "PvCPU Easy"
         : "PvCPU Tactical";
     prefix = `${prefix} | ${modeText} | Map: ${app.state.freePlayMapKey} | Team Size: ${app.state.freePlayTeamSize}`;
+    if (typeof freePlayPointTurnLimit === "number" && freePlayPointTurnLimit > 0) {
+      const turnsUsed = currentTurnNumber - (freePlayRoundStartTurn ?? 1);
+      const turnsRemaining = freePlayPointTurnLimit - turnsUsed;
+      if (turnsRemaining <= 10 && turnsRemaining > 0) {
+        prefix = `${prefix} | Point resets in ${turnsRemaining} turn${turnsRemaining === 1 ? "" : "s"}`;
+      }
+    }
   }
   scoreElement.innerHTML = prefix;
   updateAreaFreezeStatus(app);

@@ -36,6 +36,8 @@ Three variables together describe the active UI context. They are independent; r
 | `currentModeView` | `GUIDED_LEVELS`, `FREE_PLAY` | Top-level view: the level-picker / lesson panel vs the free-play setup / sandbox. |
 | `freePlayMode` | `PvP`, `PvCPU Easy`, `PvCPU Tactical` | Sub-mode within Free Play. Ignored when `currentModeView` is `GUIDED_LEVELS`. |
 | `activeBlocklyTeamTab` | `1`, `2` | Which team's program is loaded in the Blockly editor during PvP. Ignored outside PvP. |
+| `freePlayPointTurnLimit` | `null`, `60`, `100`, `150`, `200` | Per-point turn limit in Free Play. `null` = no limit. Default `100`. Does not apply to Guided Levels. |
+| `freePlayRoundStartTurn` | integer | The `currentTurnNumber` at which the current Free Play round began. Reset to `currentTurnNumber` on every `resetRound` call and on match start. |
 
 ## Control visibility by mode
 
@@ -79,7 +81,7 @@ Prediction levels use the same guided lesson shell but add one extra rule: the S
 `src/ui/scoreboard.js` combines turn count, team scores, win threshold, and the area-freeze status chip for all modes. Additional mode-sensitive fields:
 
 - In Guided Levels: shows the current level title and guided level pass/fail status.
-- In Free Play: shows the free-play mode label and map name.
+- In Free Play: shows the free-play mode label, map name, team size, and the per-point turn limit label. When 10 or fewer turns remain in the current round and a limit is active, appends a `Point resets in N turn(s)` countdown warning inline.
 - When Area Freeze is available in the current context, shows a compact snowflake chip with ready/cooldown text and an offscreen accessible Team / Area Freeze label instead of a live region. Free Play PvCPU shows the player team's chip; PvP shows both teams.
 - Scoreboard rendering is suppressed while the mode-chooser overlay is active.
 

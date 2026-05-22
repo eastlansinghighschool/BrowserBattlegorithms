@@ -5,8 +5,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projec
 export default {
   id: "optional-double-carrier-showdown",
   title: "Optional Lab: Double Carrier Showdown",
-  description: "Protect your carrier while another carrier is already racing on the other side of the map.",
-  introText: "Both teams start with a flag carrier. This optional lab is about carrier vulnerability, screening, and interception now that collisions can decide a carrier's fate.",
+  description: "Both teams start with a carrier. Your team cannot score while your own flag is away — stop the enemy carrier to unblock the run.",
+  introText: "Both teams start with a flag carrier already in motion. Under the scoring rules, your team cannot score while your own flag is away — stopping the enemy carrier is the only way to unblock your run. This lab is about using runner roles to escort your carrier and intercept theirs at the same time.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "wideScrimmage",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT,
@@ -27,13 +27,13 @@ export default {
     {
       id: "optional-double-carrier-intro",
       title: "Two Carriers, One Decision",
-      body: "Your runner starts with the enemy flag, and Team 2 already has your flag. Because carriers can now lose collisions even on home turf, the lane is only safe if your allies help screen and intercept.",
+      body: "Your runner starts with the enemy flag, and Team 2 already has your flag. Your team cannot score while your own flag is away — stopping the enemy carrier is not optional, it is what unblocks the scoring run.",
       targetSelector: "#canvas-container"
     },
     {
       id: "optional-double-carrier-roles",
       title: "Split Escort And Intercept",
-      body: "Use runner index and teammate-has-flag to give one ally escort duty and another ally interception duty. The goal is coordination, not a single rush.",
+      body: "Use runner index and teammate-has-flag to give one ally escort duty and one ally interception duty. Intercepting the enemy carrier returns your flag home and unblocks the scoring run.",
       targetSelector: "#blockly-region"
     }
   ],

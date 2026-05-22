@@ -14,6 +14,12 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
 | [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
 | [Plan 66](plan-66-browser-test-tier-cost-cleanup.md) | ready | Clean up browser test tier drift and Playwright cost: move local-dev workbench out of smoke, add targeted tooling scripts, reduce smoke/focus duplication, and document the revised validation policy without deleting coverage. |
+| [Plan 67](plan-67-own-flag-home-scoring-rule.md) | complete | Require a team's own flag to be home before a carrier can score, with blocked-score feedback, docs, tests, and guided-level fallout reporting. |
+| [Plan 68](plan-68-guided-level-scoring-rule-repairs.md) | complete | Repair guided-level, fixture, and curriculum fallout from the own-flag-home scoring rule, especially Levels 28, 37, and 39. |
+| [Plan 69](plan-69-cpu-scoring-rule-adaptation.md) | complete | Adapt Free Play tactical CPU behavior so carriers respond sensibly when scoring is blocked because their own flag is away. |
+| [Plan 70](plan-70-free-play-tactical-cpu-rut-escape.md) | complete | Add a bounded rut-escape behavior for Free Play Tactical CPU runners using existing recent movement state. |
+| [Plan 71](plan-71-tactical-cpu-special-ability-polish.md) | complete | Improve Free Play Tactical CPU special-ability use, especially attacker jump choices and carrier Area Freeze. |
+| [Plan 72](plan-72-free-play-per-point-turn-limit.md) | complete | Add a Free Play per-point turn-limit dropdown, defaulting to 100 turns, that resets stalemated rounds with no score. |
 
 ### Completed Packets
 

@@ -340,6 +340,15 @@ function advanceToNextRunner(app) {
 
   if (state.activeRunnerIndex === 0 && previousActiveRunnerIndex === state.allRunners.length - 1) {
     state.currentTurnNumber += 1;
+    // Free Play per-point turn limit: reset the round with no score when the limit is reached.
+    if (
+      state.currentModeView === GAME_VIEW_MODES.FREE_PLAY &&
+      typeof state.freePlayPointTurnLimit === "number" &&
+      state.freePlayPointTurnLimit > 0 &&
+      state.currentTurnNumber - (state.freePlayRoundStartTurn ?? 1) >= state.freePlayPointTurnLimit
+    ) {
+      resetRound(state);
+    }
   }
 }
 

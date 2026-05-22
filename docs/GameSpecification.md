@@ -65,6 +65,7 @@ The entities below are the persistent objects that the rules move around and upd
 - A flag stays at its home unless a runner carries it away or a round reset returns it home.
 - When a flag is carried, its visible position follows the carrier.
 - A runner can only score with the enemy flag, not with its own flag.
+- A runner's score attempt is blocked if that runner's own team's flag is not currently at home. The runner keeps the enemy flag and the turn continues normally. The runner can score on a later turn once their own flag returns home.
 
 ### Barriers
 - A barrier has a grid position and the id of the runner who placed it.
@@ -177,7 +178,8 @@ A team may use it only when the shared helper says it is ready.
 - The shared cooldown is what keeps the power from being spammed every turn.
 
 ## 9. Scoring and Win Conditions
-A point is scored when a runner carrying the enemy flag reaches any cell in its own team's base area.
+A point is scored when a runner carrying the enemy flag reaches any cell in its own team's base area and that runner's own team's flag is currently at home.
+If the runner reaches base with the enemy flag but their own team's flag is away, scoring is blocked. The runner keeps the enemy flag and play continues. Scoring can succeed on that runner's later turn once their own flag is back home.
 When scoring happens, the flag returns home, the round resets, and play continues unless the match is over.
 The first team to reach the points-to-win threshold wins the match.
 Guided levels may add authored pass/fail conditions on top of these match rules.
@@ -188,6 +190,7 @@ Guided levels may add authored pass/fail conditions on top of these match rules.
 - Scoring is the thing that turns a successful flag run into a completed round.
 - A full match can contain several scored rounds before one team reaches the win threshold.
 - A round reset happens immediately after the point is awarded.
+- In Free Play, an optional per-point turn limit can also reset the current round with no score when the round lasts too long.
 - The match is over only when a team reaches the win threshold.
 
 ## 10. Configurable Parameters
@@ -200,6 +203,7 @@ Guided levels may add authored pass/fail conditions on top of these match rules.
 - The active map and the runner spawn setup for the current level or match.
 - The default board remains 12 columns by 8 rows unless a level or mode overrides it.
 - Free Play team size can vary within the authored sandbox limits.
+- Free Play can set a per-point turn limit of no limit, 60, 100, 150, or 200 turns. The default is 100 turns.
 - Collision freeze duration is separate from Area Freeze duration and cooldown.
 - Configurable parameters change the match feel without changing the core rules.
 - The same rules still apply when a level chooses a smaller or larger map.

@@ -34,6 +34,19 @@ export function checkForScoring(state, runner) {
     return false;
   }
 
+  // Own-flag-home prerequisite: the runner can only score when their own team's flag
+  // is at home and not carried.  If it is away, emit a factual event and return false
+  // without changing any score, flag, or round state.
+  const ownFlag = state.gameFlags?.[runner.team];
+  if (!ownFlag || !ownFlag.isAtBase) {
+    emit(state, "score.blocked", {
+      blockedTeam: runner.team,
+      carrierRunnerId: runner.id,
+      reason: "own_flag_away"
+    });
+    return false;
+  }
+
   const enemyTeamId = runner.team === 1 ? 2 : 1;
   const scoredFlag = state.gameFlags[enemyTeamId];
   if (scoredFlag && scoredFlag.carriedByRunnerId === runner.id) {

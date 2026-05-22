@@ -199,6 +199,7 @@ export function initializeMatch(app) {
   state.classifierRecurrenceState.perLevelAttempt = {};
   state.classifierRecurrenceState.perMatch = {};
   state.currentTurnNumber = 1;
+  state.freePlayRoundStartTurn = 1;
   resetAreaFreezeState(state);
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
@@ -232,6 +233,7 @@ export function initializeDisplayState(app) {
   state.lastBlocklyTrace = null;
   state.classifierRecurrenceState.perLevelAttempt = {};
   state.currentTurnNumber = 1;
+  state.freePlayRoundStartTurn = 1;
   resetAreaFreezeState(state);
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
@@ -252,6 +254,7 @@ export function resetRound(state) {
   state.runnerActionHistory = {};
   state.lastScoringTeam = null;
   state.activeRunnerIndex = 0;
+  state.freePlayRoundStartTurn = state.currentTurnNumber;
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;

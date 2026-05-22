@@ -195,6 +195,36 @@ test("formatTurnNarration summarizes a frozen skip", () => {
   assert.equal(text, "Turn 5. Ally 0 is frozen and skipped a turn.");
 });
 
+test("formatTurnNarration describes a blocked scoring attempt", () => {
+  const text = formatTurnNarration(makeTurnLog([
+    {
+      kind: "turn.started",
+      payload: {
+        runnerId: "runner_ally_0",
+        runnerLabel: "Ally 0"
+      }
+    },
+    {
+      kind: "runner.actionResolved",
+      payload: {
+        actionType: "MOVE_FORWARD",
+        outcome: "moved",
+        targetCell: { x: 0, y: 3 }
+      }
+    },
+    {
+      kind: "score.blocked",
+      payload: {
+        blockedTeam: 1,
+        carrierRunnerId: "runner_ally_0",
+        reason: "own_flag_away"
+      }
+    }
+  ]));
+
+  assert.equal(text, "Turn 5. Ally 0 moved to row 4, column 1. Team 1 reached base with the enemy flag, but their own flag is away.");
+});
+
 test("formatTurnNarration summarizes an unavailable resource", () => {
   const text = formatTurnNarration(makeTurnLog([
     {

@@ -44,6 +44,113 @@ test("flag pickup and scoring update team score", () => {
   assert.equal(enemyFlag.isAtBase, true);
 });
 
+test("scoring is blocked when own flag is carried by the enemy", () => {
+  // Simulate: Team 1 runner is at Team 1 base with the enemy flag, but Team 1's own
+  // flag is being carried by an opponent — so Team 1 cannot score yet.
+  const app = buildMatch();
+  const runner = app.state.allRunners.find((r) => r.team === 1);
+  const enemyFlag = app.state.gameFlags[2];
+  const ownFlag = app.state.gameFlags[1];
+
+  // Give runner the enemy flag
+  runner.gridX = enemyFlag.gridX;
+  runner.gridY = enemyFlag.gridY;
+  checkForFlagPickup(app.state, runner);
+  assert.equal(runner.hasEnemyFlag, true);
+
+  // Place runner on Team 1's base
+  runner.gridX = 0;
+  runner.gridY = 3;
+
+  // Simulate Team 1's own flag being carried away
+  ownFlag.isAtBase = false;
+  ownFlag.carriedByRunnerId = "runner_2_NPC1";
+
+  const scored = checkForScoring(app.state, runner);
+  assert.equal(scored, false, "score must be blocked when own flag is away");
+  assert.equal(app.state.teamScores[1], 0, "score must not increment");
+  assert.equal(runner.hasEnemyFlag, true, "blocked carrier must keep the enemy flag");
+  assert.equal(enemyFlag.isAtBase, false, "enemy flag must not be reset");
+  assert.equal(ownFlag.isAtBase, false, "own flag state must be unchanged");
+});
+
+test("scoring is blocked when own flag is dropped but not yet home", () => {
+  const app = buildMatch();
+  const runner = app.state.allRunners.find((r) => r.team === 1);
+  const enemyFlag = app.state.gameFlags[2];
+  const ownFlag = app.state.gameFlags[1];
+
+  runner.gridX = enemyFlag.gridX;
+  runner.gridY = enemyFlag.gridY;
+  checkForFlagPickup(app.state, runner);
+
+  runner.gridX = 0;
+  runner.gridY = 3;
+
+  // Own flag dropped mid-field (not at base, not carried)
+  ownFlag.isAtBase = false;
+  ownFlag.carriedByRunnerId = null;
+  ownFlag.gridX = 5;
+  ownFlag.gridY = 3;
+
+  const scored = checkForScoring(app.state, runner);
+  assert.equal(scored, false, "score must be blocked when own flag is not yet home");
+  assert.equal(app.state.teamScores[1], 0);
+  assert.equal(runner.hasEnemyFlag, true, "blocked carrier must keep the enemy flag");
+});
+
+test("blocked carrier can score on its own next completed turn once own flag returns home", () => {
+  const app = buildMatch();
+  const runner = app.state.allRunners.find((r) => r.team === 1);
+  const enemyFlag = app.state.gameFlags[2];
+  const ownFlag = app.state.gameFlags[1];
+
+  runner.gridX = enemyFlag.gridX;
+  runner.gridY = enemyFlag.gridY;
+  checkForFlagPickup(app.state, runner);
+
+  runner.gridX = 0;
+  runner.gridY = 3;
+
+  // First attempt: own flag is away — blocked
+  ownFlag.isAtBase = false;
+  ownFlag.carriedByRunnerId = "runner_2_NPC1";
+  const firstAttempt = checkForScoring(app.state, runner);
+  assert.equal(firstAttempt, false);
+  assert.equal(runner.hasEnemyFlag, true, "runner still holds the enemy flag after blocked attempt");
+
+  // Own flag returns home (e.g., from a collision or manual reset)
+  ownFlag.resetToInitialPosition();
+  assert.equal(ownFlag.isAtBase, true);
+
+  // Second attempt on runner's own next completed turn — same position, now scores
+  const secondAttempt = checkForScoring(app.state, runner);
+  assert.equal(secondAttempt, true, "carrier must score once own flag is back home");
+  assert.equal(app.state.teamScores[1], 1);
+  assert.equal(runner.hasEnemyFlag, false);
+});
+
+test("scoring still works normally when own flag is home", () => {
+  // Regression guard: the new rule must not change behavior when own flag is at base.
+  const app = buildMatch();
+  const runner = app.state.allRunners[0];
+  const enemyFlag = app.state.gameFlags[2];
+  runner.gridX = enemyFlag.gridX;
+  runner.gridY = enemyFlag.gridY;
+  checkForFlagPickup(app.state, runner);
+  assert.equal(runner.hasEnemyFlag, true);
+
+  // Both flags start at base in a fresh buildMatch — own flag (gameFlags[1]) is at base
+  assert.equal(app.state.gameFlags[1].isAtBase, true);
+
+  runner.gridX = 0;
+  runner.gridY = 3;
+  const scored = checkForScoring(app.state, runner);
+  assert.equal(scored, true);
+  assert.equal(app.state.teamScores[1], 1);
+  assert.equal(runner.hasEnemyFlag, false);
+});
+
 test("level 1 passes when the ally reaches the target cell and unlocks level 2", () => {
   const app = createApp();
   initializeLevelState(app);

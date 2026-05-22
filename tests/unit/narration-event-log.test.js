@@ -231,6 +231,52 @@ test("flag.dropped logs collision loss and the collision cell", () => {
   });
 });
 
+test("score.blocked logs the blocked team, carrier, and reason when own flag is away", () => {
+  const app = buildMatch();
+  const runner = app.state.allRunners[0]; // team 1 human runner
+  const teamBaseType = getTeamBaseCellType(app.state, runner.team);
+  let scoringCell = null;
+  for (let y = 0; y < app.state.gameMap.length && !scoringCell; y += 1) {
+    for (let x = 0; x < app.state.gameMap[y].length; x += 1) {
+      if (app.state.gameMap[y][x] === teamBaseType) {
+        scoringCell = { x, y };
+        break;
+      }
+    }
+  }
+
+  assert.ok(scoringCell);
+  runner.gridX = scoringCell.x;
+  runner.gridY = scoringCell.y;
+
+  // Give runner the enemy flag
+  const enemyFlag = app.state.gameFlags[2];
+  runner.hasEnemyFlag = true;
+  enemyFlag.carriedByRunnerId = runner.id;
+  enemyFlag.isAtBase = false;
+  enemyFlag.gridX = runner.gridX;
+  enemyFlag.gridY = runner.gridY;
+
+  // Own flag is away
+  const ownFlag = app.state.gameFlags[1];
+  ownFlag.isAtBase = false;
+  ownFlag.carriedByRunnerId = "runner_2_NPC1";
+
+  checkForScoring(app.state, runner);
+
+  const blockedEvent = getTurnEvents(app).find((event) => event.kind === "score.blocked");
+  assert.ok(blockedEvent, "expected a score.blocked event");
+  assert.deepEqual(blockedEvent.payload, {
+    blockedTeam: runner.team,
+    carrierRunnerId: runner.id,
+    reason: "own_flag_away"
+  });
+
+  // No team.scored event must be present
+  const scoredEvent = getTurnEvents(app).find((event) => event.kind === "team.scored");
+  assert.equal(scoredEvent, undefined, "team.scored must not fire when scoring is blocked");
+});
+
 test("team.scored logs the score increment and win threshold", () => {
   const app = buildMatch();
   const runner = app.state.allRunners[0];

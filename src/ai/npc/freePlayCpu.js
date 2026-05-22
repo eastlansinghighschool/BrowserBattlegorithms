@@ -13,8 +13,11 @@ import {
   resolveMoveTowardTarget,
   translateActionDecision
 } from "../../core/movement.js";
+import { hasRunnerBeenStuckForTurns } from "../../core/recentMovement.js";
 import { getEnemyTeamId, getTeamConfig } from "../../core/teams.js";
 import { calculateMoveTowardsTarget } from "./pathing.js";
+
+const RUT_THRESHOLD_TURNS = 4;
 
 function getRandomFn(state) {
   return typeof state.randomFn === "function" ? state.randomFn : Math.random;
@@ -75,6 +78,22 @@ function getLegalMovementCandidates(runner, state) {
 
 function getEnemyFlagCarrier(state, teamId) {
   return state.allRunners.find((runner) => runner.team === teamId && runner.hasEnemyFlag) || null;
+}
+
+function getOwnFlagCarrier(state, teamId) {
+  const ownFlag = state.gameFlags?.[teamId];
+  if (!ownFlag || !ownFlag.carriedByRunnerId) return null;
+  return state.allRunners.find((r) => r.id === ownFlag.carriedByRunnerId) || null;
+}
+
+function getNearestUnfrozenEnemy(runner, state) {
+  return state.allRunners
+    .filter((candidate) => candidate.team !== runner.team && !candidate.isFrozen)
+    .sort((a, b) => {
+      const distA = Math.abs(a.gridX - runner.gridX) + Math.abs(a.gridY - runner.gridY);
+      const distB = Math.abs(b.gridX - runner.gridX) + Math.abs(b.gridY - runner.gridY);
+      return distA - distB || a.id.localeCompare(b.id);
+    })[0] || null;
 }
 
 function getNearestEnemyOnMySide(runner, state) {
@@ -141,35 +160,111 @@ function getGuidedVerticalPatrolAction(runner, state) {
   return { actionType: AI_ACTION_TYPES.STAY_STILL };
 }
 
+function getRutEscapeAction(runner, state) {
+  const recentPositions = runner.recentMovementState?.recentEndPositions ?? [];
+  const recentSet = new Set(recentPositions.map((p) => `${p.gridX},${p.gridY}`));
+  const randomFn = getRandomFn(state);
+
+  const candidates = getLegalMovementCandidates(runner, state)
+    .map((decision) => translateActionDecision(runner, decision, state));
+
+  const escapeCandidates = candidates.filter(
+    (c) => !recentSet.has(`${c.targetGridX},${c.targetGridY}`)
+  );
+
+  const pool = escapeCandidates.length > 0 ? escapeCandidates : candidates;
+  return getRandomItem(pool, randomFn) || { actionType: AI_ACTION_TYPES.STAY_STILL };
+}
+
+function getBlockedCarrierAction(runner, state) {
+  const ownFlagCarrier = getOwnFlagCarrier(state, runner.team);
+  if (ownFlagCarrier) {
+    const dist = Math.abs(ownFlagCarrier.gridX - runner.gridX) + Math.abs(ownFlagCarrier.gridY - runner.gridY);
+    if (isAreaFreezeReady(state, runner.team) && dist <= AREA_FREEZE_RADIUS) {
+      return { actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS };
+    }
+    const moveToward = calculateMoveTowardsTarget(
+      runner,
+      ownFlagCarrier.gridX,
+      ownFlagCarrier.gridY,
+      state.barriers,
+      state.gameMap,
+      state
+    );
+    if (moveToward.actionType !== AI_ACTION_TYPES.STAY_STILL) {
+      return moveToward;
+    }
+  }
+  return getRandomLegalFallbackMove(runner, state, null);
+}
+
 function getAttackerAction(runner, state) {
+  // 1. Rut escape overrides everything when stuck in a small local area.
+  if (hasRunnerBeenStuckForTurns(runner, RUT_THRESHOLD_TURNS)) {
+    return getRutEscapeAction(runner, state);
+  }
+
+  // 2. Blocked-scoring: own flag is away — chase the runner holding it instead.
+  if (runner.hasEnemyFlag && !(state.gameFlags?.[runner.team]?.isAtBase)) {
+    return getBlockedCarrierAction(runner, state);
+  }
+
+  // 3. Carrier freeze: while returning home with the enemy flag, freeze nearby threats.
+  if (runner.hasEnemyFlag && isAreaFreezeReady(state, runner.team)) {
+    const threat = getNearestUnfrozenEnemy(runner, state);
+    if (threat) {
+      const dist = Math.abs(threat.gridX - runner.gridX) + Math.abs(threat.gridY - runner.gridY);
+      if (dist <= AREA_FREEZE_RADIUS) {
+        return { actionType: AI_ACTION_TYPES.FREEZE_OPPONENTS };
+      }
+    }
+  }
+
+  // 4. Resolve the tactical target and its coordinates.
   const moveTarget = runner.hasEnemyFlag
     ? resolveMoveTowardTarget(state, runner, MOVE_TOWARD_TARGETS.MY_BASE)
     : resolveMoveTowardTarget(state, runner, MOVE_TOWARD_TARGETS.ENEMY_FLAG);
-  const preferred = runner.hasEnemyFlag
-    ? calculateMoveTowardsTarget(runner, moveTarget?.x ?? runner.gridX, moveTarget?.y ?? runner.gridY, state.barriers, state.gameMap, state)
-    : calculateMoveTowardsTarget(
-        runner,
-        state.gameFlags[getEnemyTeamId(runner.team)]?.gridX ?? runner.gridX,
-        state.gameFlags[getEnemyTeamId(runner.team)]?.gridY ?? runner.gridY,
-        state.barriers,
-        state.gameMap,
-        state
-      );
+  const targetX = runner.hasEnemyFlag
+    ? (moveTarget?.x ?? runner.gridX)
+    : (state.gameFlags[getEnemyTeamId(runner.team)]?.gridX ?? runner.gridX);
+  const targetY = runner.hasEnemyFlag
+    ? (moveTarget?.y ?? runner.gridY)
+    : (state.gameFlags[getEnemyTeamId(runner.team)]?.gridY ?? runner.gridY);
+
+  // 5. Jump if the landing cell is legal and meaningfully reduces distance to target.
+  if (runner.canJump) {
+    const jumpCell = getForwardCell(runner, 2);
+    if (!isCellBlockedForRunner(jumpCell.x, jumpCell.y, state.barriers, state.gameMap, state, runner)) {
+      const distCurrent = Math.abs(targetX - runner.gridX) + Math.abs(targetY - runner.gridY);
+      const distAfterJump = Math.abs(targetX - jumpCell.x) + Math.abs(targetY - jumpCell.y);
+      if (distAfterJump < distCurrent) {
+        return { actionType: AI_ACTION_TYPES.JUMP_FORWARD };
+      }
+    }
+  }
+
+  // 6. Normal pathing move toward target.
+  const preferred = calculateMoveTowardsTarget(runner, targetX, targetY, state.barriers, state.gameMap, state);
 
   if (preferred.actionType !== AI_ACTION_TYPES.STAY_STILL) {
     return preferred;
   }
 
+  // 7. If blocked by a barrier directly ahead, stay still rather than random-wandering.
   const forwardCell = getForwardCell(runner, 1);
   if (getBarrierAtCell(forwardCell.x, forwardCell.y, state.barriers)) {
     return { actionType: AI_ACTION_TYPES.STAY_STILL };
   }
 
-  const fallbackMove = getRandomLegalFallbackMove(runner, state, moveTarget);
-  return fallbackMove;
+  // 8. Random legal fallback biased toward target.
+  return getRandomLegalFallbackMove(runner, state, moveTarget);
 }
 
 function getDefenderAction(runner, state) {
+  if (hasRunnerBeenStuckForTurns(runner, RUT_THRESHOLD_TURNS)) {
+    return getRutEscapeAction(runner, state);
+  }
+
   const enemyCarrier = getEnemyFlagCarrier(state, getEnemyTeamId(runner.team));
   if (enemyCarrier) {
     const carrierDistance = Math.abs(enemyCarrier.gridX - runner.gridX) + Math.abs(enemyCarrier.gridY - runner.gridY);
