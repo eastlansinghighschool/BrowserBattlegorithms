@@ -1,0 +1,73 @@
+# Guided Reference Behavior Evidence: Level 7: Watch the Wall
+
+## Level Identity
+- order: 8
+- id: `watch-the-wall`
+- title: Level 7: Watch the Wall
+- category: ordinary
+- level kind: not found
+- source file: `src/config/levels/phases/sensing/level-07-watch-the-wall.js`
+- dossier link: [dossier](../level-dossiers/08-watch-the-wall.md)
+- summary index: [behavior-summary-index](../behavior-summary-index.md)
+
+## Fixture Overview
+- status: pass
+- runnable fixture count: 1
+- one-off reference: pass
+  - fixture path: `tests/unit/fixtures/guided-reference-solutions/watch-the-wall.xml`
+  - turns elapsed: 5
+  - lastLevelResultReason: win_condition_met
+
+## Runtime Evidence
+| fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
+| --- | --- | --- | --- | --- | --- | --- |
+| one-off reference | pass | 5 | Team 1: 0, Team 2: 0 | 5 | no | none observed |
+
+### one-off reference
+- fixture path: `tests/unit/fixtures/guided-reference-solutions/watch-the-wall.xml`
+- run status: pass
+- result: PASSED
+- turns elapsed: 5
+- activeLevelResult: PASSED
+- lastLevelResultReason: win_condition_met
+- team scores: Team 1: 0, Team 2: 0
+- score / blocked-scoring events: none observed
+- flag pickup / drop events: none observed
+- resource unavailable events: none observed
+- branch/trace evidence present: yes
+- reference action count: 5
+- distinct action types observed: `MOVE_DOWN_SCREEN`, `MOVE_FORWARD`
+- live enemy acted: no
+- enemy interaction events: none observed
+- ignored/extra-action evidence: none observed
+### Reference action summary
+| turn | runner | action | outcome | trace summary |
+| --- | --- | --- | --- | --- |
+| 1 | `runner_1_AI_AllyP1` | MOVE_DOWN_SCREEN | illegal_noop | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=true -> action `battlegorithms_move_down_screen` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_DOWN_SCREEN | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=true -> action `battlegorithms_move_down_screen` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward` |
+### Enemy action summary
+- none observed
+### Event Tail
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, outcome=illegal_noop)
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, outcome=illegal_noop) | level.result (result=PASSED)
+### Trace Tail
+- turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=true -> action `battlegorithms_move_down_screen`
+- turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=true -> action `battlegorithms_move_down_screen`
+- turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward`
+- turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward`
+- turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_forward`
+
+#### NPC / Enemy Snapshot
+## Enemy / NPC Behavior
+- runner_2_Npc1: behavior PATROL_INTERCEPT; start (10, 2); frozen yes (995 turns remaining)
+- runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (995 turns remaining)
+- first enemy actions: none observed

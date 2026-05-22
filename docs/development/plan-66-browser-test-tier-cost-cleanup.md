@@ -4,7 +4,7 @@
 
 - Packet id: plan-66
 - Packet title: Browser Test Tier Cost Cleanup
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: testing / CI hygiene / docs

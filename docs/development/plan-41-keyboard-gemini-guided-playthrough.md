@@ -4,7 +4,7 @@
 
 - Packet id: plan-41
 - Packet title: Keyboard-First Gemini Guided Playthrough Campaign
-- Status: ready
+- Status: complete
 - Owner/model: browser-capable Gemini/playtest agent with orchestration review
 - Date: 2026-05-17
 - Packet type: scan-only / browser QA / pedagogy / accessibility-informed playtest

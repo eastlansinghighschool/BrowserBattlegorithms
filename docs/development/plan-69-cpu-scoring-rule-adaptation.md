@@ -2,7 +2,7 @@
 
 - Packet id: Plan 69
 - Packet title: CPU Scoring-Rule Adaptation
-- Status: ready
+- Status: complete
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

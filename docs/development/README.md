@@ -12,14 +12,17 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [00 Level Editing Agent Starting Prompt](00-level-editing-agent-starting-prompt.md) | ready | Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation. |
 | [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
 | [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
-| [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | ready | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
-| [Plan 66](plan-66-browser-test-tier-cost-cleanup.md) | ready | Clean up browser test tier drift and Playwright cost: move local-dev workbench out of smoke, add targeted tooling scripts, reduce smoke/focus duplication, and document the revised validation policy without deleting coverage. |
+| [Plan 41](plan-41-keyboard-gemini-guided-playthrough.md) | complete | Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched. |
+| [Plan 66](plan-66-browser-test-tier-cost-cleanup.md) | complete | Clean up browser test tier drift and Playwright cost: move local-dev workbench out of smoke, add targeted tooling scripts, reduce smoke/focus duplication, and document the revised validation policy without deleting coverage. |
 | [Plan 67](plan-67-own-flag-home-scoring-rule.md) | complete | Require a team's own flag to be home before a carrier can score, with blocked-score feedback, docs, tests, and guided-level fallout reporting. |
 | [Plan 68](plan-68-guided-level-scoring-rule-repairs.md) | complete | Repair guided-level, fixture, and curriculum fallout from the own-flag-home scoring rule, especially Levels 28, 37, and 39. |
 | [Plan 69](plan-69-cpu-scoring-rule-adaptation.md) | complete | Adapt Free Play tactical CPU behavior so carriers respond sensibly when scoring is blocked because their own flag is away. |
 | [Plan 70](plan-70-free-play-tactical-cpu-rut-escape.md) | complete | Add a bounded rut-escape behavior for Free Play Tactical CPU runners using existing recent movement state. |
 | [Plan 71](plan-71-tactical-cpu-special-ability-polish.md) | complete | Improve Free Play Tactical CPU special-ability use, especially attacker jump choices and carrier Area Freeze. |
 | [Plan 72](plan-72-free-play-per-point-turn-limit.md) | complete | Add a Free Play per-point turn-limit dropdown, defaulting to 100 turns, that resets stalemated rounds with no score. |
+| [Plan 73](plan-73-guided-level-dossier-generator.md) | complete | Generate factual per-level guided dossiers and a summary index so later curriculum analysis can consume packaged evidence instead of raw source spelunking. |
+| [Plan 74](plan-74-guided-reference-behavior-evidence.md) | complete | Generate deterministic reference-run and NPC/enemy behavior evidence for guided levels, linked to the complexity-audit dossier set. |
+| [Plan 75](plan-75-guided-level-complexity-audit.md) | ready | Repeatable orchestration-grade scan that consumes Plan 73/74 evidence to produce model-specific guided-level complexity audits for later comparison. |
 
 ### Completed Packets
 
@@ -117,14 +120,15 @@ Loose backlog triage and unnumbered future packet ideas live in [future-directio
 
 ## Current Validation Baseline
 
-As of Plan 66 completion on 2026-05-21:
+As of Plan 74 completion on 2026-05-21:
 
-- `npm test` passes — 361/361 tests.
+- `npm test` passes — 400/400 tests (Plan 74 added 7 unit tests in `level-behavior-evidence.test.js`, including the `full-team-tactics` not-applicable regression; Plan 73 had already added `level-dossiers.test.js`; verified 2026-05-21 after Plan 74 repair pass).
 - `npm run test:browser:smoke` passes — 60/60 tests, ~40-50s, `workers: 2`.
 - `npm run test:browser:focus` passes — 5/5 tests, ~30s, `workers: 1`.
 - `npm run test:browser:tooling` passes — 21/21 tests, ~25-30s, `workers: 1`.
 - `npm run test:browser` passes — 126/126 tests, ~2m10s, `workers: 1`.
 - `npm run build` passes.
+- `npm run level:behavior-evidence` generates 46 per-level behavior-evidence files and `behavior-summary-index.md` under `reports/development/guided-level-complexity-audit/`.
 - `npm run test:browser:workbench` is deferred/manual and currently known failing until the lazy-boot packet lands.
 - Build output still warns that Blockly is both dynamically and statically imported, preventing the intended chunk split.
 - Build output still warns that minified chunks exceed 500 kB.
