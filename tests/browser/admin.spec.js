@@ -15,6 +15,13 @@ function buildSampleExport(studentName = "Ada Lovelace", sessionId = "session-ad
   appendUsageEvent(session, "mode_entered", { modeView: "GUIDED_LEVELS", levelId: "move-to-target", mapKey: "wideAisle" }, "2026-05-13T10:00:01.000Z");
   appendUsageEvent(session, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
   appendUsageEvent(session, "level_completed", { levelId: "move-to-target", levelKind: "guided", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "enemy-nearby", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 4, attemptNumber: 2 }, "2026-05-13T10:01:30.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "enemy-nearby", levelKind: "guided", result: "FAILED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 8, turnsSpent: 4 }, "2026-05-13T10:03:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "show-what-you-know", levelKind: "challenge", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 9, attemptNumber: 3 }, "2026-05-13T10:04:00.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "show-what-you-know", levelKind: "challenge", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 18, turnsSpent: 9 }, "2026-05-13T10:10:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 19, attemptNumber: 4 }, "2026-05-13T10:10:30.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "optional-random-lab", levelKind: null, modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 20, attemptNumber: 5 }, "2026-05-13T10:11:00.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "optional-random-lab", levelKind: null, result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 24, turnsSpent: 4 }, "2026-05-13T10:12:00.000Z");
   return buildUsageExportWithIntegrity(session, studentName, "2026-05-13T10:15:00.000Z");
 }
 
@@ -50,6 +57,12 @@ test("loading a valid usage file renders a table row", async ({ page }) => {
   await expect(page.locator("#tableSection")).toBeVisible();
   await expect(page.locator("#classTableBody")).toContainText("Grace Hopper");
   await expect(page.locator("#classTableBody")).toContainText("✓ verified");
+  await expect(page.locator("#classTable")).toContainText("Highest reached");
+  await expect(page.locator("#classTable")).toContainText("Highest passed");
+  await expect(page.locator("#classTable")).toContainText("Highest passed challenge");
+  await expect(page.locator("#classTable")).toContainText("Needs review");
+  await expect(page.locator("#classTable")).toContainText("Session span (min)");
+  await expect(page.locator("#classTable")).not.toContainText("Time (min)");
 });
 
 test("loading multiple files renders one row per file", async ({ page }) => {
@@ -70,6 +83,15 @@ test("clicking a table row opens the detail panel", async ({ page }) => {
   await expect(page.locator("#detailSection")).toBeVisible();
   await expect(page.locator("#detailHeading")).toContainText("Alan Turing");
   await expect(page.locator("#detailContent")).toContainText("Verified hash");
+  await expect(page.locator("#detailContent")).toContainText("Guided Progress Story");
+  await expect(page.locator("#detailContent")).toContainText("Highest reached");
+  await expect(page.locator("#detailContent")).toContainText("Highest passed");
+  await expect(page.locator("#detailContent")).toContainText("Highest passed challenge");
+  await expect(page.locator("#detailContent")).toContainText("Contiguous pass-through");
+  await expect(page.locator("#detailContent")).toContainText("Guided Sequence Map");
+  await expect(page.locator("#detailContent")).toContainText("Exact Guided Progress Table");
+  await expect(page.locator("#detailContent")).toContainText("Challenge 22: Show What You Know");
+  await expect(page.locator("#detailContent")).toContainText("Optional Lab: Move Randomly");
 });
 
 test("tampered file shows hash mismatch warning in detail panel", async ({ page }) => {

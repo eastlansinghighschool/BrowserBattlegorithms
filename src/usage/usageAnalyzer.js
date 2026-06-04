@@ -1,9 +1,16 @@
 import { createHash } from "node:crypto";
+import { getLevelDefinitions } from "../config/levels/index.js";
 import {
   canonicalJsonStringify,
   createExportPayload,
   getUsageEventFingerprint
 } from "./usageFormat.js";
+import {
+  buildGuidedLevelProgressCatalog,
+  deriveGuidedProgress
+} from "./guidedProgress.js";
+
+const GUIDED_LEVEL_PROGRESS_CATALOG = buildGuidedLevelProgressCatalog(getLevelDefinitions());
 
 export function computeUsageSha256Hex(payloadWithoutIntegrity) {
   const canonical = canonicalJsonStringify(payloadWithoutIntegrity);
@@ -83,6 +90,12 @@ export function summarizeUsagePayload(payload) {
   if (hasFreePlayEvidence && Number(summary.freePlay?.scoreEvents || 0) === 0 && (Number(freePlayScores?.[1] || 0) + Number(freePlayScores?.[2] || 0) > 0)) {
     suspiciousSignals.push("scores_without_score_events");
   }
+  const guidedProgress = deriveGuidedProgress({
+    events: payload?.events || [],
+    summary,
+    levelCatalog: GUIDED_LEVEL_PROGRESS_CATALOG
+  });
+  const sessionSpanMinutes = Math.max(0, Math.round(totalPlayTimeMs / 60000));
 
   return {
     studentName: payload?.studentName || "",
@@ -115,10 +128,14 @@ export function summarizeUsagePayload(payload) {
         2: Number(freePlayScores?.[2] || 0)
       }
     },
-    playTimeMinutes: Math.max(0, Math.round(totalPlayTimeMs / 60000)),
+    playTimeMinutes: sessionSpanMinutes,
+    sessionSpanMinutes,
     eventFingerprint,
     challengeSummary: describeChallengeCounts(summary),
-    suspiciousSignals
+    suspiciousSignals,
+    guidedProgress,
+    needsReview: suspiciousSignals.length > 0 || guidedProgress.needsReview,
+    reviewSignals: guidedProgress.reviewSignals
   };
 }
 

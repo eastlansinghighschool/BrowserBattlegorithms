@@ -104,6 +104,12 @@ test.describe.serial("usage pipeline admin regression", () => {
 
     const rows = page.locator("#classTableBody tr");
     await expect(rows).toHaveCount(profiles.length + 1, { timeout: 30000 });
+    await expect(page.locator("#classTable")).toContainText("Highest reached");
+    await expect(page.locator("#classTable")).toContainText("Highest passed");
+    await expect(page.locator("#classTable")).toContainText("Highest passed challenge");
+    await expect(page.locator("#classTable")).toContainText("Session span (min)");
+    await expect(page.locator("#classTable")).toContainText("Needs review");
+    await expect(page.locator("#classTable")).not.toContainText("Time (min)");
     await expect(page.locator("#classTableBody")).toContainText("✓ verified");
     await expect(page.locator("#classTableBody")).toContainText("✗ mismatch");
     await expect(page.locator("#flagsSection")).toBeVisible();
@@ -117,6 +123,9 @@ test.describe.serial("usage pipeline admin regression", () => {
       const row = page.locator("#classTableBody tr").filter({ hasText: profile.studentName }).first();
       await row.click();
       await expect(page.locator("#detailSection")).toBeVisible();
+      await expect(page.locator("#detailContent")).toContainText("Guided Progress Story");
+      await expect(page.locator("#detailContent")).toContainText("Guided Sequence Map");
+      await expect(page.locator("#detailContent")).toContainText("Exact Guided Progress Table");
       await page.locator("#detailSection").screenshot({
         path: resolve(REGRESSION_SCREENSHOT_DIR, `detail-${slugify(profile.studentName)}.png`)
       });

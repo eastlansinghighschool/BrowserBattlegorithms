@@ -6,6 +6,7 @@ import {
   getUsageEventFingerprint
 } from "../../src/usage/usageFormat.js";
 import { buildUsageExportWithIntegrity } from "../../src/usage/usageAnalyzer.js";
+import { summarizeUsagePayload } from "../../src/usage/usageAnalyzer.js";
 import {
   compareUsageSummaries,
   summarizeUsagePayloadAsync,
@@ -20,6 +21,20 @@ function buildSample(studentName = "Ada Lovelace", sessionId = "session-browser-
   appendUsageEvent(session, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
   appendUsageEvent(session, "level_completed", { levelId: "move-to-target", levelKind: "guided", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
   return buildUsageExportWithIntegrity(session, studentName, "2026-05-13T10:10:00.000Z");
+}
+
+function buildProgressSample(studentName = "Grace Hopper", sessionId = "session-progress-browser") {
+  const session = createUsageSession({ sessionId, startedAt: "2026-05-13T10:00:00.000Z", updatedAt: "2026-05-13T10:12:00.000Z" });
+  appendUsageEvent(session, "mode_entered", { modeView: "GUIDED_LEVELS", levelId: "move-to-target", mapKey: "wideAisle" }, "2026-05-13T10:00:01.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "move-to-target", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 1, attemptNumber: 1 }, "2026-05-13T10:00:02.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "move-to-target", levelKind: "guided", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 3, turnsSpent: 3 }, "2026-05-13T10:01:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "enemy-nearby", levelKind: "guided", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 4, attemptNumber: 2 }, "2026-05-13T10:02:00.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "enemy-nearby", levelKind: "guided", result: "FAILED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 8, turnsSpent: 4 }, "2026-05-13T10:03:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "show-what-you-know", levelKind: "challenge", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 9, attemptNumber: 3 }, "2026-05-13T10:04:00.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "show-what-you-know", levelKind: "challenge", result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 18, turnsSpent: 9 }, "2026-05-13T10:10:00.000Z");
+  appendUsageEvent(session, "level_started", { levelId: "optional-random-lab", levelKind: null, modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 19, attemptNumber: 4 }, "2026-05-13T10:10:30.000Z");
+  appendUsageEvent(session, "level_completed", { levelId: "optional-random-lab", levelKind: null, result: "PASSED", modeView: "GUIDED_LEVELS", mapKey: "wideAisle", turnNumber: 23, turnsSpent: 4 }, "2026-05-13T10:11:00.000Z");
+  return buildUsageExportWithIntegrity(session, studentName, "2026-05-13T10:12:00.000Z");
 }
 
 test("browser verifyUsageExportAsync returns ok for a valid payload", async () => {
@@ -74,6 +89,17 @@ test("Node-built hash and browser-computed hash agree on the same payload", asyn
   // The Node path already stamped the hash; browser should reproduce it.
   assert.equal(browserResult.ok, true);
   assert.equal(browserResult.computedSha256, payload.integrity.sha256);
+});
+
+test("browser and CLI analyzers agree on guided progress summary fields", async () => {
+  const payload = buildProgressSample();
+  const cliSummary = summarizeUsagePayload(payload);
+  const browserSummary = await summarizeUsagePayloadAsync(payload);
+
+  assert.deepEqual(browserSummary.guidedProgress, cliSummary.guidedProgress);
+  assert.deepEqual(browserSummary.reviewSignals, cliSummary.reviewSignals);
+  assert.equal(browserSummary.needsReview, cliSummary.needsReview);
+  assert.equal(browserSummary.sessionSpanMinutes, cliSummary.sessionSpanMinutes);
 });
 
 test("compareUsageSummaries detects duplicate session ids", async () => {

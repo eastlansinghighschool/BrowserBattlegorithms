@@ -1,4 +1,11 @@
 import { canonicalJsonStringify, getUsageEventFingerprint } from "./usageFormat.js";
+import { getLevelDefinitions } from "../config/levels/index.js";
+import {
+  buildGuidedLevelProgressCatalog,
+  deriveGuidedProgress
+} from "./guidedProgress.js";
+
+const GUIDED_LEVEL_PROGRESS_CATALOG = buildGuidedLevelProgressCatalog(getLevelDefinitions());
 
 async function computeSha256Hex(text) {
   const subtle = globalThis.crypto?.subtle;
@@ -62,6 +69,12 @@ export async function summarizeUsagePayloadAsync(payload) {
   if (hasFreePlayEvidence && Number(summary.freePlay?.scoreEvents || 0) === 0 && (Number(freePlayScores?.[1] || 0) + Number(freePlayScores?.[2] || 0) > 0)) {
     suspiciousSignals.push("scores_without_score_events");
   }
+  const guidedProgress = deriveGuidedProgress({
+    events: payload?.events || [],
+    summary,
+    levelCatalog: GUIDED_LEVEL_PROGRESS_CATALOG
+  });
+  const sessionSpanMinutes = Math.max(0, Math.round(totalPlayTimeMs / 60000));
   return {
     studentName: payload?.studentName || "",
     sessionId: payload?.sessionId || "",
@@ -90,13 +103,17 @@ export async function summarizeUsagePayloadAsync(payload) {
       losses: Number(summary.freePlay?.losses || 0),
       lastScores: {
         1: Number(freePlayScores?.[1] || 0),
-        2: Number(freePlayScores?.[2] || 0)
+      2: Number(freePlayScores?.[2] || 0)
       }
     },
-    playTimeMinutes: Math.max(0, Math.round(totalPlayTimeMs / 60000)),
+    playTimeMinutes: sessionSpanMinutes,
+    sessionSpanMinutes,
     eventFingerprint,
     challengeSummary: describeChallengeCounts(summary),
-    suspiciousSignals
+    suspiciousSignals,
+    guidedProgress,
+    needsReview: suspiciousSignals.length > 0 || guidedProgress.needsReview,
+    reviewSignals: guidedProgress.reviewSignals
   };
 }
 

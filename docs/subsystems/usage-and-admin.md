@@ -20,9 +20,10 @@ This note does NOT own:
 |---|---|
 | `src/usage/usageTracker.js` | Session management, event recording, IndexedDB persistence, export payload assembly, SHA-256 hash via Web Crypto. |
 | `src/usage/usageFormat.js` | Canonical event structure, snapshot limits, fingerprint logic (noise filtering). |
-| `src/usage/usageAnalyzer.js` | Node-side CLI analyzer: hash verification, guided and free-play summary, duplicate and similarity detection. |
+| `src/usage/usageAnalyzer.js` | Node-side CLI analyzer: hash verification, guided progress derivation, free-play summary, duplicate and similarity detection. |
 | `src/usage/usageAnalyzerBrowser.js` | Browser-side analyzer: same output semantics as the CLI, used by the admin page. |
-| `src/admin/adminApp.js` | Teacher-facing admin UI: file upload, class table, per-student detail view, anomaly flags. |
+| `src/usage/guidedProgress.js` | Shared pure guided-progress derivation helper used by both analyzers and future cohort tooling. |
+| `src/admin/adminApp.js` | Teacher-facing admin UI: file upload, class table, guided progress story, sequence map, per-student detail view, anomaly flags. |
 | `tests/regression/usage-pipeline.spec.js` | Simulates student profiles, exports usage files, post-processes timestamps, re-hashes. |
 | `tests/regression/usage-pipeline-admin.spec.js` | Uploads generated files to admin.html, captures screenshots. |
 
@@ -76,10 +77,12 @@ For each uploaded file, the admin page shows:
 
 - **Identity**: student name, session id, export timestamp.
 - **Integrity**: hash status (`verified` / `tampered`).
-- **Guided level stats**: levels attempted, levels passed, turn counts.
+- **Guided progress**: highest reached, highest passed, highest passed challenge, contiguous pass-through evidence, revisits, and an accessible per-level sequence map.
+- **Guided level stats**: levels attempted, levels passed, turn counts, and approximate session span.
 - **Free play stats**: matches played, outcomes.
+- **Review evidence**: a compact `needs review` indicator for hash mismatch, unknown guided levels, and analyzer warnings.
 - **Anomaly flags**: duplicate session ids, identical integrity hashes, similar event fingerprints under different names.
-- **Detail view**: event list, snapshot list, suspicious signal summary.
+- **Detail view**: event list, snapshot list, suspicious signal summary, guided progress story, accessible sequence map, and exact per-level table.
 
 Anomaly flags use careful language: `possible duplicate`, `similarity flag`, `review recommended`. The system does not claim certainty.
 
@@ -91,6 +94,7 @@ Both analyzers (`usageAnalyzerBrowser.js` and `usageAnalyzer.js`) produce the sa
 - **Browser analyzer**: runs in a browser worker or inline; uses Web Crypto; feeds the admin page UI.
 
 The two paths are designed to agree on hash verification and anomaly detection. If they diverge, that is a bug.
+They should also agree on guided progress semantics: the same ordered catalog, the same highest reached / highest passed milestones, and the same exact passed-challenge label.
 
 ## Regression harness
 

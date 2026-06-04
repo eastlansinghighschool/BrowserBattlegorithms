@@ -314,6 +314,157 @@ body {
   font-size: 0.82em;
 }
 
+.adm-progress-label {
+  display: inline-block;
+  max-width: 18rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.adm-progress-table-wrap {
+  margin-top: 10px;
+}
+
+.adm-progress-table .adm-progress-label {
+  max-width: 16rem;
+}
+
+.adm-guided-story-card {
+  border-color: #b6c8df;
+  background: linear-gradient(180deg, #f7fbff 0%, #eef5fb 100%);
+}
+
+.adm-guided-story-lead {
+  margin: 0 0 12px;
+  color: var(--adm-text);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.adm-guided-story-grid {
+  margin-bottom: 0;
+}
+
+.adm-progress-map {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.adm-progress-item {
+  border: 1px solid var(--adm-border-light);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fafbfd;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adm-progress-item-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.adm-progress-seq {
+  color: var(--adm-text-muted);
+  font-family: var(--adm-mono);
+  font-size: 0.75rem;
+  flex: 0 0 auto;
+}
+
+.adm-progress-title {
+  font-weight: 600;
+  color: var(--adm-text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adm-progress-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adm-progress-status {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--adm-border-light);
+  color: var(--adm-text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.adm-progress-item-passed {
+  border-color: #b7e2c8;
+  background: #f1fbf5;
+}
+
+.adm-progress-item-passed .adm-progress-status {
+  background: var(--adm-green-bg);
+  color: var(--adm-green);
+}
+
+.adm-progress-item-failed {
+  border-color: #f0c6c8;
+  background: #fff7f7;
+}
+
+.adm-progress-item-failed .adm-progress-status {
+  background: var(--adm-red-bg);
+  color: var(--adm-red);
+}
+
+.adm-progress-item-started {
+  border-color: #d9e5f3;
+}
+
+.adm-progress-item-unknown {
+  border-style: dashed;
+  background: #fffdf3;
+}
+
+.adm-progress-item-optional {
+  opacity: 0.95;
+}
+
+.adm-progress-item-revisited {
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 168, 0.12);
+}
+
+.adm-progress-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.adm-progress-metrics {
+  font-size: 0.78rem;
+  color: var(--adm-text-muted);
+  line-height: 1.35;
+}
+
+.adm-progress-row-unknown td {
+  background: #fffdf3;
+}
+
+.adm-progress-table th,
+.adm-progress-table td {
+  white-space: nowrap;
+}
+
 /* ── Detail panel ── */
 
 .adm-detail {

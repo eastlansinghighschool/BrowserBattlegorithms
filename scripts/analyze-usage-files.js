@@ -2,6 +2,7 @@
 import { readFile } from "node:fs/promises";
 import { basename } from "node:path";
 import { compareUsageSummaries, summarizeUsagePayload, verifyUsageExport } from "../src/usage/usageAnalyzer.js";
+import { formatGuidedProgressLabel } from "../src/usage/guidedProgress.js";
 
 function printUsage() {
   console.error("Usage: node scripts/analyze-usage-files.js [--json] <usage-file.json> [more-files.json...]");
@@ -23,6 +24,10 @@ function formatSummaryLine(record) {
   const hashLabel = record.hashStatus === "verified hash" ? "verified hash" : "hash mismatch";
   const guidedLabel = `${record.guided.passed}/${record.guided.completed} passed`;
   const freePlayLabel = `free play score ${record.freePlay.lastScores[1]}-${record.freePlay.lastScores[2]}`;
+  const highestReached = formatGuidedProgressLabel(record.guidedProgress?.highestReached);
+  const highestPassed = formatGuidedProgressLabel(record.guidedProgress?.highestPassed);
+  const highestPassedChallenge = formatGuidedProgressLabel(record.guidedProgress?.highestPassedChallenge);
+  const reviewLabel = record.needsReview ? "review" : "clear";
   return [
     basename(record.filePath),
     `student=${record.studentName || "(blank)"}`,
@@ -30,7 +35,11 @@ function formatSummaryLine(record) {
     `exported=${record.exportedAt || "(missing)"}`,
     `integrity=${hashLabel}`,
     `guided=${guidedLabel}`,
-    `challenge=${record.challengeSummary}`,
+    `challengeCount=${record.challengeSummary}`,
+    `highestReached=${highestReached}`,
+    `highestPassed=${highestPassed}`,
+    `highestPassedChallenge=${highestPassedChallenge}`,
+    `needsReview=${reviewLabel}`,
     freePlayLabel
   ].join(" | ");
 }

@@ -2,7 +2,7 @@
 
 - Packet id: Plan 79
 - Packet title: Admin Guided Progress Story
-- Status: ready
+- Status: complete
 - Owner/model: lower-cost implementation agent with UI/testing care
 - Date: 2026-05-30
 - Packet type: implementation / admin UI / usage analysis / docs
