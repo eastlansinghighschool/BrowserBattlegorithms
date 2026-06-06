@@ -31,6 +31,7 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 | [Plan 81](plan-81-cohort-usage-dataset-and-baseline.md) | ready | Build local-only cohort usage analysis tooling that anonymizes student exports, generates normalized untracked tables, and produces deterministic baseline metrics plus starter queries for later interpretation. |
 | [Plan 82](plan-82-cohort-guided-learning-insight-audit.md) | ready | Local-only orchestration-grade scan over Plan 81 anonymized outputs to identify guided-level, curriculum, and UI/UX insights without reading raw exports, identity maps, or writing tracked audit reports. |
 | [Plan 83](plan-83-cohort-insight-distillation.md) | ready | Owner-gated privacy-safe distillation that converts local Plan 82 cohort audits into tracked directional conclusions and follow-up packet candidates without exact small-cohort counts or row-level data. |
+| [Plan 84](plan-84-usage-tracker-v2-design-contract.md) | ready | Settled design contract for a Usage Tracker V2: durable per-level learning ledger, local diff-deduped run-version store (last ~8 guided levels / ~20 free-play runs, cross-session), value-based pruning replacing FIFO, boundary-XML+hashes export keeping similarity detection alive, schema v2 with v1 back-compat. Records owner decisions D1–D4 and defines the downstream implementation packet sequence (Plans 85–87). |
 
 ### Completed Packets
 
