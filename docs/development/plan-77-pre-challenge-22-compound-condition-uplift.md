@@ -2,7 +2,7 @@
 
 - Packet id: Plan 77
 - Packet title: Pre-Challenge 22 Compound-Condition Uplift
-- Status: ready
+- Status: superseded by Plan 93
 - Owner/model: level-editing specialist
 - Date: 2026-05-22
 - Packet type: implementation / curriculum / level-editing
@@ -21,6 +21,8 @@
 - Progress report file: `reports/development/plan-77-pre-challenge-22-compound-condition-uplift/progress.md`
 
 ## Packet Summary
+
+Supersession note (2026-07-06): do not implement this packet as written. Plan 85 reframed the guided-campaign rewrite around living boards, protected-level rules, board-dynamics tiers, voice/hint policy, and Bootstrap-backed packet sequencing. Plan 93 replaces this packet with a living-board-aware Pre-Challenge 22 resource uplift. The per-level analysis below remains useful raw material, but the frozen-board implementation assumptions are stale.
 
 Goal: Close the largest documented learning cliff in the campaign — the jump from one-branch resource/territory lessons (L16–L21) into Challenge 22's 14-block, 6-decision, two-resource-readiness live scrimmage — by adding one compound condition to each of four targeted lesson levels. The reference solution for each level should require students to combine the new block with a prior block in the same `On Each Turn` program. Block introductions become integrated introductions: the level still introduces its named concept, but the win condition requires that concept paired with one already-mastered idea.
 
