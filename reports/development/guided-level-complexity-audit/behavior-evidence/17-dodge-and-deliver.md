@@ -133,16 +133,16 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `rArC4=3zzuxfkG(ONg|q` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `|1GNri[4:|0x.vT^bq,M` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 23 | fired |
-| `jQdHPN|Ue-Q6=bza}uQo` | `battlegorithms_if_sensor_matches` | If | 12 | fired |
-| `ME2G;Piohnu)fP$oX}`o` | `battlegorithms_if_sensor_matches` | If | 11 | fired |
-| `iq0odl3U*z+#iX#a*p*;` | `battlegorithms_move_down_screen` | Move Down (screen) | 1 | fired |
-| `]F]i0g-$G;]jcGNvCH6!` | `battlegorithms_move_toward` | Move Toward | 11 | fired |
-| `{+xA3xBZ4xy^bBnaD@bG` | `battlegorithms_if_sensor_matches_else` | If | 1 | fired |
-| `rU+6w-KG+K#`!(m];Lou` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
-| `Mi_(aYw:mYo+j_)F{s}{` | `battlegorithms_jump_forward` | Jump Forward | 1 | fired |
-| `X=oqv!3NX@-YBQ=1~Hrt` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 23 | fired |
+| `if_sensor_matches_1` | `battlegorithms_if_sensor_matches` | If | 12 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 11 | fired |
+| `move_down_screen_1` | `battlegorithms_move_down_screen` | Move Down (screen) | 1 | fired |
+| `if_sensor_matches_2` | `battlegorithms_if_sensor_matches` | If | 11 | fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
+| `if_sensor_matches_else_1` | `battlegorithms_if_sensor_matches_else` | If | 1 | fired |
+| `jump_forward_1` | `battlegorithms_jump_forward` | Jump Forward | 1 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

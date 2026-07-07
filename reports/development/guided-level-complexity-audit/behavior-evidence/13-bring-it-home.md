@@ -96,10 +96,10 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `hAa_i^A8910,1@S7mNC1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `zy]ht,e7hV7BKaFQWNqy` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 21 | fired |
-| `U~Rp/Aj_C=!iI;Tvh%qX` | `battlegorithms_move_toward` | Move Toward | 9 | fired |
-| `Kx8Bs^mHmq@6:lAK,|2U` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 21 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 9 | fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

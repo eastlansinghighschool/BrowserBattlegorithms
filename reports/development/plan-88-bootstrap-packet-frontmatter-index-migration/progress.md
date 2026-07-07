@@ -2,7 +2,15 @@
 
 ## Summary
 
-Migrated Browser Battlegorithms packet tracking to Bootstrap-compatible frontmatter plus a generated plan index in `docs/development/README.md`, while preserving the manual starting-prompt rows and archived packet rows outside the generated block.
+Migrated Browser Battlegorithms packet tracking to Bootstrap-compatible frontmatter plus a generated plan index in `docs/development/README.md`, then repaired the packet-status dependency graph so downstream packets are actually blocked when their prerequisite packets are not complete.
+
+## Repair Pass
+
+- Converted packet `depends_on` values to the inline array syntax the status tool parses.
+- Restored the dependency chain for Plans 80-83, 88-90, and 91-98.
+- Review correction: restored Plans 80 and 89 to `ready`; their downstream packets are blocked by incomplete dependencies rather than by downgrading the packets themselves to `draft`.
+- Re-ran the generated README render after the repair.
+- Rechecked the packet-status brake on Plan 90 after repair.
 
 ## Files Changed
 
@@ -60,11 +68,14 @@ Migrated Browser Battlegorithms packet tracking to Bootstrap-compatible frontmat
 
 ## Results
 
-- `plan:list` now reads the migrated frontmatter and shows the expected packet statuses.
+- `plan:list` now reads the migrated frontmatter and shows the dependency chain in the `deps` column.
 - `plan:check -- plan-88-bootstrap-packet-frontmatter-index-migration` returned runnable before the packet was closed.
+- `plan:check -- plan-90-bootstrap-audit-closure-path-hygiene` now reports blocked dependencies instead of runnable, with Plan 88 delivered and Plan 89 ready but incomplete.
+- `plan:check -- plan-81-cohort-usage-dataset-and-baseline` now reports Plan 80 as an incomplete dependency.
+- `plan:check -- plan-83-cohort-insight-distillation` now reports the full cohort-chain blockers.
 - `plan:render` successfully regenerated the README index from frontmatter.
 - `plan:lint` passed with warnings only after the final repair pass.
-- Final warnings were limited to preexisting missing report folders for Plans 75, 76, 86, and 88.
+- Final warnings were limited to preexisting missing report folders for Plans 75, 76, and 85.
 
 ## Approval Gates Honored
 
@@ -74,9 +85,9 @@ Migrated Browser Battlegorithms packet tracking to Bootstrap-compatible frontmat
 
 ## Remaining Risks
 
-- Plans 75, 76, 86, and 88 still lack the expected report folders, so lint emits warnings for those completed packets.
+- Plans 75, 76, and 85 still lack the expected report folders, so lint emits warnings for those completed packets.
 - Archive packets remain manually maintained outside the generated plan index, by design.
 
 ## Ready For Integration
 
-Yes
+Yes. Accepted by orchestration review after the dependency-frontmatter repair and the Plan 80/89 readiness correction.

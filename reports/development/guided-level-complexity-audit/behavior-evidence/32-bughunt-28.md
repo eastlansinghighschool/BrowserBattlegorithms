@@ -127,15 +127,15 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `%f.tVt/q(uS^)I;9}@fj` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `?U#3))D%t+uZ`F.]8(d:` | `battlegorithms_if_boolean_else` | If [boolean] else | 12 | fired |
-| `X!A_cPj$|n+8`Bs25Upu` | `battlegorithms_logic_and` | and | 12 | fired |
-| `vt!@1y%DeV9HfGDm7N.p` | `battlegorithms_freeze_opponents` | Freeze Opponents | 2 | fired |
-| `^9Wl.j_Zh}Y7ob{sdwe0` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
-| `*arI@r3)[e^F@K=_k`SK` | `battlegorithms_value_compare` | compare | 12 | fired |
-| `m;I;~@hCgeqec}f@Ym@2` | `battlegorithms_boolean_area_freeze_ready` | Area Freeze is ready | 7 | fired |
-| `f$YF;KUgd/Jn~N,BiDhh` | `battlegorithms_value_distance_to_target` | distance to | 12 | fired |
-| `1mjf2?O83,?jLaB10-ww` | `battlegorithms_value_number` | number | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_boolean_else_1` | `battlegorithms_if_boolean_else` | If [boolean] else | 12 | fired |
+| `logic_and_1` | `battlegorithms_logic_and` | and | 12 | fired |
+| `value_compare_1` | `battlegorithms_value_compare` | compare | 12 | fired |
+| `value_distance_to_target_1` | `battlegorithms_value_distance_to_target` | distance to | 12 | fired |
+| `value_number_1` | `battlegorithms_value_number` | number | 0 | never fired |
+| `boolean_area_freeze_ready_1` | `battlegorithms_boolean_area_freeze_ready` | Area Freeze is ready | 7 | fired |
+| `freeze_opponents_1` | `battlegorithms_freeze_opponents` | Freeze Opponents | 2 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

@@ -2,7 +2,7 @@
 id: plan-82-cohort-guided-learning-insight-audit
 title: "Cohort Guided Learning Insight Audit"
 status: ready
-depends_on: []
+depends_on: [plan-80-cohort-usage-privacy-workspace, plan-81-cohort-usage-dataset-and-baseline]
 gate: "before any source, level, UI, docs, or generated-data mutation"
 superseded_by: null
 resolution: null

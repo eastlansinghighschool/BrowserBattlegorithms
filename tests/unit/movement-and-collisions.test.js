@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AI_ACTION_TYPES, MOVE_TOWARD_TARGETS, MAIN_GAME_STATES } from "../../src/config/constants.js";
+import { AI_ACTION_TYPES, CELL_TYPE, MOVE_TOWARD_TARGETS, MAIN_GAME_STATES } from "../../src/config/constants.js";
 import { buildMatch } from "./helpers/builders.js";
 import { checkInvariants } from "../../src/core/invariants.js";
 import {
@@ -10,6 +10,7 @@ import {
   translateMoveTowardDecision
 } from "../../src/core/movement.js";
 import { resolveCollision } from "../../src/core/collisions.js";
+import { reconcileFlagHomeOccupancy } from "../../src/core/flagReconciliation.js";
 import { processTurnActions } from "../../src/core/turnEngine.js";
 import { TEST_P5, getTeamHuman } from "./helpers/testHarness.js";
 
@@ -363,6 +364,38 @@ test("a reset flag landing under a waiting opposing runner is immediately picked
   assert.equal(waitingRunner.hasEnemyFlag, true);
   assert.equal(team2Flag.isAtBase, false);
   assert.equal(checkInvariants(app.state), true);
+});
+
+test("reconciliation leaves an occupant in place and logs a diagnostic when no legal displacement cell exists", () => {
+  const flag = { gridX: 4, gridY: 4, teamId: 1, isAtBase: true, carriedByRunnerId: null };
+  const occupant = { id: "runner_1_test", team: 1, gridX: flag.gridX, gridY: flag.gridY };
+
+  // Every cell on the board is a wall except the occupant's own cell (never a
+  // displacement candidate), so no legal displacement cell can be found.
+  const gameMap = Array.from({ length: 8 }, () => new Array(12).fill(CELL_TYPE.WALL));
+
+  const state = {
+    gameMap,
+    barriers: [],
+    allRunners: [occupant],
+    gameFlags: { 1: flag }
+  };
+
+  const originalWarn = console.warn;
+  let warned = false;
+  console.warn = () => {
+    warned = true;
+  };
+
+  try {
+    assert.doesNotThrow(() => reconcileFlagHomeOccupancy(state, flag));
+  } finally {
+    console.warn = originalWarn;
+  }
+
+  assert.equal(occupant.gridX, flag.gridX);
+  assert.equal(occupant.gridY, flag.gridY);
+  assert.equal(warned, true);
 });
 
 test("Move Toward enemy flag chooses a forward step in the open lane", () => {

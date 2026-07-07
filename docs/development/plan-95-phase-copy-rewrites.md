@@ -2,7 +2,7 @@
 id: plan-95-phase-copy-rewrites
 title: "Phase Copy Rewrites"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter, plan-94-copy-voice-contract-lint-warnings]
 gate: "before each phase rewrite lands"
 superseded_by: null
 resolution: null

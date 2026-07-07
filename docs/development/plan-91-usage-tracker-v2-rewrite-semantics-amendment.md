@@ -2,7 +2,7 @@
 id: plan-91-usage-tracker-v2-rewrite-semantics-amendment
 title: "Usage Tracker V2 Rewrite Semantics Amendment"
 status: draft
-depends_on: []
+depends_on: [plan-84-usage-tracker-v2-design-contract, plan-85-campaign-rewrite-charter]
 gate: "before mutation; this packet should not run until Plan 85 owner gate is resolved"
 superseded_by: null
 resolution: null

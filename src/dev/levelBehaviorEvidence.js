@@ -363,25 +363,35 @@ function makeSimulationApp(randomSeedText) {
   return app;
 }
 
-function getConnectedBlocks(block, visited = new Set()) {
-  if (!block || visited.has(block.id)) {
-    return visited;
-  }
-  visited.add(block.id);
-  const next = block.getNextBlock();
-  if (next) {
-    getConnectedBlocks(next, visited);
-  }
-  for (const input of block.inputList || []) {
-    const target = input.connection?.targetBlock();
-    if (target) {
-      getConnectedBlocks(target, visited);
+function getDeterministicBlockTraversal(rootBlock) {
+  const visited = [];
+  const visitedSet = new Set();
+
+  function traverse(block) {
+    if (!block || visitedSet.has(block.id)) {
+      return;
+    }
+    visitedSet.add(block.id);
+    visited.push(block);
+
+    const next = block.getNextBlock();
+    if (next) {
+      traverse(next);
+    }
+
+    for (const input of block.inputList || []) {
+      const target = input.connection?.targetBlock();
+      if (target) {
+        traverse(target);
+      }
     }
   }
+
+  traverse(rootBlock);
   return visited;
 }
 
-function getBlockCoverage(app, traceSnapshots) {
+export function getBlockCoverage(app, traceSnapshots) {
   if (!app.blocklyWorkspace) {
     return { ratioText: "not applicable", total: 0, blocks: [] };
   }
@@ -389,15 +399,29 @@ function getBlockCoverage(app, traceSnapshots) {
   if (!eventBlock) {
     return { ratioText: "not applicable", total: 0, blocks: [] };
   }
-  const executableBlockIds = getConnectedBlocks(eventBlock);
-  const executableBlocks = app.blocklyWorkspace.getAllBlocks(false).filter(b => executableBlockIds.has(b.id) && b.isEnabled());
+
+  const traversal = getDeterministicBlockTraversal(eventBlock);
+  const executableBlocks = traversal.filter(b => b.isEnabled());
+
+  const rawToStableId = new Map();
+  const typeCounts = {};
+  for (const block of executableBlocks) {
+    const type = block.type;
+    typeCounts[type] = (typeCounts[type] || 0) + 1;
+    const cleanType = type.replace("battlegorithms_", "");
+    const stableId = `${cleanType}_${typeCounts[type]}`;
+    rawToStableId.set(block.id, stableId);
+  }
 
   const firedCounts = {};
   for (const trace of traceSnapshots) {
     if (Array.isArray(trace.steps)) {
       for (const step of trace.steps) {
         if (step.blockId) {
-          firedCounts[step.blockId] = (firedCounts[step.blockId] || 0) + 1;
+          const stableId = rawToStableId.get(step.blockId);
+          if (stableId) {
+            firedCounts[stableId] = (firedCounts[stableId] || 0) + 1;
+          }
         }
       }
     }
@@ -405,10 +429,11 @@ function getBlockCoverage(app, traceSnapshots) {
 
   let firedCount = 0;
   const blocksData = executableBlocks.map(block => {
-    const count = firedCounts[block.id] || 0;
+    const stableId = rawToStableId.get(block.id);
+    const count = firedCounts[stableId] || 0;
     if (count > 0) firedCount += 1;
     return {
-      id: block.id,
+      id: stableId,
       type: block.type,
       label: getBlockDisplayLabel(block.type) || block.type,
       count,

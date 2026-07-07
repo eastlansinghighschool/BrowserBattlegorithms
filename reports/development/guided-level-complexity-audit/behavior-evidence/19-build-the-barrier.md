@@ -75,8 +75,8 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `!Xg[lw?sVirE.OE/OB77` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `TSg45H?a%xZJxlg!_if3` | `battlegorithms_place_barrier` | Place Barrier (in front) | 1 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `place_barrier_1` | `battlegorithms_place_barrier` | Place Barrier (in front) | 1 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

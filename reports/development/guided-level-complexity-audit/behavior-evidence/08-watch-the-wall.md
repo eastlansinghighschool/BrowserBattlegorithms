@@ -89,10 +89,10 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `f1c46p.3a0e7})MA/Uhq` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `rV||e;quxahT]2,^W(U]` | `battlegorithms_if_sensor_matches_else` | If | 5 | fired |
-| `z`2UzsOV8|`blEWVAx(D` | `battlegorithms_move_down_screen` | Move Down (screen) | 2 | fired |
-| `Nq`t~k?M$z8Cj#c7G8BB` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_sensor_matches_else_1` | `battlegorithms_if_sensor_matches_else` | If | 5 | fired |
+| `move_down_screen_1` | `battlegorithms_move_down_screen` | Move Down (screen) | 2 | fired |
+| `move_forward_1` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

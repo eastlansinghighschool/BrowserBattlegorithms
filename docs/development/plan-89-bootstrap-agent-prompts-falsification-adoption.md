@@ -2,10 +2,8 @@
 id: plan-89-bootstrap-agent-prompts-falsification-adoption
 title: "Bootstrap Agent Prompts And Falsification Adoption"
 status: ready
-depends_on: []
+depends_on: [plan-87-bootstrap-consumer-core-setup]
 gate: "before deleting old prompts, before changing packet approval policy, before adding dependencies"
-superseded_by: null
-resolution: null
 summary: >-
   Adopt Bootstrap-derived implementer/orchestrator/design-review/plan-scan/test-coverage prompts and add a Browser Battlegorithms falsification-check convention to packet guidance.
 ---

@@ -85,8 +85,8 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `@}|yNKSY=|?d`nyLrN:I` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `*y{GAjCJ5o3Hdg[W_]iu` | `battlegorithms_move_randomly` | Move Randomly | 3 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `move_randomly_1` | `battlegorithms_move_randomly` | Move Randomly | 3 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

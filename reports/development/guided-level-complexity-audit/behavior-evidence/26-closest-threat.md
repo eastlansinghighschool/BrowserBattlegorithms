@@ -94,8 +94,8 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `og_TlnQ~A[wN*gN4F,aL` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `Mz?nUqq^G.%D6*@UYX?[` | `battlegorithms_move_toward` | Move Toward | 5 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 5 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
@@ -172,12 +172,12 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `?M;:u!KH8l;Y|7K4_VyV` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `Ix__1rd-!9^tW5Vzbk7Q` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 15 | fired |
-| `G*zQkoS(y+Xd}DY9*?v$` | `battlegorithms_move_toward` | Move Toward | 5 | fired |
-| `96y!^!h)oL^,xf/!/YHA` | `battlegorithms_if_sensor_matches_else` | If | 10 | fired |
-| `xNH!s/scF1uippkmqtF|` | `battlegorithms_move_up_screen` | Move Up (screen) | 1 | fired |
-| `vOiUT%)#QK2y~(uHCu5+` | `battlegorithms_move_toward` | Move Toward | 9 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 15 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 5 | fired |
+| `if_sensor_matches_else_1` | `battlegorithms_if_sensor_matches_else` | If | 10 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 1 | fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 9 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

@@ -2,7 +2,7 @@
 id: plan-92-pre-challenge-15-living-board-pilot
 title: "Pre-Challenge 15 Living Board Pilot"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade]
 gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites below are complete"
 superseded_by: null
 resolution: null

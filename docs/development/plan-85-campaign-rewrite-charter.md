@@ -1,11 +1,11 @@
 ---
 id: plan-85-campaign-rewrite-charter
 title: "Campaign Rewrite Charter"
-status: draft
+status: complete
 depends_on: []
 gate: "this charter IS the gate — no campaign rewrite implementation packet may run until the owner accepts the settled positions below; any change to a settled position requires owner sign-off"
 superseded_by: null
-resolution: null
+resolution: "Accepted by the owner on 2026-07-07; downstream slate unlocked."
 summary: >-
   Campaign Rewrite Charter: settled positions S1–S12 for the guided-campaign rewrite (board-dynamics taxonomy + lint, enemy bestiary, visible mini-arcs, earned-hint reveal policy, in-world voice contract, default star/par mastery layer with protected-level override, trace-based film review, degenerate-solution test standard, Plan 77 supersession, Tracker V2 amendment coordination, movement-helpers 11–14 pilot, two-tier protected levels). All five gate items resolved by adopting recommendations; initial 7-archetype bestiary roster recorded in Appendix A. Downstream slate Plans 86–98 unlocked.
 ---

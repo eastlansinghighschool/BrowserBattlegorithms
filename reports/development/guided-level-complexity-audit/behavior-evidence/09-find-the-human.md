@@ -91,12 +91,12 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `|$Za#Ni6$4C:$1|8hKp3` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `o{}?/7FSNp^^py82H_yP` | `battlegorithms_if_sensor_matches_else` | If | 7 | fired |
-| `Vcx*zDS*Z%DO5k{zfLbw` | `battlegorithms_move_up_screen` | Move Up (screen) | 3 | fired |
-| `:^(kgzu$CYG!vL8u$N$E` | `battlegorithms_if_sensor_matches_else` | If | 4 | fired |
-| `#[lgff1eQl`fG@xV7K!8` | `battlegorithms_move_forward` | Move Forward | 4 | fired |
-| `MT/(SheZ|)YQuau~rZ0G` | `battlegorithms_move_down_screen` | Move Down (screen) | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_sensor_matches_else_1` | `battlegorithms_if_sensor_matches_else` | If | 7 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 3 | fired |
+| `if_sensor_matches_else_2` | `battlegorithms_if_sensor_matches_else` | If | 4 | fired |
+| `move_forward_1` | `battlegorithms_move_forward` | Move Forward | 4 | fired |
+| `move_down_screen_1` | `battlegorithms_move_down_screen` | Move Down (screen) | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

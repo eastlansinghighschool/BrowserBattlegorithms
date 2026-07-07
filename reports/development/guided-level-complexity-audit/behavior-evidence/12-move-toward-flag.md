@@ -96,8 +96,8 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `}071{UCIJlr@%5Oo9vZJ` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `Cl#wDF}aHMI?DT,6khe:` | `battlegorithms_move_toward` | Move Toward | 13 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 13 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

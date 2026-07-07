@@ -100,10 +100,10 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `^eN#=gz!!qX#CAd{b)Cw` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `Sz^{/un7MkyheK%:cl=e` | `battlegorithms_if_area_freeze_ready_else` | If Area Freeze Is Ready | 5 | fired |
-| `2RG2#~]F_u81:gLv3+qw` | `battlegorithms_freeze_opponents` | Freeze Opponents | 1 | fired |
-| `h{`V5;MFQF%9s:ijRns-` | `battlegorithms_move_toward` | Move Toward | 4 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_area_freeze_ready_else_1` | `battlegorithms_if_area_freeze_ready_else` | If Area Freeze Is Ready | 5 | fired |
+| `freeze_opponents_1` | `battlegorithms_freeze_opponents` | Freeze Opponents | 1 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 4 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

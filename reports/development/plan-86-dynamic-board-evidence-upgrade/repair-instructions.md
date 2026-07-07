@@ -139,3 +139,43 @@ If `npm test` is skipped because of time, say so explicitly in the progress repo
 
 - This packet should remain evidence/tooling-only. Do not change guided level source, reference fixtures, engine semantics, NPC behavior, or Blockly interpreter behavior unless the repair proves the evidence cannot be made truthful without a separate runtime packet.
 - If a runtime event outcome bug is discovered while repairing action-outcome reporting, document it as a separate follow-up unless a very small and clearly safe fix is already covered by another active runtime packet.
+
+## Second Repair Pass - Stable Generated Evidence
+
+The first repair pass fixed the substantive evidence issues: frozen/static NPCs are separated from live movement, interaction timelines are bounded, and reference action summaries now report truthful derived outcomes. However, review found one remaining blocker before Plan 86 can close: `npm run level:behavior-evidence` is not stable across clean runs.
+
+### Finding
+
+Running the generator with no source-input changes rewrites behavior evidence files because the Blockly block ids in the "Block Execution Coverage" tables change. For example, `reports/development/guided-level-complexity-audit/behavior-evidence/01-move-to-target.md` changed only these ids after regeneration:
+
+```diff
+-| `cW~+}%_r,1Iz2Ygl]f;o` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+-| `aA9ZCde!*{QeTM|^mAKK` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
++| `mG:k@f|dt:nKuUiTJ@G0` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
++| `.TO%S+3kdd}gj1WtMib1` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
+```
+
+This makes the generated evidence noisy for source control and weakens later audit comparisons. The behavior-evidence generator should be deterministic for the same level source, fixture XML, seed, and tool version.
+
+### Required Repair
+
+- Stabilize the "Block Execution Coverage" table output so repeated runs do not change generated Markdown when source inputs are unchanged.
+- Prefer a semantic/stable display identifier over raw auto-generated Blockly ids when the XML lacks durable ids or when parsing assigns random ids.
+- Preserve the useful fields already present: block type, display label, fired count, and fired/never-fired status.
+- Do not change runtime Blockly behavior, guided level XML fixtures, or level source for this repair.
+- Add a focused regression test that proves repeated generation of the same level evidence is byte-stable or at least proves the coverage rows use stable identifiers.
+- Regenerate all Plan 86 artifacts after the repair.
+
+### Required Validation Before Re-Report
+
+Run from the repo root:
+
+```powershell
+node --test --test-isolation=none tests/unit/level-behavior-evidence.test.js
+npm run level:behavior-evidence
+npm run level:behavior-evidence
+git diff -- reports/development/guided-level-complexity-audit/behavior-evidence/01-move-to-target.md
+npm test
+```
+
+Expected result: the second generator run should not introduce fresh block-id churn. If any generated-file diff remains after the second run, explain exactly why it is expected and bounded.

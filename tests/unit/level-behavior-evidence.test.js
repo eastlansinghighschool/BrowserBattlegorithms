@@ -8,7 +8,8 @@ import {
   generateGuidedLevelBehaviorEvidence,
   renderGuidedLevelBehaviorEvidenceMarkdown,
   renderGuidedLevelBehaviorSummaryIndexMarkdown,
-  runBehaviorSimulation
+  runBehaviorSimulation,
+  getBlockCoverage
 } from "../../src/dev/levelBehaviorEvidence.js";
 
 let evidenceDataPromise = null;
@@ -330,4 +331,30 @@ test("synthetic: passing movement fixture shows outcome moved and genuinely ille
   const blockedEvent = resultBlocked.actionEvents.find(e => e.payload.actionType === "MOVE_FORWARD");
   assert.ok(blockedEvent);
   assert.equal(blockedEvent.resolvedOutcome, "bounced", "Blocked move should resolve to bounced");
+});
+
+test("synthetic: repeated simulation runs produce stable/identical block coverage IDs", async () => {
+  const level = makeMockLevel("mock-stability", {
+    runnerOverrides: {
+      runner_1_HumanP1: { gridX: 1, gridY: 1 },
+      runner_1_AI_AllyP1: { gridX: 1, gridY: 4 }
+    }
+  });
+
+  const result1 = runBehaviorSimulation(level, xmlMoveForward, { randomSeedText: "test-stability-1" });
+  const result2 = runBehaviorSimulation(level, xmlMoveForward, { randomSeedText: "test-stability-2" });
+
+  const cov1 = getBlockCoverage(result1.app, result1.traceSnapshots);
+  const cov2 = getBlockCoverage(result2.app, result2.traceSnapshots);
+
+  assert.ok(cov1.blocks.length > 0, "Should have block coverage blocks");
+  assert.equal(cov1.blocks.length, cov2.blocks.length, "Both runs should have same block count");
+
+  for (let i = 0; i < cov1.blocks.length; i++) {
+    const block1 = cov1.blocks[i];
+    const block2 = cov2.blocks[i];
+    assert.equal(block1.id, block2.id, `Block at index ${i} should have stable ID across runs`);
+    assert.equal(block1.type, block2.type, `Block at index ${i} should have same type`);
+    assert.match(block1.id, /^[a-zA-Z_]+_[0-9]+$/, "Stable ID should match traversal-based format (e.g. move_forward_1)");
+  }
 });

@@ -2,7 +2,7 @@
 id: plan-81-cohort-usage-dataset-and-baseline
 title: "Cohort Usage Dataset And Baseline"
 status: ready
-depends_on: []
+depends_on: [plan-80-cohort-usage-privacy-workspace]
 gate: "before adding dependencies, writing outside `local/usage-cohorts/`, committing generated cohort data, or making curriculum recommendations beyond deterministic baseline flags"
 superseded_by: null
 resolution: null

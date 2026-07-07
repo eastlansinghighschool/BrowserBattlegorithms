@@ -91,10 +91,10 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `3|f4]Gon`sT5`^t^h_52` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `O@kgPCJ+.Wqu]gyYzcXW` | `battlegorithms_if_on_my_side_else` | If I Am On My Side | 9 | fired |
-| `h5Ds85D9O~iHAw!GjY;y` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
-| `yaW7.A`R):=p|WN2y:c+` | `battlegorithms_move_up_screen` | Move Up (screen) | 4 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_on_my_side_else_1` | `battlegorithms_if_on_my_side_else` | If I Am On My Side | 9 | fired |
+| `move_forward_1` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 4 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

@@ -2,7 +2,7 @@
 id: plan-98-strategy-brain-reframe-decision
 title: "Strategy Brain Reframe Decision"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter]
 gate: "before mutation; no source edits"
 superseded_by: null
 resolution: null

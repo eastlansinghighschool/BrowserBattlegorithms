@@ -145,20 +145,20 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `vL4)4tX)%c77J5ES$;dB` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `sYFrt1n.C;o|5]U{p$)c` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 29 | fired |
-| `[OSf[de=#3Uj^ivKALfi` | `battlegorithms_if_sensor_matches` | If | 11 | fired |
-| `hmDb!839ld*2wD?=:N/]` | `battlegorithms_if_sensor_matches` | If | 18 | fired |
-| `bB5||LkXShZ,?;ts3QYB` | `battlegorithms_move_up_screen` | Move Up (screen) | 1 | fired |
-| `}d58a@;3kI7E?:+L2pIB` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
-| `bOF@}p45}pLByyd=kj?T` | `battlegorithms_if_area_freeze_ready_else` | If Area Freeze Is Ready | 5 | fired |
-| `^tsqS@KKxC@jnQGo/_s3` | `battlegorithms_if_sensor_matches` | If | 13 | fired |
-| `*y8)7YNgP_k{Wm(k)YL6` | `battlegorithms_freeze_opponents` | Freeze Opponents | 1 | fired |
-| `?BVbbOYtCLV{67X,Ob3`` | `battlegorithms_move_down_screen` | Move Down (screen) | 4 | fired |
-| ``Us,6+tJUmSIZ})jb|gA` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
-| `O#xg[`q6Z6Q@sZFi:quj` | `battlegorithms_move_toward` | Move Toward | 13 | fired |
-| `JO[3UKH9Pmmn`:_GA]mT` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
-| `b!zbq%|M%BZ:QnMr2Q5]` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 29 | fired |
+| `if_sensor_matches_1` | `battlegorithms_if_sensor_matches` | If | 11 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 1 | fired |
+| `if_sensor_matches_2` | `battlegorithms_if_sensor_matches` | If | 18 | fired |
+| `if_sensor_matches_3` | `battlegorithms_if_sensor_matches` | If | 13 | fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 13 | fired |
+| `if_can_jump_else_1` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
+| `jump_forward_1` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
+| `move_up_screen_2` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `if_area_freeze_ready_else_1` | `battlegorithms_if_area_freeze_ready_else` | If Area Freeze Is Ready | 5 | fired |
+| `freeze_opponents_1` | `battlegorithms_freeze_opponents` | Freeze Opponents | 1 | fired |
+| `move_down_screen_1` | `battlegorithms_move_down_screen` | Move Down (screen) | 4 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

@@ -2,7 +2,7 @@
 id: plan-96-stars-par-v1-implementation
 title: "Stars And Par V1 Implementation"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-91-usage-tracker-v2-rewrite-semantics-amendment]
 gate: "before mutation; likely split into smaller packets after prerequisite evidence is reviewed"
 superseded_by: null
 resolution: null

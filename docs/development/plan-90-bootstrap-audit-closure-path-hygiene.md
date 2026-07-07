@@ -2,7 +2,7 @@
 id: plan-90-bootstrap-audit-closure-path-hygiene
 title: "Bootstrap Audit Closure And Path Hygiene Triage"
 status: ready
-depends_on: []
+depends_on: [plan-87-bootstrap-consumer-core-setup, plan-88-bootstrap-packet-frontmatter-index-migration, plan-89-bootstrap-agent-prompts-falsification-adoption]
 gate: "before changing source paths, before deleting files, before adopting deferred Bootstrap capabilities"
 superseded_by: null
 resolution: null

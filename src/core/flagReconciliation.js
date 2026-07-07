@@ -76,9 +76,19 @@ export function reconcileFlagHomeOccupancy(state, flag) {
 
   const displacement = findDeterministicDisplacementCell(state, occupant, flag.gridX, flag.gridY);
   if (!displacement) {
-    throw new Error(
-      `flagReconciliation: no legal displacement cell found for runner ${occupant.id} on home flag cell (${flag.gridX}, ${flag.gridY})`
-    );
+    // Unreachable on authored maps: a 96-cell board with a handful of runners
+    // always has a free cell in range. If it ever happens, degrade rather than
+    // halt the turn engine (Plan 78's no-new-halt-paths goal): leave the runner
+    // where it is and surface a diagnostic for owner review. The leftover
+    // runner-on-own-loose-flag state is the same mild oddity reconciliation
+    // normally prevents, and invariants.js will flag it if it matters.
+    if (typeof console !== "undefined" && console.warn) {
+      console.warn(
+        `flagReconciliation: no legal displacement cell for runner ${occupant.id} ` +
+        `on home flag cell (${flag.gridX}, ${flag.gridY}); leaving runner in place.`
+      );
+    }
+    return;
   }
   snapRunnerToCell(occupant, displacement.x, displacement.y);
 }

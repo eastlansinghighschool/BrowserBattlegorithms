@@ -96,12 +96,12 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `D]yFvV|Olydwh*K3ltB$` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `~pr3a#8aW,uC(9eQ.3K_` | `battlegorithms_if_boolean_else` | If [boolean] else | 7 | fired |
-| `ZX`Kft}nGQH(EA9DCvea` | `battlegorithms_logic_not` | not | 7 | fired |
-| `MI+cr,L~7$8zN;,TuD=C` | `battlegorithms_move_up_screen` | Move Up (screen) | 2 | fired |
-| `ZngvlLL#oAhYAQ*tB49j` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
-| `~F4B%)ej=da_NYTS5X]d` | `battlegorithms_boolean_on_my_side` | I am on my side | 7 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_boolean_else_1` | `battlegorithms_if_boolean_else` | If [boolean] else | 7 | fired |
+| `logic_not_1` | `battlegorithms_logic_not` | not | 7 | fired |
+| `boolean_on_my_side_1` | `battlegorithms_boolean_on_my_side` | I am on my side | 7 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 2 | fired |
+| `move_forward_1` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
@@ -178,12 +178,12 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `PYr#2i*$UI__6a{HiK#U` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `78,CD[WYPbp,gRXdXiVT` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 20 | fired |
-| `p`f|,Tq577j=g(.HH7aL` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
-| `V8AE;jWFSf/liPp[`:8u` | `battlegorithms_if_sensor_matches_else` | If | 10 | fired |
-| `VHHFaKvJw-Tvt.wH$T_:` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
-| `k()C4?0K%bSgk~:TBl38` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 20 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
+| `if_sensor_matches_else_1` | `battlegorithms_if_sensor_matches_else` | If | 10 | fired |
+| `move_up_screen_1` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

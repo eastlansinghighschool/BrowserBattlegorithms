@@ -2,10 +2,8 @@
 id: plan-80-cohort-usage-privacy-workspace
 title: "Cohort Usage Privacy Workspace"
 status: ready
-depends_on: []
+depends_on: [plan-79-admin-guided-progress-story]
 gate: "before changing usage export format, adding dependencies, committing generated cohort data, or creating any tracked student-data artifact"
-superseded_by: null
-resolution: null
 summary: >-
   Prepare an explicit git-ignored local workspace for raw student usage exports and anonymized cohort-analysis outputs, with operator instructions and path/privacy guardrails before any real cohort analysis runs.
 ---

@@ -97,13 +97,13 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `Ly?K]mMw8m-1B3SddLjP` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `dNl9r14ec]7#_~K|LumW` | `battlegorithms_if_boolean_else` | If [boolean] else | 23 | fired |
-| `G=5)G4Md`~{cam;?YRDv` | `battlegorithms_value_compare` | compare | 23 | fired |
-| `54dUd6xWj3dQ%(6bLc|7` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
-| `**d(^2Th}@GyI]CKrSdY` | `battlegorithms_stay_still` | Stay Still | 11 | fired |
-| `nvM.Q9*Km#t~rRN6z{gW` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
-| `FBHj]-*$}:QbT:c!ZEB.` | `battlegorithms_value_number` | number | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_boolean_else_1` | `battlegorithms_if_boolean_else` | If [boolean] else | 23 | fired |
+| `value_compare_1` | `battlegorithms_value_compare` | compare | 23 | fired |
+| `value_runner_index_1` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `value_number_1` | `battlegorithms_value_number` | number | 0 | never fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
+| `stay_still_1` | `battlegorithms_stay_still` | Stay Still | 11 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
@@ -402,31 +402,31 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `bKkuiv;k[nlSgw0WmWT$` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `soAHTLgj0+.)|U?aiJmE` | `battlegorithms_if_boolean_else` | If [boolean] else | 40 | fired |
-| ``bvBVl;]]WKrE3Pss^XN` | `battlegorithms_value_compare` | compare | 40 | fired |
-| `B?t9:ux~d3y}}3Sp=fR+` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 20 | fired |
-| `~,}%JHk8.FKMvc/d_#3m` | `battlegorithms_if_teammate_has_flag_else` | If Teammate Has Enemy Flag | 20 | fired |
-| `DI|gtu=DpOcwYOkj6hDa` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
-| `WfY]8mt=.nf|kN%9L{|W` | `battlegorithms_value_number` | number | 0 | never fired |
-| `}v|M7t!16*IPJ][T{iE:` | `battlegorithms_move_toward` | Move Toward | 0 | never fired |
-| `b,3N[+kpcf;3=]#v2Lww` | `battlegorithms_move_toward` | Move Toward | 20 | fired |
-| `@I-n7_sr@9V#`7Or]*^P` | `battlegorithms_move_toward` | Move Toward | 0 | never fired |
-| `dLx0t0qR8yrhg59m$`@g` | `battlegorithms_if_boolean_else` | If [boolean] else | 20 | fired |
-| `:!M}cD.b=QEoUe]fHHqD` | `battlegorithms_value_compare` | compare | 20 | fired |
-| `fJIlrGE^SMb_p?]JO)$}` | `battlegorithms_move_forward` | Move Forward | 20 | fired |
-| `*v6Y}5T]_rRu%o0en$5`` | `battlegorithms_if_boolean_else` | If [boolean] else | 0 | never fired |
-| `n9}ZvnI-uC.f?DzXOO%{` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
-| `SbJKYymp~du!Nu,=*ZVF` | `battlegorithms_value_number` | number | 0 | never fired |
-| `0;He=gA$aQ+?Y5f+B0T.` | `battlegorithms_value_compare` | compare | 0 | never fired |
-| `k``hq(t4M2tO9S)~l}{o` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
-| `@jT45-+7fz~x^#SQd5[d` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
-| `K!^A=~p3RKnXCCtt3e~L` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
-| `{0a;S+$SJzWHbo9y2msH` | `battlegorithms_value_number` | number | 0 | never fired |
-| `x]kQOfc+IP8`j2g$G41o` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
-| `_,QA9Iwrs{h_BODrMEG:` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
-| `sv/]14wxOb1UQL=tU:g.` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
-| `N}Tv8Ria$_7xS,h,#rSJ` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_boolean_else_1` | `battlegorithms_if_boolean_else` | If [boolean] else | 40 | fired |
+| `value_compare_1` | `battlegorithms_value_compare` | compare | 40 | fired |
+| `value_runner_index_1` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `value_number_1` | `battlegorithms_value_number` | number | 0 | never fired |
+| `if_have_enemy_flag_else_1` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 20 | fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 0 | never fired |
+| `move_toward_2` | `battlegorithms_move_toward` | Move Toward | 20 | fired |
+| `if_teammate_has_flag_else_1` | `battlegorithms_if_teammate_has_flag_else` | If Teammate Has Enemy Flag | 20 | fired |
+| `move_toward_3` | `battlegorithms_move_toward` | Move Toward | 0 | never fired |
+| `if_boolean_else_2` | `battlegorithms_if_boolean_else` | If [boolean] else | 20 | fired |
+| `value_compare_2` | `battlegorithms_value_compare` | compare | 20 | fired |
+| `value_runner_index_2` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `value_number_2` | `battlegorithms_value_number` | number | 0 | never fired |
+| `move_forward_1` | `battlegorithms_move_forward` | Move Forward | 20 | fired |
+| `if_boolean_else_3` | `battlegorithms_if_boolean_else` | If [boolean] else | 0 | never fired |
+| `value_compare_3` | `battlegorithms_value_compare` | compare | 0 | never fired |
+| `value_runner_index_3` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `value_number_3` | `battlegorithms_value_number` | number | 0 | never fired |
+| `if_can_jump_else_1` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
+| `jump_forward_1` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
+| `move_forward_2` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
+| `if_can_jump_else_2` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
+| `jump_forward_2` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
+| `move_forward_3` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

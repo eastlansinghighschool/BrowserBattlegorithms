@@ -2,7 +2,7 @@
 id: plan-83-cohort-insight-distillation
 title: "Cohort Insight Distillation"
 status: ready
-depends_on: []
+depends_on: [plan-80-cohort-usage-privacy-workspace, plan-81-cohort-usage-dataset-and-baseline, plan-82-cohort-guided-learning-insight-audit]
 gate: "before writing any tracked cohort-derived conclusion, before citing exact cohort counts, before drafting implementation packets from cohort evidence"
 superseded_by: null
 resolution: null

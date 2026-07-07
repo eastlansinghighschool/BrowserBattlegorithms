@@ -92,13 +92,13 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `@l3no~?~d{d#/korzbQa` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `SSWnz/.$.^qUN53WBWld` | `battlegorithms_if_boolean_else` | If [boolean] else | 23 | fired |
-| `b-{BBwI@%!m|qKIQ#N|p` | `battlegorithms_value_compare` | compare | 23 | fired |
-| `CTvA$-^I`mUI]R~$nU^5` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
-| `pH(uIEc]^?l|P|p@XDKl` | `battlegorithms_stay_still` | Stay Still | 11 | fired |
-| `neFl`BO4BVFKcE)#|RNM` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
-| `Z5wh|RvFTX2#*w]6)[w!` | `battlegorithms_value_number` | number | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_boolean_else_1` | `battlegorithms_if_boolean_else` | If [boolean] else | 23 | fired |
+| `value_compare_1` | `battlegorithms_value_compare` | compare | 23 | fired |
+| `value_runner_index_1` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `value_number_1` | `battlegorithms_value_number` | number | 0 | never fired |
+| `move_toward_1` | `battlegorithms_move_toward` | Move Toward | 12 | fired |
+| `stay_still_1` | `battlegorithms_stay_still` | Stay Still | 11 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

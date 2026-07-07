@@ -2,7 +2,7 @@
 id: plan-94-copy-voice-contract-lint-warnings
 title: "Copy Voice Contract And Lint Warnings"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter]
 gate: "before mutation; do not run until Plan 85 voice contract is accepted"
 superseded_by: null
 resolution: null

@@ -2,7 +2,7 @@
 id: plan-97-inversion-level-prototype
 title: "Inversion Level Prototype"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter]
 gate: "before mutation; owner must select prototype placement and interaction shape"
 superseded_by: null
 resolution: null

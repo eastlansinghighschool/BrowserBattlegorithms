@@ -75,10 +75,10 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `,A*_7)ou%5$DBH_Z/|jy` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `+(VkWP],L9(ebQwg6XTz` | `battlegorithms_if_can_place_barrier_else` | If I Can Place Barrier | 1 | fired |
-| `~;0f.`D+chlXkv3T:14n` | `battlegorithms_place_barrier` | Place Barrier (in front) | 1 | fired |
-| `3HeA.;4VmI,o47Q=.2M-` | `battlegorithms_stay_still` | Stay Still | 0 | never fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `if_can_place_barrier_else_1` | `battlegorithms_if_can_place_barrier_else` | If I Can Place Barrier | 1 | fired |
+| `place_barrier_1` | `battlegorithms_place_barrier` | Place Barrier (in front) | 1 | fired |
+| `stay_still_1` | `battlegorithms_stay_still` | Stay Still | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

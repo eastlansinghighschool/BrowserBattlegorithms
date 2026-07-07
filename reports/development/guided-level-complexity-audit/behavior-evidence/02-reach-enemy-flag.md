@@ -80,8 +80,8 @@
 
 | block id | block type | display label | fired count | status |
 | --- | --- | --- | --- | --- |
-| `0aMpb@~Kh(NSQR6-.ci!` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
-| `L0H%8%d3]oaLROT%dq%S` | `battlegorithms_move_backward` | Move Backward | 1 | fired |
+| `on_each_turn_1` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `move_backward_1` | `battlegorithms_move_backward` | Move Backward | 1 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

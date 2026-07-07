@@ -1,11 +1,11 @@
 ---
 id: plan-78-frozen-input-and-flag-home-reconciliation
 title: "Frozen Input And Flag-Home Reconciliation"
-status: ready
+status: complete
 depends_on: []
 gate: "before changing collision winner/loser priority, scoring prerequisites, flag reset location, guided level design, or broad turn-engine semantics"
 superseded_by: null
-resolution: null
+resolution: "Repaired frozen-human-input engine halt, animation-start guard, and flag-home occupancy reconciliation (including a stay-in-place fallback for the unreachable no-legal-cell case). Focused and full unit suites pass."
 summary: >-
   Repair student-reported runtime bugs: frozen human input halting the turn engine, collision outcomes leaving same-team runners on their own at-base flag, and reset flags failing to promote waiting opposing runners to carriers.
 ---

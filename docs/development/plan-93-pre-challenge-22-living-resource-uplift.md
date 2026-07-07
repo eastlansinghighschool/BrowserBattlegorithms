@@ -2,7 +2,7 @@
 id: plan-93-pre-challenge-22-living-resource-uplift
 title: "Pre-Challenge 22 Living Resource Uplift"
 status: draft
-depends_on: []
+depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-92-pre-challenge-15-living-board-pilot]
 gate: "before mutation; do not run until Plan 92 pilot review is accepted or the owner explicitly skips the pilot dependency"
 superseded_by: null
 resolution: null
