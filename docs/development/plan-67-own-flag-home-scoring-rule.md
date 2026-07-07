@@ -1,8 +1,19 @@
+---
+id: plan-67-own-flag-home-scoring-rule
+title: "Own-Flag-Home Scoring Rule"
+status: complete
+depends_on: []
+gate: "none; integration owner has approved the core design decision below"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Require a team's own flag to be home before a carrier can score, with blocked-score feedback, docs, tests, and guided-level fallout reporting.
+---
 # Plan 67: Own-Flag-Home Scoring Rule
 
 - Packet id: Plan 67
 - Packet title: Own-Flag-Home Scoring Rule
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

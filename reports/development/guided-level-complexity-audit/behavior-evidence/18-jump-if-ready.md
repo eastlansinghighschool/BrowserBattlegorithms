@@ -18,6 +18,9 @@
   - turns elapsed: 4
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -44,9 +47,9 @@
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
 | 1 | `runner_1_AI_AllyP1` | JUMP_FORWARD | jumped | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=true -> action `battlegorithms_jump_forward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -63,6 +66,31 @@
 - turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward`
 - turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward`
 - turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_can_jump_else` result=false -> action `battlegorithms_move_forward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 4 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 4
+- blocks fired: 3
+- blocks never fired: 1
+- coverage ratio: 3 / 4 (75.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| ``1wOZMXC|2gA:$6wEbLE` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `I$^^zL!n3y51B:BM:-_*` | `battlegorithms_if_can_jump_else` | If I Can Jump | 4 | fired |
+| `Eyzkw/{I?or[INq-d3O@` | `battlegorithms_jump_forward` | Jump Forward | 1 | fired |
+| `M%u[{FlOqYyH,mu8GR`1` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

@@ -27,6 +27,7 @@ This note does NOT own:
 | `src/core/scoring.js` | Flag pickup, score increment, `GAME_OVER` transitions, round reset trigger. |
 | `src/core/levels.js` | Guided level completion, pass/fail resolution, and the `GAME_OVER` level-result safety net. |
 | `src/core/collisions.js` | Winner/loser resolution, freeze application, flag drop. |
+| `src/core/flagReconciliation.js` | Post-collision flag-home occupancy reconciliation: opposing-runner pickup and same-team deterministic displacement. |
 | `src/core/events.js` | Per-turn event log for narration consumers; passive observer, does not change resolution order. |
 | `src/core/invariants.js` | Post-resolution state validation: duplicate positions, invalid flag state, team direction. |
 
@@ -61,6 +62,23 @@ Gameplay pause is a live-match UI state, not a new turn-state enum. `src/core/ga
 - Resume clears both pause flags and returns the engine to normal live processing.
 
 Pause is separate from the trace pause above and separate from the Plan 28 and Plan 55 safety nets. Those safety nets repair invalid turn or level states; gameplay pause simply asks the engine to wait at the next clean boundary.
+
+## Frozen human input and animation-start safety (Plan 78)
+
+- A frozen human-controlled runner cannot queue player input. `handlePlayerInput()` in `src/core/turnEngine.js` early-returns when `runner.isFrozen` is true, so a key press while the active human is frozen is silently ignored rather than being accepted into `PROCESSING_ACTION`.
+- Frozen turns are still handled exclusively by `handleFrozenRunnerTurn()`: the runner occupies its cell, the turn is consumed, and `frozenTurnsRemaining` decrements toward thaw, unchanged from prior behavior.
+- The engine must never enter `TURN_STATES.ANIMATING` unless a runner is actually animating. `executeQueuedAction()` only treats an action as "resolved and animating" when the corresponding `Runner` animation-start method (`startMoveAnimation()`, `startJumpAnimation()`, `startFailedJumpAnimation()`, `startBounceAnimation()`) returns `true`. If an animation-start call returns `false` (for example, because the runner turned out to be frozen, moving, jumping, or bouncing at the moment the call happened), the action completes immediately instead, so `handleActionCompletion()` still runs and the turn cannot stall.
+
+## Flag-home occupancy reconciliation (Plan 78)
+
+After a collision causes a carried flag to reset to its home cell (`src/core/collisions.js`'s `resolveCollision()` calls `flag.resetToInitialPosition()` and returns the reset `Flag` as `resetFlag`), `src/core/turnEngine.js` calls `reconcileFlagHomeOccupancy(state, outcome.resetFlag)` from `src/core/flagReconciliation.js` once both the collision winner and loser have been snapped to their final cells.
+
+Reconciliation only runs for a flag that just reset via collision (not ordinary scoring round resets), and only when the flag is loose (`isAtBase` true, `carriedByRunnerId` null):
+
+- If the runner now standing on the flag's home cell is on the **opposing** team from the flag's own team, that runner is promoted to carrier immediately, using the same `checkForFlagPickup()` path (and `flag.pickedUp` event) as ordinary pickup.
+- If the runner now standing on the flag's home cell is on the flag's **own** team, that runner may not remain there — normal movement already forbids a team from walking onto its own loose at-base flag cell (`isOwnFlagHomeCellBlockedForRunner()` in `src/core/movement.js`), so a collision snap cannot be allowed to create the same illegal state through a different path. The runner is displaced to the nearest legal cell using a deterministic search: the four cardinal neighbors in the fixed order left, right, up, down, then expanding Manhattan radius outward across the board. A candidate cell must pass the same `isCellBlockedForRunner()` legality check used for normal movement and must not already hold another runner.
+- If no legal displacement cell exists anywhere on the board, `reconcileFlagHomeOccupancy()` throws rather than silently leaving the runner on the illegal cell or teleporting it somewhere arbitrary. Given board sizes and the one-barrier-per-runner rule, this should not occur on any authored map; if it does, it is a signal that the specific board state needs owner review, not a case the helper should paper over.
+- Reconciliation does not touch a flag that is still carried, and does not run as part of `resetRound()` after scoring — it exists only to close the gap that collision-snap placement can open around a flag's home cell.
 
 ## Area Freeze cooldown
 
@@ -159,6 +177,8 @@ This is a separate safety net from the `PROCESSING_ACTION` recovery in `src/core
 - **Expecting a parked carrier to auto-score when the own flag returns home.** Blocked scoring does not create a deferred trigger. The carrier scores only during its own completed turn, not as a side effect of another runner returning the own flag.
 - **Assuming the Free Play turn limit applies to guided levels.** The `freePlayPointTurnLimit` check is gated on `currentModeView === FREE_PLAY`. Guided level turn limits are separate authored properties in each level's config.
 - **Treating the no-score round reset as a score event.** It resets the round state but neither increments team scores nor emits a scoring event. `lastScoringTeam` remains `null` after the reset.
+- **Assuming a frozen human runner is inert to input.** Before Plan 78, a frozen active human could still queue a movement action; `handlePlayerInput()` now guards on `runner.isFrozen` explicitly rather than relying on `isMoving`/`isBouncing` alone.
+- **Assuming `snapRunnerToCell()` after a collision is always the final placement.** When the collision reset a carried flag, `reconcileFlagHomeOccupancy()` can move the just-snapped runner again (opposing pickup or same-team displacement) before the turn completes.
 
 ## Related
 

@@ -1,8 +1,19 @@
+---
+id: plan-98-strategy-brain-reframe-decision
+title: "Strategy Brain Reframe Decision"
+status: draft
+depends_on: []
+gate: "before mutation; no source edits"
+superseded_by: null
+resolution: null
+summary: >-
+  Orchestration-grade decision scan for Strategy Brain/project-arc reframing, preserving decentralized coordination goals and producing downstream options without source edits.
+---
 # Plan 98: Strategy Brain Reframe Decision
 
 - Packet id: Plan 98
 - Packet title: Strategy Brain Reframe Decision
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: orchestration-grade scan/design agent
 - Date: 2026-07-06
 - Packet type: scan-only / design decision

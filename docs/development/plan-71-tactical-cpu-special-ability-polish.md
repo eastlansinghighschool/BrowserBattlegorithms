@@ -1,8 +1,19 @@
+---
+id: plan-71-tactical-cpu-special-ability-polish
+title: "Tactical CPU Special Ability Polish"
+status: complete
+depends_on: []
+gate: "none for bounded Free Play tactical CPU tuning; stop for broad AI redesign"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Improve Free Play Tactical CPU special-ability use, especially attacker jump choices and carrier Area Freeze.
+---
 # Plan 71: Tactical CPU Special Ability Polish
 
 - Packet id: Plan 71
 - Packet title: Tactical CPU Special Ability Polish
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

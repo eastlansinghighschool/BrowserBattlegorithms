@@ -1,8 +1,19 @@
+---
+id: plan-93-pre-challenge-22-living-resource-uplift
+title: "Pre-Challenge 22 Living Resource Uplift"
+status: draft
+depends_on: []
+gate: "before mutation; do not run until Plan 92 pilot review is accepted or the owner explicitly skips the pilot dependency"
+superseded_by: null
+resolution: null
+summary: >-
+  Living-board-aware replacement for Plan 77's pre-Challenge-22 resource/territory uplift, preserving compound-condition intent while waiting for pilot evidence and owner target confirmation.
+---
 # Plan 93: Pre-Challenge 22 Living Resource Uplift
 
 - Packet id: Plan 93
 - Packet title: Pre-Challenge 22 Living Resource Uplift
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: level-editing specialist after pilot review
 - Date: 2026-07-06
 - Packet type: implementation / curriculum / level-editing

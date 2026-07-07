@@ -22,6 +22,9 @@
   - turns elapsed: 18
   - lastLevelResultReason: turn_limit_exceeded
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -48,19 +51,19 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 1 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=5 -> comparison `battlegorithms_value_compare` result=true compare=5 vs 5 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=6 -> comparison `battlegorithms_value_compare` result=false compare=6 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 6 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=5 -> comparison `battlegorithms_value_compare` result=true compare=5 vs 5 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 1 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=5 -> comparison `battlegorithms_value_compare` result=true compare=5 vs 5 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=7 -> comparison `battlegorithms_value_compare` result=false compare=7 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=6 -> comparison `battlegorithms_value_compare` result=false compare=6 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 6 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=5 -> comparison `battlegorithms_value_compare` result=true compare=5 vs 5 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
 ### Enemy action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 2 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 3 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 4 | `runner_2_Npc1` | STAY_STILL | illegal_noop | trace data not available |
+| 1 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 2 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 3 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 4 | `runner_2_Npc1` | STAY_STILL | stayed | trace data not available |
 ### Event Tail
 - turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=STAY_STILL, source=npc) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=illegal_noop)
 - turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
@@ -78,15 +81,48 @@
 - turn 5 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=6 -> comparison `battlegorithms_value_compare` result=false compare=6 vs 5 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward`
 - turn 6 runner runner_1_AI_AllyP1: value `battlegorithms_value_distance_to_target` result=5 -> comparison `battlegorithms_value_compare` result=true compare=5 vs 5 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen`
 
+#### Enemy Movement Timeline
+| turn | runner | behavior | from | to | action |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `runner_2_Npc1` | PATROL_INTERCEPT | (6, 4) | (7, 4) | MOVE (moved) |
+| 2 | `runner_2_Npc1` | PATROL_INTERCEPT | (7, 4) | (8, 4) | MOVE (moved) |
+| 3 | `runner_2_Npc1` | PATROL_INTERCEPT | (8, 4) | (9, 4) | MOVE (moved) |
+| 4 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 5 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 6 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 7
+- blocks fired: 5
+- blocks never fired: 2
+- coverage ratio: 5 / 7 (71.4%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `yK!ihV%bv0+!`D#)um%(` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `sz.v*s@2C/Iv}^MT_.]*` | `battlegorithms_if_boolean_else` | If [boolean] else | 6 | fired |
+| `TRbjJ7zKi6ZPkAg?1T:F` | `battlegorithms_value_compare` | compare | 6 | fired |
+| `sEIbQw,~zozcXq,dy0*o` | `battlegorithms_move_up_screen` | Move Up (screen) | 2 | fired |
+| `$!6MVD:_A3o?#N8}BCR:` | `battlegorithms_move_forward` | Move Forward | 4 | fired |
+| `u%K@a81Wd6{e}7XR!#M_` | `battlegorithms_value_distance_to_target` | distance to | 6 | fired |
+| `%L_b|QMhA4fj~-Mz`v]H` | `battlegorithms_value_number` | number | 0 | never fired |
+
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
 - runner_2_Npc1: behavior PATROL_INTERCEPT; start (6, 4); frozen no
 - runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (994 turns remaining)
 - first enemy actions:
-  - turn 1: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 2: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 3: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 4: runner_2_Npc1 chose STAY_STILL via npc; outcome illegal_noop
+  - turn 1: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 2: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 3: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 4: runner_2_Npc1 chose STAY_STILL via npc; outcome stayed
 
 ### project final
 - fixture path: `tests/unit/fixtures/guided-project-solutions/strategy-brain/final.xml`
@@ -109,19 +145,19 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | stayed | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | stayed | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | stayed | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | stayed | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | bounced | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | bounced | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | bounced | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | bounced | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
 ### Enemy action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 2 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 3 | `runner_2_Npc1` | MOVE | illegal_noop | trace data not available |
-| 4 | `runner_2_Npc1` | STAY_STILL | illegal_noop | trace data not available |
+| 1 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 2 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 3 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 4 | `runner_2_Npc1` | STAY_STILL | stayed | trace data not available |
 ### Event Tail
 - turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, source=blockly) | runner.blockedOrBounced (runner=runner_1_AI_AllyP1, team=1, reason=barrier) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, outcome=stayed)
@@ -139,12 +175,86 @@
 - turn 16 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward`
 - turn 17 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward`
 
+#### Enemy Movement Timeline
+| turn | runner | behavior | from | to | action |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `runner_2_Npc1` | PATROL_INTERCEPT | (6, 4) | (7, 4) | MOVE (moved) |
+| 2 | `runner_2_Npc1` | PATROL_INTERCEPT | (7, 4) | (8, 4) | MOVE (moved) |
+| 3 | `runner_2_Npc1` | PATROL_INTERCEPT | (8, 4) | (9, 4) | MOVE (moved) |
+| 4 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 5 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 6 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 7 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 8 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 9 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 10 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 11 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 12 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 13 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+| 14 | `runner_2_Npc1` | PATROL_INTERCEPT | (9, 4) | (9, 4) | STAY_STILL (stayed) |
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 3 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 4 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 5 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 10 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 11 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 12 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 13 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 14 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 15 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (4, 4) |
+| 18 | `level.result` | level result: FAILED (reason: turn_limit_exceeded) |
+| ... | `info` | later events omitted after evidence window |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 6
+- blocks fired: 3
+- blocks never fired: 3
+- coverage ratio: 3 / 6 (50.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `D#:i|e%JW0AeFFKjciy6` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `[z/~`8bd+[Z#84g1^dkP` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 17 | fired |
+| `Dcid}f,f?+|P9[0Sa5#:` | `battlegorithms_move_toward` | Move Toward | 0 | never fired |
+| `~2D=b(V:FkWI8?0:g8)d` | `battlegorithms_if_sensor_matches_else` | If | 17 | fired |
+| `J[Fuo7(MNzz1?;nvpkG]` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `PNrYG4dNoV#O4a_5XX]c` | `battlegorithms_move_toward` | Move Toward | 17 | fired |
+
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
 - runner_2_Npc1: behavior PATROL_INTERCEPT; start (6, 4); frozen no
 - runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (982 turns remaining)
 - first enemy actions:
-  - turn 1: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 2: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 3: runner_2_Npc1 chose MOVE via npc; outcome illegal_noop
-  - turn 4: runner_2_Npc1 chose STAY_STILL via npc; outcome illegal_noop
+  - turn 1: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 2: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 3: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 4: runner_2_Npc1 chose STAY_STILL via npc; outcome stayed

@@ -1,8 +1,19 @@
+---
+id: plan-72-free-play-per-point-turn-limit
+title: "Free Play Per-Point Turn Limit"
+status: complete
+depends_on: []
+gate: "none for the approved dropdown/default behavior; stop for broader stalemate detection"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Add a Free Play per-point turn-limit dropdown, defaulting to 100 turns, that resets stalemated rounds with no score.
+---
 # Plan 72: Free Play Per-Point Turn Limit
 
 - Packet id: Plan 72
 - Packet title: Free Play Per-Point Turn Limit
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

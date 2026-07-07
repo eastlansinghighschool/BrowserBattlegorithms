@@ -1,8 +1,19 @@
+---
+id: plan-97-inversion-level-prototype
+title: "Inversion Level Prototype"
+status: draft
+depends_on: []
+gate: "before mutation; owner must select prototype placement and interaction shape"
+superseded_by: null
+resolution: null
+summary: >-
+  Prototype a small "read the program, choose/predict the board" inversion level if the owner selects placement and interaction shape.
+---
 # Plan 97: Inversion Level Prototype
 
 - Packet id: Plan 97
 - Packet title: Inversion Level Prototype
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: curriculum interaction prototype agent
 - Date: 2026-07-06
 - Packet type: prototype / curriculum / UI

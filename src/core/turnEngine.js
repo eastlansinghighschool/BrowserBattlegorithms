@@ -8,7 +8,6 @@ import {
   BLOCKLY_TRACE_SPEED_THRESHOLD,
   AREA_FREEZE_DURATION_TURNS,
   AREA_FREEZE_RADIUS,
-  CELL_SIZE,
   CELL_TYPE,
   GAME_VIEW_MODES,
   HUMAN_TURN_BEHAVIORS,
@@ -28,9 +27,11 @@ import {
   getRunnerAtCell,
   isCellBlockedForBarrierPlacement,
   isCellBlockedForRunner,
+  snapRunnerToCell,
   translateActionDecision
 } from "./movement.js";
 import { checkForFlagPickup, checkForScoring } from "./scoring.js";
+import { reconcileFlagHomeOccupancy } from "./flagReconciliation.js";
 import { resetRound } from "./setup.js";
 import { emit, finalizeTurnEventLog } from "./events.js";
 import { calculateNpcType1Action } from "../ai/npc/npcType1.js";
@@ -139,22 +140,6 @@ function recordRunnerAction(state, runner, actionType) {
   }
 }
 
-function snapRunnerToCell(runner, gridX, gridY) {
-  runner.gridX = gridX;
-  runner.gridY = gridY;
-  runner.pixelX = gridX * CELL_SIZE;
-  runner.pixelY = gridY * CELL_SIZE;
-  runner.targetGridX = gridX;
-  runner.targetGridY = gridY;
-  runner.targetPixelX = runner.pixelX;
-  runner.targetPixelY = runner.pixelY;
-  runner.isMoving = false;
-  runner.isJumping = false;
-  runner.isBouncing = false;
-  runner.jumpFailedReversal = false;
-  runner.animationCompletionType = null;
-}
-
 function applyAreaFreeze(state, actionRunner) {
   if (!isAreaFreezeReady(state, actionRunner.team)) {
     return null;
@@ -201,7 +186,8 @@ export function handlePlayerInput(app, runner, actionData) {
     !runner.isHumanControlled ||
     state.currentTurnState !== TURN_STATES.AWAITING_INPUT ||
     runner.isMoving ||
-    runner.isBouncing
+    runner.isBouncing ||
+    runner.isFrozen
   ) {
     return;
   }
@@ -556,15 +542,22 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
     if (isJump) {
       if (!actionRunner.canJump) {
         actionOutcome = "stayed";
-        actionRunner.startBounceAnimation(actionRunner.gridX + actionRunner.playDirection, actionRunner.gridY);
-        actionResolvedAndAnimating = true;
+        const bounceStarted = actionRunner.startBounceAnimation(
+          actionRunner.gridX + actionRunner.playDirection,
+          actionRunner.gridY
+        );
+        if (bounceStarted) {
+          actionResolvedAndAnimating = true;
+        } else {
+          actionCompletedImmediately = true;
+        }
       } else {
         targetGridX = actionRunner.gridX + actionRunner.playDirection * 2;
         targetGridY = actionRunner.gridY;
       }
     }
 
-    if (!actionResolvedAndAnimating) {
+    if (!actionResolvedAndAnimating && !actionCompletedImmediately) {
       if (isCellBlockedForRunner(targetGridX, targetGridY, state.barriers, state.gameMap, state, actionRunner)) {
         if (isJump) {
           actionRunner.canJump = false;
@@ -580,8 +573,12 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
           playSound(state, "jump-takeoff");
           actionResolvedAndAnimating = true;
         } else {
-          actionRunner.startBounceAnimation(targetGridX, targetGridY);
-          actionResolvedAndAnimating = true;
+          const bounceStarted = actionRunner.startBounceAnimation(targetGridX, targetGridY);
+          if (bounceStarted) {
+            actionResolvedAndAnimating = true;
+          } else {
+            actionCompletedImmediately = true;
+          }
         }
       } else {
         const runnerInTargetCell = getRunnerAtCell(targetGridX, targetGridY, state.allRunners, actionRunner.id);
@@ -601,8 +598,12 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
               playSound(state, "jump-takeoff");
               actionResolvedAndAnimating = true;
             } else {
-              actionRunner.startBounceAnimation(targetGridX, targetGridY);
-              actionResolvedAndAnimating = true;
+              const bounceStarted = actionRunner.startBounceAnimation(targetGridX, targetGridY);
+              if (bounceStarted) {
+                actionResolvedAndAnimating = true;
+              } else {
+                actionCompletedImmediately = true;
+              }
             }
           } else {
             const outcome = resolveCollision(
@@ -615,6 +616,9 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
             );
             snapRunnerToCell(outcome.winner, targetGridX, targetGridY);
             snapRunnerToCell(outcome.loser, outcome.loserCell.x, outcome.loserCell.y);
+            if (outcome.resetFlag) {
+              reconcileFlagHomeOccupancy(state, outcome.resetFlag);
+            }
             if (isJump) {
               actionRunner.canJump = false;
             }
@@ -623,14 +627,22 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
           }
         } else {
           if (isJump) {
-            if (actionRunner.startJumpAnimation(targetGridX, targetGridY)) {
+            const jumpStarted = actionRunner.startJumpAnimation(targetGridX, targetGridY);
+            if (jumpStarted) {
               playSound(state, "jump-takeoff");
               actionOutcome = "jumped";
+              actionResolvedAndAnimating = true;
+            } else {
+              actionCompletedImmediately = true;
             }
           } else {
-            actionRunner.startMoveAnimation(targetGridX, targetGridY);
+            const moveStarted = actionRunner.startMoveAnimation(targetGridX, targetGridY);
+            if (moveStarted) {
+              actionResolvedAndAnimating = true;
+            } else {
+              actionCompletedImmediately = true;
+            }
           }
-          actionResolvedAndAnimating = true;
         }
       }
     }

@@ -1,3 +1,14 @@
+---
+id: 00-orchestrator-thread-starting-prompt
+title: "Orchestrator Thread Starting Prompt"
+status: draft
+depends_on: []
+gate: ""
+superseded_by: null
+resolution: null
+summary: >-
+  Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing.
+---
 # Orchestrator Thread Starting Prompt
 
 You are an orchestration model working with the Browser Battlegorithms integration owner.

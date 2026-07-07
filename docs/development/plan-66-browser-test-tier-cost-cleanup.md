@@ -1,10 +1,21 @@
+---
+id: plan-66-browser-test-tier-cost-cleanup
+title: "Browser Test Tier Cost Cleanup"
+status: complete
+depends_on: []
+gate: "before changing GitHub workflow files, before deleting coverage outright, before changing app runtime behavior"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Clean up browser test tier drift and Playwright cost: move local-dev workbench out of smoke, add targeted tooling scripts, reduce smoke/focus duplication, and document the revised validation policy without deleting coverage.
+---
 # Plan 66: Browser Test Tier Cost Cleanup
 
 ## Packet Metadata
 
 - Packet id: plan-66
 - Packet title: Browser Test Tier Cost Cleanup
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: testing / CI hygiene / docs

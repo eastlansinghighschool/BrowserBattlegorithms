@@ -1,3 +1,14 @@
+---
+id: 00-level-editing-agent-starting-prompt
+title: "Level Editing Implementation Thread Starting Prompt"
+status: draft
+depends_on: []
+gate: ""
+superseded_by: null
+resolution: null
+summary: >-
+  Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation.
+---
 # Level Editing Implementation Thread Starting Prompt
 
 You are a level-editing implementation agent working in the Browser Battlegorithms repository.

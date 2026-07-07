@@ -1,8 +1,19 @@
+---
+id: plan-91-usage-tracker-v2-rewrite-semantics-amendment
+title: "Usage Tracker V2 Rewrite Semantics Amendment"
+status: draft
+depends_on: []
+gate: "before mutation; this packet should not run until Plan 85 owner gate is resolved"
+superseded_by: null
+resolution: null
+summary: >-
+  Amend Plan 84 before tracker implementation so Usage Tracker V2 can capture rewrite-aware semantics: arcs, board-dynamics tiers, bestiary encounters, stars/par/mastery outcomes, film-review summaries, and corrected downstream numbering.
+---
 # Plan 91: Usage Tracker V2 Rewrite Semantics Amendment
 
 - Packet id: Plan 91
 - Packet title: Usage Tracker V2 Rewrite Semantics Amendment
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: orchestration docs agent
 - Date: 2026-07-06
 - Packet type: design / docs

@@ -1,8 +1,19 @@
+---
+id: plan-79-admin-guided-progress-story
+title: "Admin Guided Progress Story"
+status: complete
+depends_on: []
+gate: "before adding grade-specific targets, database storage, new dependencies, server behavior, or changing usage export format semantics"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Improve the local admin usage view so teachers can see each student's guided progress story: highest reached, highest passed, label-honest passed-challenge evidence, review signals, and an accessible per-level sequence map without semester-specific grading targets.
+---
 # Plan 79: Admin Guided Progress Story
 
 - Packet id: Plan 79
 - Packet title: Admin Guided Progress Story
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent with UI/testing care
 - Date: 2026-05-30
 - Packet type: implementation / admin UI / usage analysis / docs

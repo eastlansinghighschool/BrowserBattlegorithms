@@ -9,7 +9,7 @@ import {
   toggleGameplayPause
 } from "../../src/core/gameplayPause.js";
 import { checkForFlagPickup, checkForScoring } from "../../src/core/scoring.js";
-import { processTurnActions } from "../../src/core/turnEngine.js";
+import { handlePlayerInput, processTurnActions } from "../../src/core/turnEngine.js";
 
 const TEST_P5 = {
   lerp(start, end, amount) {
@@ -97,6 +97,86 @@ test("frozen runner turns count as not moved but not blocked", () => {
   assert.equal(human.recentMovementState.lastMoveWasBlocked, false);
   assert.equal(human.recentMovementState.consecutiveTurnsWithoutMovement, 1);
   assert.equal(human.isFrozen, false);
+});
+
+test("a frozen active human ignores queued movement input and continues thawing normally", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const human = app.state.allRunners.find((runner) => runner.isHumanControlled);
+  assert.ok(human, "expected a human runner");
+
+  human.setFrozen(1);
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = TURN_STATES.AWAITING_INPUT;
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(human);
+
+  handlePlayerInput(app, human, { type: AI_ACTION_TYPES.MOVE_FORWARD });
+
+  assert.equal(app.state.currentTurnState, TURN_STATES.AWAITING_INPUT);
+  assert.equal(app.state.queuedActionForCurrentRunner, null);
+
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(human.isFrozen, false);
+  assert.equal(app.state.currentTurnState, TURN_STATES.AWAITING_INPUT);
+  assert.notEqual(app.state.currentTurnState, TURN_STATES.ANIMATING);
+});
+
+test("a movement animation-start failure cannot leave the engine stuck in ANIMATING", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const runner = app.state.allRunners.find((candidate) => !candidate.isHumanControlled && candidate.team === 1);
+  assert.ok(runner, "expected a non-human team 1 runner");
+  runner.setFrozen(2);
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(runner);
+  app.state.queuedActionForCurrentRunner = {
+    runner,
+    actionType: AI_ACTION_TYPES.MOVE_FORWARD,
+    targetGridX: runner.gridX + runner.playDirection,
+    targetGridY: runner.gridY
+  };
+
+  processTurnActions(app, TEST_P5);
+
+  assert.notEqual(app.state.currentTurnState, TURN_STATES.ANIMATING);
+  assert.equal(runner.isMoving, false);
+  assert.equal(runner.isJumping, false);
+  assert.equal(runner.isBouncing, false);
+});
+
+test("a jump animation-start failure cannot leave the engine stuck in ANIMATING", () => {
+  const app = createApp();
+  initializeLevelState(app);
+  startLevel(app, "human-runner-practice");
+
+  const runner = app.state.allRunners.find((candidate) => !candidate.isHumanControlled && candidate.team === 1);
+  assert.ok(runner, "expected a non-human team 1 runner");
+  runner.canJump = true;
+  runner.setFrozen(2);
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(runner);
+  app.state.queuedActionForCurrentRunner = {
+    runner,
+    actionType: AI_ACTION_TYPES.JUMP_FORWARD,
+    targetGridX: runner.gridX + runner.playDirection * 2,
+    targetGridY: runner.gridY
+  };
+
+  processTurnActions(app, TEST_P5);
+
+  assert.notEqual(app.state.currentTurnState, TURN_STATES.ANIMATING);
+  assert.equal(runner.isMoving, false);
+  assert.equal(runner.isJumping, false);
+  assert.equal(runner.isBouncing, false);
 });
 
 test("pause requests apply immediately at a human input boundary and resume clears them", () => {

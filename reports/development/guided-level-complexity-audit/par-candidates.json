@@ -1,0 +1,705 @@
+{
+  "move-to-target": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 3,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "reach-enemy-flag": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 1,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD"
+        ]
+      }
+    ]
+  },
+  "score-a-point": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 20,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "barrier-detour": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 6,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "mirror-forward": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 3,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "prediction-06": {
+    "runnable": false,
+    "notApplicableReason": "prediction checkpoint requires a prediction choice before play"
+  },
+  "sensor-barrier-branch": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 6,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "watch-the-wall": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 5,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "find-the-human": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 7,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "find-the-enemy-flag": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 12,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "human-runner-practice": {
+    "runnable": false,
+    "notApplicableReason": "human-input level requires live player input"
+  },
+  "move-toward-flag": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 13,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "bring-it-home": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 21,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "enemy-nearby": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 6,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "jump-the-gap": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 1,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "JUMP_FORWARD"
+        ]
+      }
+    ]
+  },
+  "bughunt-15": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 18,
+        "blockCount": 8,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "dodge-and-deliver": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 26,
+        "blockCount": 10,
+        "distinctActionTypes": [
+          "JUMP_FORWARD",
+          "MOVE_BACKWARD",
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "jump-if-ready": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 4,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "JUMP_FORWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "build-the-barrier": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 1,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "PLACE_BARRIER_FORWARD"
+        ]
+      }
+    ]
+  },
+  "stay-still-can-do-something": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 4,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "STAY_STILL"
+        ]
+      }
+    ]
+  },
+  "relay-race": {
+    "runnable": false,
+    "notApplicableReason": "human-input level requires live player input"
+  },
+  "my-side-their-side": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 9,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "freeze-the-lane": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 5,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "FREEZE_OPPONENTS",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "bughunt-22": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 1,
+        "blockCount": 4,
+        "distinctActionTypes": [
+          "PLACE_BARRIER_FORWARD"
+        ]
+      }
+    ]
+  },
+  "show-what-you-know": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 35,
+        "blockCount": 14,
+        "distinctActionTypes": [
+          "FREEZE_OPPONENTS",
+          "MOVE_BACKWARD",
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "closest-threat": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 5,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 16,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "how-far-away": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 6,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 18,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "two-conditions-at-once": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 5,
+        "blockCount": 9,
+        "distinctActionTypes": [
+          "FREEZE_OPPONENTS",
+          "MOVE_FORWARD"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 11,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "this-or-that": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 7,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 7,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "flip-the-answer": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 7,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 20,
+        "blockCount": 6,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "prediction-25": {
+    "runnable": false,
+    "notApplicableReason": "prediction checkpoint requires a prediction choice before play"
+  },
+  "bughunt-28": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 12,
+        "blockCount": 9,
+        "distinctActionTypes": [
+          "FREEZE_OPPONENTS",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "full-team-tactics": {
+    "runnable": false,
+    "notApplicableReason": "project capstone with live human input — project fixtures exist but runtime behavior evidence requires student-driven play"
+  },
+  "one-program-two-allies": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 12,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD",
+          "STAY_STILL"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 21,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "index-jobs": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 9,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 11,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD",
+          "STAY_STILL"
+        ]
+      }
+    ]
+  },
+  "first-two-defend": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 3,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 13,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "JUMP_FORWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "escort-the-carrier": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 3,
+        "blockCount": 10,
+        "distinctActionTypes": [
+          "MOVE_FORWARD",
+          "STAY_STILL"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 6,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "STAY_STILL"
+        ]
+      }
+    ]
+  },
+  "closest-enemy-defender": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 10,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 19,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "freeze-support": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 5,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "FREEZE_OPPONENTS",
+          "MOVE_FORWARD"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 5,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "barrier-specialist": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 11,
+        "blockCount": 9,
+        "distinctActionTypes": [
+          "MOVE_BACKWARD",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN",
+          "PLACE_BARRIER_FORWARD",
+          "STAY_STILL"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 14,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "jump-team": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 3,
+        "blockCount": 9,
+        "distinctActionTypes": [
+          "JUMP_FORWARD",
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 16,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "prediction-31": {
+    "runnable": false,
+    "notApplicableReason": "prediction checkpoint requires a prediction choice before play"
+  },
+  "bughunt-37": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 12,
+        "blockCount": 7,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD",
+          "STAY_STILL"
+        ]
+      }
+    ]
+  },
+  "advanced-scrimmage": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "project checkpoint",
+        "turnsElapsed": 56,
+        "blockCount": 5,
+        "distinctActionTypes": [
+          "MOVE_FORWARD"
+        ]
+      },
+      {
+        "fixtureKind": "project final",
+        "turnsElapsed": 56,
+        "blockCount": 25,
+        "distinctActionTypes": [
+          "JUMP_FORWARD",
+          "MOVE_FORWARD"
+        ]
+      }
+    ]
+  },
+  "optional-random-lab": {
+    "runnable": true,
+    "runs": [
+      {
+        "fixtureKind": "one-off reference",
+        "turnsElapsed": 3,
+        "blockCount": 2,
+        "distinctActionTypes": [
+          "MOVE_DOWN_SCREEN",
+          "MOVE_FORWARD",
+          "MOVE_UP_SCREEN"
+        ]
+      }
+    ]
+  },
+  "optional-double-carrier-showdown": {
+    "runnable": false,
+    "notApplicableReason": "human-input level requires live player input"
+  }
+}

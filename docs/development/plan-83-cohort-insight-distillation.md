@@ -1,8 +1,19 @@
+---
+id: plan-83-cohort-insight-distillation
+title: "Cohort Insight Distillation"
+status: ready
+depends_on: []
+gate: "before writing any tracked cohort-derived conclusion, before citing exact cohort counts, before drafting implementation packets from cohort evidence"
+superseded_by: null
+resolution: null
+summary: >-
+  Owner-gated privacy-safe distillation that converts local Plan 82 cohort audits into tracked directional conclusions and follow-up packet candidates without exact small-cohort counts or row-level data.
+---
 # Plan 83: Cohort Insight Distillation
 
 - Packet id: Plan 83
 - Packet title: Cohort Insight Distillation
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: orchestration-grade model under integration-owner review
 - Date: 2026-05-30
 - Packet type: scan-only / synthesis / privacy review / packet planning

@@ -1,3 +1,14 @@
+---
+id: 00-cross-doc-drift-scanner-agent-starting-prompt
+title: "Cross-Doc Drift Scanner Agent Starting Prompt"
+status: draft
+depends_on: []
+gate: ""
+superseded_by: null
+resolution: null
+summary: >-
+  Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve.
+---
 # Cross-Doc Drift Scanner Agent Starting Prompt
 
 You are a cross-doc drift scanner agent working in the Browser Battlegorithms repository.

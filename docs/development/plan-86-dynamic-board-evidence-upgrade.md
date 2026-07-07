@@ -1,8 +1,17 @@
+---
+id: plan-86-dynamic-board-evidence-upgrade
+title: "Dynamic Board Evidence Upgrade"
+status: delivered
+depends_on: []
+gate: "before adding dependencies, before changing existing generated-output file contracts consumed by prior audits"
+summary: >-
+  Decision-independent upgrade to the Plan 73/74 evidence generators for living boards: per-NPC movement timelines, sequenced interaction timelines with near-miss derivation, trace-observed execution evidence from Plan 25a traces, naive-solution failure proofs (new fixture convention), machine-readable par candidates, additive summary-index columns preserving prior-audit citations.
+---
 # Plan 86: Dynamic Board Evidence Upgrade
 
 - Packet id: Plan 86
 - Packet title: Dynamic Board Evidence Upgrade
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent with data-tooling care
 - Date: 2026-07-06
 - Packet type: developer tooling / reports / testing / scan-prep

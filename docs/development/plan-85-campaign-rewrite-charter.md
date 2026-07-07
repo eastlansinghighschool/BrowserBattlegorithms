@@ -1,8 +1,19 @@
+---
+id: plan-85-campaign-rewrite-charter
+title: "Campaign Rewrite Charter"
+status: draft
+depends_on: []
+gate: "this charter IS the gate — no campaign rewrite implementation packet may run until the owner accepts the settled positions below; any change to a settled position requires owner sign-off"
+superseded_by: null
+resolution: null
+summary: >-
+  Campaign Rewrite Charter: settled positions S1–S12 for the guided-campaign rewrite (board-dynamics taxonomy + lint, enemy bestiary, visible mini-arcs, earned-hint reveal policy, in-world voice contract, default star/par mastery layer with protected-level override, trace-based film review, degenerate-solution test standard, Plan 77 supersession, Tracker V2 amendment coordination, movement-helpers 11–14 pilot, two-tier protected levels). All five gate items resolved by adopting recommendations; initial 7-archetype bestiary roster recorded in Appendix A. Downstream slate Plans 86–98 unlocked.
+---
 # Plan 85: Campaign Rewrite Charter
 
 - Packet id: Plan 85
 - Packet title: Campaign Rewrite Charter
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: orchestration design contract (three-way: Claude orchestrator ideation A–F, Codex orchestrator guardrails, integration owner direction)
 - Date: 2026-07-06
 - Packet type: design / contract / docs
@@ -121,15 +132,15 @@ Protection has two tiers, keyed by **level id** (the repo's order-number vs titl
 - **Fully protected — voice rewrite only:** `move-to-target`, `score-a-point`, `mirror-forward`, `human-runner-practice`, `move-toward-flag`. No dynamics, arc, or star-criterion changes beyond the pass star. These rules override the broad S1 tier plan and the default S6 star model. The foundations levels among these additionally stay `static-prop` per S1.
 - **Complexity-protected — dynamics and voice allowed, lesson shape preserved:** the remaining Plan 75 audit protected list (`barrier-detour`, `watch-the-wall`, `find-the-human`, `bring-it-home`, `jump-the-gap`, `build-the-barrier`, `relay-race`, `bughunt-15`). These may gain `background-motion` and mission copy, but their win conditions, required solution shape, and core lesson stay unchanged. "Protected" in the Plan 75 audit meant *do not raise required complexity* — it was never a ban on making the board feel alive.
 
-## Owner Decisions Still Open (Gate Items)
+## Owner Decisions — Resolved 2026-07-07
 
-Acceptance of this charter means resolving each of these explicitly:
+All five gate items were resolved by adopting the recommendations:
 
-1. Confirm pilot phase choice — recommendation: movement-helpers 11–14 (S11); alternative considered: sensing 6–9.
-2. Confirm the S6 star-criterion vocabulary is the right initial closed set.
-3. Confirm arc visibility framing — the "Part 2 of 3" naming (S3).
-4. Confirm bestiary adoption (named archetypes, S2) vs plain patrol tiers.
-5. Confirm film-review (S7) inclusion in the pilot vs deferral to a later wave.
+1. Pilot phase: **movement-helpers 11–14** (S11). ✔
+2. S6 star-criterion vocabulary: **adopted as the initial closed set**. ✔
+3. Arc visibility framing: **"Part 2 of 3" naming** (S3). ✔
+4. Bestiary: **adopted** (named archetypes, S2); initial roster in Appendix A below — archetype *rules* are contract, archetype *names* remain owner-taste and may be renamed before Plan 92 copy lands.
+5. Film review (S7): **included in the pilot**. ✔
 
 ## Recorded For Later (Deferred, Out Of First Wave)
 
@@ -236,3 +247,21 @@ For any agent drafting a downstream packet from this charter:
 - Pilot evidence (Plan 92 review) contradicts a charter assumption — e.g. Challenge 15 pass rates worsen, or timing-threat boards prove unrecoverable for the protected-adjacent levels → stop, surface, revise before campaign-wide extension.
 - Any implementation packet discovers the shared-workspace mechanism cannot generalize to arcs (S3) without engine changes → stop, surface; arc semantics are a curriculum-data decision, not an engine rewrite mandate.
 - Any downstream packet finds a `docs/subsystems/*.md` note would become untrue → stop and surface per standing packet guidance.
+
+## Appendix A — Initial Bestiary Roster (added 2026-07-07 on charter acceptance)
+
+Orchestration proposal accompanying gate item 4. **Rules are the contract; names are owner-taste** and may be renamed any time before Plan 92's copy lands. Three archetypes wrap behaviors that already exist in `src/ai/npc/`; four are new. Every rule must be learnable by watching — that is the S2 test for admitting any future archetype.
+
+| Archetype | Rule (student-observable) | Exists today? | Tier range | Concept it teaches | First appearance |
+|---|---|---|---|---|---|
+| **Dummy** | Never moves. Training prop. | `GUIDED_STAY_STILL` (rename/reframe of frozen statues where a statue is genuinely intended) | `static-prop` | Basic sensing without risk | Foundations (1–5) |
+| **Sentry** | Walks a fixed route, never deviates. Route varies per level (vertical lane today; horizontal / rectangle circuit as authored routes). | `GUIDED_VERTICAL_PATROL` (extend to authored waypoint routes) | `background-motion` → `timing-threat` | Timing; above/below sensing; "wait for the gap" | Pilot (11–14), background |
+| **Wanderer** | Moves one random step each turn, stays inside its zone. *No pattern — you cannot time it, you must sense it.* | `GUIDED_RANDOM_MOVE_ONLY` (add zone bound) | `background-motion` → `timing-threat` | Why sensors beat memorized routes | Bug hunts; sensing refreshers |
+| **Guard** | Stands at a post. If you come within K cells, it steps toward you; leave the radius and it returns to post. | New — simple deterministic rule over existing distance helpers | `timing-threat` → `collision-threat` | Distance (`enemy-nearby`, `count-within`) made visible: its aggro radius *is* the concept | Pilot uplift target `enemy-nearby` (Plan 92) |
+| **Charger** | Stands still until a runner enters its row/column, then charges straight down that line; stops at walls/barriers. | New — deterministic trigger + straight-line move | `collision-threat` | Row/column alignment; jump-to-dodge; gives barriers and freeze a real purpose (block or stop a charge) | Pre-Challenge-22 wave (Plan 93: `jump-if-ready`, `build-the-barrier`, `freeze-the-lane`) |
+| **Raider** | Runs the shortest path to your flag; if it grabs it, runs home. | New — deterministic reuse of `calculateMoveTowardsTarget` (`src/ai/npc/pathing.js`); a simplified, fully deterministic cousin of the Free Play attacker | `collision-threat` → `scrimmage-threat` | Flag-state awareness, interception, defense roles; makes the Plan 67 own-flag-home rule matter in guided play | Team Strategy Script defense levels; Challenge 22+ |
+| **Shadow** | Mirrors your ally's moves (flipped) each turn. Moves only when you move. | New — needs last-player-action access; slightly more engine coupling | `background-motion` → `timing-threat` | Prediction and relative direction; cause-and-effect of your own program | Prediction checkpoints; inversion prototype (Plan 97). Defer if coupling cost is high |
+
+Interpretation note for S2: the Wanderer's movement is random, not deterministic — but its *rule* ("random one step, never leaves its zone, never chases") is fully legible, which is what S2 actually requires. S2's "strictly deterministic" phrasing is satisfied by six of seven archetypes; the Wanderer is the deliberate exception whose lesson is that unpredictable things must be sensed, not timed. Determinism in guided *tests* is preserved via the existing seeded `state.randomFn` harness convention.
+
+Rollout guidance: Plan 92 needs Dummy, Sentry, and Guard only. Charger and Raider land with Plan 93 and the Team Strategy Script wave respectively. Shadow is optional and gated on the Plan 97 prototype. Do not build archetypes ahead of the level that needs them.

@@ -8,17 +8,17 @@ The goal is to make each packet a clear work order plus a guardrail contract. A 
 
 - Put implementation packets in `docs/development/`.
 - Use sequential names such as `plan-01-guided-level-contract-repair.md`.
-- Keep `docs/development/README.md` updated when adding, completing, or superseding a packet.
+- Keep `docs/development/README.md` updated when adding, completing, or superseding a packet; the packet table is generated from packet frontmatter with `node scripts/dev/plan-status.js render`.
 - Use `docs/development/00-mini-packet-agent-starting-prompt.md` when starting a lower-cost implementation thread.
 - Progress reports should go under `reports/development/<packet-name>/progress.md` unless the packet states otherwise.
 
 ## Packet Metadata
 
-Every packet should start with metadata:
+Every packet should start with metadata in YAML frontmatter, then repeat the human-readable packet metadata block in the body if needed:
 
 - Packet id:
 - Packet title:
-- Status: draft / ready / in-progress / complete / superseded
+- Status: draft / ready / in-progress / delivered / complete / superseded / parked
 - Owner/model:
 - Date:
 - Packet type: implementation / scan-only / docs / testing / frontend / integration / deployment / other

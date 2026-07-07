@@ -1,8 +1,19 @@
+---
+id: plan-87-bootstrap-consumer-core-setup
+title: "Bootstrap Consumer Core Setup"
+status: complete
+depends_on: []
+gate: "before adding dependencies, before renaming Bootstrap-managed files, before deleting or archiving existing packet docs"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Adopt Bootstrap's packet-status core for Browser Battlegorithms: adoption manifest, copied status tooling with ESM/CommonJS compatibility, npm packet-status scripts, and initial decision/open-question scaffolds without migrating packet frontmatter yet.
+---
 # Plan 87: Bootstrap Consumer Core Setup
 
 - Packet id: Plan 87
 - Packet title: Bootstrap Consumer Core Setup
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent with repo-tooling care
 - Date: 2026-07-06
 - Packet type: tooling / docs / integration

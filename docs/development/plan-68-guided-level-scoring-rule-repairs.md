@@ -1,8 +1,19 @@
+---
+id: plan-68-guided-level-scoring-rule-repairs
+title: "Guided Level Scoring-Rule Repairs"
+status: complete
+depends_on: []
+gate: "before broad level redesign; see stop conditions"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Repair guided-level, fixture, and curriculum fallout from the own-flag-home scoring rule, especially Levels 28, 37, and 39.
+---
 # Plan 68: Guided Level Scoring-Rule Repairs
 
 - Packet id: Plan 68
 - Packet title: Guided Level Scoring-Rule Repairs
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

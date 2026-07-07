@@ -1,8 +1,19 @@
+---
+id: plan-84-usage-tracker-v2-design-contract
+title: "Usage Tracker V2 Design Contract"
+status: ready
+depends_on: []
+gate: "this packet IS the gate — no V2 implementation packet may begin until the decisions here are accepted; any change to a settled decision requires owner sign-off"
+superseded_by: null
+resolution: null
+summary: >-
+  Settled design contract for a Usage Tracker V2: durable per-level learning ledger, local diff-deduped run-version store (last ~8 guided levels / ~20 free-play runs, cross-session), value-based pruning replacing FIFO, boundary-XML+hashes export keeping similarity detection alive, schema v2 with v1 back-compat. Records owner decisions D1–D4 and defines the downstream implementation packet sequence — note: its internal "Plans 85–87" references are renumbered by the Plan 91 amendment per the Plan 85 charter.
+---
 # Plan 84: Usage Tracker V2 Design Contract
 
 - Packet id: Plan 84
 - Packet title: Usage Tracker V2 Design Contract
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: orchestration design contract (decisions settled with integration owner)
 - Date: 2026-06-04
 - Packet type: design / contract / docs

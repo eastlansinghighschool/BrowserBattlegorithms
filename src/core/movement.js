@@ -1,4 +1,4 @@
-import { AI_ACTION_TYPES, CELL_TYPE, COLS, MOVE_TOWARD_TARGETS, ROWS } from "../config/constants.js";
+import { AI_ACTION_TYPES, CELL_SIZE, CELL_TYPE, COLS, MOVE_TOWARD_TARGETS, ROWS } from "../config/constants.js";
 import { getTeamBaseCellType, getTeamFlagHome } from "./teams.js";
 
 const RANDOM_MOVE_ACTIONS = [
@@ -22,6 +22,22 @@ export function getRunnerAtCell(gridX, gridY, runnersArray, excludeRunnerId = nu
       (runner) => runner.id !== excludeRunnerId && runner.gridX === gridX && runner.gridY === gridY
     ) || null
   );
+}
+
+export function snapRunnerToCell(runner, gridX, gridY) {
+  runner.gridX = gridX;
+  runner.gridY = gridY;
+  runner.pixelX = gridX * CELL_SIZE;
+  runner.pixelY = gridY * CELL_SIZE;
+  runner.targetGridX = gridX;
+  runner.targetGridY = gridY;
+  runner.targetPixelX = runner.pixelX;
+  runner.targetPixelY = runner.pixelY;
+  runner.isMoving = false;
+  runner.isJumping = false;
+  runner.isBouncing = false;
+  runner.jumpFailedReversal = false;
+  runner.animationCompletionType = null;
 }
 
 export function isCellBlockedByImpassables(targetGridX, targetGridY, barriersArray, gameMap) {

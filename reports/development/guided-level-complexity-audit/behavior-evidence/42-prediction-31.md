@@ -14,5 +14,8 @@
 - status: not run
 - not-applicable reason: prediction checkpoint requires a prediction choice before play
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 - no runtime evidence collected

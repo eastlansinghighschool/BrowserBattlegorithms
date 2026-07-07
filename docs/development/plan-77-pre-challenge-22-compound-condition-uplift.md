@@ -1,8 +1,19 @@
+---
+id: plan-77-pre-challenge-22-compound-condition-uplift
+title: "Pre-Challenge 22 Compound-Condition Uplift"
+status: superseded
+depends_on: []
+gate: "before any board layout or win-condition change that materially alters the puzzle, and before any reference-solution shape deviates from the per-level spec below"
+superseded_by: plan-93
+resolution: "Superseded by Plan 93."
+summary: >-
+  Preserved as raw per-level analysis for the pre-Challenge-22 resource cliff, but no longer executable as written because Plan 85 reframed the rewrite around living boards, protected levels, voice policy, and Bootstrap-backed packet sequencing.
+---
 # Plan 77: Pre-Challenge 22 Compound-Condition Uplift
 
 - Packet id: Plan 77
 - Packet title: Pre-Challenge 22 Compound-Condition Uplift
-- Status: superseded by Plan 93
+- Status: (see frontmatter)
 - Owner/model: level-editing specialist
 - Date: 2026-05-22
 - Packet type: implementation / curriculum / level-editing

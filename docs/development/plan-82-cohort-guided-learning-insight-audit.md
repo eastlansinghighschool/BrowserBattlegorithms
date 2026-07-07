@@ -1,8 +1,19 @@
+---
+id: plan-82-cohort-guided-learning-insight-audit
+title: "Cohort Guided Learning Insight Audit"
+status: ready
+depends_on: []
+gate: "before any source, level, UI, docs, or generated-data mutation"
+superseded_by: null
+resolution: null
+summary: >-
+  Local-only orchestration-grade scan over Plan 81 anonymized outputs to identify guided-level, curriculum, and UI/UX insights without reading raw exports, identity maps, or writing tracked audit reports.
+---
 # Plan 82: Cohort Guided Learning Insight Audit
 
 - Packet id: Plan 82
 - Packet title: Cohort Guided Learning Insight Audit
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: orchestration-grade model, optionally repeated across multiple models
 - Date: 2026-05-30
 - Packet type: scan-only / curriculum analysis / UX analysis / local usage evidence

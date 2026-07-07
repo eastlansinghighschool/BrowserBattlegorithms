@@ -16,6 +16,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
   - `docs/TeacherGuide.md`
   - `docs/StudentGuide.md`
   - `docs/GUIDED_LEVEL_CONCEPT_MATRIX.md`
+  - `docs/workflows/packet-tracking-system.md` when touching packet-status tooling or plan sequencing
   - `docs/subsystems/*.md` for any runtime area you will touch
   - `docs/development/README.md` for packet status and sequencing
 - If the task is packet-based, also read the packet fully and note its progress-report folder under `reports/development/`.

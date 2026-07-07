@@ -22,6 +22,9 @@
   - turns elapsed: 20
   - lastLevelResultReason: match_ended_without_level_win_condition_satisfied
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -48,12 +51,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=false -> boolean `battlegorithms_logic_not` result=true -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=false -> boolean `battlegorithms_logic_not` result=true -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -72,6 +75,33 @@
 - turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=true -> boolean `battlegorithms_logic_not` result=false -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_forward`
 - turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=false -> boolean `battlegorithms_logic_not` result=true -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen`
 - turn 7 runner runner_1_AI_AllyP1: condition `battlegorithms_boolean_on_my_side` result=false -> boolean `battlegorithms_logic_not` result=true -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_up_screen`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 7 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 6
+- blocks fired: 5
+- blocks never fired: 1
+- coverage ratio: 5 / 6 (83.3%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `D]yFvV|Olydwh*K3ltB$` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `~pr3a#8aW,uC(9eQ.3K_` | `battlegorithms_if_boolean_else` | If [boolean] else | 7 | fired |
+| `ZX`Kft}nGQH(EA9DCvea` | `battlegorithms_logic_not` | not | 7 | fired |
+| `MI+cr,L~7$8zN;,TuD=C` | `battlegorithms_move_up_screen` | Move Up (screen) | 2 | fired |
+| `ZngvlLL#oAhYAQ*tB49j` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
+| `~F4B%)ej=da_NYTS5X]d` | `battlegorithms_boolean_on_my_side` | I am on my side | 7 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
@@ -100,12 +130,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=false -> condition `battlegorithms_if_sensor_matches_else` result=false -> action `battlegorithms_move_toward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -124,6 +154,36 @@
 - turn 18 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=true -> action `battlegorithms_move_toward`
 - turn 19 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=true -> action `battlegorithms_move_toward`
 - turn 20 runner runner_1_AI_AllyP1: condition `battlegorithms_if_have_enemy_flag_else` result=true -> action `battlegorithms_move_toward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 10 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (11, 4) |
+| 20 | `team.scored` | team 1 scored a point |
+| 20 | `level.result` | level result: FAILED (reason: match_ended_without_level_win_condition_satisfied) |
+| ... | `info` | later events omitted after evidence window |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 6
+- blocks fired: 4
+- blocks never fired: 2
+- coverage ratio: 4 / 6 (66.7%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `PYr#2i*$UI__6a{HiK#U` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `78,CD[WYPbp,gRXdXiVT` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 20 | fired |
+| `p`f|,Tq577j=g(.HH7aL` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
+| `V8AE;jWFSf/liPp[`:8u` | `battlegorithms_if_sensor_matches_else` | If | 10 | fired |
+| `VHHFaKvJw-Tvt.wH$T_:` | `battlegorithms_move_up_screen` | Move Up (screen) | 0 | never fired |
+| `k()C4?0K%bSgk~:TBl38` | `battlegorithms_move_toward` | Move Toward | 10 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

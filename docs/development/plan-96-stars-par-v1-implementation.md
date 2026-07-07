@@ -1,8 +1,19 @@
+---
+id: plan-96-stars-par-v1-implementation
+title: "Stars And Par V1 Implementation"
+status: draft
+depends_on: []
+gate: "before mutation; likely split into smaller packets after prerequisite evidence is reviewed"
+superseded_by: null
+resolution: null
+summary: >-
+  Implement Plan 85's stars/par mastery layer after par evidence, tracker semantics, and owner gate settle; packet explicitly requires reassessing whether to split by subsystem.
+---
 # Plan 96: Stars And Par V1 Implementation
 
 - Packet id: Plan 96
 - Packet title: Stars And Par V1 Implementation
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: frontend/runtime implementation agent after design gate
 - Date: 2026-07-06
 - Packet type: implementation / UI / usage tracking

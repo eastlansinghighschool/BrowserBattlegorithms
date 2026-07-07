@@ -1,8 +1,19 @@
+---
+id: plan-69-cpu-scoring-rule-adaptation
+title: "CPU Scoring-Rule Adaptation"
+status: complete
+depends_on: []
+gate: "none for bounded CPU tuning; stop for broad AI redesign"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Adapt Free Play tactical CPU behavior so carriers respond sensibly when scoring is blocked because their own flag is away.
+---
 # Plan 69: CPU Scoring-Rule Adaptation
 
 - Packet id: Plan 69
 - Packet title: CPU Scoring-Rule Adaptation
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

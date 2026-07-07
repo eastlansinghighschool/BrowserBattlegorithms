@@ -18,6 +18,9 @@
   - turns elapsed: 1
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -51,6 +54,29 @@
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=PLACE_BARRIER_FORWARD, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=PLACE_BARRIER_FORWARD, outcome=barrier_placed) | level.result (result=PASSED)
 ### Trace Tail
 - turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_place_barrier`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 1 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 2
+- blocks fired: 1
+- blocks never fired: 1
+- coverage ratio: 1 / 2 (50.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `!Xg[lw?sVirE.OE/OB77` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `TSg45H?a%xZJxlg!_if3` | `battlegorithms_place_barrier` | Place Barrier (in front) | 1 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

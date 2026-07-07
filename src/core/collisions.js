@@ -43,6 +43,7 @@ export function resolveCollision(state, attacker, defenderInCell, collisionX, co
     loser.setFrozen(FROZEN_DURATION_TURNS);
   }
 
+  let resetFlag = null;
   if (loser.hasEnemyFlag) {
     const enemyTeamOfLoser = loser.team === 1 ? 2 : 1;
     const flagCarriedByLoser = state.gameFlags[enemyTeamOfLoser];
@@ -58,6 +59,7 @@ export function resolveCollision(state, attacker, defenderInCell, collisionX, co
         reason: "collision_lost"
       });
       flagCarriedByLoser.resetToInitialPosition();
+      resetFlag = flagCarriedByLoser;
     }
   }
 
@@ -71,6 +73,7 @@ export function resolveCollision(state, attacker, defenderInCell, collisionX, co
     loser,
     loserCell,
     attackerWon: winner === attacker,
-    loserAvoidedFreezeDueToGrace: loser.isGracePeriod && !loser.isFrozen
+    loserAvoidedFreezeDueToGrace: loser.isGracePeriod && !loser.isFrozen,
+    resetFlag
   };
 }

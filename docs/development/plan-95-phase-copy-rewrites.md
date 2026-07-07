@@ -1,8 +1,19 @@
+---
+id: plan-95-phase-copy-rewrites
+title: "Phase Copy Rewrites"
+status: draft
+depends_on: []
+gate: "before each phase rewrite lands"
+superseded_by: null
+resolution: null
+summary: >-
+  Rewrite student-facing guided copy one phase at a time after each phase's board behavior is settled, preserving teacher-facing pedagogy and avoiding solution reveals.
+---
 # Plan 95: Phase Copy Rewrites
 
 - Packet id: Plan 95
 - Packet title: Phase Copy Rewrites
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: curriculum-copy agent with owner approval gates
 - Date: 2026-07-06
 - Packet type: curriculum copy / docs / level data

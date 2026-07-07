@@ -1,8 +1,19 @@
+---
+id: plan-90-bootstrap-audit-closure-path-hygiene
+title: "Bootstrap Audit Closure And Path Hygiene Triage"
+status: ready
+depends_on: []
+gate: "before changing source paths, before deleting files, before adopting deferred Bootstrap capabilities"
+superseded_by: null
+resolution: null
+summary: >-
+  After Plans 87–89, rerun the Bootstrap audit, make the adoption manifest truthful, and triage durable-doc path hygiene without broad historical cleanup.
+---
 # Plan 90: Bootstrap Audit Closure And Path Hygiene Triage
 
 - Packet id: Plan 90
 - Packet title: Bootstrap Audit Closure And Path Hygiene Triage
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost scan/report agent with light docs-edit permission
 - Date: 2026-07-06
 - Packet type: scan-only / docs

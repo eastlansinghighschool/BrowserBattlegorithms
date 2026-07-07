@@ -22,6 +22,9 @@
   - turns elapsed: 11
   - lastLevelResultReason: turn_limit_exceeded
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -48,12 +51,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 1 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
-| 1 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 2 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
-| 2 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 3 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
-| 3 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 1 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
+| 1 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 2 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
+| 2 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 3 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen` |
+| 3 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -72,6 +75,239 @@
 - turn 8 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward`
 - turn 9 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=false compare=0 vs 1 -> condition `battlegorithms_if_boolean_else` result=false -> action `battlegorithms_move_up_screen`
 - turn 9 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> action `battlegorithms_move_toward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 6 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 7 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 8 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `bounce` | runner runner_1_AI_AllyP1 bounced trying to reach (7, -1) |
+| 9 | `flag.pickedUp` | runner runner_1_AI_AllyP1_2 picked up flag 2 at (10, 5) |
+| 9 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 7
+- blocks fired: 4
+- blocks never fired: 3
+- coverage ratio: 4 / 7 (57.1%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `cqAAw92H(Uy%Ric${n{w` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `LtpAT,TFd,[[=J0HwAAN` | `battlegorithms_if_boolean_else` | If [boolean] else | 18 | fired |
+| `pEdirdME.axQjURH|:E1` | `battlegorithms_value_compare` | compare | 18 | fired |
+| `Gt|sj!!#u5a=^=X)Z:7c` | `battlegorithms_move_toward` | Move Toward | 9 | fired |
+| `]R0@7J,:$]G0m|xW0GGe` | `battlegorithms_move_up_screen` | Move Up (screen) | 9 | fired |
+| `vAsq%`M$r0k.Q](AT^Ia` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `Km_)#`f`/5w~p+@2iSna` | `battlegorithms_value_number` | number | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
@@ -100,12 +336,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
-| 1 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=false -> comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> … (+1 more) |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
-| 2 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=false -> comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> … (+1 more) |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
-| 3 | `runner_1_AI_AllyP1_2` | MOVE_BACKWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=true -> action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=false -> comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> … (+1 more) |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
+| 2 | `runner_1_AI_AllyP1_2` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=false -> comparison `battlegorithms_value_compare` result=true compare=1 vs 1 -> condition `battlegorithms_if_boolean_else` result=true -> … (+1 more) |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=false -> action `battlegorithms_move_toward` |
+| 3 | `runner_1_AI_AllyP1_2` | MOVE_BACKWARD | moved | turn 3 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=true -> action `battlegorithms_move_toward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -124,6 +360,115 @@
 - turn 9 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=true -> action `battlegorithms_move_toward`
 - turn 10 runner runner_1_AI_AllyP1: comparison `battlegorithms_value_compare` result=true compare=0 vs 0 -> condition `battlegorithms_if_boolean_else` result=true -> condition `battlegorithms_if_have_enemy_flag_else` result=true -> action `battlegorithms_move_toward`
 - turn 10 runner runner_1_AI_AllyP1_2: comparison `battlegorithms_value_compare` result=false compare=1 vs 0 -> condition `battlegorithms_if_boolean_else` result=false -> condition `battlegorithms_if_teammate_has_flag_else` result=true -> action `battlegorithms_move_toward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (10, 5) and (10, 6)) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 3 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 5) |
+| 4 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (10, 5) and (10, 6)) |
+| 11 | `level.result` | level result: FAILED (reason: turn_limit_exceeded) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 25
+- blocks fired: 10
+- blocks never fired: 15
+- coverage ratio: 10 / 25 (40.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `K1?L%s9svH`3t/o]E:U}` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `fcQN-s4#5Bd]oT7uK/fU` | `battlegorithms_if_boolean_else` | If [boolean] else | 20 | fired |
+| `J-x`-EMN_dJB1}N!)Z6G` | `battlegorithms_value_compare` | compare | 20 | fired |
+| `MQdyldnQ`vy?W9yVp.`c` | `battlegorithms_if_have_enemy_flag_else` | If I Have Enemy Flag | 10 | fired |
+| `iYQdeH[,A]yD?TJZE8It` | `battlegorithms_if_teammate_has_flag_else` | If Teammate Has Enemy Flag | 10 | fired |
+| `.1JreRycomG)fKiJhB1M` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `E1E#cXvq@L_NV}XO[Gn_` | `battlegorithms_value_number` | number | 0 | never fired |
+| `3]#qL)v8ddp/%y}oZQVL` | `battlegorithms_move_toward` | Move Toward | 7 | fired |
+| `D)v?bBnZh$(qMqhf?XL+` | `battlegorithms_move_toward` | Move Toward | 3 | fired |
+| `*qjQa}=%knKT9:oreES{` | `battlegorithms_move_toward` | Move Toward | 8 | fired |
+| `gE}8BX6iB*[|5R/wgMQi` | `battlegorithms_if_boolean_else` | If [boolean] else | 2 | fired |
+| `%pTOG^H=U=-2#x!V{sa(` | `battlegorithms_value_compare` | compare | 2 | fired |
+| `B9m6QaBrg%Ft,?Ji+o|X` | `battlegorithms_move_forward` | Move Forward | 2 | fired |
+| `emn8XKmv9h%SoQn@|.L,` | `battlegorithms_if_boolean_else` | If [boolean] else | 0 | never fired |
+| `T1d%$)U4m72Db`mYjc3b` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `Jks8@#4aI7m9HpHQ@iX|` | `battlegorithms_value_number` | number | 0 | never fired |
+| `h+I=[M+BFl*6+|Sof}i)` | `battlegorithms_value_compare` | compare | 0 | never fired |
+| `r?x@G-vS!3cds/{M*SP3` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
+| `;Sawu3Pvl?Cell$bv3il` | `battlegorithms_if_can_jump_else` | If I Can Jump | 0 | never fired |
+| `@~t_xgdt+nxKB2AHd,OH` | `battlegorithms_value_runner_index` | my runner index | 0 | never fired |
+| `mYjTrY5PZPUB6p@g+~?G` | `battlegorithms_value_number` | number | 0 | never fired |
+| `L1$DH4G4a8K(;Oo=g24M` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
+| `?*f6N(pIj[TXJY3Yu6E^` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
+| `bUv%^5!+t7jvQ)y}xU%(` | `battlegorithms_jump_forward` | Jump Forward | 0 | never fired |
+| `_dMF2(nrtO@NnA_yPLTe` | `battlegorithms_move_forward` | Move Forward | 0 | never fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

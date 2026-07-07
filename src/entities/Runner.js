@@ -245,8 +245,8 @@ export class Runner {
   }
 
   startBounceAnimation(attemptedTargetGridX, attemptedTargetGridY) {
-    if (this.isMoving || this.isBouncing) {
-      return;
+    if (this.isMoving || this.isBouncing || this.isFrozen) {
+      return false;
     }
     this.isBouncing = true;
     this.isJumping = false;
@@ -264,6 +264,7 @@ export class Runner {
       (attemptedTargetGridY * CELL_SIZE - this.bounceOriginPixelY) * bounceDistanceFactor;
     this.pixelX = this.bounceOriginPixelX;
     this.pixelY = this.bounceOriginPixelY;
+    return true;
   }
 
   updateAnimation(animationSpeedFactor, p, state = null) {

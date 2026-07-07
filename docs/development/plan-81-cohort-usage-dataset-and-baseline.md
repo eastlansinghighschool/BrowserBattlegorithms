@@ -1,8 +1,19 @@
+---
+id: plan-81-cohort-usage-dataset-and-baseline
+title: "Cohort Usage Dataset And Baseline"
+status: ready
+depends_on: []
+gate: "before adding dependencies, writing outside `local/usage-cohorts/`, committing generated cohort data, or making curriculum recommendations beyond deterministic baseline flags"
+superseded_by: null
+resolution: null
+summary: >-
+  Build local-only cohort usage analysis tooling that anonymizes student exports, generates normalized untracked tables, and produces deterministic baseline metrics plus starter queries for later interpretation.
+---
 # Plan 81: Cohort Usage Dataset And Baseline
 
 - Packet id: Plan 81
 - Packet title: Cohort Usage Dataset And Baseline
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent with data-tooling care
 - Date: 2026-05-30
 - Packet type: implementation / local tooling / usage analysis / tests / docs

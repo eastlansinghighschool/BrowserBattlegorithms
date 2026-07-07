@@ -18,6 +18,9 @@
   - turns elapsed: 13
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -43,12 +46,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 6 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 6 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -67,6 +70,34 @@
 - turn 11 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward`
 - turn 12 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward`
 - turn 13 runner runner_1_AI_AllyP1: action `battlegorithms_move_toward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 1) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 8 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (9, 6) and (10, 6)) |
+| 9 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (9, 6) and (10, 6)) |
+| 10 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (10, 5) and (10, 6)) |
+| 11 | `near-miss` | enemy runner_2_Npc2 within 1 cell of player runner_1_AI_AllyP1 (at (10, 5) and (10, 6)) |
+| 13 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (11, 3) |
+| 13 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 2
+- blocks fired: 1
+- blocks never fired: 1
+- coverage ratio: 1 / 2 (50.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `}071{UCIJlr@%5Oo9vZJ` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `Cl#wDF}aHMI?DT,6khe:` | `battlegorithms_move_toward` | Move Toward | 13 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

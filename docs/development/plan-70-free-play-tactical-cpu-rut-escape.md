@@ -1,8 +1,19 @@
+---
+id: plan-70-free-play-tactical-cpu-rut-escape
+title: "Free Play Tactical CPU Rut Escape"
+status: complete
+depends_on: []
+gate: "none for bounded Free Play tactical CPU tuning; stop for broader pathfinding or guided NPC changes"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Add a bounded rut-escape behavior for Free Play Tactical CPU runners using existing recent movement state.
+---
 # Plan 70: Free Play Tactical CPU Rut Escape
 
 - Packet id: Plan 70
 - Packet title: Free Play Tactical CPU Rut Escape
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-05-21
 - Packet type: implementation

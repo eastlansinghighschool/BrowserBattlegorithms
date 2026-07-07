@@ -18,6 +18,9 @@
   - turns elapsed: 3
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -43,9 +46,9 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_DOWN_SCREEN | illegal_noop | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_DOWN_SCREEN | moved | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -61,6 +64,29 @@
 - turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly`
 - turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly`
 - turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_randomly`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 3 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 2
+- blocks fired: 1
+- blocks never fired: 1
+- coverage ratio: 1 / 2 (50.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `@}|yNKSY=|?d`nyLrN:I` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `*y{GAjCJ5o3Hdg[W_]iu` | `battlegorithms_move_randomly` | Move Randomly | 3 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

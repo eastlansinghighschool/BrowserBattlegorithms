@@ -1,8 +1,19 @@
+---
+id: plan-92-pre-challenge-15-living-board-pilot
+title: "Pre-Challenge 15 Living Board Pilot"
+status: draft
+depends_on: []
+gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites below are complete"
+superseded_by: null
+resolution: null
+summary: >-
+  Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15, preserving fully protected levels and using `enemy-nearby` as the one complexity-uplift target after Plan 86 evidence.
+---
 # Plan 92: Pre-Challenge 15 Living Board Pilot
 
 - Packet id: Plan 92
 - Packet title: Pre-Challenge 15 Living Board Pilot
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: level-editing specialist after owner gate
 - Date: 2026-07-06
 - Packet type: implementation / curriculum / level-editing

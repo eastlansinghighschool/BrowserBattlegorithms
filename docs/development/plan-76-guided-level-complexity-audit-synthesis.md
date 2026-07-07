@@ -1,8 +1,19 @@
+---
+id: plan-76-guided-level-complexity-audit-synthesis
+title: "Guided Level Complexity Audit Synthesis"
+status: complete
+depends_on: []
+gate: "before implementation packets, before resolving divergent recommendations, before level/source changes, before curriculum source-of-truth changes"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Repeatable orchestration-grade synthesis that compares Plan 75 model audits without smoothing disagreement, producing model-specific comparison artifacts for owner triage. Codex, Claude Opus, and Gemini syntheses landed under `reports/development/guided-level-complexity-audit/syntheses/`.
+---
 # Plan 76: Guided Level Complexity Audit Synthesis
 
 - Packet id: Plan 76
 - Packet title: Guided Level Complexity Audit Synthesis
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: orchestration-grade model that did not author a Plan 75 audit
 - Date: 2026-05-21
 - Packet type: scan-only / synthesis / curriculum / product / planning

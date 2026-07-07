@@ -248,6 +248,123 @@ test("collision processing leaves one runner on the collision cell and freezes t
   assert.equal(checkInvariants(app.state), true);
 });
 
+test("collision winner cannot remain on their own team's loose home flag cell", () => {
+  const app = buildMatch();
+  const attacker = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  const defender = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  const untouchedAlly = app.state.allRunners.find((runner) => runner.team === 1 && !runner.isHumanControlled);
+  const team1Flag = app.state.gameFlags[1];
+
+  // Move the untouched team 1 ally out of the way so it cannot overlap with
+  // the scripted attacker/defender positions below.
+  untouchedAlly.gridX = 6;
+  untouchedAlly.gridY = 7;
+
+  // Attacker starts one step away from team 1's flag home cell and moves onto
+  // it, where the enemy carrier (defender) happens to be standing.
+  attacker.gridX = team1Flag.initialGridX + 1;
+  attacker.gridY = team1Flag.initialGridY;
+  attacker.playDirection = 1;
+
+  defender.gridX = team1Flag.initialGridX;
+  defender.gridY = team1Flag.initialGridY;
+  defender.hasEnemyFlag = true;
+  team1Flag.carriedByRunnerId = defender.id;
+  team1Flag.isAtBase = false;
+  team1Flag.gridX = defender.gridX;
+  team1Flag.gridY = defender.gridY;
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(attacker);
+  app.state.queuedActionForCurrentRunner = {
+    runner: attacker,
+    actionType: AI_ACTION_TYPES.MOVE_BACKWARD,
+    targetGridX: team1Flag.initialGridX,
+    targetGridY: team1Flag.initialGridY
+  };
+
+  processTurnActions(app, TEST_P5);
+
+  // The flag carrier (defender) loses and drops the flag; it resets home.
+  assert.equal(team1Flag.isAtBase, true);
+  assert.deepEqual(
+    { x: team1Flag.gridX, y: team1Flag.gridY },
+    { x: team1Flag.initialGridX, y: team1Flag.initialGridY }
+  );
+
+  // The attacker (team 1, same team as the flag) must not remain on the loose
+  // home-flag cell, even though it won the collision.
+  assert.notDeepEqual(
+    { x: attacker.gridX, y: attacker.gridY },
+    { x: team1Flag.initialGridX, y: team1Flag.initialGridY }
+  );
+  assert.equal(checkInvariants(app.state), true);
+
+  // A future enemy runner can legally re-enter the home flag cell.
+  const anotherEnemy = app.state.allRunners.find((runner) => runner.team === 2 && runner !== defender);
+  assert.equal(
+    isCellBlockedForRunner(
+      team1Flag.initialGridX,
+      team1Flag.initialGridY,
+      app.state.barriers,
+      app.state.gameMap,
+      app.state,
+      anotherEnemy
+    ),
+    false
+  );
+});
+
+test("a reset flag landing under a waiting opposing runner is immediately picked up", () => {
+  const app = buildMatch();
+  const carrier = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  const attacker = app.state.allRunners.find((runner) => runner.team === 2 && runner.isHumanControlled);
+  // The waiting teammate must be on the carrier's own team (team 1): both
+  // runners treat team 2's flag as "the enemy flag" from the same side.
+  const waitingRunner = app.state.allRunners.find((runner) => runner.team === 1 && runner.id !== carrier.id);
+  const untouchedAlly = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  const team2Flag = app.state.gameFlags[2];
+
+  // Move the untouched team 2 ally out of the way so it cannot overlap with
+  // the scripted attacker position below.
+  untouchedAlly.gridX = 6;
+  untouchedAlly.gridY = 7;
+
+  carrier.gridX = 5;
+  carrier.gridY = 4;
+  carrier.hasEnemyFlag = true;
+  team2Flag.carriedByRunnerId = carrier.id;
+  team2Flag.isAtBase = false;
+  team2Flag.gridX = carrier.gridX;
+  team2Flag.gridY = carrier.gridY;
+
+  attacker.gridX = 6;
+  attacker.gridY = 4;
+  attacker.playDirection = -1;
+
+  // Waiting teammate is already staged exactly on team 2's flag home cell.
+  waitingRunner.gridX = team2Flag.initialGridX;
+  waitingRunner.gridY = team2Flag.initialGridY;
+
+  app.state.mainGameState = MAIN_GAME_STATES.RUNNING;
+  app.state.currentTurnState = "PROCESSING_ACTION";
+  app.state.activeRunnerIndex = app.state.allRunners.indexOf(attacker);
+  app.state.queuedActionForCurrentRunner = {
+    runner: attacker,
+    actionType: AI_ACTION_TYPES.MOVE_FORWARD,
+    targetGridX: 5,
+    targetGridY: 4
+  };
+
+  processTurnActions(app, TEST_P5);
+
+  assert.equal(team2Flag.carriedByRunnerId, waitingRunner.id);
+  assert.equal(waitingRunner.hasEnemyFlag, true);
+  assert.equal(team2Flag.isAtBase, false);
+  assert.equal(checkInvariants(app.state), true);
+});
+
 test("Move Toward enemy flag chooses a forward step in the open lane", () => {
   const app = buildMatch();
   const actor = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");

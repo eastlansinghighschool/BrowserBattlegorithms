@@ -1,8 +1,17 @@
+---
+id: plan-88-bootstrap-packet-frontmatter-index-migration
+title: "Bootstrap Packet Frontmatter And Generated Index Migration"
+status: delivered
+depends_on: []
+gate: "before archiving, deleting, or renaming packet files; before changing packet semantics beyond status metadata"
+summary: >-
+  After Plan 87, migrate packet docs to Bootstrap-compatible frontmatter and convert this README to the generated packet-index convention, preserving existing packet semantics and Plan 77's superseded state.
+---
 # Plan 88: Bootstrap Packet Frontmatter And Generated Index Migration
 
 - Packet id: Plan 88
 - Packet title: Bootstrap Packet Frontmatter And Generated Index Migration
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent with docs-migration care
 - Date: 2026-07-06
 - Packet type: docs / tooling migration

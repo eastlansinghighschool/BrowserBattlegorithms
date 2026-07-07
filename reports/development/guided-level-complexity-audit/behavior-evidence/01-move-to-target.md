@@ -18,6 +18,13 @@
   - turns elapsed: 3
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: fail
+- fixture path: `tests/unit/fixtures/guided-naive-solutions/move-to-target.xml`
+- turns elapsed: 9
+- failure reason: `turn_limit_exceeded`
+- final board state summary: Score: Team 1: 0, Team 2: 0. runner_1_HumanP1 at (1, 1) (frozen); runner_1_AI_AllyP1 at (1, 4); runner_2_Npc1 at (10, 1) (frozen); runner_2_Npc2 at (10, 6) (frozen). Flag 1 is at base; Flag 2 is at base.
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -43,9 +50,9 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -61,6 +68,29 @@
 - turn 1 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward`
 - turn 2 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward`
 - turn 3 runner runner_1_AI_AllyP1: action `battlegorithms_move_forward`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 1) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 3 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 2
+- blocks fired: 1
+- blocks never fired: 1
+- coverage ratio: 1 / 2 (50.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `cW~+}%_r,1Iz2Ygl]f;o` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `aA9ZCde!*{QeTM|^mAKK` | `battlegorithms_move_forward` | Move Forward | 3 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

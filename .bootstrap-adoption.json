@@ -1,0 +1,46 @@
+{
+  "lastBootstrapAudit": "2026-07-07",
+  "bootstrapVersion": "0.1.0",
+  "capabilities": [
+    {
+      "capability": "packet-status-system",
+      "state": "adopted",
+      "capabilityVersion": "1.1.0"
+    },
+    {
+      "capability": "packet-status-set-verb",
+      "state": "adopted",
+      "capabilityVersion": "1.0.0"
+    },
+    {
+      "capability": "reports-archive",
+      "state": "adopted",
+      "capabilityVersion": "1.0.0"
+    },
+    {
+      "capability": "root-agent-guide",
+      "state": "adopted",
+      "capabilityVersion": "1.0.0"
+    },
+    {
+      "capability": "decision-log",
+      "state": "adopted",
+      "capabilityVersion": "1.1.0"
+    },
+    {
+      "capability": "dev-console-hub",
+      "state": "deferred",
+      "localRationale": "No dev:console hub exists yet in this repo."
+    },
+    {
+      "capability": "agent-starting-prompts",
+      "state": "deferred",
+      "localRationale": "Prompt-folder adoption is deferred until Plan 89."
+    },
+    {
+      "capability": "falsification-check",
+      "state": "deferred",
+      "localRationale": "Bootstrap falsification-check prose is deferred until Plan 89."
+    }
+  ]
+}

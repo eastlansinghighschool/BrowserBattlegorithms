@@ -1,10 +1,21 @@
+---
+id: plan-41-keyboard-gemini-guided-playthrough
+title: "Keyboard-First Gemini Guided Playthrough Campaign"
+status: complete
+depends_on: []
+gate: "before any source, test, fixture, level, dependency, deployment, or packet-index mutation"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Revive the archived Plan 06 guided playtest as a new keyboard-first Gemini campaign. Consumes Plan 40 keyboard workflows plus Plan 06/19/22 scaffolding, writes new reports under a Plan 41 folder, and leaves existing Plan 06 artifacts untouched.
+---
 # Plan 41: Keyboard-First Gemini Guided Playthrough Campaign
 
 ## Packet Metadata
 
 - Packet id: plan-41
 - Packet title: Keyboard-First Gemini Guided Playthrough Campaign
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: browser-capable Gemini/playtest agent with orchestration review
 - Date: 2026-05-17
 - Packet type: scan-only / browser QA / pedagogy / accessibility-informed playtest

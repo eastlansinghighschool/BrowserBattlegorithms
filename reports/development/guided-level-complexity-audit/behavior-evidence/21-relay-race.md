@@ -14,5 +14,8 @@
 - status: not run
 - not-applicable reason: human-input level requires live player input
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 - no runtime evidence collected

@@ -1,8 +1,19 @@
+---
+id: plan-74-guided-reference-behavior-evidence
+title: "Guided Reference Behavior Evidence"
+status: complete
+depends_on: []
+gate: "before changing game rules, guided levels, fixtures, reference solutions, or runtime semantics"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Generate deterministic reference-run and NPC/enemy behavior evidence for guided levels, linked to the complexity-audit dossier set.
+---
 # Plan 74: Guided Reference Behavior Evidence
 
 - Packet id: Plan 74
 - Packet title: Guided Reference Behavior Evidence
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent
 - Date: 2026-05-21
 - Packet type: developer tooling / reports / testing / scan-prep

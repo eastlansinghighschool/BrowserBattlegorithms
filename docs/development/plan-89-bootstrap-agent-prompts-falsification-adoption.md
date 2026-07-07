@@ -1,8 +1,19 @@
+---
+id: plan-89-bootstrap-agent-prompts-falsification-adoption
+title: "Bootstrap Agent Prompts And Falsification Adoption"
+status: ready
+depends_on: []
+gate: "before deleting old prompts, before changing packet approval policy, before adding dependencies"
+superseded_by: null
+resolution: null
+summary: >-
+  Adopt Bootstrap-derived implementer/orchestrator/design-review/plan-scan/test-coverage prompts and add a Browser Battlegorithms falsification-check convention to packet guidance.
+---
 # Plan 89: Bootstrap Agent Prompts And Falsification Adoption
 
 - Packet id: Plan 89
 - Packet title: Bootstrap Agent Prompts And Falsification Adoption
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost docs/tooling implementation agent
 - Date: 2026-07-06
 - Packet type: docs / workflow integration

@@ -14,5 +14,8 @@
 - status: not run
 - not-applicable reason: project capstone with live human input — project fixtures exist but runtime behavior evidence requires student-driven play
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 - no runtime evidence collected

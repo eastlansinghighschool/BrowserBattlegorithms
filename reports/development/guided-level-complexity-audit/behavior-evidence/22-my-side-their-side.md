@@ -18,6 +18,9 @@
   - turns elapsed: 9
   - lastLevelResultReason: win_condition_met
 
+## Naive Solution Run Proof
+- status: no naive fixture
+
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -43,12 +46,12 @@
 ### Reference action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
-| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
-| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
-| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
-| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | illegal_noop | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
-| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | illegal_noop | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen` |
+| 1 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 1 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
+| 2 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 2 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
+| 3 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 3 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
+| 4 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 4 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
+| 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
+| 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen` |
 ### Enemy action summary
 - none observed
 ### Event Tail
@@ -67,6 +70,31 @@
 - turn 7 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen`
 - turn 8 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen`
 - turn 9 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen`
+
+#### Enemy Movement Timeline
+- no live NPC movement observed
+
+**Static/Frozen NPCs:**
+- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
+- `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
+
+#### Interaction Timeline
+| turn | event | details |
+| --- | --- | --- |
+| 9 | `level.result` | level result: PASSED (reason: win_condition_met) |
+
+#### Blockly Reference Solution Execution Trace Coverage
+- executable block count: 4
+- blocks fired: 3
+- blocks never fired: 1
+- coverage ratio: 3 / 4 (75.0%)
+
+| block id | block type | display label | fired count | status |
+| --- | --- | --- | --- | --- |
+| `3|f4]Gon`sT5`^t^h_52` | `battlegorithms_on_each_turn` | battlegorithms_on_each_turn | 0 | never fired |
+| `O@kgPCJ+.Wqu]gyYzcXW` | `battlegorithms_if_on_my_side_else` | If I Am On My Side | 9 | fired |
+| `h5Ds85D9O~iHAw!GjY;y` | `battlegorithms_move_forward` | Move Forward | 5 | fired |
+| `yaW7.A`R):=p|WN2y:c+` | `battlegorithms_move_up_screen` | Move Up (screen) | 4 | fired |
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior

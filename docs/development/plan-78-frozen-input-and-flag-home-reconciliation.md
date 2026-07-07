@@ -1,8 +1,19 @@
+---
+id: plan-78-frozen-input-and-flag-home-reconciliation
+title: "Frozen Input And Flag-Home Reconciliation"
+status: ready
+depends_on: []
+gate: "before changing collision winner/loser priority, scoring prerequisites, flag reset location, guided level design, or broad turn-engine semantics"
+superseded_by: null
+resolution: null
+summary: >-
+  Repair student-reported runtime bugs: frozen human input halting the turn engine, collision outcomes leaving same-team runners on their own at-base flag, and reset flags failing to promote waiting opposing runners to carriers.
+---
 # Plan 78: Frozen Input And Flag-Home Reconciliation
 
 - Packet id: Plan 78
 - Packet title: Frozen Input And Flag-Home Reconciliation
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent
 - Date: 2026-05-22
 - Packet type: implementation / rules correctness / testing / docs

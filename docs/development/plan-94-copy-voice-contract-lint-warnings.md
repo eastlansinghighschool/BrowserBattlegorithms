@@ -1,8 +1,19 @@
+---
+id: plan-94-copy-voice-contract-lint-warnings
+title: "Copy Voice Contract And Lint Warnings"
+status: draft
+depends_on: []
+gate: "before mutation; do not run until Plan 85 voice contract is accepted"
+superseded_by: null
+resolution: null
+summary: >-
+  Convert Plan 85's student-facing voice contract into docs and lint warnings before broad copy rewrites.
+---
 # Plan 94: Copy Voice Contract And Lint Warnings
 
 - Packet id: Plan 94
 - Packet title: Copy Voice Contract And Lint Warnings
-- Status: draft
+- Status: (see frontmatter)
 - Owner/model: implementation agent with curriculum-copy care
 - Date: 2026-07-06
 - Packet type: docs / testing / level tooling

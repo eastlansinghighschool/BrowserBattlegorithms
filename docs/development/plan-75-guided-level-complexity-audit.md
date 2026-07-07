@@ -1,8 +1,19 @@
+---
+id: plan-75-guided-level-complexity-audit
+title: "Guided Level Complexity Audit"
+status: complete
+depends_on: []
+gate: "before implementation packets, before level/source changes, before curriculum source-of-truth changes"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Repeatable orchestration-grade scan that consumes Plan 73/74 evidence to produce model-specific guided-level complexity audits for later comparison. Codex and Claude audits landed under `reports/development/guided-level-complexity-audit/model-audits/`.
+---
 # Plan 75: Guided Level Complexity Audit
 
 - Packet id: Plan 75
 - Packet title: Guided Level Complexity Audit
-- Status: ready
+- Status: (see frontmatter)
 - Owner/model: orchestration-grade model
 - Date: 2026-05-21
 - Packet type: scan-only / curriculum / product / planning

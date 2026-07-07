@@ -1,3 +1,14 @@
+---
+id: 00-mini-packet-agent-starting-prompt
+title: "Mini Packet Implementation Thread Starting Prompt"
+status: draft
+depends_on: []
+gate: ""
+superseded_by: null
+resolution: null
+summary: >-
+  Starting prompt for lower-cost implementation threads before assigning a specific packet.
+---
 # Mini Packet Implementation Thread Starting Prompt
 
 You are an implementation agent working in the Browser Battlegorithms repository.

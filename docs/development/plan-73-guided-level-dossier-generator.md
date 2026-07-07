@@ -1,8 +1,19 @@
+---
+id: plan-73-guided-level-dossier-generator
+title: "Guided Level Dossier Generator"
+status: complete
+depends_on: []
+gate: "before source-of-truth curriculum decisions, before changing guided levels, before adding dependencies"
+superseded_by: null
+resolution: "Completed and verified; see progress report."
+summary: >-
+  Generate factual per-level guided dossiers and a summary index so later curriculum analysis can consume packaged evidence instead of raw source spelunking.
+---
 # Plan 73: Guided Level Dossier Generator
 
 - Packet id: Plan 73
 - Packet title: Guided Level Dossier Generator
-- Status: complete
+- Status: (see frontmatter)
 - Owner/model: lower-cost implementation agent
 - Date: 2026-05-21
 - Packet type: developer tooling / reports / scan-prep
