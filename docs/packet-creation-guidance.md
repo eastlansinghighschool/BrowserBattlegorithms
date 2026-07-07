@@ -9,7 +9,7 @@ The goal is to make each packet a clear work order plus a guardrail contract. A 
 - Put implementation packets in `docs/development/`.
 - Use sequential names such as `plan-01-guided-level-contract-repair.md`.
 - Keep `docs/development/README.md` updated when adding, completing, or superseding a packet; the packet table is generated from packet frontmatter with `node scripts/dev/plan-status.js render`.
-- Use `docs/development/00-mini-packet-agent-starting-prompt.md` when starting a lower-cost implementation thread.
+- Use `docs/agent-starting-prompts/implementer-thread-starting-prompt.md` when starting a lower-cost implementation thread. The `docs/development/00-mini-packet-agent-starting-prompt.md` file remains a compatibility entry point.
 - Progress reports should go under `reports/development/<packet-name>/progress.md` unless the packet states otherwise.
 
 ## Packet Metadata
@@ -130,6 +130,27 @@ Include pedagogy checks when UI, feedback, levels, copy, Blockly, or visible gam
 - Are keyboard, color contrast, sound, motion, and screen reader basics preserved?
 
 If the packet changes runtime behavior covered by a subsystem note (`docs/subsystems/`), it must either include the matching note update in the same patch, or stop and surface the conflict for owner review. Silent divergence from a subsystem note is not allowed.
+
+<!-- bootstrap:falsification-check v3 begin -->
+## Falsification Check
+
+When a packet or review delivers a conclusion rather than code, ask what would make the claim wrong before accepting it.
+
+- For each rival hypothesis, name the observation that would have falsified it.
+- Watch for confounded designs where the candidate causes always agree, or where one dimension never varied.
+- Watch for aggregate reporting that hides tails or edge cases.
+- Prefer cheap discriminating experiments over broad assertion.
+- Where possible, anchor the check to a concrete incident from this project's own history.
+
+Useful repo-specific examples:
+
+- "Tests pass" but the level no longer requires the claimed block.
+- "The generated report is complete" but a subsystem note is stale.
+- "Usage counts look healthy" but the sequence story is missing.
+- "The private data path is safe" but a tracked path slipped in.
+
+A conclusion that survives this check is worth recording. One that does not is worth exactly one more cheap experiment.
+<!-- bootstrap:falsification-check v3 end -->
 
 ## Model-Specific Instructions
 
