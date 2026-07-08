@@ -89,6 +89,13 @@ function applyRunnerSetup(runner, teamConfig, runnerSpec) {
   runner.cpuBehavior = runnerSpec.cpuBehavior ?? null;
   runner.cpuRole = runnerSpec.cpuRole ?? null;
 
+  if (runnerSpec.guardPost && Number.isFinite(runnerSpec.guardPost.x) && Number.isFinite(runnerSpec.guardPost.y)) {
+    runner.guardPost = { x: runnerSpec.guardPost.x, y: runnerSpec.guardPost.y };
+  }
+  if (Number.isFinite(runnerSpec.guardRadius)) {
+    runner.guardRadius = runnerSpec.guardRadius;
+  }
+
   if (runnerSpec.isFrozen) {
     runner.setFrozen(runnerSpec.frozenTurnsRemaining || 1);
   }

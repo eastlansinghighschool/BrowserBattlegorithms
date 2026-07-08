@@ -106,6 +106,14 @@ The regression harness under `tests/regression/` simulates student profiles, exp
 
 **Output files under `tests/regression/output/` and `tests/regression/screenshots/` are generated artifacts.** They are run outputs, not committed source fixtures. Do not treat them as stable test fixtures or commit them as part of the source tree.
 
+## Cohort Privacy Contract
+
+When performing local classroom cohort analysis:
+- All raw student exports, anonymized row-level data, identity mappings, and local databases (SQLite/DuckDB) **must** reside strictly within `local/usage-cohorts/`.
+- No row-level student files or anonymized learning trajectories may be committed to the repository.
+- Reports and progress logs may summarize analytical conclusions, but they must contain absolutely no student-identifying data or row-level logs unless approved in an aggregate-only owner-facing schema.
+- For complete setup instructions and operator safety checks, see [CohortUsageAnalysis.md](../CohortUsageAnalysis.md).
+
 ## Common traps
 
 - **Confusing workspace export with usage export.** The workspace XML export is a program portability file; the usage export is classroom evidence. See [file-pipelines.md](./file-pipelines.md).
@@ -119,3 +127,4 @@ The regression harness under `tests/regression/` simulates student profiles, exp
 - [file-pipelines.md](./file-pipelines.md) — export/import UI flow and the three file types
 - [blockly-workspace.md](./blockly-workspace.md) — workspace events that feed into usage tracking
 - [turn-engine.md](./turn-engine.md) — scoring and level-completion events that feed into usage tracking
+- [CohortUsageAnalysis.md](../CohortUsageAnalysis.md) — Local cohort usage analysis workspace layout and privacy checklist

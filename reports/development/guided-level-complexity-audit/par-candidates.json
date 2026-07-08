@@ -164,7 +164,7 @@
     "runs": [
       {
         "fixtureKind": "one-off reference",
-        "turnsElapsed": 6,
+        "turnsElapsed": 8,
         "blockCount": 4,
         "distinctActionTypes": [
           "MOVE_FORWARD",

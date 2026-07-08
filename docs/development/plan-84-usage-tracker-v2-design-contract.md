@@ -1,13 +1,13 @@
 ---
 id: plan-84-usage-tracker-v2-design-contract
 title: "Usage Tracker V2 Design Contract"
-status: ready
+status: complete
 depends_on: []
 gate: "this packet IS the gate — no V2 implementation packet may begin until the decisions here are accepted; any change to a settled decision requires owner sign-off"
 superseded_by: null
-resolution: null
+resolution: "Completed and verified 2026-07-07. Accepted as the settled Usage Tracker V2 base design contract: D1-D4 and B1-B7 remain the current owner-approved design baseline, with Plan 91 reserved for rewrite-aware amendments before implementation. Progress report added and wording corrected to distinguish the future V2 contract from the current v1 usage/admin subsystem note."
 summary: >-
-  Settled design contract for a Usage Tracker V2: durable per-level learning ledger, local diff-deduped run-version store (last ~8 guided levels / ~20 free-play runs, cross-session), value-based pruning replacing FIFO, boundary-XML+hashes export keeping similarity detection alive, schema v2 with v1 back-compat. Records owner decisions D1–D4 and defines the downstream implementation packet sequence — note: its internal "Plans 85–87" references are renumbered by the Plan 91 amendment per the Plan 85 charter.
+  Settled design contract for a Usage Tracker V2: durable per-level learning ledger, local diff-deduped run-version store (last ~8 guided levels / ~20 free-play runs, cross-session), value-based pruning replacing FIFO, boundary-XML+hashes export keeping similarity detection alive, schema v2 with v1 back-compat, and optional rewrite-aware extensions for arcs, board dynamics, bestiary encounters, stars/par/mastery, and film review. Records owner decisions D1–D4 and defines the downstream implementation packet sequence; the old Plan 85/86/87 slot labels are retired by the Plan 91 amendment per the Plan 85 charter.
 ---
 # Plan 84: Usage Tracker V2 Design Contract
 
@@ -59,6 +59,21 @@ The system is behaving like a short debug transcript; the admin tool and future 
 - **B6 — Per-level version cap** (keep first + last + most-recent-K unique runs) and a **conservative, tunable total byte budget** for the run-version store, with graceful degradation on quota failure (matches existing persistence behavior).
 - **B7 — Snapshot coalescing:** drop `reason` from the `addUsageSnapshot` dedupe signature so the same workspace state under different reasons collapses to one snapshot.
 
+### Rewrite-aware extensions (optional)
+
+The V2 ledger may also carry nullable or additive fields for campaign-rewrite semantics:
+
+- `arcId`
+- `arcStageIndex`
+- `arcStageCount`
+- `boardDynamicsTier`
+- `bestiaryEncounterIds` or an equivalent cheap encounter summary
+- star outcome fields for pass / par / mastery
+- `masteryCriterionId`
+- film-review summary fields if Plan 85's S7 remains part of the final contract
+
+These fields are optional and additive. Old exports and older levels can omit them without breaking analysis; v1 files remain valid and analyzable when the fields are absent. Keep the signal compact and teacher-useful rather than high-volume raw event tails.
+
 ### Hard constraints (not optional)
 
 - Static Vite deployment, no server, no new dependencies without explicit owner approval.
@@ -81,9 +96,9 @@ The durable ledger's per-level rollup is intentionally shaped to match Plan 81's
 
 These are defined here but **not yet drafted**; dispatch when ready to move the repo forward.
 
-1. **Plan 85 — Usage Tracker V2 Implementation.** Per-level durable ledger (incremental, survives trimming); `level_opened` records; guided pass-ledger export; run-version capture (B3) with D1/D2 retention and B6 budget; value-based pruning (B2); snapshot coalescing (B7); schema v2; truncation/completeness flags. Synthetic-data tests only. Must verify similarity detection still works with boundary-only export XML.
-2. **Plan 86 — Admin Analyzer V2 Integration.** Make the analyzer prefer ledgers over event reconstruction; read both v1 and v2 (B1); label old/truncated files honestly; fold in the now-fixes (`—` instead of `<1s approx`; surface the truncation review-signals the analyzer already computes). CLI/browser parity preserved.
-3. **Plan 87 (deferred) — Run-Version Restore UI.** Student-facing browse/restore of saved run-versions. Capture lands in Plan 85; only the UI is deferred. Build only if/when the feature is wanted.
+1. **Usage Tracker V2 implementation packet** (old Plan 85 slot). Per-level durable ledger (incremental, survives trimming); `level_opened` records; guided pass-ledger export; run-version capture (B3) with D1/D2 retention and B6 budget; value-based pruning (B2); snapshot coalescing (B7); schema v2; truncation/completeness flags. Synthetic-data tests only. Must verify similarity detection still works with boundary-only export XML.
+2. **Admin Analyzer V2 integration packet** (old Plan 86 slot). Make the analyzer prefer ledgers over event reconstruction; read both v1 and v2 (B1); label old/truncated files honestly; fold in the now-fixes (`—` instead of `<1s approx`; surface the truncation review-signals the analyzer already computes). CLI/browser parity preserved.
+3. **Run-Version Restore UI packet** (old Plan 87 slot; deferred). Student-facing browse/restore of saved run-versions. Capture lands in the implementation packet; only the UI is deferred. Build only if/when the feature is wanted.
 4. **Plan 81/82 re-scope note (D4).** Any run on this year's data is progression-distribution only, caveated; per-level cohort insight targets next-year V2 data.
 
 ## Open Questions Preserved

@@ -1,10 +1,13 @@
-import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
+import { GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS, BOARD_DYNAMICS_TIERS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
 import { MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
 export default {
   id: "move-toward-flag",
   title: "Level 11: Shortcut Block - Move Toward the Flag",
+  // Fully protected level (charter S12, Plan 85): no dynamics/arc/star changes.
+  // Both opponents stay frozen; this tier reflects the unchanged setup, not a new edit.
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.STATIC_PROP,
   description: "Use the Move Toward helper block to take one smart step toward the enemy flag.",
   introText: "Move Toward is a shortcut block. It chooses one step toward a target, but it does not magically find a full path.",
   tips: [

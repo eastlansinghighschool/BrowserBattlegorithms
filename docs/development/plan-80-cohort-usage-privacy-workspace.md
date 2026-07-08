@@ -1,7 +1,8 @@
 ---
 id: plan-80-cohort-usage-privacy-workspace
 title: "Cohort Usage Privacy Workspace"
-status: ready
+status: complete
+resolution: "Completed and verified 2026-07-07 after orchestration review. Accepted explicit ignored cohort workspace, operator privacy guide, usage/admin subsystem note tail, reusable cohort path guard, focused tests, and package test registration. Review cleaned portable report paths and duplicated subsystem heading; full npm test currently fails only from unrelated in-flight Level 13 living-board changes."
 depends_on: [plan-79-admin-guided-progress-story]
 gate: "before changing usage export format, adding dependencies, committing generated cohort data, or creating any tracked student-data artifact"
 summary: >-

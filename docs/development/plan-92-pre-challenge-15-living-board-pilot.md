@@ -1,7 +1,8 @@
 ---
 id: plan-92-pre-challenge-15-living-board-pilot
 title: "Pre-Challenge 15 Living Board Pilot"
-status: ready
+status: complete
+resolution: "Orchestrator-verified 2026-07-07 (repair round). L12 Sentry relocated to column 11: independently confirmed no winning or near-winning path reaches col 11 (Move Toward never overshoots the flag's col 10; grabbing at (10,3) then homing goes left; only a losing Forward-overshoot could touch col 11), so background-motion is honest. L13 false 'enemy is frozen' tip deleted with no replacement (owner-chosen deletion); 3 accurate tips remain, Guard copy deferred to Plan 95. S8 degenerate test green (sensor-ignoring solution captured), reference solution passes, lint:levels exit 0. Two pre-existing (not Plan-92-introduced) lint warnings persist: jump-the-gap turn-floor and enemy-nearby win-condition-requires-named-mechanic — the latter is a false positive under living boards (necessity is now dynamic via the Guard, which the static rule can't see). Carry-forward: (1) teach the linter to accept an S8 degenerate-fixture as proof of mechanic necessity; (2) prefer physical/walled separation over path-argument separation for future background-motion enemies."
 depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-99-board-dynamics-bestiary-core]
 gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites (incl. Plan 99 board-dynamics + Guard infrastructure) are complete"
 summary: >-

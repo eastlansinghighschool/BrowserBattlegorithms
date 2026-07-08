@@ -64,9 +64,9 @@
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
 - player runner 1 (runner_1_AI_AllyP1) slot ally 0 at (1, 4); control ally; frozen no; enemy flag no
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
-- opponent runner 0 (runner_2_Npc1) slot npc 0 at (10, 2); control npc; frozen yes; enemy flag no
+- opponent runner 0 (runner_2_Npc1) slot npc 0 at (10, 2); control npc; frozen no; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
-  - frozen turns remaining: 999
+  - cpu behavior: GUIDED_VERTICAL_PATROL
 - opponent runner 1 (runner_2_Npc2) slot npc 1 at (10, 6); control npc; frozen yes; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
   - frozen turns remaining: 999

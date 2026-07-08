@@ -59,7 +59,6 @@
 - no live NPC movement observed
 
 **Static/Frozen NPCs:**
-- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
 - `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
 
 #### Interaction Timeline
@@ -80,6 +79,6 @@
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
-- runner_2_Npc1: behavior PATROL_INTERCEPT; start (10, 2); frozen yes (999 turns remaining)
+- runner_2_Npc1: behavior GUIDED_VERTICAL_PATROL; start (10, 2); frozen no
 - runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (999 turns remaining)
 - first enemy actions: none observed

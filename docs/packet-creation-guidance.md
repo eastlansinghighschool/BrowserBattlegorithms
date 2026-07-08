@@ -131,6 +131,15 @@ Include pedagogy checks when UI, feedback, levels, copy, Blockly, or visible gam
 
 If the packet changes runtime behavior covered by a subsystem note (`docs/subsystems/`), it must either include the matching note update in the same patch, or stop and surface the conflict for owner review. Silent divergence from a subsystem note is not allowed.
 
+## Degenerate-Solution Test Standard (Charter S8)
+
+Any packet that raises a guided level's required complexity — making a previously-optional concept load-bearing for that level's win condition — must include a test proving the **old, degenerate solution shape now fails**, not only that the new reference solution passes. A reference-solution test alone can't tell a genuine uplift from an untested regression; the paired failing case is the falsifiable claim.
+
+- Identify the specific old/naive solution shape the uplift is meant to defeat (e.g., a program that ignores the sensor concept the level is meant to teach).
+- Add a test asserting that shape now fails the level (via the harness in `tests/unit/helpers/testHarness.js`, or an equivalent simulation), alongside the existing reference-solution-passes test.
+- Record in the packet's progress report what the old shape was and why it used to succeed (frozen/inert threat, no real consequence for skipping the concept, etc.) versus why it now fails (real capture, timeout, or other concrete consequence).
+- This standard was established by Plan 92 (`enemy-nearby`'s Guard uplift) as the first packet to raise a guided level's required complexity under the Plan 85 charter.
+
 <!-- bootstrap:falsification-check v3 begin -->
 ## Falsification Check
 

@@ -24,6 +24,9 @@ coverage/
 scratch/
 local/
 
+# Local classroom cohort usage analysis data (Plan 80)
+local/usage-cohorts/
+
 # OS cruft
 .DS_Store
 Thumbs.db

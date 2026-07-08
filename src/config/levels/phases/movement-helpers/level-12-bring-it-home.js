@@ -1,10 +1,19 @@
-import { BLOCK_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
+import { BLOCK_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS } from "../../../constants.js";
 import { STARTER_EVENT_XML, BRING_IT_HOME_DEMO_XML } from "../../shared/blocklyXml.js";
 import { MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
 export default {
   id: "bring-it-home",
   title: "Level 12: Bring It Home",
+  // Complexity-protected level (charter S12, Plan 85): dynamics and copy may
+  // change, but win condition and lesson shape stay fixed. NPC1 becomes a
+  // Sentry (background motion) patrolling column 11, one column past the
+  // enemy flag at (10, 3) — Move Toward's dominant-axis heuristic never
+  // overshoots its target column, so no valid Move Toward solution ever
+  // reaches x=11. The Sentry's reachable set (column 11, all rows) is
+  // therefore geometrically disjoint from the ally's reachable set (x<=10),
+  // not just clear on the reference run's specific timing.
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
   description: "Use Move Toward for the trip out and the trip back.",
   introText: "The helper block now has two jobs: head toward the enemy flag first, then turn back toward home after pickup.",
   tips: [
@@ -55,7 +64,7 @@ export default {
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
       runner_1_AI_AllyP1: { gridX: 1, gridY: 6 },
-      runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_2_Npc1: { gridX: 11, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     flagOverrides: {

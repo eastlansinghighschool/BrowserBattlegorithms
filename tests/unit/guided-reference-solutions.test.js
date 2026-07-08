@@ -51,3 +51,38 @@ test("level 15 reference solution passes across representative wandering rolls",
     );
   }
 });
+
+// Charter S8 degenerate-solution standard (Plan 92, docs/packet-creation-guidance.md):
+// enemy-nearby's opponent became a live Guard (charter S2/Appendix A, Plan 99) with a
+// Manhattan aggro radius of 1 around its post. Before this uplift the opponent was a
+// frozen statue, so a program that ignored the distance sensor entirely and just walked
+// forward could never be punished for it (it simply timed out without ever reaching the
+// off-row goal cell). Now, walking straight through the Guard's post gets the ally
+// captured and frozen by live collision resolution -- a concrete consequence that did
+// not exist before. The taught reference solution (react to WITHIN_2 and detour) never
+// enters the Guard's radius and still passes comfortably inside the turn limit.
+const ENEMY_NEARBY_BLIND_FORWARD_XML = `<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn" x="24" y="24">
+    <next>
+      <block type="battlegorithms_move_forward"></block>
+    </next>
+  </block>
+</xml>`;
+
+test("enemy-nearby: degenerate solution that ignores the sensor gets captured by the live Guard and fails", () => {
+  const { app } = runGuidedLevelWithSolution("enemy-nearby", ENEMY_NEARBY_BLIND_FORWARD_XML);
+
+  assert.equal(app.state.activeLevelResult, LEVEL_RESULT.FAILED);
+  assert.equal(app.state.lastLevelResultReason, "turn_limit_exceeded");
+  const ally = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  assert.equal(ally.isFrozen, true, "the naive straight-line ally should have been captured by the Guard");
+});
+
+test("enemy-nearby: taught reference solution still reaches the goal without ever being captured", () => {
+  const xmlText = GUIDED_LEVEL_REFERENCE_SOLUTIONS["enemy-nearby"];
+  const { app } = runGuidedLevelWithSolution("enemy-nearby", xmlText);
+
+  assert.equal(app.state.activeLevelResult, LEVEL_RESULT.PASSED);
+  const ally = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  assert.equal(ally.isFrozen, false);
+});

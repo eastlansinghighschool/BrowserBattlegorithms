@@ -1,10 +1,15 @@
-import { GAME_MODES, HUMAN_TURN_BEHAVIORS } from "../../../constants.js";
+import { GAME_MODES, HUMAN_TURN_BEHAVIORS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS } from "../../../constants.js";
 import { STARTER_EVENT_XML } from "../../shared/blocklyXml.js";
 import { JUMP_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
 export default {
   id: "jump-the-gap",
   title: "Level 14: Jump the Gap",
+  // Complexity-protected level (charter S12, Plan 85): dynamics and copy may
+  // change, but win condition and lesson shape stay fixed. NPC1 becomes a
+  // Sentry (background motion) on the far side of the wall from the jump
+  // lane (x=1-3); its vertical patrol column (x=10) never enters that lane.
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
   description: "Use Jump Forward as the one decisive action that clears a wall and lands on the goal side.",
   introText: "This lesson is about a single leap. One Jump Forward should carry the ally over the wall and into the winning lane.",
   tips: [
@@ -47,7 +52,7 @@ export default {
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
       runner_1_AI_AllyP1: { gridX: 1, gridY: 4 },
-      runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_2_Npc1: { gridX: 10, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     barriers: [

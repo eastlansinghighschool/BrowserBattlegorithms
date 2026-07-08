@@ -36,7 +36,6 @@
   - Within 2 spaces and within 3 spaces use Manhattan distance.
   - Try giving the ally one response for danger and another response for normal progress.
   - This level is easier if you think about ideal grid moves, not straight-line distance.
-  - The enemy is frozen so you can focus on the new sensing idea.
 - tutorial steps:
   - 1. Distance Uses Grid Steps (level-13-distance)
     - body: Within 2 spaces means the target is close in ideal grid moves. It does not mean the target is visible in a straight line.
@@ -49,11 +48,11 @@
 - map key: `simpleAisle`
 - map label: Simple Aisle
 - dimensions: 12 x 8
-- win condition: {"type":"runner_reaches_cell","runnerId":"runner_1_AI_AllyP1","targetCell":{"x":5,"y":2}}
-- objective: runner runner_1_AI_AllyP1 reaches (5, 2)
+- win condition: {"type":"runner_reaches_cell","runnerId":"runner_1_AI_AllyP1","targetCell":{"x":7,"y":2}}
+- objective: runner runner_1_AI_AllyP1 reaches (7, 2)
 - team 1 base cells: (0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)
 - team 2 base cells: (10, 0), (11, 0), (10, 1), (11, 1), (10, 2), (11, 2), (10, 3), (11, 3), (10, 4), (11, 4), (10, 5), (11, 5), (10, 6), (11, 6), (10, 7), (11, 7)
-- goal cell: (5, 2)
+- goal cell: (7, 2)
 - wall cells: none
 - jail cells: none
 - flags: not found
@@ -64,9 +63,9 @@
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
 - player runner 1 (runner_1_AI_AllyP1) slot ally 0 at (1, 4); control ally; frozen no; enemy flag no
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
-- opponent runner 0 (runner_2_Npc1) slot npc 0 at (5, 4); control npc; frozen yes; enemy flag no
+- opponent runner 0 (runner_2_Npc1) slot npc 0 at (7, 4); control npc; frozen no; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
-  - frozen turns remaining: 999
+  - cpu behavior: GUIDED_GUARD
 - opponent runner 1 (runner_2_Npc2) slot npc 1 at (10, 6); control npc; frozen yes; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
   - frozen turns remaining: 999
