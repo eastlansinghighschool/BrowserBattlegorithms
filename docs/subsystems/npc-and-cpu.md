@@ -20,7 +20,7 @@ This note does NOT own:
 |---|---|
 | `src/ai/npc/npcType1.js` | Guided teaching NPC: axis-prioritized flag-chaser. Deterministic. |
 | `src/ai/npc/npcType2.js` | Guided teaching NPC: patrol/defender near flag home. Deterministic. |
-| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies plus authored guided exceptions: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`, `GUIDED_STAY_STILL`, `GUIDED_RANDOM_MOVE_ONLY`, `GUIDED_VERTICAL_PATROL`. |
+| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies plus authored guided exceptions: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`, `GUIDED_STAY_STILL`, `GUIDED_RANDOM_MOVE_ONLY`, `GUIDED_VERTICAL_PATROL`, `GUIDED_GUARD`. |
 | `src/ai/npc/pathing.js` | Shared deterministic one-step move-toward helper. Used by `npcType2.js` and the tactical free-play CPU. |
 | `src/core/teams.js` | Assigns `cpuBehavior` and `cpuRole` to CPU runner slots during team setup. |
 | `src/config/constants.js` | Defines CPU behavior constants referenced by both NPC and free-play CPU code. |
@@ -70,6 +70,32 @@ These are two separate systems with different tuning goals. They share no code p
 - Patrol direction is stored on the runner itself as runner-local state and defaults to upward movement when unset.
 - The behavior moves vertically until blocked, then reverses, and stays still only when both vertical directions are blocked.
 - It is deterministic and not exposed through the Free Play UI.
+
+**`GUIDED_GUARD`** (Plan 99, charter S2 / Appendix A — the Guard archetype):
+- Stands at a post. If a player-team runner (any runner on a different team from the Guard) comes within its aggro radius K, the Guard steps toward the nearest one; once nothing is in range, it steps back to its post; on post with nothing in range, it stays still.
+- **Post:** defaults to the runner's spawn cell (`initialGridX`/`initialGridY`, captured automatically by team setup). A runner-local `guardPost: {x, y}` override is supported by the behavior function if set directly on the runner object, but no shipped level or setup path currently wires an authored override through — the default spawn-cell post is the only path in active use as of this packet.
+- **Radius:** defaults to `GUIDED_GUARD_DEFAULT_RADIUS` (3, Manhattan distance). A runner-local `guardRadius` override is supported the same way, with the same caveat: no shipped level sets it yet.
+- **Determinism:** "nearest" ties break by ascending runner id (`localeCompare`), matching the tie-break convention already used by `getClosestEnemyTarget` in `src/core/movement.js`. No randomness anywhere in the behavior.
+- Reuses `calculateMoveTowardsTarget` from `pathing.js` for every step, both chasing and returning to post — no second pathing routine. `calculateMoveTowardsTarget` already returns `STAY_STILL` when boxed in on all sides, so a cornered Guard degrades to standing still rather than throwing.
+- Produces a move decision only. Capture, collision, and freeze consequences are decided entirely by the existing turn-engine collision resolution (`src/core/collisions.js`) — the Guard behavior function never touches runner health/frozen state directly.
+- Frozen-turn handling is inherited from the general turn engine: a frozen Guard's behavior function is never consulted, exactly like every other `cpuBehavior`.
+- Not exposed through the Free Play UI — a guided-only archetype, like `GUIDED_STAY_STILL`/`GUIDED_RANDOM_MOVE_ONLY`/`GUIDED_VERTICAL_PATROL`.
+
+### Bestiary mapping (charter S2, Plan 99)
+
+Appendix A of the campaign rewrite charter (`docs/development/plan-85-campaign-rewrite-charter.md`) names archetypes; archetype *rules* are the contract, archetype *names* are owner-taste and may be renamed before Plan 92's copy lands. This table is the source of truth for which archetype maps to which behavior constant and whether it exists yet:
+
+| Archetype | Behavior constant | Status |
+|---|---|---|
+| Dummy | `GUIDED_STAY_STILL` | Implemented (existing) |
+| Sentry | `GUIDED_VERTICAL_PATROL` | Implemented (existing); authored-route generalization beyond the vertical lane is deferred |
+| Wanderer | `GUIDED_RANDOM_MOVE_ONLY` | Implemented (existing); zone-bounding is deferred |
+| Guard | `GUIDED_GUARD` | Implemented (Plan 99) |
+| Charger | — | Deferred, no constant yet (targeted for the pre-Challenge-22 wave) |
+| Raider | — | Deferred, no constant yet (targeted for the Team Strategy Script defense levels) |
+| Shadow | — | Deferred, no constant yet; gated on the Plan 97 prediction/inversion prototype |
+
+Only Guard is new as of this packet. Do not describe Charger, Raider, or Shadow as implemented — they have no behavior constant, dispatch case, or implementation in `src/ai/npc/` yet.
 
 **`FREE_PLAY_TACTICAL_ATTACKER`:**
 - Chases the enemy flag or returns home when carrying it.
@@ -136,6 +162,8 @@ This hook exists specifically because `FREE_PLAY_EASY` is designed to be random 
 - **Expecting the tactical attacker to stall at base when scoring is blocked.** Since Plan 69, the attacker switches to chasing the enemy runner who holds its own team's flag rather than looping at the scoring cell. This is Free Play behavior only — guided NPCs are unaffected.
 - **Expecting the tactical attacker to always move before considering jump or freeze.** Since Plan 71, jump and carrier freeze are checked before the normal pathing step. Jump fires only when landing reduces distance to target; carrier freeze fires only when an unfrozen enemy is within `AREA_FREEZE_RADIUS` and freeze is ready.
 - **Assuming rut detection is a global-turn counter.** The rut check uses `hasRunnerBeenStuckForTurns` from `src/core/recentMovement.js`, which reads the runner's own `recentEndPositions` history. It is independent of global turn numbers and resets automatically when the runner moves out of the stuck area.
+- **Assuming bestiary names in the charter are already implemented.** Only Dummy, Sentry, Wanderer, and Guard have behavior constants. Charger, Raider, and Shadow are deferred — see the bestiary mapping table above before assuming a level can use one.
+- **Treating the Guard's `guardPost`/`guardRadius` overrides as an authored level field today.** The behavior function reads them off the runner instance if present, but no `setup.js` path currently copies an authored `guardPost`/`guardRadius` from level config onto the runner. Every Guard in the campaign as of Plan 99 uses the default spawn-cell post and default radius.
 
 ## Related
 

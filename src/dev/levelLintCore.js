@@ -1,4 +1,4 @@
-import { CELL_TYPE, HUMAN_TURN_BEHAVIORS, MAPS } from "../config/constants.js";
+import { BOARD_DYNAMICS_TIERS, CELL_TYPE, HUMAN_TURN_BEHAVIORS, MAPS, NPC_BEHAVIORS } from "../config/constants.js";
 import { deriveHomeSideFromPlayDirection, getDefaultSlotPosition, getRunnerSlotMetadata } from "../core/teams.js";
 import {
   STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS,
@@ -1022,6 +1022,93 @@ export function checkFlagSetupGameSpecCompliance(levels) {
   return diagnostics;
 }
 
+// Charter S1 (Plan 85) / Plan 99: boardDynamicsTier is optional authored metadata,
+// cross-checked here against provable setup facts only (frozen flags, cpuBehavior
+// constants). This does not — and cannot — verify whether a live enemy can actually
+// reach or interfere with the player; that is a semantic claim beyond a static linter.
+// A live opponent counts as "static" only when it is authored frozen (isFrozen) or
+// uses GUIDED_STAY_STILL. Any other opponent runner (including one with no
+// cpuBehavior at all, which falls back to a moving guided teaching NPC) counts as live.
+function isOpponentRunnerSpecStatic(runnerSpec) {
+  return Boolean(runnerSpec.isFrozen) || runnerSpec.cpuBehavior === NPC_BEHAVIORS.GUIDED_STAY_STILL;
+}
+
+export function checkBoardDynamicsTierAgreement(levels) {
+  const diagnostics = [];
+  const validTiers = new Set(Object.values(BOARD_DYNAMICS_TIERS));
+
+  for (const level of levels) {
+    const tier = level.boardDynamicsTier;
+
+    if (tier === undefined || tier === null) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "board-dynamics-tier",
+          message: "untiered: level has no boardDynamicsTier metadata",
+          file: level.sourcePath || null
+        })
+      );
+      continue;
+    }
+
+    if (!validTiers.has(tier)) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId: level.id,
+          contract: "board-dynamics-tier",
+          message: `boardDynamicsTier "${tier}" is not one of: ${[...validTiers].join(", ")}`,
+          file: level.sourcePath || null
+        })
+      );
+      continue;
+    }
+
+    const opponentRunners = level.setup?.teams?.opponent?.runners || [];
+    const liveOpponentCount = opponentRunners.filter((runnerSpec) => !isOpponentRunnerSpecStatic(runnerSpec)).length;
+
+    if (tier === BOARD_DYNAMICS_TIERS.STATIC_PROP && liveOpponentCount > 0) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId: level.id,
+          contract: "board-dynamics-tier",
+          message: `tier "static-prop" contradicts setup: ${liveOpponentCount} live opponent runner(s) found`,
+          file: level.sourcePath || null
+        })
+      );
+    }
+
+    if (tier !== BOARD_DYNAMICS_TIERS.STATIC_PROP && liveOpponentCount === 0) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId: level.id,
+          contract: "board-dynamics-tier",
+          message: `tier "${tier}" contradicts setup: all opponents are static (frozen or GUIDED_STAY_STILL), nothing moves`,
+          file: level.sourcePath || null
+        })
+      );
+    }
+
+    if (tier === BOARD_DYNAMICS_TIERS.SCRIMMAGE_THREAT && liveOpponentCount < 2) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId: level.id,
+          contract: "board-dynamics-tier",
+          message: `tier "scrimmage-threat" requires multiple live opponents but found ${liveOpponentCount}`,
+          file: level.sourcePath || null
+        })
+      );
+    }
+  }
+
+  return diagnostics;
+}
+
 export function runLevelLint({
   levels,
   conceptMatrix,
@@ -1044,7 +1131,8 @@ export function runLevelLint({
     ...checkWinConditionRequiresNamedMechanic(levels, conceptMatrix),
     ...checkReferenceSolutionFixtureNameMatchesLevelId(levels, { referenceSolutionsByLevelId }),
     ...checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId }),
-    ...checkFlagSetupGameSpecCompliance(levels)
+    ...checkFlagSetupGameSpecCompliance(levels),
+    ...checkBoardDynamicsTierAgreement(levels)
   ];
 }
 

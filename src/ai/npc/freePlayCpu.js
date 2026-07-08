@@ -1,6 +1,7 @@
 import {
   AI_ACTION_TYPES,
   AREA_FREEZE_RADIUS,
+  GUIDED_GUARD_DEFAULT_RADIUS,
   MOVE_TOWARD_TARGETS,
   NPC_BEHAVIORS
 } from "../../config/constants.js";
@@ -155,6 +156,51 @@ function getGuidedVerticalPatrolAction(runner, state) {
         actionType: direction < 0 ? AI_ACTION_TYPES.MOVE_UP_SCREEN : AI_ACTION_TYPES.MOVE_DOWN_SCREEN
       };
     }
+  }
+
+  return { actionType: AI_ACTION_TYPES.STAY_STILL };
+}
+
+// Guard archetype (charter S2 / Appendix A, Plan 99): stands at a post, chases
+// the nearest player-team runner within its aggro radius, and returns to post
+// when nothing is in range. Deterministic — no randomness, fixed tie-break.
+// The post defaults to the runner's spawn cell (initialGridX/initialGridY,
+// captured by setup) and the radius defaults to GUIDED_GUARD_DEFAULT_RADIUS.
+// A future level that needs a non-default post/radius can set runner.guardPost
+// / runner.guardRadius directly; no level today wires this through setup.js.
+function getGuardPost(runner) {
+  if (runner.guardPost && Number.isFinite(runner.guardPost.x) && Number.isFinite(runner.guardPost.y)) {
+    return runner.guardPost;
+  }
+  return { x: runner.initialGridX, y: runner.initialGridY };
+}
+
+function getGuardRadius(runner) {
+  return Number.isFinite(runner.guardRadius) ? runner.guardRadius : GUIDED_GUARD_DEFAULT_RADIUS;
+}
+
+function getNearestPlayerRunnerWithinRadius(runner, state, radius) {
+  return state.allRunners
+    .filter((candidate) => candidate.team !== runner.team)
+    .map((candidate) => ({
+      candidate,
+      distance: Math.abs(candidate.gridX - runner.gridX) + Math.abs(candidate.gridY - runner.gridY)
+    }))
+    .filter((entry) => entry.distance <= radius)
+    .sort((a, b) => a.distance - b.distance || a.candidate.id.localeCompare(b.candidate.id))[0]?.candidate || null;
+}
+
+function getGuidedGuardAction(runner, state) {
+  const radius = getGuardRadius(runner);
+  const target = getNearestPlayerRunnerWithinRadius(runner, state, radius);
+
+  if (target) {
+    return calculateMoveTowardsTarget(runner, target.gridX, target.gridY, state.barriers, state.gameMap, state);
+  }
+
+  const post = getGuardPost(runner);
+  if (runner.gridX !== post.x || runner.gridY !== post.y) {
+    return calculateMoveTowardsTarget(runner, post.x, post.y, state.barriers, state.gameMap, state);
   }
 
   return { actionType: AI_ACTION_TYPES.STAY_STILL };
@@ -317,6 +363,10 @@ export function calculateFreePlayCpuAction(runner, state) {
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL) {
     return getGuidedVerticalPatrolAction(runner, state);
+  }
+
+  if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_GUARD) {
+    return getGuidedGuardAction(runner, state);
   }
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.FREE_PLAY_TACTICAL_ATTACKER) {

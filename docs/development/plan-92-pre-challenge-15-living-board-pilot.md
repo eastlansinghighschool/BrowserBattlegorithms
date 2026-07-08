@@ -2,12 +2,12 @@
 id: plan-92-pre-challenge-15-living-board-pilot
 title: "Pre-Challenge 15 Living Board Pilot"
 status: draft
-depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade]
-gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites below are complete"
+depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-99-board-dynamics-bestiary-core]
+gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites (incl. Plan 99 board-dynamics + Guard infrastructure) are complete"
 superseded_by: null
 resolution: null
 summary: >-
-  Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15, preserving fully protected levels and using `enemy-nearby` as the one complexity-uplift target after Plan 86 evidence.
+  Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15: assign board-dynamics tiers, wire the Guard archetype into `enemy-nearby` as the one complexity-uplift target, and regenerate evidence — consuming Plan 99 infrastructure. Copy/voice, film review, and hints are deferred to follow-on packets per charter S5.
 ---
 # Plan 92: Pre-Challenge 15 Living Board Pilot
 
@@ -37,15 +37,21 @@ Non-goals:
 - Do not edit levels outside the movement-helper pre-Challenge-15 arc.
 - Do not change Challenge 15 itself.
 - Do not raise required complexity for fully protected levels.
-- Do not implement campaign-wide stars, arcs, bestiary, or film review unless their prerequisite packets explicitly landed.
+- Do not implement stars, arcs, or film review.
+- **Do not rewrite student-facing copy in this packet.** Mission copy and the in-world voice rewrite (charter S5) land in the copy packets (94→95) *after* boards are settled — that is S5's own sequencing rule. This pilot changes board behavior and one win condition only; existing copy stays untouched even where it becomes temporarily stale.
+- Do not build new NPC behaviors or the board-dynamics metadata system — those are Plan 99. If this pilot needs an archetype Plan 99 did not build, stop and ask.
 - Do not introduce Advanced boolean operators before their intended point.
 
 Depends on:
 - Plan 85 accepted by the owner.
 - Plan 86 complete.
-- Plan 91 complete if usage fields are touched.
-- Plan 94 complete if copy lint/voice rules are required before level copy changes; otherwise owner must explicitly permit copy edits ahead of lint.
+- **Plan 99 complete** — the `boardDynamicsTier` metadata + lint (S1) and the Guard archetype (S2/Appendix A) this pilot consumes. This is a hard prerequisite, now in `depends_on`.
 - Current level readiness tooling.
+
+Deferred to follow-on packets (not this pilot):
+- Copy/voice rewrite for the pilot phase → Plans 94 (voice contract + lint) then 95 (phase copy rewrite), after these board changes land.
+- Film-review v1 (S7) and earned-hint "Stuck?" affordance (S4) → their own increments once the board layer is proven. Staging these out of the first pilot wave keeps it bounded and reviewable; see the owner note in the progress report expectations.
+- Usage Tracker V2 fields for tiers/arcs/stars → Plan 91, not touched here (this pilot writes no new usage fields).
 
 Blocks:
 - Campaign-wide living-board extension.
@@ -100,18 +106,20 @@ Use `rg` for the level ids and for:
 
 ### In Scope
 
-- Assign/update board-dynamics metadata for the pilot levels if the metadata system exists.
-- Keep `move-toward-flag` fully protected: voice-only/pass-star-only unless the owner changes S12.
-- Add living-board/background or timing behavior to eligible pilot levels where Plan 85 allows it.
-- Make `enemy-nearby` require its named sensing concept in a more satisfying way, with old trivial solution failure evidence.
-- Update fixtures, readiness expectations, and generated evidence for changed levels.
+- Assign `boardDynamicsTier` (from Plan 99's metadata) to the pilot levels 11–14, and pass the new tier lint clean.
+- Keep `move-toward-flag` fully protected: no dynamics/arc/star changes, no copy rewrite here (its voice pass is a later packet). It participates only as an untouched baseline.
+- Give eligible pilot levels living-board behavior using **only** archetypes Plan 99 provides — Dummy (existing), Sentry (existing vertical patrol), Guard (Plan 99). Background-motion for the non-uplift levels; the Guard for the `enemy-nearby` uplift.
+- Make `enemy-nearby` materially require its distance-sensing concept by wiring in a Guard whose aggro radius makes the sensor load-bearing, with old-trivial-solution failure evidence (charter S8 degenerate-solution standard).
+- Update reference fixtures, readiness expectations, and regenerated dossiers/behavior evidence for changed levels.
 - Update concept matrix assumptions only if genuinely changed.
 
 ### Out Of Scope
 
-- Whole-campaign rewrite.
-- Stars/par implementation beyond preserving compatibility with existing fields.
-- Usage Tracker V2 implementation.
+- Whole-campaign rewrite; any level outside 11–14.
+- Student-facing copy/voice edits (Plans 94/95).
+- Film review (S7), hints (S4), stars/par (Plan 96), arcs (S3).
+- New NPC behaviors or metadata/lint infrastructure (Plan 99).
+- Usage Tracker V2 fields (Plan 91).
 - New server/deployment behavior.
 
 ## Implementation Requirements
@@ -182,6 +190,7 @@ If only some generators need full regeneration, record the exact command used.
 - [ ] Plan 85 gate was accepted before mutation.
 - [ ] `move-toward-flag` protected status was preserved.
 - [ ] `enemy-nearby` old trivial solution fails and new reference solution passes.
+- [ ] Tier-lint real-data check: `npm run lint:levels` accepts the correct `boardDynamicsTier` on each tiered pilot level AND rejects a deliberately-wrong tier (verify once with a temporary bad value, then revert). Plan 99 exercised the cross-check only against synthetic fixtures — this pilot is the first to run it on real normalized `setup.teams.opponent.runners`, so confirm both accept and reject paths fire.
 - [ ] Touched levels still teach one primary concept each.
 - [ ] Demo Blockly remains structural and non-spoiling.
 - [ ] Dossiers/evidence reflect the new board behavior.

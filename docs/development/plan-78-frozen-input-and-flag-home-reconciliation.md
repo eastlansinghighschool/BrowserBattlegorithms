@@ -5,7 +5,7 @@ status: complete
 depends_on: []
 gate: "before changing collision winner/loser priority, scoring prerequisites, flag reset location, guided level design, or broad turn-engine semantics"
 superseded_by: null
-resolution: "Repaired frozen-human-input engine halt, animation-start guard, and flag-home occupancy reconciliation (including a stay-in-place fallback for the unreachable no-legal-cell case). Focused and full unit suites pass."
+resolution: "Orchestrator-verified 2026-07-07: confirmed the throw was removed and replaced with a stay-in-place + console.warn fallback; new movement-and-collisions test asserts no-throw, occupant unchanged, and diagnostic fired; ran that suite (19/19). All three original bugs fixed (frozen-input engine halt, animation-start guard across every call site incl. failed-jump, flag-home occupancy reconciliation). Zero new engine-halt paths remain."
 summary: >-
   Repair student-reported runtime bugs: frozen human input halting the turn engine, collision outcomes leaving same-team runners on their own at-base flag, and reset flags failing to promote waiting opposing runners to carriers.
 ---

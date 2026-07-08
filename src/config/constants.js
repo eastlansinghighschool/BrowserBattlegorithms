@@ -30,12 +30,25 @@ export const NPC_BEHAVIORS = {
   FREE_PLAY_TACTICAL_DEFENDER: "FREE_PLAY_TACTICAL_DEFENDER",
   GUIDED_STAY_STILL: "GUIDED_STAY_STILL",
   GUIDED_RANDOM_MOVE_ONLY: "GUIDED_RANDOM_MOVE_ONLY",
-  GUIDED_VERTICAL_PATROL: "GUIDED_VERTICAL_PATROL"
+  GUIDED_VERTICAL_PATROL: "GUIDED_VERTICAL_PATROL",
+  GUIDED_GUARD: "GUIDED_GUARD"
 };
 
 export const ACTIVE_TEAM2_NPC_BEHAVIOR = NPC_BEHAVIORS.PATROL_INTERCEPT;
 export const NPC_PATROL_RADIUS = 2;
 export const NPC_THREAT_DETECTION_RADIUS = 4;
+export const GUIDED_GUARD_DEFAULT_RADIUS = 3;
+
+// Board Dynamics Taxonomy (charter S1, Plan 85). Optional per-level metadata
+// describing how live/threatening the board's enemies are, cross-checked
+// against provable setup facts by the lint:levels tier rule.
+export const BOARD_DYNAMICS_TIERS = {
+  STATIC_PROP: "static-prop",
+  BACKGROUND_MOTION: "background-motion",
+  TIMING_THREAT: "timing-threat",
+  COLLISION_THREAT: "collision-threat",
+  SCRIMMAGE_THREAT: "scrimmage-threat"
+};
 
 export const AI_ACTION_TYPES = {
   MOVE_FORWARD: "MOVE_FORWARD",

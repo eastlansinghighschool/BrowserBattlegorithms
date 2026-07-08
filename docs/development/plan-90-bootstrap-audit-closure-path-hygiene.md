@@ -1,11 +1,11 @@
 ---
 id: plan-90-bootstrap-audit-closure-path-hygiene
 title: "Bootstrap Audit Closure And Path Hygiene Triage"
-status: ready
+status: complete
 depends_on: [plan-87-bootstrap-consumer-core-setup, plan-88-bootstrap-packet-frontmatter-index-migration, plan-89-bootstrap-agent-prompts-falsification-adoption]
 gate: "before changing source paths, before deleting files, before adopting deferred Bootstrap capabilities"
 superseded_by: null
-resolution: null
+resolution: "Completed and verified 2026-07-07 after orchestration review. Bootstrap audit is current, adoption manifest records prompt/falsification versions, durable audit and path-hygiene reports exist, prompt compatibility copies match canonical prompts, no-self-complete guardrail is present, and scoped path-hygiene scan is clean."
 summary: >-
   After Plans 87–89, rerun the Bootstrap audit, make the adoption manifest truthful, and triage durable-doc path hygiene without broad historical cleanup.
 ---

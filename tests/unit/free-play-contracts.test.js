@@ -92,6 +92,98 @@ test("guided Level 15 CPU behaviors stay still or move only through legal cardin
   }
 });
 
+test("Guard steps toward a player-team runner within its aggro radius", () => {
+  const app = buildMatch();
+  const guard = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  guard.gridX = 6;
+  guard.gridY = 4;
+  guard.initialGridX = 6;
+  guard.initialGridY = 4;
+  guard.cpuBehavior = NPC_BEHAVIORS.GUIDED_GUARD;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridX = 7;
+  player.gridY = 4;
+
+  const distanceBefore = Math.abs(player.gridX - guard.gridX) + Math.abs(player.gridY - guard.gridY);
+  const decision = calculateFreePlayCpuAction(guard, app.state);
+  const translated = translateActionDecision(guard, decision, app.state);
+  const distanceAfter = Math.abs(player.gridX - translated.targetGridX) + Math.abs(player.gridY - translated.targetGridY);
+
+  assert.ok(distanceAfter < distanceBefore, "Guard should step toward the in-range player runner");
+});
+
+test("Guard steps back toward its post when no player is within radius and it is off-post", () => {
+  const app = buildMatch();
+  const guard = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  guard.initialGridX = 6;
+  guard.initialGridY = 4;
+  guard.gridX = 9;
+  guard.gridY = 4;
+  guard.cpuBehavior = NPC_BEHAVIORS.GUIDED_GUARD;
+
+  for (const player of app.state.allRunners.filter((runner) => runner.team === 1)) {
+    player.gridX = 0;
+    player.gridY = 0;
+  }
+
+  const post = { x: guard.initialGridX, y: guard.initialGridY };
+  const distanceBefore = Math.abs(post.x - guard.gridX) + Math.abs(post.y - guard.gridY);
+  const decision = calculateFreePlayCpuAction(guard, app.state);
+  const translated = translateActionDecision(guard, decision, app.state);
+  const distanceAfter = Math.abs(post.x - translated.targetGridX) + Math.abs(post.y - translated.targetGridY);
+
+  assert.ok(distanceAfter < distanceBefore, "Guard should step toward its post when off-post with no target in range");
+});
+
+test("Guard stays still when on post with no player in range", () => {
+  const app = buildMatch();
+  const guard = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  guard.gridX = 6;
+  guard.gridY = 4;
+  guard.initialGridX = 6;
+  guard.initialGridY = 4;
+  guard.cpuBehavior = NPC_BEHAVIORS.GUIDED_GUARD;
+
+  for (const player of app.state.allRunners.filter((runner) => runner.team === 1)) {
+    player.gridX = 0;
+    player.gridY = 0;
+  }
+
+  const decision = calculateFreePlayCpuAction(guard, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.STAY_STILL);
+});
+
+test("Guard breaks a distance tie between two equidistant player runners by lowest runner id", () => {
+  const app = buildMatch();
+  const guard = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  guard.gridX = 6;
+  guard.gridY = 4;
+  guard.initialGridX = 6;
+  guard.initialGridY = 4;
+  guard.cpuBehavior = NPC_BEHAVIORS.GUIDED_GUARD;
+
+  const humanP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_HumanP1");
+  const allyP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  // Equidistant (Manhattan 2) but in opposite directions, so the resolved move
+  // direction unambiguously reveals which runner the tie-break selected.
+  humanP1.gridX = 4;
+  humanP1.gridY = 4;
+  allyP1.gridX = 8;
+  allyP1.gridY = 4;
+
+  assert.ok(
+    "runner_1_AI_AllyP1".localeCompare("runner_1_HumanP1") < 0,
+    "test setup expects AI_AllyP1 to have the lower id"
+  );
+
+  const decision = calculateFreePlayCpuAction(guard, app.state);
+  const translated = translateActionDecision(guard, decision, app.state);
+
+  assert.equal(translated.targetGridX, guard.gridX + 1, "Guard should move toward the lower-id equidistant runner (AI_AllyP1, to the right)");
+  assert.equal(translated.targetGridY, guard.gridY);
+});
+
 test("guided vertical patrol alternates up and down without using special actions", () => {
   const app = buildMatch();
   const actor = app.state.allRunners.find((runner) => runner.id.includes("Npc")) || app.state.allRunners.find((runner) => !runner.isHumanControlled);

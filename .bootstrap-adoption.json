@@ -34,13 +34,13 @@
     },
     {
       "capability": "agent-starting-prompts",
-      "state": "deferred",
-      "localRationale": "Prompt-folder adoption is deferred until Plan 89."
+      "state": "adopted",
+      "capabilityVersion": "1.3.0"
     },
     {
       "capability": "falsification-check",
-      "state": "deferred",
-      "localRationale": "Bootstrap falsification-check prose is deferred until Plan 89."
+      "state": "adopted",
+      "capabilityVersion": "3.0.0"
     }
   ]
 }

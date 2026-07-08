@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  checkBoardDynamicsTierAgreement,
   checkBugHuntHasBrokenStarter,
   checkBugHuntHasReferenceSolution,
   checkBugHuntLevelsIntroduceNoNewBlock,
@@ -20,6 +21,7 @@ import {
   formatDiagnostic,
   runLevelLint
 } from "../../scripts/lint-levels.js";
+import { BOARD_DYNAMICS_TIERS, NPC_BEHAVIORS } from "../../src/config/constants.js";
 import {
   STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS,
   TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS
@@ -652,6 +654,102 @@ test("flag setup game spec compliance warns for off-base, missing-carrier, misma
   assert.equal(checkFlagSetupGameSpecCompliance([missingCarrier])[0].contract, "flag-setup-game-spec-compliance");
   assert.equal(checkFlagSetupGameSpecCompliance([carrierWithoutFlag]).some((entry) => /hasEnemyFlag/.test(entry.message)), true);
   assert.equal(checkFlagSetupGameSpecCompliance([falseAtBase])[0].contract, "flag-setup-game-spec-compliance");
+});
+
+function createLevelWithOpponents(id, boardDynamicsTier, opponentRunners) {
+  return createLevel({
+    id,
+    mapKey: "simpleAisle",
+    boardDynamicsTier,
+    setup: {
+      teams: {
+        player: {
+          homeSide: "left",
+          baseCellType: 3,
+          flagHome: { x: 0, y: 4 },
+          runners: [{ slot: "human", gridX: 1, gridY: 1 }]
+        },
+        opponent: {
+          homeSide: "right",
+          baseCellType: 4,
+          flagHome: { x: 11, y: 4 },
+          runners: opponentRunners
+        }
+      },
+      flags: {}
+    }
+  });
+}
+
+test("board dynamics tier flags static-prop levels with a live opponent as an error", () => {
+  const level = createLevelWithOpponents("tier-static-with-live", BOARD_DYNAMICS_TIERS.STATIC_PROP, [
+    { slot: "npc1", gridX: 10, gridY: 2 }
+  ]);
+  const diagnostics = checkBoardDynamicsTierAgreement([level]);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "error");
+  assert.equal(diagnostics[0].contract, "board-dynamics-tier");
+  assert.match(diagnostics[0].message, /static-prop/);
+});
+
+test("board dynamics tier flags a motion/threat tier with all-static opponents as an error", () => {
+  const frozenLevel = createLevelWithOpponents("tier-motion-all-frozen", BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION, [
+    { slot: "npc1", gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 }
+  ]);
+  const stayStillLevel = createLevelWithOpponents("tier-timing-all-stay-still", BOARD_DYNAMICS_TIERS.TIMING_THREAT, [
+    { slot: "npc1", gridX: 10, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_STAY_STILL }
+  ]);
+  const noOpponentsLevel = createLevelWithOpponents("tier-collision-no-opponents", BOARD_DYNAMICS_TIERS.COLLISION_THREAT, []);
+
+  for (const level of [frozenLevel, stayStillLevel, noOpponentsLevel]) {
+    const diagnostics = checkBoardDynamicsTierAgreement([level]);
+    assert.equal(diagnostics.length, 1, `expected exactly one diagnostic for ${level.id}`);
+    assert.equal(diagnostics[0].severity, "error");
+    assert.equal(diagnostics[0].contract, "board-dynamics-tier");
+    assert.match(diagnostics[0].message, /all opponents are static/);
+  }
+});
+
+test("board dynamics tier flags scrimmage-threat with fewer than two live opponents as an error", () => {
+  const level = createLevelWithOpponents("tier-scrimmage-one-live", BOARD_DYNAMICS_TIERS.SCRIMMAGE_THREAT, [
+    { slot: "npc1", gridX: 10, gridY: 2 },
+    { slot: "npc2", gridX: 10, gridY: 3, isFrozen: true, frozenTurnsRemaining: 999 }
+  ]);
+  const diagnostics = checkBoardDynamicsTierAgreement([level]);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "error");
+  assert.match(diagnostics[0].message, /scrimmage-threat/);
+});
+
+test("board dynamics tier accepts a harmless-lane Sentry as background-motion and other consistent pairings cleanly", () => {
+  const backgroundMotionSentry = createLevelWithOpponents("tier-background-sentry", BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION, [
+    { slot: "npc1", gridX: 10, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
+  ]);
+  const staticPropAllFrozen = createLevelWithOpponents("tier-static-clean", BOARD_DYNAMICS_TIERS.STATIC_PROP, [
+    { slot: "npc1", gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 }
+  ]);
+  const scrimmageTwoLive = createLevelWithOpponents("tier-scrimmage-clean", BOARD_DYNAMICS_TIERS.SCRIMMAGE_THREAT, [
+    { slot: "npc1", gridX: 10, gridY: 2 },
+    { slot: "npc2", gridX: 10, gridY: 3 }
+  ]);
+
+  for (const level of [backgroundMotionSentry, staticPropAllFrozen, scrimmageTwoLive]) {
+    assert.deepEqual(checkBoardDynamicsTierAgreement([level]), [], `expected no diagnostics for ${level.id}`);
+  }
+});
+
+test("board dynamics tier warns when the tier is absent and errors on an invalid value", () => {
+  const untiered = createLevelWithOpponents("tier-untiered", undefined, [{ slot: "npc1", gridX: 10, gridY: 2 }]);
+  const untieredDiagnostics = checkBoardDynamicsTierAgreement([untiered]);
+  assert.equal(untieredDiagnostics.length, 1);
+  assert.equal(untieredDiagnostics[0].severity, "warning");
+  assert.match(untieredDiagnostics[0].message, /untiered/);
+
+  const invalid = createLevelWithOpponents("tier-invalid", "extremely-dangerous", [{ slot: "npc1", gridX: 10, gridY: 2 }]);
+  const invalidDiagnostics = checkBoardDynamicsTierAgreement([invalid]);
+  assert.equal(invalidDiagnostics.length, 1);
+  assert.equal(invalidDiagnostics[0].severity, "error");
+  assert.match(invalidDiagnostics[0].message, /is not one of/);
 });
 
 test("lint runner returns exit code 0 for warnings only and 1 for errors", () => {
