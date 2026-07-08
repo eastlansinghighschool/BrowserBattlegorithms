@@ -1,11 +1,9 @@
 ---
 id: plan-92-pre-challenge-15-living-board-pilot
 title: "Pre-Challenge 15 Living Board Pilot"
-status: draft
+status: ready
 depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-99-board-dynamics-bestiary-core]
 gate: "before mutation; do not run until Plan 85 owner gate is accepted and prerequisites (incl. Plan 99 board-dynamics + Guard infrastructure) are complete"
-superseded_by: null
-resolution: null
 summary: >-
   Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15: assign board-dynamics tiers, wire the Guard archetype into `enemy-nearby` as the one complexity-uplift target, and regenerate evidence — consuming Plan 99 infrastructure. Copy/voice, film review, and hints are deferred to follow-on packets per charter S5.
 ---

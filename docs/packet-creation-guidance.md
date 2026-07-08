@@ -9,7 +9,7 @@ The goal is to make each packet a clear work order plus a guardrail contract. A 
 - Put implementation packets in `docs/development/`.
 - Use sequential names such as `plan-01-guided-level-contract-repair.md`.
 - Keep `docs/development/README.md` updated when adding, completing, or superseding a packet; the packet table is generated from packet frontmatter with `node scripts/dev/plan-status.js render`.
-- Use `docs/agent-starting-prompts/implementer-thread-starting-prompt.md` when starting a lower-cost implementation thread. The `docs/development/00-mini-packet-agent-starting-prompt.md` file remains a compatibility entry point.
+- Use `docs/agent-starting-prompts/implementer-thread-starting-prompt.md` when starting a lower-cost implementation thread.
 - Progress reports should go under `reports/development/<packet-name>/progress.md` unless the packet states otherwise.
 
 ## Packet Metadata

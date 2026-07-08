@@ -6,14 +6,16 @@ This folder holds bounded implementation packets and scan reports for Browser Ba
 
 ### Starting Prompts
 
-Canonical prompt templates live in `docs/agent-starting-prompts/`. The `docs/development/00-*` files remain compatibility entry points for older links and launch flows.
+Canonical prompt templates live in `docs/agent-starting-prompts/`.
 
 | Packet | Status | Purpose |
 | --- | --- | --- |
-| [00 Mini Packet Agent Starting Prompt](00-mini-packet-agent-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
-| [00 Level Editing Agent Starting Prompt](00-level-editing-agent-starting-prompt.md) | ready | Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation. |
-| [00 Orchestrator Thread Starting Prompt](00-orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
-| [00 Cross-Doc Drift Scanner Agent Starting Prompt](00-cross-doc-drift-scanner-agent-starting-prompt.md) | ready | Starting prompt for scan-only agent sessions that audit the live `docs/` surface (excluding archive/history/reports) for rule, terminology, capability, cross-reference, numeric, roadmap, and scope-authority drift, producing a detailed report under `reports/development/cross-doc-drift-scans/` for a stronger model to resolve. |
+| [Implementer Thread Starting Prompt](../agent-starting-prompts/implementer-thread-starting-prompt.md) | ready | Starting prompt for lower-cost implementation threads before assigning a specific packet. |
+| [Level Editing Implementation Thread Starting Prompt](../agent-starting-prompts/level-editing-thread-starting-prompt.md) | ready | Starting prompt for focused guided-level editing threads that need the level source, Blockly XML, fixture, tutorial, and validation map before implementation. |
+| [Orchestrator Thread Starting Prompt](../agent-starting-prompts/orchestrator-thread-starting-prompt.md) | ready | Starting prompt for fresh orchestration threads that advise on product, curriculum, architecture, and packet sequencing. |
+| [Design Review / Grilling Prompt](../agent-starting-prompts/design-review-prompt.md) | ready | Starting prompt for conclusion-bearing design reviews and packet grilling passes. |
+| [Plan Status Scan Prompt](../agent-starting-prompts/plan-scan-prompt.md) | ready | Starting prompt for packet-status scan-only checks and sequencing audits. |
+| [Test Coverage Scan Prompt](../agent-starting-prompts/test-coverage-scan-prompt.md) | ready | Starting prompt for coverage scans that compare blind-first and diff-based evidence. |
 
 ### Plan Packets
 
@@ -47,7 +49,7 @@ Canonical prompt templates live in `docs/agent-starting-prompts/`. The `docs/dev
 | `plan-89-bootstrap-agent-prompts-falsification-adoption` | Bootstrap Agent Prompts And Falsification Adoption | complete | Adopt Bootstrap-derived implementer/orchestrator/design-review/plan-scan/test-coverage prompts and add a Browser Battlegorithms falsification-check convention to packet guidance. |
 | `plan-90-bootstrap-audit-closure-path-hygiene` | Bootstrap Audit Closure And Path Hygiene Triage | complete | After Plans 87–89, rerun the Bootstrap audit, make the adoption manifest truthful, and triage durable-doc path hygiene without broad historical cleanup. |
 | `plan-91-usage-tracker-v2-rewrite-semantics-amendment` | Usage Tracker V2 Rewrite Semantics Amendment | draft | Amend Plan 84 before tracker implementation so Usage Tracker V2 can capture rewrite-aware semantics: arcs, board-dynamics tiers, bestiary encounters, stars/par/mastery outcomes, film-review summaries, and corrected downstream numbering. |
-| `plan-92-pre-challenge-15-living-board-pilot` | Pre-Challenge 15 Living Board Pilot | draft | Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15: assign board-dynamics tiers, wire the Guard archetype into `enemy-nearby` as the one complexity-uplift target, and regenerate evidence — consuming Plan 99 infrastructure. Copy/voice, film review, and hints are deferred to follow-on packets per charter S5. |
+| `plan-92-pre-challenge-15-living-board-pilot` | Pre-Challenge 15 Living Board Pilot | ready | Pilot living-board rewrite on movement-helper levels 11–14 before Challenge 15: assign board-dynamics tiers, wire the Guard archetype into `enemy-nearby` as the one complexity-uplift target, and regenerate evidence — consuming Plan 99 infrastructure. Copy/voice, film review, and hints are deferred to follow-on packets per charter S5. |
 | `plan-93-pre-challenge-22-living-resource-uplift` | Pre-Challenge 22 Living Resource Uplift | draft | Living-board-aware replacement for Plan 77's pre-Challenge-22 resource/territory uplift, preserving compound-condition intent while waiting for pilot evidence and owner target confirmation. |
 | `plan-94-copy-voice-contract-lint-warnings` | Copy Voice Contract And Lint Warnings | draft | Convert Plan 85's student-facing voice contract into docs and lint warnings before broad copy rewrites. |
 | `plan-95-phase-copy-rewrites` | Phase Copy Rewrites | draft | Rewrite student-facing guided copy one phase at a time after each phase's board behavior is settled, preserving teacher-facing pedagogy and avoiding solution reveals. |
