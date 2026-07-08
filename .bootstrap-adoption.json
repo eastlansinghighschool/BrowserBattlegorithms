@@ -29,8 +29,8 @@
     },
     {
       "capability": "dev-console-hub",
-      "state": "deferred",
-      "localRationale": "No dev:console hub exists yet in this repo."
+      "state": "adopted",
+      "capabilityVersion": "1.1.0"
     },
     {
       "capability": "agent-starting-prompts",

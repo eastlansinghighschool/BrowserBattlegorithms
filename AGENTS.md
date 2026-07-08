@@ -55,6 +55,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - Run targeted tests first, then broader validation only as needed.
 - Use the repo scripts rather than inventing ad hoc commands.
 - Common commands:
+  - `npm run dev:console` (centralized interactive developer console hub)
   - `npm test`
   - `npm run build`
   - `npm run test:browser:smoke`

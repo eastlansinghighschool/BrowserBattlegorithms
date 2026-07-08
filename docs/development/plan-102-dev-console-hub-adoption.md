@@ -1,11 +1,11 @@
 ---
 id: plan-102-dev-console-hub-adoption
 title: "Dev Console Hub Adoption"
-status: ready
+status: complete
 depends_on: [plan-87-bootstrap-consumer-core-setup, plan-88-bootstrap-packet-frontmatter-index-migration, plan-90-bootstrap-audit-closure-path-hygiene]
 gate: "before adding dependencies, before executing mutating menu actions during implementation validation, before broadening the console into a general task runner"
 superseded_by: null
-resolution: null
+resolution: "Implemented and reviewed; dev console hub adopted, argument wiring repaired, Bootstrap audit current, focused tests and full npm test pass."
 summary: >-
   Adopt Bootstrap's optional dev-console-hub pattern by adding a local submenu-driven `npm run dev:console` command hub for common development, testing, build, and packet-status tasks, with centralized platform-aware package-script invocation, confirmation-gated mutating actions, launch-error reporting, focused tests, and Bootstrap audit closeout.
 ---
