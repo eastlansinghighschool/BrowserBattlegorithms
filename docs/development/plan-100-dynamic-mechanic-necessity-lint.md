@@ -1,11 +1,11 @@
 ---
 id: plan-100-dynamic-mechanic-necessity-lint
 title: "Dynamic Mechanic Necessity Lint"
-status: ready
+status: complete
 depends_on: [plan-86-dynamic-board-evidence-upgrade, plan-92-pre-challenge-15-living-board-pilot]
 gate: "before changing the win-condition-requires-named-mechanic rule's static path, before adding a new level-metadata field beyond the one specified here"
 superseded_by: null
-resolution: null
+resolution: "Orchestrator-verified 2026-07-08: four-path rule correct — static structure checked first (no static+dynamic double-report), dynamic branch requires BOTH the annotation AND a discoverable fixture, and the naive-fixture map is consulted only inside the DYNAMIC branch so a stray fixture cannot silence an unannotated level (anti-bypass edge tested and passing). Linter stays static: loadNaiveSolutionIndex is an fs existence lookup at context-build, never runs a level. On disk: enemy-nearby false positive cleared, the three legitimately-unannotated levels still warn (move-toward-flag/closest-threat/prediction-31), lint exit 0, 8 new lint tests + Plan 99 tier tests green, full suite 455/455, build clean. Degenerate program extracted to a real fixture file, now also surfaced by the Plan 86 evidence generator (naive fixture: yes (fail)) as a bonus."
 summary: >-
   Teach the `win-condition-requires-named-mechanic` linter rule to recognize dynamic necessity — a mechanic made mandatory by a live enemy rather than by win-condition structure — so living-board uplift levels stop firing a permanent false-positive warning. A level may declare dynamic necessity and point at an S8 degenerate-solution fixture; the linter then treats the mechanic as required. Clears the spurious `enemy-nearby` warning surfaced by Plan 92.
 ---

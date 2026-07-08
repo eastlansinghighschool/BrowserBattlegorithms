@@ -1,4 +1,4 @@
-import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS } from "../../../constants.js";
+import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS, MECHANIC_NECESSITY } from "../../../constants.js";
 import { STARTER_EVENT_XML, ENEMY_NEARBY_DEMO_XML } from "../../shared/blocklyXml.js";
 import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
@@ -14,6 +14,13 @@ export default {
   // mission copy is owner-gated and lands with Plans 94/95, after boards
   // settle. This level ships with 3 tips (not 4) until then.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.COLLISION_THREAT,
+  // Charter S8 / Plan 100: the distance sensor is required dynamically, not
+  // structurally -- runner_reaches_cell can't encode "or the Guard captures
+  // you." Proof is the degenerate fixture at
+  // tests/unit/fixtures/guided-naive-solutions/enemy-nearby.xml (a naive
+  // "always move forward" program), which the win-condition-requires-named-
+  // mechanic lint rule checks is discoverable before accepting this claim.
+  mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC,
   tips: [
     "Within 2 spaces and within 3 spaces use Manhattan distance.",
     "Try giving the ally one response for danger and another response for normal progress.",

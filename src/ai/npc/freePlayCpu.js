@@ -206,6 +206,88 @@ function getGuidedGuardAction(runner, state) {
   return { actionType: AI_ACTION_TYPES.STAY_STILL };
 }
 
+// Charger archetype (charter S2 / Appendix A, Plan 101): stands still until a
+// player-team runner shares its row or column, then commits to a straight-line
+// charge down that line until a wall, barrier, or board edge stops it. Unlike
+// the Guard, it does not path toward a target and does not return to a post —
+// it just charges, which is what makes "jump to dodge the lane" the legible
+// counterplay. Committed direction is stored on the runner instance
+// (runner.chargeDirection, a {dx, dy} unit vector or null when idle/stopped),
+// the same pattern as guidedVerticalPatrolDirection. Determinism: tie-break
+// among multiple aligned runners is row before column, then nearest along the
+// line, then lowest runner id (ascending, localeCompare) — no randomness.
+// Optional per-runner chargeRange bounds the trigger distance along the line;
+// absent means unbounded (any same-row/column alignment triggers), the
+// deliberate default per this packet's own scope note.
+function getChargeRange(runner) {
+  return Number.isFinite(runner.chargeRange) ? runner.chargeRange : Number.POSITIVE_INFINITY;
+}
+
+function findChargeTrigger(runner, state, range) {
+  const candidates = [];
+  for (const candidate of state.allRunners) {
+    if (candidate.team === runner.team) {
+      continue;
+    }
+    const sameRow = candidate.gridY === runner.gridY;
+    const sameColumn = candidate.gridX === runner.gridX;
+    if (!sameRow && !sameColumn) {
+      continue;
+    }
+    const axis = sameRow ? "row" : "column";
+    const distance = axis === "row"
+      ? Math.abs(candidate.gridX - runner.gridX)
+      : Math.abs(candidate.gridY - runner.gridY);
+    if (distance > range) {
+      continue;
+    }
+    candidates.push({ candidate, axis, distance });
+  }
+
+  candidates.sort((a, b) => {
+    if (a.axis !== b.axis) {
+      return a.axis === "row" ? -1 : 1;
+    }
+    return a.distance - b.distance || a.candidate.id.localeCompare(b.candidate.id);
+  });
+
+  return candidates[0] || null;
+}
+
+function getChargeDirectionToward(runner, candidate, axis) {
+  if (axis === "row") {
+    return { dx: Math.sign(candidate.gridX - runner.gridX), dy: 0 };
+  }
+  return { dx: 0, dy: Math.sign(candidate.gridY - runner.gridY) };
+}
+
+function getGuidedChargerAction(runner, state) {
+  let direction = runner.chargeDirection || null;
+
+  if (!direction) {
+    const trigger = findChargeTrigger(runner, state, getChargeRange(runner));
+    if (!trigger) {
+      return { actionType: AI_ACTION_TYPES.STAY_STILL };
+    }
+    direction = getChargeDirectionToward(runner, trigger.candidate, trigger.axis);
+    if (direction.dx === 0 && direction.dy === 0) {
+      // Degenerate: the triggering runner occupies the Charger's own cell.
+      // Nothing to charge toward; stay idle rather than commit to a no-op.
+      return { actionType: AI_ACTION_TYPES.STAY_STILL };
+    }
+  }
+
+  const nextX = runner.gridX + direction.dx;
+  const nextY = runner.gridY + direction.dy;
+  if (isCellBlockedForRunner(nextX, nextY, state.barriers, state.gameMap, state, runner)) {
+    runner.chargeDirection = null;
+    return { actionType: AI_ACTION_TYPES.STAY_STILL };
+  }
+
+  runner.chargeDirection = direction;
+  return { actionType: "MOVE", dx: direction.dx, dy: direction.dy };
+}
+
 function getRutEscapeAction(runner, state) {
   const recentPositions = runner.recentMovementState?.recentEndPositions ?? [];
   const recentSet = new Set(recentPositions.map((p) => `${p.gridX},${p.gridY}`));
@@ -367,6 +449,10 @@ export function calculateFreePlayCpuAction(runner, state) {
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_GUARD) {
     return getGuidedGuardAction(runner, state);
+  }
+
+  if (runner.cpuBehavior === NPC_BEHAVIORS.GUIDED_CHARGER) {
+    return getGuidedChargerAction(runner, state);
   }
 
   if (runner.cpuBehavior === NPC_BEHAVIORS.FREE_PLAY_TACTICAL_ATTACKER) {

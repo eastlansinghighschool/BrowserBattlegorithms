@@ -19,7 +19,11 @@
   - lastLevelResultReason: win_condition_met
 
 ## Naive Solution Run Proof
-- status: no naive fixture
+- status: fail
+- fixture path: `tests/unit/fixtures/guided-naive-solutions/enemy-nearby.xml`
+- turns elapsed: 13
+- failure reason: `turn_limit_exceeded`
+- final board state summary: Score: Team 1: 0, Team 2: 0. runner_1_HumanP1 at (1, 1) (frozen); runner_1_AI_AllyP1 at (7, 4) (frozen); runner_2_Npc1 at (6, 4); runner_2_Npc2 at (10, 6) (frozen). Flag 1 is at base; Flag 2 is at base.
 
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |

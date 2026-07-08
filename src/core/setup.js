@@ -95,6 +95,9 @@ function applyRunnerSetup(runner, teamConfig, runnerSpec) {
   if (Number.isFinite(runnerSpec.guardRadius)) {
     runner.guardRadius = runnerSpec.guardRadius;
   }
+  if (Number.isFinite(runnerSpec.chargeRange)) {
+    runner.chargeRange = runnerSpec.chargeRange;
+  }
 
   if (runnerSpec.isFrozen) {
     runner.setFrozen(runnerSpec.frozenTurnsRemaining || 1);

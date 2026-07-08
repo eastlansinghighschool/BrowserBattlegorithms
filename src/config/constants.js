@@ -31,7 +31,8 @@ export const NPC_BEHAVIORS = {
   GUIDED_STAY_STILL: "GUIDED_STAY_STILL",
   GUIDED_RANDOM_MOVE_ONLY: "GUIDED_RANDOM_MOVE_ONLY",
   GUIDED_VERTICAL_PATROL: "GUIDED_VERTICAL_PATROL",
-  GUIDED_GUARD: "GUIDED_GUARD"
+  GUIDED_GUARD: "GUIDED_GUARD",
+  GUIDED_CHARGER: "GUIDED_CHARGER"
 };
 
 export const ACTIVE_TEAM2_NPC_BEHAVIOR = NPC_BEHAVIORS.PATROL_INTERCEPT;
@@ -48,6 +49,15 @@ export const BOARD_DYNAMICS_TIERS = {
   TIMING_THREAT: "timing-threat",
   COLLISION_THREAT: "collision-threat",
   SCRIMMAGE_THREAT: "scrimmage-threat"
+};
+
+// Dynamic Mechanic Necessity (charter S8, Plan 100). Optional per-level
+// metadata declaring whether the taught mechanic is required dynamically (by
+// a live enemy's behavior) rather than structurally (by win-condition
+// shape). Absent means "static" — the current, default lint behavior.
+export const MECHANIC_NECESSITY = {
+  STATIC: "static",
+  DYNAMIC: "dynamic"
 };
 
 export const AI_ACTION_TYPES = {

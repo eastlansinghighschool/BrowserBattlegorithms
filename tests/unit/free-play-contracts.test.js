@@ -184,6 +184,203 @@ test("Guard breaks a distance tie between two equidistant player runners by lowe
   assert.equal(translated.targetGridY, guard.gridY);
 });
 
+test("Charger stays idle with no committed direction when no player shares its row or column", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  for (const player of app.state.allRunners.filter((runner) => runner.team === 1)) {
+    player.gridX = 0;
+    player.gridY = 0;
+  }
+
+  const decision = calculateFreePlayCpuAction(charger, app.state);
+  assert.equal(decision.actionType, AI_ACTION_TYPES.STAY_STILL);
+  assert.equal(charger.chargeDirection, null, "Charger should hold no committed direction while idle");
+});
+
+test("Charger commits to a fixed direction and charges toward a player who enters its row", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridX = 9;
+  player.gridY = 4;
+  for (const other of app.state.allRunners.filter((runner) => runner.team === 1 && runner !== player)) {
+    other.gridX = 0;
+    other.gridY = 1;
+  }
+
+  const decision = calculateFreePlayCpuAction(charger, app.state);
+  const translated = translateActionDecision(charger, decision, app.state);
+
+  assert.deepEqual(charger.chargeDirection, { dx: 1, dy: 0 }, "committed direction should point along the row toward the triggering runner");
+  assert.equal(translated.targetGridX, charger.gridX + 1);
+  assert.equal(translated.targetGridY, charger.gridY);
+});
+
+test("Charger keeps charging in its committed direction after the triggering runner leaves the line", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridX = 9;
+  player.gridY = 4;
+  for (const other of app.state.allRunners.filter((runner) => runner.team === 1 && runner !== player)) {
+    other.gridX = 0;
+    other.gridY = 1;
+  }
+
+  const firstDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.deepEqual(firstDecision, { actionType: "MOVE", dx: 1, dy: 0 });
+  charger.gridX += 1; // simulate the turn engine applying the resolved move
+
+  // The runner that triggered the charge steps off the row entirely; the
+  // Charger should not re-evaluate — it stays committed to the same line.
+  player.gridX = 9;
+  player.gridY = 0;
+
+  const secondDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.deepEqual(secondDecision, { actionType: "MOVE", dx: 1, dy: 0 }, "Charger should keep charging in its committed direction");
+});
+
+test("Charger stops, clears its committed direction, and stays still when the charge reaches a barrier", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridX = 9;
+  player.gridY = 4;
+  for (const other of app.state.allRunners.filter((runner) => runner.team === 1 && runner !== player)) {
+    other.gridX = 0;
+    other.gridY = 1;
+  }
+
+  const firstDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.deepEqual(firstDecision, { actionType: "MOVE", dx: 1, dy: 0 });
+  charger.gridX += 1;
+
+  // Wall in immediately ahead of the charger's committed line.
+  app.state.barriers.push({ gridX: charger.gridX + 1, gridY: charger.gridY, ownerRunnerId: "test-barrier" });
+
+  const secondDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.equal(secondDecision.actionType, AI_ACTION_TYPES.STAY_STILL);
+  assert.equal(charger.chargeDirection, null, "committed direction should be cleared once the charge is stopped");
+
+  // It resumes idle from wherever it stopped, not returning to a post: with
+  // the triggering player still aligned it may re-trigger the same charge on
+  // a later call, but nothing here forces movement back toward initialGridX/Y.
+});
+
+test("Charger charging off the edge of the board stops instead of throwing", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 0;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridX = 0;
+  player.gridY = 6;
+  for (const other of app.state.allRunners.filter((runner) => runner.team === 1 && runner !== player)) {
+    other.gridX = 5;
+    other.gridY = 1;
+  }
+
+  // Player shares the Charger's column and is below it, so the committed
+  // direction points off the top edge (dy = -1) once the Charger walks up to
+  // row 0 -- simulate it already being pinned at the top edge at trigger time.
+  charger.gridY = 0;
+  const decision = calculateFreePlayCpuAction(charger, app.state);
+  const translated = translateActionDecision(charger, decision, app.state);
+  assert.equal(translated.targetGridY, charger.gridY + 1, "player is below, so the committed direction should point down, not off the edge");
+
+  // Force the opposite, edge-facing direction directly to exercise the
+  // boxed-in / immediately-blocked path without depending on further setup.
+  charger.chargeDirection = { dx: 0, dy: -1 };
+  const edgeDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.equal(edgeDecision.actionType, AI_ACTION_TYPES.STAY_STILL);
+  assert.equal(charger.chargeDirection, null);
+});
+
+test("Charger tie-break prefers a runner on its row over one on its column", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const humanP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_HumanP1");
+  const allyP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  // On the column, closer than the row runner -- should still lose to row.
+  humanP1.gridX = 6;
+  humanP1.gridY = 1;
+  // On the row, farther away -- should win the tie-break because row beats column.
+  allyP1.gridX = 9;
+  allyP1.gridY = 4;
+
+  const decision = calculateFreePlayCpuAction(charger, app.state);
+  const translated = translateActionDecision(charger, decision, app.state);
+
+  assert.equal(translated.targetGridX, charger.gridX + 1, "row alignment should win over a closer column alignment");
+  assert.equal(translated.targetGridY, charger.gridY);
+});
+
+test("Charger tie-break on the same axis prefers the nearer runner, then the lower id", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+
+  const humanP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_HumanP1");
+  const allyP1 = app.state.allRunners.find((runner) => runner.id === "runner_1_AI_AllyP1");
+  // Both on the row; allyP1 is nearer and should win regardless of id order.
+  humanP1.gridX = 10;
+  humanP1.gridY = 4;
+  allyP1.gridX = 8;
+  allyP1.gridY = 4;
+
+  const decision = calculateFreePlayCpuAction(charger, app.state);
+  assert.deepEqual(decision, { actionType: "MOVE", dx: 1, dy: 0 }, "the nearer same-axis runner should be the trigger regardless of id");
+});
+
+test("Charger respects an authored chargeRange, triggering only within range", () => {
+  const app = buildMatch();
+  const charger = app.state.allRunners.find((runner) => runner.team === 2 && !runner.isHumanControlled);
+  charger.gridX = 6;
+  charger.gridY = 4;
+  charger.cpuBehavior = NPC_BEHAVIORS.GUIDED_CHARGER;
+  charger.chargeRange = 3;
+
+  const player = app.state.allRunners.find((runner) => runner.team === 1 && runner.isHumanControlled);
+  player.gridY = 4;
+  for (const other of app.state.allRunners.filter((runner) => runner.team === 1 && runner !== player)) {
+    other.gridX = 0;
+    other.gridY = 1;
+  }
+
+  player.gridX = 10; // distance 4 along the row -- just outside the range
+  const outOfRangeDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.equal(outOfRangeDecision.actionType, AI_ACTION_TYPES.STAY_STILL);
+  assert.equal(charger.chargeDirection, null);
+
+  player.gridX = 9; // distance 3 along the row -- just inside the range
+  const inRangeDecision = calculateFreePlayCpuAction(charger, app.state);
+  assert.deepEqual(inRangeDecision, { actionType: "MOVE", dx: 1, dy: 0 });
+});
+
 test("guided vertical patrol alternates up and down without using special actions", () => {
   const app = buildMatch();
   const actor = app.state.allRunners.find((runner) => runner.id.includes("Npc")) || app.state.allRunners.find((runner) => !runner.isHumanControlled);

@@ -1,10 +1,16 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { AI_ACTION_TYPES, HUMAN_TURN_BEHAVIORS, LEVEL_RESULT } from "../../src/config/constants.js";
 import { getLevelDefinitions } from "../../src/config/levels.js";
 import { checkInvariants } from "../../src/core/invariants.js";
 import { GUIDED_LEVEL_REFERENCE_SOLUTIONS } from "./fixtures/guidedReferenceSolutions.js";
 import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 test("every non-project non-prediction guided level has a reference code-block solution", () => {
   const nonProjectLevels = getLevelDefinitions().filter((level) => level.humanTurnBehavior !== HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT && !level.project && level.levelKind !== "prediction");
@@ -61,13 +67,16 @@ test("level 15 reference solution passes across representative wandering rolls",
 // captured and frozen by live collision resolution -- a concrete consequence that did
 // not exist before. The taught reference solution (react to WITHIN_2 and detour) never
 // enters the Guard's radius and still passes comfortably inside the turn limit.
-const ENEMY_NEARBY_BLIND_FORWARD_XML = `<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="battlegorithms_on_each_turn" x="24" y="24">
-    <next>
-      <block type="battlegorithms_move_forward"></block>
-    </next>
-  </block>
-</xml>`;
+//
+// This fixture lives on disk (not inline) at tests/unit/fixtures/guided-naive-solutions/
+// enemy-nearby.xml (Plan 86's naive-fixture convention, Plan 100's discoverable-artifact
+// requirement) so the win-condition-requires-named-mechanic lint rule can find it: the
+// level declares mechanicNecessity: "dynamic" and this file is the proof the claim isn't
+// silencing the rule for free.
+const ENEMY_NEARBY_BLIND_FORWARD_XML = fs.readFileSync(
+  path.join(__dirname, "fixtures/guided-naive-solutions/enemy-nearby.xml"),
+  "utf8"
+);
 
 test("enemy-nearby: degenerate solution that ignores the sensor gets captured by the live Guard and fails", () => {
   const { app } = runGuidedLevelWithSolution("enemy-nearby", ENEMY_NEARBY_BLIND_FORWARD_XML);

@@ -21,7 +21,7 @@ import {
   formatDiagnostic,
   runLevelLint
 } from "../../scripts/lint-levels.js";
-import { BOARD_DYNAMICS_TIERS, NPC_BEHAVIORS } from "../../src/config/constants.js";
+import { BOARD_DYNAMICS_TIERS, MECHANIC_NECESSITY, NPC_BEHAVIORS } from "../../src/config/constants.js";
 import {
   STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS,
   TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS
@@ -411,6 +411,93 @@ test("win condition heuristic warns when the mechanic is only described in prose
   const diagnostics = checkWinConditionRequiresNamedMechanic([level], matrix);
   assert.equal(diagnostics[0].severity, "warning");
   assert.equal(diagnostics[0].contract, "win-condition-requires-named-mechanic");
+});
+
+test("win condition heuristic is clean when the mechanic is structurally required (static path unchanged)", () => {
+  const level = createLevel({
+    id: "static-mechanic",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell_past_barrier" }
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  assert.deepEqual(checkWinConditionRequiresNamedMechanic([level], matrix), []);
+});
+
+test("win condition heuristic accepts dynamic necessity when a degenerate fixture is discoverable", () => {
+  const level = createLevel({
+    id: "dynamic-mechanic",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell" },
+    mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  const naiveSolutionsByLevelId = new Map([["dynamic-mechanic", { filePath: "/abs/dynamic-mechanic.xml", xmlText: "<xml></xml>" }]]);
+  assert.deepEqual(
+    checkWinConditionRequiresNamedMechanic([level], matrix, { naiveSolutionsByLevelId }),
+    []
+  );
+});
+
+test("win condition heuristic errors when dynamic necessity is claimed without a degenerate fixture", () => {
+  const level = createLevel({
+    id: "dynamic-unproven",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell" },
+    mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  const diagnostics = checkWinConditionRequiresNamedMechanic([level], matrix, { naiveSolutionsByLevelId: new Map() });
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "error");
+  assert.equal(diagnostics[0].contract, "win-condition-requires-named-mechanic");
+  assert.match(diagnostics[0].message, /no degenerate fixture found/);
+});
+
+test("win condition heuristic rejects an invalid mechanicNecessity value", () => {
+  const level = createLevel({
+    id: "necessity-invalid",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell" },
+    mechanicNecessity: "sometimes"
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  const diagnostics = checkWinConditionRequiresNamedMechanic([level], matrix);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "error");
+  assert.match(diagnostics[0].message, /is not one of/);
+});
+
+test("win condition heuristic does not double-report when static structure and a dynamic annotation both hold", () => {
+  const level = createLevel({
+    id: "belt-and-suspenders",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell_past_barrier" },
+    mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  assert.deepEqual(
+    checkWinConditionRequiresNamedMechanic([level], matrix, { naiveSolutionsByLevelId: new Map() }),
+    []
+  );
+});
+
+test("win condition heuristic ignores an unrelated degenerate fixture when the level is not annotated dynamic", () => {
+  const level = createLevel({
+    id: "unannotated",
+    title: "Level 2: Barrier Lesson",
+    description: "Use a barrier to win.",
+    winCondition: { type: "runner_reaches_cell" }
+  });
+  const matrix = [createMatrixRow("2", "Barrier detour")];
+  const naiveSolutionsByLevelId = new Map([["unannotated", { filePath: "/abs/unannotated.xml", xmlText: "<xml></xml>" }]]);
+  const diagnostics = checkWinConditionRequiresNamedMechanic([level], matrix, { naiveSolutionsByLevelId });
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "warning");
 });
 
 test("reference solution fixture names must match level ids", () => {

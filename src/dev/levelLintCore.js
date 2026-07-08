@@ -1,4 +1,4 @@
-import { BOARD_DYNAMICS_TIERS, CELL_TYPE, HUMAN_TURN_BEHAVIORS, MAPS, NPC_BEHAVIORS } from "../config/constants.js";
+import { BOARD_DYNAMICS_TIERS, CELL_TYPE, HUMAN_TURN_BEHAVIORS, MAPS, MECHANIC_NECESSITY, NPC_BEHAVIORS } from "../config/constants.js";
 import { deriveHomeSideFromPlayDirection, getDefaultSlotPosition, getRunnerSlotMetadata } from "../core/teams.js";
 import {
   STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS,
@@ -718,11 +718,35 @@ function mechanicEvidenceFromLevel(level) {
   return { structuredHaystack, proseHaystack };
 }
 
-export function checkWinConditionRequiresNamedMechanic(levels, conceptMatrix) {
+const MECHANIC_NECESSITY_VALUES = new Set(Object.values(MECHANIC_NECESSITY));
+const NAIVE_SOLUTIONS_FIXTURE_DIR = "tests/unit/fixtures/guided-naive-solutions";
+
+// Charter S8 (Plan 85) / Plan 100: a level may declare mechanicNecessity:
+// "dynamic" when its taught mechanic is made mandatory by a live enemy
+// rather than by win-condition structure (a runner_reaches_cell win
+// condition cannot statically encode "or you get captured"). The claim is
+// only accepted when a degenerate/naive fixture is discoverable for the
+// level, so the annotation cannot silently bypass this check on its own.
+export function checkWinConditionRequiresNamedMechanic(levels, conceptMatrix, { naiveSolutionsByLevelId = new Map() } = {}) {
   const diagnostics = [];
 
   for (let index = 0; index < levels.length; index += 1) {
     const level = levels[index];
+    const necessity = level.mechanicNecessity;
+
+    if (necessity !== undefined && necessity !== null && !MECHANIC_NECESSITY_VALUES.has(necessity)) {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.ERROR,
+          levelId: level.id,
+          contract: "win-condition-requires-named-mechanic",
+          message: `mechanicNecessity "${necessity}" is not one of: ${[...MECHANIC_NECESSITY_VALUES].join(", ")}`,
+          file: level.sourcePath || null
+        })
+      );
+      continue;
+    }
+
     const row = conceptMatrix[index];
     if (!row) {
       continue;
@@ -751,23 +775,47 @@ export function checkWinConditionRequiresNamedMechanic(levels, conceptMatrix) {
     const structuredMatches = interestingKeywords.some((keyword) => structuredHaystack.includes(keyword));
     const proseMatches = interestingKeywords.some((keyword) => proseHaystack.includes(keyword));
 
-    if (!structuredMatches && proseMatches) {
+    if (structuredMatches) {
+      // Static structure alone proves necessity; clean regardless of any
+      // mechanicNecessity annotation (either proof suffices, no double-report).
+      continue;
+    }
+
+    if (necessity === MECHANIC_NECESSITY.DYNAMIC) {
+      if (naiveSolutionsByLevelId.has(level.id)) {
+        // Silenced by dynamic proof: annotation + a discoverable degenerate
+        // fixture stand in for the static check this win condition can't express.
+        continue;
+      }
       diagnostics.push(
         makeDiagnostic({
-          severity: SEVERITIES.WARNING,
+          severity: SEVERITIES.ERROR,
           levelId: level.id,
           contract: "win-condition-requires-named-mechanic",
-          message: `mechanic appears only in prose for concept-matrix entry "${row.levelLabel} ${row.focus}"`,
+          message: `mechanicNecessity "dynamic" claimed for concept-matrix entry "${row.levelLabel} ${row.focus}" but no degenerate fixture found at ${NAIVE_SOLUTIONS_FIXTURE_DIR}/${level.id}.xml`,
           file: level.sourcePath || null
         })
       );
-    } else if (!structuredMatches && !proseMatches) {
+      continue;
+    }
+
+    if (proseMatches) {
       diagnostics.push(
         makeDiagnostic({
           severity: SEVERITIES.WARNING,
           levelId: level.id,
           contract: "win-condition-requires-named-mechanic",
-          message: `no obvious structured reference to mechanic words from concept-matrix entry "${row.levelLabel} ${row.focus}"`,
+          message: `mechanic appears only in prose for concept-matrix entry "${row.levelLabel} ${row.focus}" (no static structure and no dynamic-necessity annotation)`,
+          file: level.sourcePath || null
+        })
+      );
+    } else {
+      diagnostics.push(
+        makeDiagnostic({
+          severity: SEVERITIES.WARNING,
+          levelId: level.id,
+          contract: "win-condition-requires-named-mechanic",
+          message: `no obvious structured reference to mechanic words from concept-matrix entry "${row.levelLabel} ${row.focus}" (no dynamic-necessity annotation either)`,
           file: level.sourcePath || null
         })
       );
@@ -1113,6 +1161,7 @@ export function runLevelLint({
   levels,
   conceptMatrix,
   referenceSolutionsByLevelId = new Map(),
+  naiveSolutionsByLevelId = new Map(),
   minTurnLimit = DEFAULT_MIN_TURN_LIMIT
 }) {
   return [
@@ -1128,7 +1177,7 @@ export function runLevelLint({
     ...checkProjectToolboxPolicy(levels),
     ...checkPredictionHasValidSchema(levels),
     ...checkTurnLimitFloor(levels, minTurnLimit),
-    ...checkWinConditionRequiresNamedMechanic(levels, conceptMatrix),
+    ...checkWinConditionRequiresNamedMechanic(levels, conceptMatrix, { naiveSolutionsByLevelId }),
     ...checkReferenceSolutionFixtureNameMatchesLevelId(levels, { referenceSolutionsByLevelId }),
     ...checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId }),
     ...checkFlagSetupGameSpecCompliance(levels),

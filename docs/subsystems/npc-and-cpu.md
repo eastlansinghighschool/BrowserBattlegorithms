@@ -20,7 +20,7 @@ This note does NOT own:
 |---|---|
 | `src/ai/npc/npcType1.js` | Guided teaching NPC: axis-prioritized flag-chaser. Deterministic. |
 | `src/ai/npc/npcType2.js` | Guided teaching NPC: patrol/defender near flag home. Deterministic. |
-| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies plus authored guided exceptions: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`, `GUIDED_STAY_STILL`, `GUIDED_RANDOM_MOVE_ONLY`, `GUIDED_VERTICAL_PATROL`, `GUIDED_GUARD`. |
+| `src/ai/npc/freePlayCpu.js` | Free Play CPU strategies plus authored guided exceptions: `FREE_PLAY_EASY` (random), `FREE_PLAY_TACTICAL_ATTACKER`, `FREE_PLAY_TACTICAL_DEFENDER`, `GUIDED_STAY_STILL`, `GUIDED_RANDOM_MOVE_ONLY`, `GUIDED_VERTICAL_PATROL`, `GUIDED_GUARD`, `GUIDED_CHARGER`. |
 | `src/ai/npc/pathing.js` | Shared deterministic one-step move-toward helper. Used by `npcType2.js` and the tactical free-play CPU. |
 | `src/core/teams.js` | Assigns `cpuBehavior` and `cpuRole` to CPU runner slots during team setup. |
 | `src/config/constants.js` | Defines CPU behavior constants referenced by both NPC and free-play CPU code. |
@@ -81,7 +81,20 @@ These are two separate systems with different tuning goals. They share no code p
 - Frozen-turn handling is inherited from the general turn engine: a frozen Guard's behavior function is never consulted, exactly like every other `cpuBehavior`.
 - Not exposed through the Free Play UI — a guided-only archetype, like `GUIDED_STAY_STILL`/`GUIDED_RANDOM_MOVE_ONLY`/`GUIDED_VERTICAL_PATROL`.
 
-### Bestiary mapping (charter S2, Plan 99)
+**`GUIDED_CHARGER`** (Plan 101, charter S2 / Appendix A — the Charger archetype):
+- Stands still until a player-team runner (any runner on a different team from the Charger) shares its row or column, then commits to a straight-line charge down that line, one cell per turn, until a wall, barrier, or board edge stops it.
+- **Idle:** while nothing is aligned (or nothing is aligned within `chargeRange`, if authored), returns `STAY_STILL` and holds no committed direction (`runner.chargeDirection` is `null`).
+- **Trigger and commit:** on the turn a player-team runner is found on the Charger's row or column, the axis and direction are fixed immediately, pointing along that line toward the triggering runner's cell at that instant, and stored on the runner as `chargeDirection: { dx, dy }` (a unit vector, mirroring how `guidedVerticalPatrolDirection` stores the Sentry's direction). **Tie-break** when more than one runner qualifies: row alignment beats column alignment; within the same axis, nearer along the line wins; remaining ties break by ascending runner id (`localeCompare`). No randomness.
+- **Charge:** once `chargeDirection` is set, every subsequent call steps one cell in that direction *regardless of whether the triggering runner is still aligned* — the Charger does not re-path or re-target mid-charge. This commit-to-the-line behavior is the point: the counterplay is judging the lane and jumping clear of it before the charge starts, not out-running it after.
+- **Stop:** when the next cell in the committed direction is blocked (`isCellBlockedForRunner` — wall, barrier, or board edge), the Charger clears `chargeDirection` back to `null` and returns `STAY_STILL` that same turn, without attempting the blocked step. It does **not** return to a post (unlike the Guard) — it simply resumes idle from wherever it stopped and may trigger a fresh charge later.
+- **Optional `chargeRange`:** an authored per-runner Manhattan/along-line trigger distance, wired through `applyRunnerSetup()` in `src/core/setup.js` the same way `guardPost`/`guardRadius` are. Absent means unbounded — any same-row/same-column alignment triggers regardless of distance. This is the deliberate default; a level author who needs a shorter fuse sets `chargeRange` explicitly rather than the default changing.
+- Reuses only `isCellBlockedForRunner` from `src/core/movement.js` — no pathing call. The Charger does not path; it charges in a fixed line, so `calculateMoveTowardsTarget`'s dominant-axis/fallback logic does not apply and is not used here.
+- Produces a move decision only (`{ actionType: "MOVE", dx, dy }`, the same generic delta shape `calculateMoveTowardsTarget` returns). Capture, collision, and freeze consequences are decided entirely by the existing turn-engine collision resolution — the Charger behavior function never touches runner health/frozen state directly.
+- **Frozen-mid-charge:** a frozen Charger's behavior function is never consulted (same general rule as every `cpuBehavior`), and freezing does not touch `chargeDirection`. A charge in progress simply pauses and resumes the same committed direction on thaw — there is no special-case code for this; it falls out of the behavior function not running while frozen.
+- `chargeDirection` is reset to `null` in both the `Runner` constructor and `resetToInitial()` (`src/entities/Runner.js`), the same two places `guidedVerticalPatrolDirection` is reset, so a round reset never leaves a stale committed charge pointing at a now-irrelevant line.
+- Not exposed through the Free Play UI — a guided-only archetype, like the rest of this table.
+
+### Bestiary mapping (charter S2, Plan 99 / Plan 101)
 
 Appendix A of the campaign rewrite charter (`docs/development/plan-85-campaign-rewrite-charter.md`) names archetypes; archetype *rules* are the contract, archetype *names* are owner-taste and may be renamed before Plan 92's copy lands. This table is the source of truth for which archetype maps to which behavior constant and whether it exists yet:
 
@@ -91,11 +104,11 @@ Appendix A of the campaign rewrite charter (`docs/development/plan-85-campaign-r
 | Sentry | `GUIDED_VERTICAL_PATROL` | Implemented (existing); authored-route generalization beyond the vertical lane is deferred |
 | Wanderer | `GUIDED_RANDOM_MOVE_ONLY` | Implemented (existing); zone-bounding is deferred |
 | Guard | `GUIDED_GUARD` | Implemented (Plan 99) |
-| Charger | — | Deferred, no constant yet (targeted for the pre-Challenge-22 wave) |
+| Charger | `GUIDED_CHARGER` | Implemented (Plan 101) |
 | Raider | — | Deferred, no constant yet (targeted for the Team Strategy Script defense levels) |
 | Shadow | — | Deferred, no constant yet; gated on the Plan 97 prediction/inversion prototype |
 
-Only Guard is new as of this packet. Do not describe Charger, Raider, or Shadow as implemented — they have no behavior constant, dispatch case, or implementation in `src/ai/npc/` yet.
+Guard (Plan 99) and Charger (Plan 101) are the only new archetypes so far. Do not describe Raider or Shadow as implemented — they have no behavior constant, dispatch case, or implementation in `src/ai/npc/` yet.
 
 **`FREE_PLAY_TACTICAL_ATTACKER`:**
 - Chases the enemy flag or returns home when carrying it.
@@ -162,8 +175,11 @@ This hook exists specifically because `FREE_PLAY_EASY` is designed to be random 
 - **Expecting the tactical attacker to stall at base when scoring is blocked.** Since Plan 69, the attacker switches to chasing the enemy runner who holds its own team's flag rather than looping at the scoring cell. This is Free Play behavior only — guided NPCs are unaffected.
 - **Expecting the tactical attacker to always move before considering jump or freeze.** Since Plan 71, jump and carrier freeze are checked before the normal pathing step. Jump fires only when landing reduces distance to target; carrier freeze fires only when an unfrozen enemy is within `AREA_FREEZE_RADIUS` and freeze is ready.
 - **Assuming rut detection is a global-turn counter.** The rut check uses `hasRunnerBeenStuckForTurns` from `src/core/recentMovement.js`, which reads the runner's own `recentEndPositions` history. It is independent of global turn numbers and resets automatically when the runner moves out of the stuck area.
-- **Assuming bestiary names in the charter are already implemented.** Only Dummy, Sentry, Wanderer, and Guard have behavior constants. Charger, Raider, and Shadow are deferred — see the bestiary mapping table above before assuming a level can use one.
+- **Assuming bestiary names in the charter are already implemented.** Only Dummy, Sentry, Wanderer, Guard, and Charger have behavior constants. Raider and Shadow are deferred — see the bestiary mapping table above before assuming a level can use one.
 - **Assuming every Guard uses the default radius/post.** Since Plan 92, `applyRunnerSetup()` in `src/core/setup.js` copies an authored `guardPost`/`guardRadius` from a runner's level-config entry onto the runner. `enemy-nearby` authors `guardRadius: 1` specifically so its reference solution's zigzag detour never enters the Guard's aggro range — check the level source before assuming `GUIDED_GUARD_DEFAULT_RADIUS` (3) applies.
+- **Expecting the Charger to re-target mid-charge.** Once triggered, it commits to the line fixed at trigger time and ignores everything else — including the runner that triggered it moving away, and including a *different* runner entering the line partway through. It only re-evaluates once stopped (blocked) and idle again.
+- **Expecting a stopped Charger to return to its spawn cell.** Unlike the Guard, the Charger has no post concept. It halts exactly where the blocked step would have landed and stays there, idle, until something re-triggers it from that position.
+- **Assuming `chargeRange` defaults to something bounded.** It defaults to unbounded (any same-row/column alignment triggers, regardless of distance) unless a level explicitly authors `chargeRange` on the runner spec.
 
 ## Related
 

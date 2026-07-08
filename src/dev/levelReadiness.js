@@ -20,6 +20,7 @@ const LEVEL_INDEX_PATH = path.join(REPO_ROOT, "src/config/levels/index.js");
 const CONCEPT_MATRIX_PATH = "docs/GUIDED_LEVEL_CONCEPT_MATRIX.md";
 const REFERENCE_SOLUTIONS_DIR = path.join(REPO_ROOT, "tests/unit/fixtures/guided-reference-solutions");
 const PROJECT_SOLUTIONS_DIR = path.join(REPO_ROOT, "tests/unit/fixtures/guided-project-solutions");
+const NAIVE_SOLUTIONS_DIR = path.join(REPO_ROOT, "tests/unit/fixtures/guided-naive-solutions");
 const TRACE_TAIL_LENGTH = 8;
 const MAX_SIMULATION_TICKS = 4000;
 
@@ -182,6 +183,22 @@ async function loadReferenceSolutionIndex(levels) {
   return byLevelId;
 }
 
+async function loadNaiveSolutionIndex(levels) {
+  const byLevelId = new Map();
+  for (const level of levels) {
+    const candidatePath = path.join(NAIVE_SOLUTIONS_DIR, `${level.id}.xml`);
+    const xmlText = await readTextIfExists(candidatePath);
+    if (xmlText == null) {
+      continue;
+    }
+    byLevelId.set(level.id, {
+      xmlText,
+      filePath: toRepoRelative(candidatePath)
+    });
+  }
+  return byLevelId;
+}
+
 async function loadProjectFixtureIndex() {
   const byProjectId = new Map();
   for (const projectId of Object.keys(PROJECT_READINESS_POLICY)) {
@@ -232,17 +249,20 @@ async function loadReadinessContext() {
       const levelById = new Map(levels.map((level) => [level.id, level]));
       const conceptMatrixRows = await loadConceptMatrixRows();
       const referenceSolutionsByLevelId = await loadReferenceSolutionIndex(levels);
+      const naiveSolutionsByLevelId = await loadNaiveSolutionIndex(levels);
       const projectFixturesById = await loadProjectFixtureIndex();
       const lintDiagnostics = runLevelLint({
         levels,
         conceptMatrix: conceptMatrixRows,
-        referenceSolutionsByLevelId
+        referenceSolutionsByLevelId,
+        naiveSolutionsByLevelId
       });
       return {
         levels,
         levelById,
         conceptMatrixRows,
         referenceSolutionsByLevelId,
+        naiveSolutionsByLevelId,
         projectFixturesById,
         lintDiagnostics
       };
