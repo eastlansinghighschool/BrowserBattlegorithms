@@ -19,7 +19,11 @@
   - lastLevelResultReason: win_condition_met
 
 ## Naive Solution Run Proof
-- status: no naive fixture
+- status: fail
+- fixture path: `tests/unit/fixtures/guided-naive-solutions/freeze-the-lane.xml`
+- turns elapsed: 11
+- failure reason: `turn_limit_exceeded`
+- final board state summary: Score: Team 1: 0, Team 2: 0. runner_1_HumanP1 at (1, 1) (frozen); runner_1_AI_AllyP1 at (7, 4) (frozen); runner_2_Npc1 at (7, 3); runner_2_Npc2 at (10, 6) (frozen). Flag 1 is at base; Flag 2 is at base.
 
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
@@ -54,14 +58,14 @@
 ### Enemy action summary
 | turn | runner | action | outcome | trace summary |
 | --- | --- | --- | --- | --- |
-| 3 | `runner_2_Npc1` | MOVE | moved | trace data not available |
-| 4 | `runner_2_Npc1` | MOVE | moved | trace data not available |
+| 3 | `runner_2_Npc1` | STAY_STILL | stayed | trace data not available |
+| 4 | `runner_2_Npc1` | STAY_STILL | stayed | trace data not available |
 ### Event Tail
-- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=MOVE, source=npc) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=MOVE, outcome=illegal_noop)
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=STAY_STILL, source=cpu) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=illegal_noop)
 - turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, outcome=illegal_noop)
-- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=MOVE, source=npc) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=MOVE, outcome=illegal_noop)
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=STAY_STILL, source=cpu) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=illegal_noop)
 - turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_FORWARD, outcome=illegal_noop) | flag.pickedUp (carrier=runner_1_AI_AllyP1, flagTeam=2) | level.result (result=PASSED)
@@ -75,8 +79,8 @@
 #### Enemy Movement Timeline
 | turn | runner | behavior | from | to | action |
 | --- | --- | --- | --- | --- | --- |
-| 3 | `runner_2_Npc1` | PATROL_INTERCEPT | (7, 3) | (7, 4) | MOVE (moved) |
-| 4 | `runner_2_Npc1` | PATROL_INTERCEPT | (7, 4) | (8, 4) | MOVE (moved) |
+| 3 | `runner_2_Npc1` | GUIDED_CHARGER | (7, 3) | (7, 3) | STAY_STILL (stayed) |
+| 4 | `runner_2_Npc1` | GUIDED_CHARGER | (7, 3) | (7, 3) | STAY_STILL (stayed) |
 
 **Static/Frozen NPCs:**
 - `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
@@ -87,8 +91,6 @@
 | 1 | `freeze` | runner runner_1_AI_AllyP1 used Area Freeze |
 | 2 | `near-miss` | enemy runner_2_Npc1 within 1 cell of player runner_1_AI_AllyP1 (at (7, 4) and (7, 3)) |
 | 3 | `near-miss` | enemy runner_2_Npc1 within 1 cell of player runner_1_AI_AllyP1 (at (7, 4) and (7, 3)) |
-| 4 | `near-miss` | enemy runner_2_Npc1 within 1 cell of player runner_1_AI_AllyP1 (at (8, 4) and (7, 4)) |
-| 5 | `near-miss` | enemy runner_2_Npc1 within 1 cell of player runner_1_AI_AllyP1 (at (9, 4) and (8, 4)) |
 | 5 | `flag.pickedUp` | runner runner_1_AI_AllyP1 picked up flag 2 at (10, 4) |
 | 5 | `level.result` | level result: PASSED (reason: win_condition_met) |
 
@@ -107,8 +109,8 @@
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
-- runner_2_Npc1: behavior PATROL_INTERCEPT; start (7, 3); frozen no
+- runner_2_Npc1: behavior GUIDED_CHARGER; start (7, 3); frozen no
 - runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (995 turns remaining)
 - first enemy actions:
-  - turn 3: runner_2_Npc1 chose MOVE via npc; outcome moved
-  - turn 4: runner_2_Npc1 chose MOVE via npc; outcome moved
+  - turn 3: runner_2_Npc1 chose STAY_STILL via cpu; outcome stayed
+  - turn 4: runner_2_Npc1 chose STAY_STILL via cpu; outcome stayed

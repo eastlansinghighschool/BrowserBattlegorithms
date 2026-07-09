@@ -1,4 +1,4 @@
-import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS } from "../../../constants.js";
+import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS } from "../../../constants.js";
 import { STARTER_EVENT_XML, STAY_STILL_DEMO_XML } from "../../shared/blocklyXml.js";
 import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
@@ -27,6 +27,7 @@ export default {
     SENSOR_RELATION_TYPES.DIRECTLY_BELOW
   ],
   initialBlocklyXml: STARTER_EVENT_XML,
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
   winCondition: {
     type: "runner_reaches_cell",
     runnerId: "runner_1_AI_AllyP1",
@@ -59,7 +60,7 @@ export default {
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
       runner_1_AI_AllyP1: { gridX: 1, gridY: 4 },
-      runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_2_Npc1: { gridX: 10, gridY: 2, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     barriers: [

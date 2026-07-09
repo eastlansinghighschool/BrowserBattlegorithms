@@ -1,13 +1,12 @@
 ---
 id: plan-93-pre-challenge-22-living-resource-uplift
 title: "Pre-Challenge 22 Living Resource Uplift"
-status: draft
+status: complete
+resolution: "Orchestrator-verified 2026-07-08 (Gemini implementer). Rescoped to three levels; L20 deferred to plan-103. VERIFIED SPATIALLY (not by reference-run): L16 jump-if-ready — wall at col6 leaves the only walk-through at (6,4), Charger on (6,5); naive walk into (6,4) is charged and captured on the enemy half (x=6, so collision resolves against the player), jump (5,4)->(7,4) skips it to win (8,4); stale 'wall blocks the whole column' clause deleted not reworded. L18 stay-still — Sentry vertical patrol on col10, player operates cols1-4, disjoint by reachability, honest background-motion, necessity correctly left static. L21 freeze-the-lane — col7 wall makes (7,4) the only crossing and any row-3 pre-alignment also draws a fatal enemy-half charge, so Area Freeze is genuinely required; dynamic necessity honest. L20 REJECTED and reverted to pre-uplift baseline: a position sensor (on_my_side) cannot be made strictly load-bearing in a deterministic reach-a-cell level — a sensor-free climb up the open simpleAisle interior then across row 2 reaches (6,2) without nearing the Guard; structural mismatch, deferred to plan-103 (objective redesign). Full suite 469/469; lint:levels clean for 16/18/21 (L20 back to pre-existing untiered baseline); build green. Process corrections: implementer self-set complete by hand-editing the rendered README — reverted via render; implementer's '96 tests' was a hand-picked/misnamed file list, re-ran real npm test (469/469). Orphaned my-side-their-side naive fixture deleted; dossiers/behavior-evidence regenerated."
 depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-92-pre-challenge-15-living-board-pilot, plan-99-board-dynamics-bestiary-core, plan-100-dynamic-mechanic-necessity-lint, plan-101-charger-archetype]
 gate: "before mutation; do not run until Plan 92 pilot review is accepted or the owner explicitly skips the pilot dependency. Archetype/lint prerequisites (Plans 99, 100, 101) are complete."
-superseded_by: null
-resolution: null
 summary: >-
-  Living-board-aware replacement for Plan 77's pre-Challenge-22 resource/territory uplift. Uplifts the four resources-and-territory levels (16 jump-if-ready, 18 stay-still-can-do-something, 20 my-side-their-side, 21 freeze-the-lane), each currently leaning on frozen-decoy NPCs, by wiring in the bestiary archetypes Plans 99/101 built (Charger for jump-if-ready, Guard for territory, Sentry ambient pressure, Charger-or-Guard for the freeze lane) and proving each tier claim spatially. find-the-enemy-flag (a sensing-phase level) is out of scope.
+  Living-board-aware replacement for Plan 77's pre-Challenge-22 resource/territory uplift. Uplifts three resources-and-territory levels (16 jump-if-ready → Charger, 18 stay-still-can-do-something → Sentry ambient, 21 freeze-the-lane → Charger), each previously leaning on frozen-decoy NPCs, wiring in the bestiary archetypes Plans 99/101 built and proving each tier/necessity claim spatially. Level 20 my-side-their-side was deferred to Plan 103 (a position sensor cannot be made strictly load-bearing in a reach-a-cell level); find-the-enemy-flag (sensing-phase) is out of scope.
 ---
 # Plan 93: Pre-Challenge 22 Living Resource Uplift
 
@@ -112,11 +111,12 @@ Use `rg` for target level ids and:
 
 ### In Scope
 
-- Uplift the four resources-and-territory target levels, each with a recommended archetype pairing (the implementer confirms or proposes an alternative in the target-confirmation note before mutation — the pairing is a starting design, not a mandate):
+- Uplift the three in-scope resources-and-territory target levels, each with a recommended archetype pairing (the implementer confirms or proposes an alternative in the target-confirmation note before mutation — the pairing is a starting design, not a mandate):
   - **Level 16 `jump-if-ready`** (`if can_jump`, a resource-state lesson) → **Charger**. A Charger charging down the ally's lane makes the jump load-bearing: the legible counterplay is to jump out of / over the charging lane at the right moment. Use `chargeRange` if an unbounded trigger proves chaotic on `simpleAisle`. This is the pairing Plan 101 was built for.
-  - **Level 20 `my-side-their-side`** (territory `if on_my_side`) → **Guard** posted on the enemy half. "Change behavior after crossing the middle" becomes real: advance on your side, then route around / evade the Guard once across, instead of walking a straight line to a frozen decoy.
-  - **Level 21 `freeze-the-lane`** (Area Freeze timing) → **Charger** down the lane (thematically exact — freeze the charging lane), or a **Guard** as the fallback if the Charger's commit-to-line makes the freeze window unreadable. Level 21 already has one live opponent, so this is the smallest board change of the four.
+  - **Level 21 `freeze-the-lane`** (Area Freeze timing) → **Charger** down the lane (thematically exact — freeze the charging lane), or a **Guard** as the fallback if the Charger's commit-to-line makes the freeze window unreadable. Level 21 already has one live opponent, so this is the smallest board change.
   - **Level 18 `stay-still-can-do-something`** (Stay Still removes a barrier directly ahead) → **Sentry** ambient vertical patrol only. This level's lesson is that *not moving* is the smart move; the added threat must supply legible life **without** making movement mandatory or contradicting the Stay-Still lesson. If no archetype can add pressure here without breaking that lesson, leave Level 18 background-motion-only or defer it — do not force a threat that fights the concept.
+- **Level 20 `my-side-their-side` is deferred out of this packet to [Plan 103](plan-103-territory-necessity-redesign.md).** At review time the reasoning was that a *position* sensor (`on_my_side`) cannot be made strictly load-bearing in a deterministic reach-a-cell level because the winning path is hardcodable.
+  - **[Correction, 2026-07-08 — Plan 103 design-note round disproved that rationale.]** The engine has no cross-turn program counter (`resolveFirstRunnableAction` returns the first runnable action every turn), so a bare stack of move blocks repeats its first action forever and the cited "hardcoded climb-then-across" path is not an expressible program. `on_my_side` is in fact *already structurally necessary* on this one-way level (the territory conditional is the only way to switch movement axes). L20's real issue was frozen decoys plus a mis-tuned Guard, not a necessity hole. Plan 103 was accordingly re-scoped from an objective redesign to an honest **living-board pass** on the existing objective. The deferral itself still stands; only the rationale above was wrong.
 - Assign an honest `boardDynamicsTier` (Plan 99) to each changed level and pass the tier lint clean.
 - Where a level's mechanic becomes load-bearing because of the live board, annotate `mechanicNecessity: "dynamic"` and add the discoverable naive-solution fixture so the Plan 100 lint passes.
 - Add living-board-aware compound conditions using existing blocks and deterministic board behavior.
@@ -126,7 +126,8 @@ Use `rg` for target level ids and:
 ### Out Of Scope
 
 - `find-the-enemy-flag` (Level 9) — sensing-phase, not part of this ramp (see non-goals).
-- Any level outside the four resources-and-territory targets.
+- **Level 20 `my-side-their-side`** — deferred to [Plan 103](plan-103-territory-necessity-redesign.md); see In Scope for why.
+- Any level outside the three in-scope resources-and-territory targets.
 - Whole-campaign rewrite.
 - Advanced boolean operator introduction.
 - New NPC archetypes or NPC-behavior/tier-lint infrastructure (Plans 99/101 own that; this packet only *consumes* it).

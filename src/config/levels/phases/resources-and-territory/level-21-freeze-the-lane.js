@@ -1,4 +1,4 @@
-import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS } from "../../../constants.js";
+import { SENSOR_OBJECT_TYPES, SENSOR_RELATION_TYPES, GAME_MODES, HUMAN_TURN_BEHAVIORS, MOVE_TOWARD_TARGETS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS, MECHANIC_NECESSITY } from "../../../constants.js";
 import { STARTER_EVENT_XML, FREEZE_THE_LANE_DEMO_XML } from "../../shared/blocklyXml.js";
 import { AREA_FREEZE_BLOCKS, GENERIC_SENSOR_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
@@ -23,6 +23,8 @@ export default {
   ],
   sensorRelationTypes: [SENSOR_RELATION_TYPES.WITHIN_2, SENSOR_RELATION_TYPES.WITHIN_3],
   initialBlocklyXml: STARTER_EVENT_XML,
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.COLLISION_THREAT,
+  mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC,
   winCondition: {
     type: "runner_reaches_enemy_flag",
     runnerId: "runner_1_AI_AllyP1"
@@ -60,11 +62,19 @@ export default {
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
       runner_1_AI_AllyP1: { gridX: 6, gridY: 4 },
-      runner_2_Npc1: { gridX: 7, gridY: 3 },
+      runner_2_Npc1: { gridX: 7, gridY: 3, cpuBehavior: NPC_BEHAVIORS.GUIDED_CHARGER },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     flagOverrides: {
       2: { gridX: 10, gridY: 4 }
-    }
+    },
+    barriers: [
+      { gridX: 7, gridY: 0, ownerRunnerId: "level_freeze_barrier_1" },
+      { gridX: 7, gridY: 1, ownerRunnerId: "level_freeze_barrier_2" },
+      { gridX: 7, gridY: 2, ownerRunnerId: "level_freeze_barrier_3" },
+      { gridX: 7, gridY: 5, ownerRunnerId: "level_freeze_barrier_4" },
+      { gridX: 7, gridY: 6, ownerRunnerId: "level_freeze_barrier_5" },
+      { gridX: 7, gridY: 7, ownerRunnerId: "level_freeze_barrier_6" }
+    ]
   }
 };

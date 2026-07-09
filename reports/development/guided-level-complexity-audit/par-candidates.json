@@ -222,7 +222,7 @@
     "runs": [
       {
         "fixtureKind": "one-off reference",
-        "turnsElapsed": 4,
+        "turnsElapsed": 2,
         "blockCount": 4,
         "distinctActionTypes": [
           "JUMP_FORWARD",

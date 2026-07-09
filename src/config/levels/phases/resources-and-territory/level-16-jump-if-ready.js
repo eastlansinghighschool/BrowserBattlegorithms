@@ -1,4 +1,4 @@
-import { GAME_MODES, HUMAN_TURN_BEHAVIORS } from "../../../constants.js";
+import { GAME_MODES, HUMAN_TURN_BEHAVIORS, NPC_BEHAVIORS, BOARD_DYNAMICS_TIERS, MECHANIC_NECESSITY } from "../../../constants.js";
 import { STARTER_EVENT_XML, JUMP_IF_READY_DEMO_XML } from "../../shared/blocklyXml.js";
 import { JUMP_CONDITION_BLOCKS, JUMP_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 
@@ -17,10 +17,12 @@ export default {
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
   toolboxBlockTypes: [...JUMP_CONDITION_BLOCKS, ...JUMP_BLOCKS, ...EXTENDED_MOVEMENT_BLOCKS],
   initialBlocklyXml: STARTER_EVENT_XML,
+  boardDynamicsTier: BOARD_DYNAMICS_TIERS.COLLISION_THREAT,
+  mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC,
   winCondition: {
     type: "runner_reaches_cell",
     runnerId: "runner_1_AI_AllyP1",
-    targetCell: { x: 6, y: 4 }
+    targetCell: { x: 8, y: 4 }
   },
   failureCondition: {
     type: "turn_limit_exceeded",
@@ -39,7 +41,7 @@ export default {
     {
       id: "level-15-resource",
       title: "Resources Can Change During A Match",
-      body: "Jump is not permanent. The wall blocks the whole column, so this level teaches how to leap once and then keep walking after the jump resource is gone.",
+      body: "Jump is not permanent. This level teaches how to leap once and then keep walking after the jump resource is gone.",
       targetSelector: "#canvas-container"
     }
   ],
@@ -48,19 +50,17 @@ export default {
     pointsToWin: 1,
     runnerOverrides: {
       runner_1_HumanP1: { gridX: 1, gridY: 1 },
-      runner_1_AI_AllyP1: { gridX: 1, gridY: 4 },
-      runner_2_Npc1: { gridX: 10, gridY: 2, isFrozen: true, frozenTurnsRemaining: 999 },
+      runner_1_AI_AllyP1: { gridX: 5, gridY: 4 },
+      runner_2_Npc1: { gridX: 6, gridY: 5, cpuBehavior: NPC_BEHAVIORS.GUIDED_CHARGER, chargeRange: 2 },
       runner_2_Npc2: { gridX: 10, gridY: 6, isFrozen: true, frozenTurnsRemaining: 999 }
     },
     barriers: [
-      { gridX: 2, gridY: 0, ownerRunnerId: "level_jump_ready_barrier_1" },
-      { gridX: 2, gridY: 1, ownerRunnerId: "level_jump_ready_barrier_2" },
-      { gridX: 2, gridY: 2, ownerRunnerId: "level_jump_ready_barrier_3" },
-      { gridX: 2, gridY: 3, ownerRunnerId: "level_jump_ready_barrier_4" },
-      { gridX: 2, gridY: 4, ownerRunnerId: "level_jump_ready_barrier_5" },
-      { gridX: 2, gridY: 5, ownerRunnerId: "level_jump_ready_barrier_6" },
-      { gridX: 2, gridY: 6, ownerRunnerId: "level_jump_ready_barrier_7" },
-      { gridX: 2, gridY: 7, ownerRunnerId: "level_jump_ready_barrier_8" }
+      { gridX: 6, gridY: 0, ownerRunnerId: "level_jump_ready_barrier_1" },
+      { gridX: 6, gridY: 1, ownerRunnerId: "level_jump_ready_barrier_2" },
+      { gridX: 6, gridY: 2, ownerRunnerId: "level_jump_ready_barrier_3" },
+      { gridX: 6, gridY: 3, ownerRunnerId: "level_jump_ready_barrier_4" },
+      { gridX: 6, gridY: 6, ownerRunnerId: "level_jump_ready_barrier_7" },
+      { gridX: 6, gridY: 7, ownerRunnerId: "level_jump_ready_barrier_8" }
     ]
   }
 };

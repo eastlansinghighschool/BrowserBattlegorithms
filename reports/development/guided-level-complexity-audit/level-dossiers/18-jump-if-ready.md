@@ -41,31 +41,31 @@
     - body: The If I Can Jump condition changes based on whether the ally has already spent the jump resource this round. Think about how the ally should behave before the jump is gone, and how that should change after it has been used.
     - demo Blockly: present
   - 2. Resources Can Change During A Match (level-15-resource)
-    - body: Jump is not permanent. The wall blocks the whole column, so this level teaches how to leap once and then keep walking after the jump resource is gone.
+    - body: Jump is not permanent. This level teaches how to leap once and then keep walking after the jump resource is gone.
     - demo Blockly: not found
 
 ## Board / Setup Facts
 - map key: `simpleAisle`
 - map label: Simple Aisle
 - dimensions: 12 x 8
-- win condition: {"type":"runner_reaches_cell","runnerId":"runner_1_AI_AllyP1","targetCell":{"x":6,"y":4}}
-- objective: runner runner_1_AI_AllyP1 reaches (6, 4)
+- win condition: {"type":"runner_reaches_cell","runnerId":"runner_1_AI_AllyP1","targetCell":{"x":8,"y":4}}
+- objective: runner runner_1_AI_AllyP1 reaches (8, 4)
 - team 1 base cells: (0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3), (1, 3), (0, 4), (1, 4), (0, 5), (1, 5), (0, 6), (1, 6), (0, 7), (1, 7)
 - team 2 base cells: (10, 0), (11, 0), (10, 1), (11, 1), (10, 2), (11, 2), (10, 3), (11, 3), (10, 4), (11, 4), (10, 5), (11, 5), (10, 6), (11, 6), (10, 7), (11, 7)
-- goal cell: (6, 4)
+- goal cell: (8, 4)
 - wall cells: none
 - jail cells: none
 - flags: not found
-- barriers: (2, 0) owner level_jump_ready_barrier_1; (2, 1) owner level_jump_ready_barrier_2; (2, 2) owner level_jump_ready_barrier_3; (2, 3) owner level_jump_ready_barrier_4; (2, 4) owner level_jump_ready_barrier_5; (2, 5) owner level_jump_ready_barrier_6; (2, 6) owner level_jump_ready_barrier_7; (2, 7) owner level_jump_ready_barrier_8
+- barriers: (6, 0) owner level_jump_ready_barrier_1; (6, 1) owner level_jump_ready_barrier_2; (6, 2) owner level_jump_ready_barrier_3; (6, 3) owner level_jump_ready_barrier_4; (6, 6) owner level_jump_ready_barrier_7; (6, 7) owner level_jump_ready_barrier_8
 
 ## Runner Facts
 - player runner 0 (runner_1_HumanP1) slot human at (1, 1); control human; frozen no; enemy flag no
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
-- player runner 1 (runner_1_AI_AllyP1) slot ally 0 at (1, 4); control ally; frozen no; enemy flag no
+- player runner 1 (runner_1_AI_AllyP1) slot ally 0 at (5, 4); control ally; frozen no; enemy flag no
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
-- opponent runner 0 (runner_2_Npc1) slot npc 0 at (10, 2); control npc; frozen yes; enemy flag no
+- opponent runner 0 (runner_2_Npc1) slot npc 0 at (6, 5); control npc; frozen no; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
-  - frozen turns remaining: 999
+  - cpu behavior: GUIDED_CHARGER
 - opponent runner 1 (runner_2_Npc2) slot npc 1 at (10, 6); control npc; frozen yes; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
   - frozen turns remaining: 999

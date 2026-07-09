@@ -59,7 +59,7 @@
 - wall cells: none
 - jail cells: none
 - flags: opponent: (10, 4)
-- barriers: none
+- barriers: (7, 0) owner level_freeze_barrier_1; (7, 1) owner level_freeze_barrier_2; (7, 2) owner level_freeze_barrier_3; (7, 5) owner level_freeze_barrier_4; (7, 6) owner level_freeze_barrier_5; (7, 7) owner level_freeze_barrier_6
 
 ## Runner Facts
 - player runner 0 (runner_1_HumanP1) slot human at (1, 1); control human; frozen no; enemy flag no
@@ -68,6 +68,7 @@
   - play direction: 1; home side: left; can jump: yes; can place barrier: no
 - opponent runner 0 (runner_2_Npc1) slot npc 0 at (7, 3); control npc; frozen no; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
+  - cpu behavior: GUIDED_CHARGER
 - opponent runner 1 (runner_2_Npc2) slot npc 1 at (10, 6); control npc; frozen yes; enemy flag no
   - play direction: -1; home side: right; can jump: yes; can place barrier: no
   - frozen turns remaining: 999
