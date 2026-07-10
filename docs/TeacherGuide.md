@@ -2,6 +2,8 @@
 
 For pacing, intervention prompts, and discussion questions while running a session, see [Teacher Facilitation Kit](TeacherFacilitationKit.md).
 
+Student-facing level text (mission briefings, tips) intentionally stays in a short in-world scout/coach voice and does not explain *why* a level exists pedagogically — that explanation belongs here. See [Copy Voice Contract](CopyVoiceContract.md) for the student-facing voice rules, and this guide's own sections above for the pedagogical framing.
+
 ## Recommended Flow
 
 1. Start students in **Guided Levels** so they learn the one-action-per-turn Blockly model.

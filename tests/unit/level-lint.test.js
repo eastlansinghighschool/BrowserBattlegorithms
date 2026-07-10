@@ -6,6 +6,9 @@ import {
   checkBugHuntHasReferenceSolution,
   checkBugHuntLevelsIntroduceNoNewBlock,
   checkChallengeLevelsIntroduceNoNewBlock,
+  checkCopyVoiceBannedPhrases,
+  checkCopyVoiceSpoilerPhrasing,
+  checkPrePlayProseLength,
   checkFlagSetupGameSpecCompliance,
   checkConceptMatrixAgreement,
   checkDemoBlocklyDoesNotSolveLevel,
@@ -870,4 +873,102 @@ test("diagnostics format with relative file paths", () => {
     file: "/abs/path/level-1.js"
   });
   assert.match(formatted, /^error level-1 turn-limit-floor: turn limit too low/);
+});
+
+test("copy voice: banned meta phrases warn and identify level id and field", () => {
+  const level = createLevel({
+    id: "teaches-level",
+    introText: "This level teaches territory awareness before the next lesson.",
+    tips: ["This is a good level for practicing sensors.", "Edge or wall is a beginner-friendly sensing target."]
+  });
+
+  const diagnostics = checkCopyVoiceBannedPhrases([level]);
+  assert.equal(diagnostics.length, 3);
+  assert.equal(diagnostics.every((entry) => entry.severity === "warning"), true);
+  assert.equal(diagnostics.every((entry) => entry.levelId === "teaches-level"), true);
+  assert.equal(diagnostics.every((entry) => entry.contract === "copy-voice-banned-phrase"), true);
+  assert.ok(diagnostics.some((entry) => entry.message.includes("introText") && entry.message.includes("this level teaches")));
+  assert.ok(diagnostics.some((entry) => entry.message.includes("tips[0]") && entry.message.includes("this is a good level for")));
+  assert.ok(diagnostics.some((entry) => entry.message.includes("tips[1]") && entry.message.includes("beginner-friendly")));
+});
+
+test("copy voice: banned phrase check also scans tutorial step bodies, case-insensitively", () => {
+  const level = createLevel({
+    id: "tutorial-level",
+    tutorialSteps: [{ id: "step-1", title: "Step", body: "THIS LEVEL TEACHES sensing basics.", targetSelector: "#x" }]
+  });
+
+  const diagnostics = checkCopyVoiceBannedPhrases([level]);
+  assert.equal(diagnostics.length, 1);
+  assert.match(diagnostics[0].message, /tutorialSteps\[0\]\.body/);
+});
+
+test("copy voice: solution-spoiler phrasing warns and identifies field", () => {
+  const level = createLevel({
+    id: "spoiler-level",
+    description: "The solution is to move forward three times.",
+    tips: ["The correct order is forward, then up."]
+  });
+
+  const diagnostics = checkCopyVoiceSpoilerPhrasing([level]);
+  assert.equal(diagnostics.length, 2);
+  assert.equal(diagnostics.every((entry) => entry.severity === "warning"), true);
+  assert.equal(diagnostics.every((entry) => entry.contract === "copy-voice-spoiler-phrase"), true);
+  assert.ok(diagnostics.some((entry) => entry.message.includes("description")));
+  assert.ok(diagnostics.some((entry) => entry.message.includes("tips[0]")));
+});
+
+test("copy voice: pre-play prose length warns over the ~35-word cap, on description and introText only", () => {
+  const longSentence = new Array(40).fill("word").join(" ");
+  const level = createLevel({
+    id: "long-level",
+    description: longSentence,
+    introText: "Short intro, well under the cap.",
+    tips: [longSentence]
+  });
+
+  const diagnostics = checkPrePlayProseLength([level]);
+  assert.equal(diagnostics.length, 1);
+  assert.equal(diagnostics[0].severity, "warning");
+  assert.equal(diagnostics[0].contract, "copy-voice-prose-length");
+  assert.match(diagnostics[0].message, /description is 40 words/);
+});
+
+test("copy voice: a clean example produces no warnings from any of the three rules", () => {
+  const level = createLevel({
+    id: "clean-level",
+    description: "Reach the flag past the wall.",
+    introText: "Watch the frozen runner near the crossing.",
+    tips: ["The wall on your right blocks a straight run."],
+    tutorialSteps: [{ id: "step-1", title: "Step", body: "Check which side of the field you're on.", targetSelector: "#x" }]
+  });
+
+  assert.deepEqual(checkCopyVoiceBannedPhrases([level]), []);
+  assert.deepEqual(checkCopyVoiceSpoilerPhrasing([level]), []);
+  assert.deepEqual(checkPrePlayProseLength([level]), []);
+});
+
+test("copy voice: custom word cap is respected", () => {
+  const level = createLevel({ id: "custom-cap", description: "One two three four five." });
+  assert.deepEqual(checkPrePlayProseLength([level], 3).length, 1);
+  assert.deepEqual(checkPrePlayProseLength([level], 10), []);
+});
+
+test("copy voice checks are wired into runLevelLint and stay non-blocking", () => {
+  const levels = [
+    createLevel({
+      id: "one",
+      title: "Level 1: One",
+      toolboxBlockTypes: ["a"],
+      failureCondition: { type: "turn_limit_exceeded", maxTurns: 8 },
+      introText: "This level teaches something."
+    })
+  ];
+  const conceptMatrix = [createMatrixRow("1", "One")];
+  const ref = new Map([["one", { filePath: "/abs/one.xml", xmlText: "<xml></xml>" }]]);
+
+  const diagnostics = runLevelLint({ levels, conceptMatrix, referenceSolutionsByLevelId: ref });
+  const voiceDiagnostics = diagnostics.filter((entry) => entry.contract === "copy-voice-banned-phrase");
+  assert.equal(voiceDiagnostics.length, 1);
+  assert.equal(voiceDiagnostics[0].severity, "warning");
 });

@@ -131,6 +131,14 @@ Include pedagogy checks when UI, feedback, levels, copy, Blockly, or visible gam
 
 If the packet changes runtime behavior covered by a subsystem note (`docs/subsystems/`), it must either include the matching note update in the same patch, or stop and surface the conflict for owner review. Silent divergence from a subsystem note is not allowed.
 
+## Copy Voice Contract (Charter S5, Plan 94)
+
+Student-facing text (`description`, `introText`, `tips`, `tutorialSteps[].body`) has an in-world scout/coach speaker, not a curriculum designer's voice. Full contract, examples, and the phrase/length lint rules that enforce it: `docs/CopyVoiceContract.md`.
+
+- `npm run lint:levels` warns (never fails) on banned meta phrases (`"this level teaches"`, `"beginner-friendly"`, `"this is a good level for"`), solution-spoiler phrasing, and pre-play prose over ~35 words.
+- These warnings are non-blocking by design — do not rewrite unrelated existing copy just to silence one while working on an unrelated packet; that's Plan 95's scoped, owner-gated job.
+- New or edited student-facing copy in your own packet's scope should still follow the contract even though the lint won't fail the build over it.
+
 ## Degenerate-Solution Test Standard (Charter S8)
 
 Any packet that raises a guided level's required complexity — making a previously-optional concept load-bearing for that level's win condition — must include a test proving the **old, degenerate solution shape now fails**, not only that the new reference solution passes. A reference-solution test alone can't tell a genuine uplift from an untested regression; the paired failing case is the falsifiable claim.

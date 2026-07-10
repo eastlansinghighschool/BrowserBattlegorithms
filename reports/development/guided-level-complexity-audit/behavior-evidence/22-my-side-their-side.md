@@ -24,7 +24,7 @@
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| one-off reference | pass | 9 | Team 1: 0, Team 2: 0 | 9 | no | none observed |
+| one-off reference | pass | 9 | Team 1: 0, Team 2: 0 | 9 | yes | none observed |
 
 ### one-off reference
 - fixture path: `tests/unit/fixtures/guided-reference-solutions/my-side-their-side.xml`
@@ -40,7 +40,7 @@
 - branch/trace evidence present: yes
 - reference action count: 9
 - distinct action types observed: `MOVE_FORWARD`, `MOVE_UP_SCREEN`
-- live enemy acted: no
+- live enemy acted: yes
 - enemy interaction events: none observed
 - ignored/extra-action evidence: none observed
 ### Reference action summary
@@ -53,13 +53,18 @@
 | 5 | `runner_1_AI_AllyP1` | MOVE_FORWARD | moved | turn 5 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=true -> action `battlegorithms_move_forward` |
 | 6 | `runner_1_AI_AllyP1` | MOVE_UP_SCREEN | moved | turn 6 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen` |
 ### Enemy action summary
-- none observed
+| turn | runner | action | outcome | trace summary |
+| --- | --- | --- | --- | --- |
+| 1 | `runner_2_Npc1` | MOVE_UP_SCREEN | moved | trace data not available |
+| 2 | `runner_2_Npc1` | MOVE_UP_SCREEN | moved | trace data not available |
+| 3 | `runner_2_Npc1` | MOVE_DOWN_SCREEN | moved | trace data not available |
+| 4 | `runner_2_Npc1` | MOVE_DOWN_SCREEN | moved | trace data not available |
 ### Event Tail
-- turn.started (runner=runner_2_Npc1, team=2) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=MOVE_DOWN_SCREEN, source=cpu) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=MOVE_DOWN_SCREEN, outcome=illegal_noop)
 - turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_UP_SCREEN, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_UP_SCREEN, outcome=illegal_noop)
-- turn.started (runner=runner_2_Npc1, team=2) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=STAY_STILL, outcome=skipped_frozen)
+- turn.started (runner=runner_2_Npc1, team=2) | runner.actionChosen (runner=runner_2_Npc1, team=2, action=MOVE_DOWN_SCREEN, source=cpu) | runner.actionResolved (runner=runner_2_Npc1, team=2, action=MOVE_DOWN_SCREEN, outcome=illegal_noop)
 - turn.started (runner=runner_2_Npc2, team=2) | runner.actionResolved (runner=runner_2_Npc2, team=2, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_HumanP1, team=1) | runner.actionResolved (runner=runner_1_HumanP1, team=1, action=STAY_STILL, outcome=skipped_frozen)
 - turn.started (runner=runner_1_AI_AllyP1, team=1) | runner.actionChosen (runner=runner_1_AI_AllyP1, team=1, action=MOVE_UP_SCREEN, source=blockly) | runner.actionResolved (runner=runner_1_AI_AllyP1, team=1, action=MOVE_UP_SCREEN, outcome=illegal_noop) | level.result (result=PASSED)
@@ -72,10 +77,18 @@
 - turn 9 runner runner_1_AI_AllyP1: condition `battlegorithms_if_on_my_side_else` result=false -> action `battlegorithms_move_up_screen`
 
 #### Enemy Movement Timeline
-- no live NPC movement observed
+| turn | runner | behavior | from | to | action |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 2) | (8, 1) | MOVE_UP_SCREEN (moved) |
+| 2 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 1) | (8, 0) | MOVE_UP_SCREEN (moved) |
+| 3 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 0) | (8, 1) | MOVE_DOWN_SCREEN (moved) |
+| 4 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 1) | (8, 2) | MOVE_DOWN_SCREEN (moved) |
+| 5 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 2) | (8, 3) | MOVE_DOWN_SCREEN (moved) |
+| 6 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 3) | (8, 4) | MOVE_DOWN_SCREEN (moved) |
+| 7 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 4) | (8, 5) | MOVE_DOWN_SCREEN (moved) |
+| 8 | `runner_2_Npc1` | GUIDED_VERTICAL_PATROL | (8, 5) | (8, 6) | MOVE_DOWN_SCREEN (moved) |
 
 **Static/Frozen NPCs:**
-- `runner_2_Npc1`: behavior PATROL_INTERCEPT, starting cell (10, 2) (frozen/static)
 - `runner_2_Npc2`: behavior PATROL_INTERCEPT, starting cell (10, 6) (frozen/static)
 
 #### Interaction Timeline
@@ -98,6 +111,10 @@
 
 #### NPC / Enemy Snapshot
 ## Enemy / NPC Behavior
-- runner_2_Npc1: behavior PATROL_INTERCEPT; start (10, 2); frozen yes (991 turns remaining)
+- runner_2_Npc1: behavior GUIDED_VERTICAL_PATROL; start (8, 2); frozen no
 - runner_2_Npc2: behavior PATROL_INTERCEPT; start (10, 6); frozen yes (991 turns remaining)
-- first enemy actions: none observed
+- first enemy actions:
+  - turn 1: runner_2_Npc1 chose MOVE_UP_SCREEN via cpu; outcome moved
+  - turn 2: runner_2_Npc1 chose MOVE_UP_SCREEN via cpu; outcome moved
+  - turn 3: runner_2_Npc1 chose MOVE_DOWN_SCREEN via cpu; outcome moved
+  - turn 4: runner_2_Npc1 chose MOVE_DOWN_SCREEN via cpu; outcome moved

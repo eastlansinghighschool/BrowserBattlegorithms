@@ -1157,6 +1157,119 @@ export function checkBoardDynamicsTierAgreement(levels) {
   return diagnostics;
 }
 
+// Copy voice contract (charter S5, Plan 94): student-facing text has an
+// in-world scout/coach speaker. These three checks are transparent
+// phrase/length rules, not NLP -- see docs/CopyVoiceContract.md for the
+// contract and examples. All are warnings: existing copy is not rewritten by
+// this packet, and the default lint mode must not fail CI on it.
+const COPY_VOICE_PROSE_FIELDS = ["description", "introText"];
+const COPY_VOICE_BANNED_PHRASES = ["this level teaches", "beginner-friendly", "this is a good level for"];
+const COPY_VOICE_SPOILER_PHRASES = [
+  "the solution is",
+  "the answer is",
+  "the correct order is",
+  "the correct sequence is",
+  "the trick is to"
+];
+const PRE_PLAY_PROSE_WORD_CAP = 35;
+
+function collectCopyVoiceFields(level) {
+  const fields = [];
+  for (const fieldName of COPY_VOICE_PROSE_FIELDS) {
+    if (level[fieldName]) {
+      fields.push({ fieldName, text: level[fieldName] });
+    }
+  }
+  (level.tips || []).forEach((tip, index) => {
+    if (tip) {
+      fields.push({ fieldName: `tips[${index}]`, text: tip });
+    }
+  });
+  (level.tutorialSteps || []).forEach((step, index) => {
+    if (step?.body) {
+      fields.push({ fieldName: `tutorialSteps[${index}].body`, text: step.body });
+    }
+  });
+  return fields;
+}
+
+export function checkCopyVoiceBannedPhrases(levels) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    for (const { fieldName, text } of collectCopyVoiceFields(level)) {
+      const normalized = normalizeText(text);
+      for (const phrase of COPY_VOICE_BANNED_PHRASES) {
+        if (normalized.includes(phrase)) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "copy-voice-banned-phrase",
+              message: `${fieldName} contains banned meta phrase "${phrase}" (charter S5 voice contract)`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+      }
+    }
+  }
+
+  return diagnostics;
+}
+
+export function checkCopyVoiceSpoilerPhrasing(levels) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    for (const { fieldName, text } of collectCopyVoiceFields(level)) {
+      const normalized = normalizeText(text);
+      for (const phrase of COPY_VOICE_SPOILER_PHRASES) {
+        if (normalized.includes(phrase)) {
+          diagnostics.push(
+            makeDiagnostic({
+              severity: SEVERITIES.WARNING,
+              levelId: level.id,
+              contract: "copy-voice-spoiler-phrase",
+              message: `${fieldName} contains solution-spoiler phrasing "${phrase}" (charter S5: never state the solution before play)`,
+              file: level.sourcePath || null
+            })
+          );
+        }
+      }
+    }
+  }
+
+  return diagnostics;
+}
+
+export function checkPrePlayProseLength(levels, maxWords = PRE_PLAY_PROSE_WORD_CAP) {
+  const diagnostics = [];
+
+  for (const level of levels) {
+    for (const fieldName of COPY_VOICE_PROSE_FIELDS) {
+      const text = level[fieldName];
+      if (!text) {
+        continue;
+      }
+      const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount > maxWords) {
+        diagnostics.push(
+          makeDiagnostic({
+            severity: SEVERITIES.WARNING,
+            levelId: level.id,
+            contract: "copy-voice-prose-length",
+            message: `${fieldName} is ${wordCount} words, over the ~${maxWords}-word pre-play prose cap (charter S4)`,
+            file: level.sourcePath || null
+          })
+        );
+      }
+    }
+  }
+
+  return diagnostics;
+}
+
 export function runLevelLint({
   levels,
   conceptMatrix,
@@ -1181,7 +1294,10 @@ export function runLevelLint({
     ...checkReferenceSolutionFixtureNameMatchesLevelId(levels, { referenceSolutionsByLevelId }),
     ...checkSensorRelationPolicy(levels, { referenceSolutionsByLevelId }),
     ...checkFlagSetupGameSpecCompliance(levels),
-    ...checkBoardDynamicsTierAgreement(levels)
+    ...checkBoardDynamicsTierAgreement(levels),
+    ...checkCopyVoiceBannedPhrases(levels),
+    ...checkCopyVoiceSpoilerPhrasing(levels),
+    ...checkPrePlayProseLength(levels)
   ];
 }
 

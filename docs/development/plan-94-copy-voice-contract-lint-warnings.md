@@ -1,11 +1,10 @@
 ---
 id: plan-94-copy-voice-contract-lint-warnings
 title: "Copy Voice Contract And Lint Warnings"
-status: draft
+status: complete
+resolution: "Orchestrator-verified 2026-07-08 (Claude implementer). Charter S5 voice contract converted to durable docs + non-blocking lint, NO level copy rewritten. VERIFIED: three new rules in levelLintCore.js -- copy-voice-banned-phrase (3 literal meta phrases), copy-voice-spoiler-phrase (narrow 5-phrase deterministic list, deliberately not fuzzy to avoid false positives), copy-voice-prose-length (~35-word cap) -- all SEVERITIES.WARNING, all wired into runLevelLint. Critical property holds: lint:levels exits 0 with the new warnings present (non-blocking; the campaign gate is safe). Banned/spoiler checks scan description/introText/tips/tutorialSteps.body; length cap correctly scoped to description+introText only (tips exempt). docs/CopyVoiceContract.md (new) documents the contract with a rule->lint table whose phrase lists match the code exactly; pointers added to packet-creation-guidance.md and TeacherGuide.md. Scope clean: no src/config/levels file changed by this packet (the L20/blockly-workspace edits in the tree are pre-existing Plan 103; the banned-phrase warning fires on L20's UNCHANGED introText, confirming copy untouched). Real pre-existing copy debt surfaced and RECORDED FOR PLAN 95, not fixed: 5 banned-phrase hits (mirror-forward, watch-the-wall, jump-if-ready, stay-still, my-side-their-side), 6 prose-length hits, 0 spoiler hits. Tests: 9 new lint tests incl. tips-exempt-from-length coverage; full suite 476/476, lint exit 0, build clean. Implementer left status for orchestration; README/index untouched."
 depends_on: [plan-85-campaign-rewrite-charter]
 gate: "before mutation; do not run until Plan 85 voice contract is accepted"
-superseded_by: null
-resolution: null
 summary: >-
   Convert Plan 85's student-facing voice contract into docs and lint warnings before broad copy rewrites.
 ---
