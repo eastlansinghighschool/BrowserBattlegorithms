@@ -5,12 +5,13 @@ import { AREA_FREEZE_BLOCKS, GENERIC_SENSOR_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED
 export default {
   id: "freeze-the-lane",
   title: "Level 21: Freeze the Lane",
-  description: "Spend Area Freeze, then let the ally keep moving toward the flag while the lane is safe and the cooldown runs.",
-  introText: "Area Freeze is a team power, not a normal move. This puzzle is about spending it at the right time and then returning to the main plan while it cools down.",
+  description: "A Charger is closing on the lane. Decide when Area Freeze should matter.",
+  introText: "The Charger starts near the ally, and the freeze window is brief. Watch the lane before you spend a team power.",
   tips: [
-    "Area Freeze affects nearby active enemies.",
-    "Think about what the ally should do before the freeze is spent and what it should do afterward.",
-    "After this level, free play is the best place to combine all the tools you have learned."
+    "The Charger can reach nearby lanes.",
+    "Area Freeze touches nearby active enemies.",
+    "When would a short safe window help?",
+    "Watch the cooldown after the power is spent."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -36,23 +37,23 @@ export default {
   tutorialSteps: [
     {
       id: "level-20-freeze",
-      title: "Team Freeze Cooldown",
-      body: "Area Freeze can lock nearby enemies in place for a short time, then it cools down before your team can use it again. A simple if/else can spend it, then switch back to movement.",
+      title: "Read The Freeze Window",
+      body: "Area Freeze stops nearby enemies briefly. Watch the resource and the Charger together.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: FREEZE_THE_LANE_DEMO_XML,
-      demoTitle: "Example freeze-then-go program",
-      demoCaption: "This example checks a cooling resource using a condition not available in this level. The pattern — spend the resource in the DO branch, then fall back to normal movement in the ELSE branch — is the same structure you need here."
+      demoTitle: "A Resource Question",
+      demoCaption: "This sample watches a different cooling resource. Notice how the board state decides whether the action is available."
     },
     {
       id: "level-20-timing",
-      title: "Use It At The Right Moment",
-      body: "This lane is dangerous because an enemy starts nearby. Freeze is strongest when you use it before that runner can block your path.",
+      title: "Choose The Moment",
+      body: "The Charger starts near the lane. What would make this the right turn to spend the power?",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-20-free-play",
-      title: "The Single-Runner Toolkit Is Complete",
-      body: "You now have the full set of single-runner tools — movement, sensing, helper blocks, barriers, jumping, and freeze. These will also serve you in free play. The next levels go further, adding new ways to combine and express conditions.",
+      title: "Carry The Toolkit",
+      body: "Movement, sensing, helper actions, barriers, jumping, and freeze are on the table. Free play opens the next board.",
       targetSelector: "#level-panel"
     }
   ],

@@ -5,12 +5,12 @@ import { BARRIER_PLACEMENT_BLOCKS, BARRIER_READY_BLOCKS, EXTENDED_MOVEMENT_BLOCK
 export default {
   id: "build-the-barrier",
   title: "Level 17: Build the Barrier",
-  description: "Place a barrier in front of the ally to learn how barrier placement works.",
-  introText: "Barrier placement is another one-time resource. This level focuses on what the action does and when it is ready.",
+  description: "Place a barrier in the marked square ahead of the ally.",
+  introText: "The ally can place one barrier. Watch the open square in front and whether the action is available.",
   tips: [
-    "A runner can only keep one active barrier on the map.",
-    "Place Barrier always targets the square directly in front.",
-    "The highlighted square shows where the barrier should appear."
+    "The barrier belongs in the highlighted square.",
+    "Place Barrier acts on the square directly ahead.",
+    "A runner can keep only one active barrier."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -28,14 +28,14 @@ export default {
   tutorialSteps: [
     {
       id: "level-16-place-barrier",
-      title: "Place A Barrier In Front",
+      title: "Place The Barrier",
       body: "This action creates a barrier in the square directly ahead of the runner if that space is open.",
       targetSelector: "#blockly-region"
     },
     {
       id: "level-16-barrier-ready",
-      title: "Barrier Placement Has A Ready State",
-      body: "The If I Can Place Barrier condition helps the ally know whether that one-time action is still available.",
+      title: "Is The Space Open?",
+      body: "The ready check tells the ally whether barrier placement is still available.",
       targetSelector: "#canvas-container"
     }
   ],

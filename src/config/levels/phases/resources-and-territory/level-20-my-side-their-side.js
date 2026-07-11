@@ -31,12 +31,13 @@ export default {
   // there is no dynamic threat necessity to prove; see Plan 103 progress
   // report for the linter-wrinkle decision.
   mechanicNecessity: MECHANIC_NECESSITY.STATIC,
-  description: "Use territory conditions so the ally changes behavior after crossing into the enemy half.",
-  introText: "Some smart programs care about which side of the field they are on. This level teaches that field position can change what move makes sense.",
+  description: "The middle of the field is about to matter. Guide the ally across it.",
+  introText: "Your side and their side are different ground. Watch the ally approach the middle and decide what should change.",
   tips: [
-    "For Team 1, the left half is your side and the right half is the enemy side.",
-    "Try a plan that moves forward on your side and then changes behavior after crossing the middle.",
-    "This level is about territory awareness, not flag carrying yet."
+    "Team 1's side is the left half; the enemy side is the right.",
+    "Watch for the moment the ally crosses the middle.",
+    "What should the route do on each side?",
+    "No flag is in this lane. Read the territory first."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -56,13 +57,13 @@ export default {
     {
       id: "level-19-territory",
       title: "The Field Has Sides",
-      body: "Your side and the enemy side are different spaces. Your program can check which half of the field the ally is in.",
+      body: "The field has two halves. The territory block can tell your program which half the ally occupies.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-19-switch-sides",
-      title: "Change Your Plan After Crossing",
-      body: "The territory blocks let a program make different decisions depending on which half of the field the ally is in. Think about what move makes sense on your side, and what might make more sense once the ally crosses over.",
+      title: "After The Middle",
+      body: "The ally will cross the middle. Trace one turn before and one turn after that change.",
       targetSelector: "#blockly-region"
     }
   ],

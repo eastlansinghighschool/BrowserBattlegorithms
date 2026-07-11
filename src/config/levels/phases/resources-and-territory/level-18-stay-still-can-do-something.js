@@ -5,12 +5,12 @@ import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/to
 export default {
   id: "stay-still-can-do-something",
   title: "Level 18: Stay Still Can Do Something",
-  description: "Use Stay Still to remove a barrier that is directly in front of the ally.",
-  introText: "Stay Still is not just a do-nothing block. When a barrier is in front, it can change the board by clearing that obstacle.",
+  description: "Clear the barrier blocking the ally's path.",
+  introText: "A barrier blocks the ally's lane. Stay Still can change the board when the barrier is directly ahead.",
   tips: [
-    "If a barrier is directly in front, Stay Still removes it.",
-    "After the barrier is gone, the ally can continue moving.",
-    "This is a good level for combining sensing with a non-movement action."
+    "Look directly ahead for the barrier.",
+    "When it is gone, the route opens again.",
+    "The pause can be the move that changes the lane."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -40,17 +40,17 @@ export default {
   tutorialSteps: [
     {
       id: "level-17-stay-still",
-      title: "Stay Still Can Change The Board",
-      body: "If a barrier is directly ahead, Stay Still removes it. This is one of the first times that not moving is the smart move.",
+      title: "Still Can Mean Action",
+      body: "When the barrier is directly ahead, Stay Still clears it. Read the board before choosing the next action.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: STAY_STILL_DEMO_XML,
       demoTitle: "Example removal program",
-      demoCaption: "This sensor branch uses an object and relation that are not available in this level. The structure is the same one you need — fill in the correct object and relation, and choose what action makes sense in each branch."
+      demoCaption: "The sample uses a different sensor and relation. Notice the barrier in front, then decide what each path should do."
     },
     {
       id: "level-17-after-removal",
-      title: "Then Keep Going",
-      body: "Once the barrier is gone, the ally can go back to its normal path.",
+      title: "Then Continue",
+      body: "Once the barrier is clear, the ally can return to the route.",
       targetSelector: "#canvas-container"
     }
   ],

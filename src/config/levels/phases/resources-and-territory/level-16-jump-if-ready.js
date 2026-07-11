@@ -5,12 +5,12 @@ import { JUMP_CONDITION_BLOCKS, JUMP_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "..
 export default {
   id: "jump-if-ready",
   title: "Level 16: Jump If Ready",
-  description: "Use a condition so the ally jumps once and then switches back to normal movement.",
-  introText: "Conditions can check the runner's resources too. In this level, the ally should jump when it can and walk after the jump has been spent.",
+  description: "One jump is waiting in the lane. What should the ally notice before it spends it?",
+  introText: "A Charger guards the lane. The ally's jump is ready now; after it is spent, watch where the Charger stands.",
   tips: [
-    "Think about what should happen before the jump is spent and after it is gone.",
-    "After the jump is used, the condition changes and the else move takes over.",
-    "This is your first resource-aware lesson."
+    "The jump is ready at the start.",
+    "What will the ally notice after it is spent?",
+    "Trace the lane before you choose a branch."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -31,17 +31,17 @@ export default {
   tutorialSteps: [
     {
       id: "level-15-ready",
-      title: "Your Program Can Check What Is Ready",
-      body: "The If I Can Jump condition changes based on whether the ally has already spent the jump resource this round. Think about how the ally should behave before the jump is gone, and how that should change after it has been used.",
+      title: "A Resource With A Limit",
+      body: "The jump check changes when the ally spends its jump. Watch the state change, then decide what the next turn needs.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: JUMP_IF_READY_DEMO_XML,
-      demoTitle: "Example ready-check program",
-      demoCaption: "The condition and actions here are not the ones this level uses. The structure shows how an if/else block checks a resource state and runs a different branch once that resource is gone."
+      demoTitle: "A Ready Check",
+      demoCaption: "This example watches a resource that is not the jump. Look at the question it asks, not the actions it chooses."
     },
     {
       id: "level-15-resource",
-      title: "Resources Can Change During A Match",
-      body: "Jump is not permanent. This level teaches how to leap once and then keep walking after the jump resource is gone.",
+      title: "When The Jump Is Gone",
+      body: "After the jump is spent, the Charger may be in a new spot. Read the lane again before choosing.",
       targetSelector: "#canvas-container"
     }
   ],

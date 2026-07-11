@@ -5,14 +5,15 @@ import { TEAMMATE_FLAG_BLOCKS, MOVE_TOWARD_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } fr
 export default {
   id: "relay-race",
   title: "Level 19: Relay Race",
-  description: "Use the teammate flag condition so the ally stages on defense first, then supports the human carrier after the enemy flag is picked up.",
-  introText: "This relay uses both keyboard control and Blockly. Move the human runner to the enemy flag, and have the ally stage first before switching into carrier support.",
+  description: "The flag changes hands in this relay. Watch both runners and decide how their jobs should change.",
+  introText: "Drive the human runner with the arrow keys. The ally heads for a staging spot; the flag handoff will change the field.",
   tips: [
-    "The human runner starts without the enemy flag and has to pick it up first.",
-    "The ally should reach the staging square near the top before the human carries the flag.",
-    "The teammate condition is true when another runner on your team has the flag.",
-    "After the human becomes the carrier, the ally should switch from staging to carrier support.",
-    "The highlighted goal marker changes with the relay phase, so watch it after the flag pickup."
+    "Watch where the ally starts.",
+    "The staging spot waits above the shared lane.",
+    "Notice what changes when a teammate reaches the enemy flag.",
+    "The goal marker moves after the flag pickup.",
+    "Which runner should move, wait, or support?",
+    "Read the next turn before you change the plan."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -32,18 +33,18 @@ export default {
   tutorialSteps: [
     {
       id: "level-19-human-route",
-      title: "Move The Human Runner First",
-      body: "You control the human runner in this level. Get to the enemy flag first, then watch the ally switch from the top staging square to carrier support once a teammate has the flag.",
+      title: "Watch The Handoff",
+      body: "Drive the human runner with the arrow keys. Watch the ally, the staging spot, and the flag as the round unfolds.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-19-support",
-      title: "Stage, Then Support",
-      body: "Use the teammate flag condition to change the ally's job after the human becomes the carrier. The structure is a branch: one action before the flag, another after it.",
+      title: "Name The New Job",
+      body: "A teammate carrying the flag changes the situation. What should the ally do now?",
       targetSelector: "#blockly-region",
       demoBlocklyXml: RELAY_RACE_DEMO_XML,
-      demoTitle: "Example branch pattern",
-      demoCaption: "This example uses a different condition than the one available in this level. The branch shape is the same: check a condition, then choose different actions before and after."
+      demoTitle: "A Board Question",
+      demoCaption: "This sample asks a different board question. Notice how the answer can change what happens next."
     }
   ],
   setupOverrides: {

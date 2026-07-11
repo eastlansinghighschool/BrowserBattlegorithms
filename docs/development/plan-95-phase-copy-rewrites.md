@@ -146,6 +146,19 @@ These are the current copy-voice lint hits, grouped by phase. This is the **floo
 
 **Board-settledness gate (charter S5 sequencing).** Only rewrite a phase whose board behavior is settled — copy must describe the board students actually see. `resources-and-territory` (settled by Plans 93/103) and `movement-helpers` (settled by Plan 92) are settled and are the safe first candidates; **resources-and-territory is recommended first** (freshly settled, three hits including the two this campaign just touched). For phases with no pending living-board packet (e.g. static foundations/sensing levels that will not receive board changes), the board is settled by default and their copy is safe to rewrite. If a phase has a living-board uplift still pending, defer its copy until that lands.
 
+## Phase 1 Review Learnings
+
+The accepted `resources-and-territory` pass exposed several repeatable review rules. Apply these to every later phase dispatch:
+
+1. **Name consequential live threats, using tier and board evidence.** Read the digest board summary, then confirm behavior in source/dossiers. A live opponent that creates a `timing-threat` or `collision-threat` decision should normally be named. Do not distract students with a `background-motion` opponent that is disjoint from the lesson's winning path.
+2. **Cross-check sibling levels that share an archetype.** Levels featuring the same named NPC should describe that creature consistently, as though one coach wrote the campaign.
+3. **Describe a threat's presence and learnable rule, not motion that successful play may never trigger.** Copy may invite observation, but it must not imply that an NPC will move on the winning path when that movement only occurs after a mistake or different choice.
+4. **Preserve operational cues.** Keyboard controls, which runner the student controls, staging markers, and other information needed to act are not disposable meta prose. Keep them concise and concrete.
+5. **Scale scaffolding to the level's complexity.** Socratic brevity is a voice preference, not an absolute. Multi-runner, multi-stage, and state-change levels need more orientation than a one-action introduction, while still leaving the student to choose the program.
+6. **Judge the phase result, not the linter exit code.** Copy-voice findings are warnings. The phase is clean only when its relevant warning count is zero or every remaining item has an explicit waiver. Never clear a warning through keyword substitution that preserves the same designer-chair meaning.
+
+These rules supplement the standing no-spoiler and delete-vs-rewrite contracts. Added orientation must not prescribe the complete action sequence, and naming a threat must not reveal hidden intent that students are meant to infer by watching.
+
 ## Implementation Requirements
 
 ### 1. Phase Selection Gate
