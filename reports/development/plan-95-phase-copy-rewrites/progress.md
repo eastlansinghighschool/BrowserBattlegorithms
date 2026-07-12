@@ -4,6 +4,8 @@
 
 Completed the first owner-selected Plan 95 phase dispatch and two requested orchestration repair passes for `resources-and-territory`. Built the durable all-level copy digest generator, regenerated its 46-level report, and performed a genuine in-world scout/coach voice pass across all six levels in the selected phase. The repair passes reduced prescriptive winning-sequence language, varied tutorial/demo phrasing, restored student decision space, named the Charger threat in Jump If Ready, restored Relay Race's keyboard/staging orientation, and corrected the barrier terminology in Stay Still without changing mechanics, board setup, toolboxes, win conditions, fixtures, NPC configuration, or runtime source.
 
+Completed the owner-selected Plan 95 Phase 2 dispatch for `foundations`. The five novice levels now use concise, concrete board-facing copy while preserving their onboarding clarity. The phase's protected levels and complexity-protected Barrier Detour received prose-only changes; no mechanics, setup, toolbox, win-condition, fixture, or demo-Blockly fields changed.
+
 The phase board is settled for this dispatch: the packet identifies `resources-and-territory` as settled by Plans 93/103, and the current source/dossiers show the authored charger, patrol, and frozen-opponent arrangements that the revised copy describes. Existing `TeacherFacilitationKit.md` already preserves the phase's pedagogical framing and intervention prompts, so no teacher-doc move was needed.
 
 ## Files Changed
@@ -18,6 +20,11 @@ The phase board is settled for this dispatch: the packet identifies `resources-a
 - `src/config/levels/phases/resources-and-territory/level-19-relay-race.js` - prose-only rewrite.
 - `src/config/levels/phases/resources-and-territory/level-20-my-side-their-side.js` - prose-only rewrite of protected level copy.
 - `src/config/levels/phases/resources-and-territory/level-21-freeze-the-lane.js` - prose-only rewrite.
+- `src/config/levels/phases/foundations/level-01-move-to-target.js` - Phase 2 prose-only rewrite.
+- `src/config/levels/phases/foundations/level-02-reach-enemy-flag.js` - Phase 2 prose-only rewrite.
+- `src/config/levels/phases/foundations/level-03-score-a-point.js` - Phase 2 prose-only rewrite of protected level copy.
+- `src/config/levels/phases/foundations/level-04-barrier-detour.js` - Phase 2 prose-only rewrite of complexity-protected level copy.
+- `src/config/levels/phases/foundations/level-05-mirror-forward.js` - Phase 2 prose-only rewrite of protected level copy.
 - `reports/development/guided-level-complexity-audit/copy-digest.md` - generated all-level digest.
 - `reports/development/plan-95-phase-copy-rewrites/progress.md` - this report.
 
@@ -43,6 +50,12 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 - phase-only copy-voice diagnostic check - passed; 0 warnings across all six selected-phase levels.
 - `npm.cmd run test:unit` - passed after the second repair round, 478/478 tests.
 - `npm.cmd run build` - passed after the second repair round; Vite production build completed successfully.
+- `npm.cmd run lint:levels` - passed for Phase 2 with warning exit behavior; no errors.
+- phase-only copy-voice diagnostic check - passed; 0 warnings across all five foundations levels.
+- `npm.cmd run level:copy-digest` - passed after the Phase 2 rewrite; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/level-copy-digest.test.js` - passed, 2/2 tests.
+- `npm.cmd run test:unit` - passed after the Phase 2 rewrite, 478/478 tests.
+- `npm.cmd run build` - passed after the Phase 2 rewrite; Vite production build completed successfully.
 - `git diff --check` - passed; reported only existing line-ending normalization warnings.
 
 ## Validation Checks Performed
@@ -51,6 +64,9 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 - Selected phase copy-voice warnings after rewrite and orchestration repair: 0 across all six phase levels.
 - The repair pass specifically reduced answer-prescribing language in `jump-if-ready`, `relay-race`, `my-side-their-side`, and `freeze-the-lane`, while retaining direct action rules where they are the level's actual concept in `build-the-barrier` and `stay-still-can-do-something`.
 - The second repair round changed prose only in `jump-if-ready`, `stay-still-can-do-something`, and `relay-race`: Charger-specific threat language, keyboard/staging orientation, and `barrier` terminology respectively. The regenerated digest shows Jump If Ready's live collision-threat board summary alongside its Charger copy.
+- Phase 2 began with 1 copy-voice warning in `mirror-forward` and ended with 0 across `foundations`.
+- The Phase 2 pass kept novice operational cues concrete: frozen opponents, flag position, barrier placement, the single action per ally turn, and runner-facing direction.
+- Protected-level checks confirm prose-only changes in `move-to-target`, `score-a-point`, and `mirror-forward`; the same boundary was confirmed for complexity-protected `barrier-detour`.
 - Digest tests now confirm that tutorial `demoTitle` and `demoCaption` are rendered alongside the other student-facing copy fields.
 - No spoiler warnings were introduced in the selected phase.
 - Protected `my-side-their-side` changed only prose fields: `description`, `introText`, `tips`, and tutorial-step title/body text. Its comments, mechanics, toolbox, win condition, failure condition, turn limit, board setup, NPC/tier metadata, and starter/reference structures were unchanged by this dispatch.
@@ -59,14 +75,16 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 
 ## Problems Encountered And How Resolved
 
-- The repository has many non-blocking warnings outside the selected phase, including existing copy-voice warnings in foundations, sensing, advanced logic, advanced teamplay, and optional levels, plus existing board-dynamics and turn-limit warnings. They remain outside this phase dispatch and were not silenced or modified.
+- The repository has non-blocking warnings outside the completed phases, including copy-voice warnings in sensing, advanced logic, advanced teamplay, and optional levels, plus existing board-dynamics and turn-limit warnings. They remain outside this phase dispatch and were not silenced or modified.
 - The first generator test command and direct generator command both passed before the packet-named npm command was rerun; the exact packet command was subsequently run and passed.
+- The first full Phase 2 unit run exposed a stale onboarding assertion for `quiet practice board`; the phrase was retained in the concise Level 1 intro because it remains truthful board orientation, and the rerun passed 478/478.
 
 ## Remaining Risks Or Follow-Ups
 
 - Copy tone is a curriculum judgment and should receive owner/orchestration review before landing.
 - The generated digest is intentionally a tracked report artifact; regenerate it after future level-copy or board changes before reviewing another phase.
 - The remaining out-of-phase copy warnings should be handled by later Plan 95 dispatches, not folded into this phase.
+- Phase 2 copy tone remains subject to orchestration review, especially because these levels form the student's first campaign impression.
 
 ## Phase 1 Review Outcome
 
@@ -75,3 +93,17 @@ Accepted after dual-orchestrator review and two bounded repair rounds. The reusa
 Plan 95 remains `ready` because this is a multi-phase packet. Completing `resources-and-territory` does not close the packet.
 
 ## Phase 1 Accepted: Yes
+
+## Phase 2 Foundations Outcome
+
+The `foundations` board is settled by default: its five authored boards use frozen opponents and have no pending living-board packet. The digest and dossiers confirm that the revised copy describes the visible novice boards without inventing threat behavior or changing protected lesson contracts.
+
+Phase 2 changed only student-facing prose in the five foundation level files. Teacher-facing pedagogy remains covered by the existing teacher guidance; no TeacherGuide update was needed.
+
+Plan 95 remains `ready` because additional phase dispatches remain. Packet status and the development README remain owner/orchestrator controlled.
+
+## Phase 2 Review Outcome
+
+Accepted after orchestration review. The five-level sequence preserves novice operational cues, keeps fully protected and complexity-protected mechanics frozen, uses direct rule explanations without prescribing complete programs, and ends with zero foundations copy-voice warnings. The reusable distinction between teaching a first-use rule and revealing an assembled solution was added to the Plan 95 Phase 1 review learnings for later dispatches.
+
+## Phase 2 Accepted: Yes

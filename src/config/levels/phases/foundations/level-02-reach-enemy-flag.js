@@ -5,12 +5,12 @@ import { EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "reach-enemy-flag",
   title: "Level 2: Reach Enemy Flag",
-  description: "Start thinking of the enemy flag as your goal.",
-  introText: "Your ally needs to reach the enemy flag, not just a target square.",
+  description: "The enemy flag is the target this time.",
+  introText: "The ally starts beyond the enemy flag. Reach that flag to clear the level.",
   tips: [
-    "A flag marks each team’s side of the field.",
-    "Move Backward moves in the opposite direction of forward — that might be exactly what this board needs.",
-    "You still only get one action from the program each ally turn."
+    "A flag marks each team's side of the field. The enemy flag is behind the ally.",
+    "Move Backward sends the ally opposite Move Forward. Check the ally's position.",
+    "One action runs on each ally turn."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -28,8 +28,8 @@ export default {
   tutorialSteps: [
     {
       id: "level-2-goal",
-      title: "New Goal: Reach The Enemy Flag",
-      body: "This time the goal is the enemy flag on the right side of the board instead of a practice target square.",
+      title: "The Enemy Flag Is The Goal",
+      body: "The enemy flag on the right is the goal, not the practice square.",
       targetSelector: "#canvas-container",
       visualItems: [
         { emoji: "🚩", label: "Your team flag", description: "This flag marks your home side." },
@@ -38,8 +38,8 @@ export default {
     },
     {
       id: "level-2-new-block",
-      title: "A New Move Is Available",
-      body: "Move Backward moves the ally in the opposite direction of forward. Look at where your ally starts and where the flag is — sometimes the goal is behind you.",
+      title: "Check The Ally's Facing",
+      body: "Move Backward sends the ally opposite Move Forward. Look at where the ally starts and where the flag waits.",
       targetSelector: "#blockly-region"
     }
   ],

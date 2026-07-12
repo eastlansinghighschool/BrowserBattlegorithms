@@ -20,11 +20,11 @@ The digest includes student-facing copy, current copy-voice lint hits, and a com
 
 - description:
 ~~~text
-Guide your ally runner to the highlighted target square.
+The highlighted square is waiting. Can your ally reach it?
 ~~~
 - introText:
 ~~~text
-This first level is a quiet practice board. Your block program controls the ally runner, and the other runners stay still so you can focus on one simple goal.
+The ally waits on the left. Enemy runners stand frozen on this quiet practice board. Guide your runner to the highlighted target square.
 ~~~
 #### Tips
 - tip 1:
@@ -37,7 +37,7 @@ Your program runs each time the ally gets a turn.
 ~~~
 - tip 3:
 ~~~text
-If you ever want the lesson again, use Show Tutorial.
+Need another look? Show Tutorial is still here.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Meet The Board
@@ -45,21 +45,21 @@ If you ever want the lesson again, use Show Tutorial.
 - demo Blockly: no
 - body:
 ~~~text
-The board is a grid of spaces. Your ally runner starts on the left, the enemy runners are on the right, and the highlighted square is today’s goal.
+A grid, two teams, one highlighted square. Your ally starts on the left; the frozen enemy runners stand on the right.
 ~~~
 ##### Step 2: Frozen Means Staying Still
 - id: level-1-frozen
 - demo Blockly: no
 - body:
 ~~~text
-In this lesson, the enemy runners are frozen. That simply means they will not move while you practice the basics.
+The enemy runners are frozen. They will not move while you practice the first route.
 ~~~
 ##### Step 3: Start With On Each Turn
 - id: level-1-event
 - demo Blockly: no
 - body:
 ~~~text
-Every ally program begins with the On Each Turn block. Any blocks connected below it will run each time your ally takes a turn. The goal square is waiting — what would you tell the ally to do?
+Start with On Each Turn. Blocks connected below it run when the ally takes a turn. The target is waiting.
 ~~~
 
 ### Level 2: Reach Enemy Flag
@@ -76,39 +76,39 @@ Every ally program begins with the On Each Turn block. Any blocks connected belo
 
 - description:
 ~~~text
-Start thinking of the enemy flag as your goal.
+The enemy flag is the target this time.
 ~~~
 - introText:
 ~~~text
-Your ally needs to reach the enemy flag, not just a target square.
+The ally starts beyond the enemy flag. Reach that flag to clear the level.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-A flag marks each team’s side of the field.
+A flag marks each team's side of the field. The enemy flag is behind the ally.
 ~~~
 - tip 2:
 ~~~text
-Move Backward moves in the opposite direction of forward — that might be exactly what this board needs.
+Move Backward sends the ally opposite Move Forward. Check the ally's position.
 ~~~
 - tip 3:
 ~~~text
-You still only get one action from the program each ally turn.
+One action runs on each ally turn.
 ~~~
 #### Tutorial Steps
-##### Step 1: New Goal: Reach The Enemy Flag
+##### Step 1: The Enemy Flag Is The Goal
 - id: level-2-goal
 - demo Blockly: no
 - body:
 ~~~text
-This time the goal is the enemy flag on the right side of the board instead of a practice target square.
+The enemy flag on the right is the goal, not the practice square.
 ~~~
-##### Step 2: A New Move Is Available
+##### Step 2: Check The Ally's Facing
 - id: level-2-new-block
 - demo Blockly: no
 - body:
 ~~~text
-Move Backward moves the ally in the opposite direction of forward. Look at where your ally starts and where the flag is — sometimes the goal is behind you.
+Move Backward sends the ally opposite Move Forward. Look at where the ally starts and where the flag waits.
 ~~~
 
 ### Level 3: Score a Point
@@ -125,47 +125,47 @@ Move Backward moves the ally in the opposite direction of forward. Look at where
 
 - description:
 ~~~text
-Bring the enemy flag back home to score a point.
+The enemy flag must come home.
 ~~~
 - introText:
 ~~~text
-This puzzle has two phases: first go get the enemy flag, then bring it back to your own side.
+The ally has two jobs: reach the enemy flag, then bring it home.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Scoring happens when your ally returns with the enemy flag.
+The point comes when the ally returns with the enemy flag.
 ~~~
 - tip 2:
 ~~~text
-Think about how the ally should behave before pickup and after pickup.
+Watch for the moment the flag changes hands.
 ~~~
 - tip 3:
 ~~~text
-The enemy runners are still frozen so the challenge stays focused on scoring.
+The enemy runners stay frozen, leaving the route clear.
 ~~~
 #### Tutorial Steps
-##### Step 1: Two Jobs In One Puzzle
+##### Step 1: The Flag Changes The Job
 - id: level-3-flag
 - demo Blockly: no
 - body:
 ~~~text
-Reaching the enemy flag is only the first half of the job. Your ally then has to carry it all the way back home.
+Reaching the enemy flag starts the return trip. The ally must carry it home.
 ~~~
-##### Step 2: A Condition Can Split The Two Phases
+##### Step 2: Watch The Flag
 - id: level-3-condition
 - demo Blockly: yes
 - demoTitle:
 ~~~text
-Pattern preview
+One Question, Two Paths
 ~~~
 - demoCaption:
 ~~~text
-An if/else block runs one branch when a condition is true and the other branch when it is false — the same structure you will use with a different condition here.
+An if/else asks a question, then chooses a path for each answer. The demo uses another condition.
 ~~~
 - body:
 ~~~text
-The new flag check can help the ally change plans once it is carrying the enemy flag. Try to make the program notice when the job changes.
+The flag check tells the program when the ally is carrying. Use that change to think about the next action.
 ~~~
 
 ### Level 4: Barrier Detour
@@ -182,24 +182,24 @@ The new flag check can help the ally change plans once it is carrying the enemy 
 
 - description:
 ~~~text
-Notice the obstacle ahead and choose a detour.
+A barrier blocks the direct lane.
 ~~~
 - introText:
 ~~~text
-The direct lane is blocked. This is the first time the ally needs to look at the board and react instead of repeating the same move forever.
+The direct lane ends at a barrier. Read the space ahead before the ally moves.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-The obstacle in front of the ally is intentional.
+The barrier is directly in front of the ally.
 ~~~
 - tip 2:
 ~~~text
-Think about what should happen when the path is blocked and when it is clear.
+Watch what changes when the lane is blocked or clear.
 ~~~
 - tip 3:
 ~~~text
-You still only get one action each ally turn.
+One action runs on each ally turn.
 ~~~
 #### Tutorial Steps
 ##### Step 1: A Barrier Blocks The Lane
@@ -207,22 +207,22 @@ You still only get one action each ally turn.
 - demo Blockly: no
 - body:
 ~~~text
-Straight ahead no longer works. The ally needs to notice the obstacle and choose another move.
+The space directly ahead is blocked. The ally must notice that barrier before choosing a move.
 ~~~
-##### Step 2: Use A Board Check
+##### Step 2: Ask About The Space Ahead
 - id: level-4-condition
 - demo Blockly: yes
 - demoTitle:
 ~~~text
-Pattern preview
+Two Paths
 ~~~
 - demoCaption:
 ~~~text
-An if/else block runs the DO branch when its condition is true and the ELSE branch when it is false — the same two-path structure you will use here.
+The demo shows an if/else with a different condition. Notice how its two branches answer the same board question.
 ~~~
 - body:
 ~~~text
-The new barrier condition lets your program ask whether the path ahead is blocked. That helps the ally decide when it should detour.
+The barrier check asks whether the space ahead is blocked. Use its two paths to handle the blocked and open lane.
 ~~~
 
 ### Level 5: Forward Works Both Ways
@@ -235,43 +235,43 @@ The new barrier condition lets your program ask whether the path ahead is blocke
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-banned-phrase: tips[2] contains banned meta phrase "this level teaches" (charter S5 voice contract)
+- none
 
 - description:
 ~~~text
-See that Move Forward follows the runner’s own direction, not the screen.
+Forward follows the runner's facing.
 ~~~
 - introText:
 ~~~text
-Forward does not always mean right on the screen. It means moving toward that runner’s goal direction.
+The ally starts on the right and faces left. Here, forward points toward the ally's goal, not the screen's right edge.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-The ally starts on the right this time.
+Watch the ally's facing.
 ~~~
 - tip 2:
 ~~~text
-Watch the runner, not the screen, to understand what forward means.
+Forward follows that facing, not the screen direction.
 ~~~
 - tip 3:
 ~~~text
-This level teaches relative direction before the sensing lessons begin.
+Same block, different orientation.
 ~~~
 #### Tutorial Steps
-##### Step 1: Forward Is Relative
+##### Step 1: Forward Follows Facing
 - id: level-5-mirror
 - demo Blockly: no
 - body:
 ~~~text
-This ally starts on the opposite side. Forward still works because it follows the runner's own goal direction, not the screen.
+This ally starts on the opposite side. Forward follows the runner's own goal direction, not the screen.
 ~~~
-##### Step 2: The Same Block, A Different Facing
+##### Step 2: Same Block, New Direction
 - id: level-5-forward
 - demo Blockly: no
 - body:
 ~~~text
-The same block that worked on the left side of the board applies here too. Think about what forward means for a runner facing the other direction — the board orientation has changed but the concept has not.
+The same Move Forward block works when the ally faces left. Read the board orientation before choosing.
 ~~~
 
 ## Phase: sensing

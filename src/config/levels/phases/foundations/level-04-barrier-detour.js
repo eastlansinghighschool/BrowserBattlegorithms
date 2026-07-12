@@ -5,15 +5,15 @@ import { EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "barrier-detour",
   title: "Level 4: Barrier Detour",
-  description: "Notice the obstacle ahead and choose a detour.",
-  introText: "The direct lane is blocked. This is the first time the ally needs to look at the board and react instead of repeating the same move forever.",
+  description: "A barrier blocks the direct lane.",
+  introText: "The direct lane ends at a barrier. Read the space ahead before the ally moves.",
   legendItems: [
     { emoji: "🚧", label: "Barrier", description: "This obstacle blocks the lane directly ahead." }
   ],
   tips: [
-    "The obstacle in front of the ally is intentional.",
-    "Think about what should happen when the path is blocked and when it is clear.",
-    "You still only get one action each ally turn."
+    "The barrier is directly in front of the ally.",
+    "Watch what changes when the lane is blocked or clear.",
+    "One action runs on each ally turn."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -37,7 +37,7 @@ export default {
     {
       id: "level-4-barrier",
       title: "A Barrier Blocks The Lane",
-      body: "Straight ahead no longer works. The ally needs to notice the obstacle and choose another move.",
+      body: "The space directly ahead is blocked. The ally must notice that barrier before choosing a move.",
       targetSelector: "#canvas-container",
       visualItems: [
         { emoji: "🚧", label: "Barrier", description: "A barrier blocks movement through that square." }
@@ -45,12 +45,12 @@ export default {
     },
     {
       id: "level-4-condition",
-      title: "Use A Board Check",
-      body: "The new barrier condition lets your program ask whether the path ahead is blocked. That helps the ally decide when it should detour.",
+      title: "Ask About The Space Ahead",
+      body: "The barrier check asks whether the space ahead is blocked. Use its two paths to handle the blocked and open lane.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: BARRIER_DETOUR_DEMO_XML,
-      demoTitle: "Pattern preview",
-      demoCaption: "An if/else block runs the DO branch when its condition is true and the ELSE branch when it is false — the same two-path structure you will use here."
+      demoTitle: "Two Paths",
+      demoCaption: "The demo shows an if/else with a different condition. Notice how its two branches answer the same board question."
     }
   ],
   setupOverrides: {

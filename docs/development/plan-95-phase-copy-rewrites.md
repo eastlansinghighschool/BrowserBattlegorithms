@@ -156,6 +156,7 @@ The accepted `resources-and-territory` pass exposed several repeatable review ru
 4. **Preserve operational cues.** Keyboard controls, which runner the student controls, staging markers, and other information needed to act are not disposable meta prose. Keep them concise and concrete.
 5. **Scale scaffolding to the level's complexity.** Socratic brevity is a voice preference, not an absolute. Multi-runner, multi-stage, and state-change levels need more orientation than a one-action introduction, while still leaving the student to choose the program.
 6. **Judge the phase result, not the linter exit code.** Copy-voice findings are warnings. The phase is clean only when its relevant warning count is zero or every remaining item has an explicit waiver. Never clear a warning through keyword substitution that preserves the same designer-chair meaning.
+7. **Teach first-use rules directly without prescribing the assembled solution.** In novice phases, explaining what `On Each Turn`, Move Backward, a flag check, or a barrier check does is necessary orientation, not a spoiler. Preserve student agency by leaving the student to select, order, or combine those rules on the board.
 
 These rules supplement the standing no-spoiler and delete-vs-rewrite contracts. Added orientation must not prescribe the complete action sequence, and naming a threat must not reveal hidden intent that students are meant to infer by watching.
 

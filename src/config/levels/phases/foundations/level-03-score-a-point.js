@@ -5,16 +5,16 @@ import { EXTENDED_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "score-a-point",
   title: "Level 3: Score a Point",
-  description: "Bring the enemy flag back home to score a point.",
-  introText: "This puzzle has two phases: first go get the enemy flag, then bring it back to your own side.",
+  description: "The enemy flag must come home.",
+  introText: "The ally has two jobs: reach the enemy flag, then bring it home.",
   legendItems: [
     { emoji: "🏳️", label: "Enemy flag", description: "Pick up the enemy flag first." },
     { emoji: "🚩", label: "Home side", description: "Bring the enemy flag back here to score." }
   ],
   tips: [
-    "Scoring happens when your ally returns with the enemy flag.",
-    "Think about how the ally should behave before pickup and after pickup.",
-    "The enemy runners are still frozen so the challenge stays focused on scoring."
+    "The point comes when the ally returns with the enemy flag.",
+    "Watch for the moment the flag changes hands.",
+    "The enemy runners stay frozen, leaving the route clear."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -37,18 +37,18 @@ export default {
   tutorialSteps: [
     {
       id: "level-3-flag",
-      title: "Two Jobs In One Puzzle",
-      body: "Reaching the enemy flag is only the first half of the job. Your ally then has to carry it all the way back home.",
+      title: "The Flag Changes The Job",
+      body: "Reaching the enemy flag starts the return trip. The ally must carry it home.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-3-condition",
-      title: "A Condition Can Split The Two Phases",
-      body: "The new flag check can help the ally change plans once it is carrying the enemy flag. Try to make the program notice when the job changes.",
+      title: "Watch The Flag",
+      body: "The flag check tells the program when the ally is carrying. Use that change to think about the next action.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: SCORE_SWITCH_DEMO_XML,
-      demoTitle: "Pattern preview",
-      demoCaption: "An if/else block runs one branch when a condition is true and the other branch when it is false — the same structure you will use with a different condition here."
+      demoTitle: "One Question, Two Paths",
+      demoCaption: "An if/else asks a question, then chooses a path for each answer. The demo uses another condition."
     }
   ],
   setupOverrides: {

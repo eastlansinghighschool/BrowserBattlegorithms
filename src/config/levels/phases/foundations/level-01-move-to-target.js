@@ -5,8 +5,8 @@ import { BASIC_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "move-to-target",
   title: "Level 1: Move to Target",
-  description: "Guide your ally runner to the highlighted target square.",
-  introText: "This first level is a quiet practice board. Your block program controls the ally runner, and the other runners stay still so you can focus on one simple goal.",
+  description: "The highlighted square is waiting. Can your ally reach it?",
+  introText: "The ally waits on the left. Enemy runners stand frozen on this quiet practice board. Guide your runner to the highlighted target square.",
   legendItems: [
     { emoji: "🏃🏿‍♂️", label: "Ally runner", description: "This is the runner your program controls." },
     { emoji: "🏃", label: "Enemy runner", description: "These runners belong to the other team." },
@@ -15,7 +15,7 @@ export default {
   tips: [
     "Only the ally runner needs to reach the target.",
     "Your program runs each time the ally gets a turn.",
-    "If you ever want the lesson again, use Show Tutorial."
+    "Need another look? Show Tutorial is still here."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -35,7 +35,7 @@ export default {
     {
       id: "level-1-board",
       title: "Meet The Board",
-      body: "The board is a grid of spaces. Your ally runner starts on the left, the enemy runners are on the right, and the highlighted square is today’s goal.",
+      body: "A grid, two teams, one highlighted square. Your ally starts on the left; the frozen enemy runners stand on the right.",
       targetSelector: "#canvas-container",
       visualItems: [
         { emoji: "🏃🏿‍♂️", label: "Ally runner", description: "Your code will decide what this runner does." },
@@ -46,13 +46,13 @@ export default {
     {
       id: "level-1-frozen",
       title: "Frozen Means Staying Still",
-      body: "In this lesson, the enemy runners are frozen. That simply means they will not move while you practice the basics.",
+      body: "The enemy runners are frozen. They will not move while you practice the first route.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-1-event",
       title: "Start With On Each Turn",
-      body: "Every ally program begins with the On Each Turn block. Any blocks connected below it will run each time your ally takes a turn. The goal square is waiting — what would you tell the ally to do?",
+      body: "Start with On Each Turn. Blocks connected below it run when the ally takes a turn. The target is waiting.",
       targetSelector: "#blockly-region"
     }
   ],

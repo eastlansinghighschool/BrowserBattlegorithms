@@ -5,12 +5,12 @@ import { BASIC_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "mirror-forward",
   title: "Level 5: Forward Works Both Ways",
-  description: "See that Move Forward follows the runner’s own direction, not the screen.",
-  introText: "Forward does not always mean right on the screen. It means moving toward that runner’s goal direction.",
+  description: "Forward follows the runner's facing.",
+  introText: "The ally starts on the right and faces left. Here, forward points toward the ally's goal, not the screen's right edge.",
   tips: [
-    "The ally starts on the right this time.",
-    "Watch the runner, not the screen, to understand what forward means.",
-    "This level teaches relative direction before the sensing lessons begin."
+    "Watch the ally's facing.",
+    "Forward follows that facing, not the screen direction.",
+    "Same block, different orientation."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -29,14 +29,14 @@ export default {
   tutorialSteps: [
     {
       id: "level-5-mirror",
-      title: "Forward Is Relative",
-      body: "This ally starts on the opposite side. Forward still works because it follows the runner's own goal direction, not the screen.",
+      title: "Forward Follows Facing",
+      body: "This ally starts on the opposite side. Forward follows the runner's own goal direction, not the screen.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-5-forward",
-      title: "The Same Block, A Different Facing",
-      body: "The same block that worked on the left side of the board applies here too. Think about what forward means for a runner facing the other direction — the board orientation has changed but the concept has not.",
+      title: "Same Block, New Direction",
+      body: "The same Move Forward block works when the ally faces left. Read the board orientation before choosing.",
       targetSelector: "#blockly-region"
     }
   ],
