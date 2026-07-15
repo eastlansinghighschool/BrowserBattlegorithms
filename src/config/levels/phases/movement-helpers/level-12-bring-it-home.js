@@ -14,12 +14,12 @@ export default {
   // therefore geometrically disjoint from the ally's reachable set (x<=10),
   // not just clear on the reference run's specific timing.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
-  description: "Use Move Toward for the trip out and the trip back.",
-  introText: "The helper block now has two jobs: head toward the enemy flag first, then turn back toward home after pickup.",
+  description: "Once the ally picks up the flag, its next target must change.",
+  introText: "The enemy flag is across the field. Once the ally carries it, the next target is home.",
   tips: [
-    "Think about how the target should change after pickup.",
-    "Move Toward enemy flag works on the way out, even when the route needs both horizontal and vertical steps.",
-    "Move Toward my base works on the way home."
+    "Watch what changes after the flag pickup.",
+    "Move Toward can aim at a different target each turn.",
+    "The ally needs a target for the trip home, too."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -45,16 +45,16 @@ export default {
     {
       id: "level-12-two-targets",
       title: "One Helper, Two Targets",
-      body: "This helper block can point at different goals. Here the ally should chase the enemy flag first and then head for home.",
+      body: "This helper can point at different targets. The flag changes what the ally carries; what target should matter next?",
       targetSelector: "#blockly-region",
       demoBlocklyXml: BRING_IT_HOME_DEMO_XML,
       demoTitle: "Example two-target program",
-      demoCaption: "An if/else block checks a condition each turn and runs a different branch depending on the result. The condition and actions here are different from what this level needs — use this just to see the structure."
+      demoCaption: "This demo asks a different question. Notice how each branch can choose a target."
     },
     {
       id: "level-12-switch",
-      title: "Switch Targets After Pickup",
-      body: "The If I Have Enemy Flag condition is the bridge that tells the ally when to stop chasing the flag and start going home.",
+      title: "After The Pickup",
+      body: "Pickup changes the board. What target should matter once the ally is carrying the flag?",
       targetSelector: "#canvas-container"
     }
   ],

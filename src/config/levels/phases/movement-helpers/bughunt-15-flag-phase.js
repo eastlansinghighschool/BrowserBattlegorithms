@@ -6,11 +6,11 @@ export default {
   id: "bughunt-15",
   levelKind: "bug_hunt",
   title: "Bug Hunt: Flag Phase",
-  description: "Trace the first action and repair the flag-phase bug before the lane turns into a full challenge.",
-  introText: "This starter is almost right, but one branch is reversed. Read the first action carefully, then repair the flag switch so the ally chooses the right target at the right time.",
+  description: "The starter takes the wrong flag-phase action. Trace its first branch.",
+  introText: "The flag changes hands, but the starter sends the ally toward the wrong target. Find the reversal.",
   tips: [
-    "Only the first reached action runs on a turn, so start by checking the very top of the program.",
-    "When the ally has the enemy flag, the return-home branch should take over.",
+    "Only the first reached action runs, so start at the top of the program.",
+    "When the ally carries the enemy flag, a different target should matter.",
     "If the wrong branch runs first, the rest of the turn never gets a chance."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
@@ -43,13 +43,13 @@ export default {
     {
       id: "bughunt-15-trace",
       title: "Trace The First Branch",
-      body: "The starter is intentionally wrong. Trace the very first decision and ask whether the ally is headed toward the flag or back home when it should be doing the opposite.",
+      body: "The starter is intentionally wrong. Trace the first decision: does the ally head toward the flag or back home at the right time?",
       targetSelector: "#blockly-region"
     },
     {
       id: "bughunt-15-fix",
       title: "Repair The Flag Phase",
-      body: "This is a debugging level, not a blank slate. Keep the same shape, but fix the reversed target so the ally can switch cleanly between the two phases.",
+      body: "This is a debugging level, not a blank slate. Keep the shape, but repair the reversed target.",
       targetSelector: "#canvas-container"
     }
   ],

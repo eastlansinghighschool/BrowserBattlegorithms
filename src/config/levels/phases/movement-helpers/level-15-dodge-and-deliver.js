@@ -6,12 +6,12 @@ export default {
   id: "dodge-and-deliver",
   levelKind: "challenge",
   title: "Challenge 15: Dodge and Deliver",
-  description: "Pick up the enemy flag and bring it home while one defender guards the lane and another enemy keeps moving.",
-  introText: "No new tools this time. One enemy holds the lane near the flag, and another keeps moving. Use what you know.",
+  description: "A defender guards the lane while another enemy keeps moving.",
+  introText: "A defender holds the lane near the flag while another enemy keeps moving. Bring the enemy flag home.",
   tips: [
-    "One enemy guards the lane while another keeps moving. Watch both threats.",
-    "Checking the enemy's distance before committing to a direction can help you plan a safer route.",
-    "The enemy flag needs to come all the way back home to score a point."
+    "One enemy guards the lane while another keeps moving. Watch both.",
+    "Distance gives warning before a nearby enemy crowds the route.",
+    "The enemy flag must come all the way home to score."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -50,14 +50,14 @@ export default {
   tutorialSteps: [
     {
       id: "dodge-and-deliver-real-game",
-      title: "A Real Game Situation",
-      body: "This is a real game situation — one enemy guards the lane and another keeps moving. Your program needs to make progress while staying out of trouble.",
+      title: "The Lane Is Contested",
+      body: "One defender holds the lane near the flag. Another enemy keeps moving. The route will not stay empty.",
       targetSelector: "#canvas-container"
     },
     {
       id: "dodge-and-deliver-toolkit",
-      title: "Your Full Toolkit",
-      body: "All the tools from the previous levels are here. There is no single right answer — think about how your ally should balance chasing the flag and handling both threats.",
+      title: "Read The Field",
+      body: "No new blocks here. Read the flag, the defender, and the moving enemy before you choose a plan.",
       targetSelector: "#blockly-region"
     }
   ],

@@ -5,13 +5,13 @@ import { BASIC_MOVEMENT_BLOCKS } from "../../shared/toolboxes.js";
 export default {
   id: "human-runner-practice",
   title: "Level 10: Human Runner Practice",
-  description: "Use the human runner controls, then reach the goal only after you use Jump or Place Barrier first.",
-  introText: "This level is about you, not the ally program. Move the human runner with the keyboard and use Jump or Place Barrier before reaching the goal.",
+  description: "Drive the human runner to the goal, but use Jump or Place Barrier first.",
+  introText: "You are driving this runner. Use the keyboard, try Jump or Place Barrier, then head for the goal.",
   tips: [
-    "Use W A S D to move the human runner on screen.",
+    "Use W A S D to move the human runner.",
     "Press F to jump, B to place a barrier, and X to stay still.",
-    "The goal only counts after you have used Jump or Place Barrier first.",
-    "The program panel stays on screen, but this lesson is about direct player control."
+    "The goal counts only after Jump or Place Barrier.",
+    "Leave the program alone for this run; your keys drive the human runner."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -34,20 +34,20 @@ export default {
   tutorialSteps: [
     {
       id: "level-10-human-focus",
-      title: "Now You Control The Human Runner",
-      body: "This lesson pauses the ally idea for a moment so you can practice what the human runner does in the match.",
+      title: "You Drive This Runner",
+      body: "The human runner is yours this round. The ally is frozen while you try the match controls.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-10-human-keys",
       title: "Keyboard Controls",
-      body: "Use W A S D to move. Press F to jump, B to place a barrier, and X to stay still. In free play, these human actions happen alongside your ally program.",
+      body: "Use W A S D to move. Press F to jump, B to place a barrier, and X to stay still.",
       targetSelector: "#instructions"
     },
     {
       id: "level-10-human-special",
-      title: "Try One Special Action First",
-      body: "This challenge only passes if you reach the goal after you use Jump or Place Barrier first. Reaching the goal without one of those actions does not count yet.",
+      title: "Try A Special Action First",
+      body: "The goal counts only after you use Jump or Place Barrier. Reaching it first does not count yet.",
       targetSelector: "#canvas-container"
     }
   ],

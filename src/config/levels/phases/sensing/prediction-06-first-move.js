@@ -14,8 +14,8 @@ const PREDICTION_06_STARTER_XML = `
 export default {
   id: "prediction-06",
   title: "Prediction: First Move",
-  description: "Predict the ally's first move before you run the program.",
-  introText: "Read the starter code, choose your prediction, and then run the level to compare what happened.",
+  description: "Trace the ally's first move before the board runs.",
+  introText: "Read the starter blocks. Choose where the ally goes first, then start the level and see.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -46,8 +46,8 @@ export default {
   tutorialSteps: [
     {
       id: "prediction-06-intro",
-      title: "Predict Before You Run",
-      body: "Read the starter program, choose where the ally will move first, and then press Start Level to check your tracing.",
+      title: "Trace Before You Run",
+      body: "Read the starter blocks. Commit to the ally's first move, then press Start Level and check your trace.",
       targetSelector: "#level-panel"
     }
   ],

@@ -5,12 +5,12 @@ import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/to
 export default {
   id: "watch-the-wall",
   title: "Level 7: Watch the Wall",
-  description: "Use the generic sensor to detect an edge or wall and steer around it.",
-  introText: "The same sensor family can notice map walls too, not just placed barriers.",
+  description: "Walls close off parts of this map.",
+  introText: "A wall is directly ahead of the ally. This sensor can watch the map itself, not only runners or barriers.",
   tips: [
-    "Edge or wall is a beginner-friendly sensing target in this phase.",
-    "This map uses real wall cells instead of a temporary barrier.",
-    "You still only get one move each ally turn."
+    "The Edge or Wall option watches map walls and edges.",
+    "The wall ahead is part of the map, not a placed barrier.",
+    "One action runs on each ally turn."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "complex",
@@ -40,13 +40,13 @@ export default {
     {
       id: "level-7-wall",
       title: "Walls Count Too",
-      body: "The Edge or Wall option can notice map geometry. Here, the ally needs to react to wall cells in the way.",
+      body: "The Edge or Wall option notices the map's walls and edges. This lane has a wall directly ahead.",
       targetSelector: "#canvas-container"
     },
     {
       id: "level-7-relation",
-      title: "Relation Means How The Object Is Positioned",
-      body: "The relation dropdown tells the sensor what kind of position to check. This level uses directly in front.",
+      title: "Describe Where It Is",
+      body: "The relation menu says where to look. Here, look directly in front of the ally.",
       targetSelector: "#blockly-region"
     }
   ],

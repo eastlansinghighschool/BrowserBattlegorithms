@@ -8,12 +8,12 @@ export default {
   // Fully protected level (charter S12, Plan 85): no dynamics/arc/star changes.
   // Both opponents stay frozen; this tier reflects the unchanged setup, not a new edit.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.STATIC_PROP,
-  description: "Use the Move Toward helper block to take one smart step toward the enemy flag.",
-  introText: "Move Toward is a shortcut block. It chooses one step toward a target, but it does not magically find a full path.",
+  description: "The enemy flag is across an open field. Try Move Toward.",
+  introText: "Move Toward picks one step toward its target. The enemy flag is the only target on this open field.",
   tips: [
-    "This helper chooses one move each turn, not a whole route.",
-    "It works best on open maps and simple corridors.",
-    "You can still compare it with the regular movement blocks."
+    "The helper chooses one move each turn, not a whole route.",
+    "This open field leaves room for the helper to work.",
+    "Regular movement blocks are still available."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -33,13 +33,13 @@ export default {
     {
       id: "level-11-helper",
       title: "Meet Move Toward",
-      body: "This block takes one step toward the target you choose. Here the only target is the enemy flag.",
+      body: "This block takes one step toward the target you choose. Here, that target is the enemy flag.",
       targetSelector: "#blockly-region"
     },
     {
       id: "level-11-not-pathfinding",
-      title: "It Is A Helper, Not Magic",
-      body: "Move Toward is useful on open maps like this one. Later you will learn when helper moves work well and when you need more detailed logic.",
+      title: "One Step At A Time",
+      body: "On open ground, the helper has room to work. Watch each step; it chooses one at a time.",
       targetSelector: "#canvas-container"
     }
   ],

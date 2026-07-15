@@ -5,8 +5,8 @@ import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/to
 export default {
   id: "enemy-nearby",
   title: "Level 13: Enemy Nearby",
-  description: "Use distance sensing to react when an enemy runner gets close.",
-  introText: "Distance sensors use ideal move count, not line-of-sight. That means the game measures how many grid steps away something is.",
+  description: "A Guard watches the lane. The ally needs to notice when it closes in.",
+  introText: "The Guard moves when a runner gets close. Within 2 and Within 3 count grid steps, not a straight line.",
   // Pilot uplift target (charter S11, Plan 92): the enemy is now a live Guard
   // that steps toward any runner inside its aggro radius. The old "the enemy
   // is frozen" tip was removed since it became false; a Guard-aware
@@ -22,9 +22,9 @@ export default {
   // mechanic lint rule checks is discoverable before accepting this claim.
   mechanicNecessity: MECHANIC_NECESSITY.DYNAMIC,
   tips: [
-    "Within 2 spaces and within 3 spaces use Manhattan distance.",
-    "Try giving the ally one response for danger and another response for normal progress.",
-    "This level is easier if you think about ideal grid moves, not straight-line distance."
+    "Within 2 and Within 3 count grid steps.",
+    "Choose how early the ally should react.",
+    "Grid steps matter, not straight-line distance."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -49,16 +49,16 @@ export default {
     {
       id: "level-13-distance",
       title: "Distance Uses Grid Steps",
-      body: "Within 2 spaces means the target is close in ideal grid moves. It does not mean the target is visible in a straight line.",
+      body: "Within 2 spaces means two ideal grid moves away. A clear straight line is not required.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: ENEMY_NEARBY_DEMO_XML,
       demoTitle: "Example nearby-enemy reaction",
-      demoCaption: "This sensor branch uses an object and relation that are not available in this level. The structure is the same one you will use — pick the right object and relation from the dropdowns for this puzzle."
+      demoCaption: "This demo asks a different sensor question. Notice how a distance check selects one of two actions."
     },
     {
       id: "level-13-nearby-enemy",
-      title: "Notice The Enemy Before It Is Too Close",
-      body: "Use the distance check to change the ally's move when the enemy runner gets nearby, then fall back to forward progress when the lane feels safe.",
+      title: "Choose Your Warning Distance",
+      body: "The Guard moves when a runner gets close. How early should the ally react?",
       targetSelector: "#canvas-container"
     }
   ],

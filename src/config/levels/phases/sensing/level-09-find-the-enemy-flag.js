@@ -5,12 +5,12 @@ import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/to
 export default {
   id: "find-the-enemy-flag",
   title: "Level 9: Find the Enemy Flag",
-  description: "Use directional sensing to guide the ally to the enemy flag.",
-  introText: "The same sensing pattern can point at goals like the enemy flag, not just runners.",
+  description: "The enemy flag waits ahead and above.",
+  introText: "The sensor can watch the enemy flag, too. Guide the ally to the flag at the far side of the field.",
   tips: [
-    "This time the target is the enemy flag instead of the human runner.",
-    "The relation dropdown still describes the flag's position relative to the ally.",
-    "Notice how the same sensor idea can shift from runners to goals."
+    "The enemy flag is the object to watch.",
+    "The relation menu describes the flag's position from the ally.",
+    "Runners and flags can both appear in the sensor menu."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -38,14 +38,14 @@ export default {
   tutorialSteps: [
     {
       id: "level-9-flag-sensor",
-      title: "Sense The Flag's Position",
-      body: "The sensor block can also look for the enemy flag. Use the same forward, behind, above, and below ideas to steer toward it.",
+      title: "Watch The Enemy Flag",
+      body: "The sensor can watch the enemy flag. Its relation menu describes where the flag is from the ally.",
       targetSelector: "#blockly-region"
     },
     {
       id: "level-9-reuse",
-      title: "Reusable Thinking",
-      body: "You are reusing the same condition pattern on a different object. That is a big step toward more flexible programs.",
+      title: "Follow The Clues",
+      body: "As the ally moves, the flag can shift from above to directly ahead. Keep checking where it is.",
       targetSelector: "#canvas-container"
     }
   ],

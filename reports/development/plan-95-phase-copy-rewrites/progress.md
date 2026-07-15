@@ -6,7 +6,9 @@ Completed the first owner-selected Plan 95 phase dispatch and two requested orch
 
 Completed the owner-selected Plan 95 Phase 2 dispatch for `foundations`. The five novice levels now use concise, concrete board-facing copy while preserving their onboarding clarity. The phase's protected levels and complexity-protected Barrier Detour received prose-only changes; no mechanics, setup, toolbox, win-condition, fixture, or demo-Blockly fields changed.
 
-The phase board is settled for this dispatch: the packet identifies `resources-and-territory` as settled by Plans 93/103, and the current source/dossiers show the authored charger, patrol, and frozen-opponent arrangements that the revised copy describes. Existing `TeacherFacilitationKit.md` already preserves the phase's pedagogical framing and intervention prompts, so no teacher-doc move was needed.
+Completed the owner-selected Plan 95 Phase 3 dispatch for `sensing`. The prediction checkpoint and Levels 6-9 now describe the visible starter code, frozen runner, map wall, human support square, and enemy flag rather than narrating curriculum progression or prescribing a movement sequence. No mechanics, setup, toolbox, win-condition, fixture, or demo-Blockly fields changed.
+
+Board-settledness was confirmed for every dispatch: `resources-and-territory` by Plans 93/103, `movement-helpers` by Plan 92, and the static `foundations`/`sensing` boards by current source and behavior evidence. Existing `TeacherFacilitationKit.md` preserves the pedagogical framing and intervention prompts, so no teacher-doc move was needed.
 
 ## Files Changed
 
@@ -25,6 +27,11 @@ The phase board is settled for this dispatch: the packet identifies `resources-a
 - `src/config/levels/phases/foundations/level-03-score-a-point.js` - Phase 2 prose-only rewrite of protected level copy.
 - `src/config/levels/phases/foundations/level-04-barrier-detour.js` - Phase 2 prose-only rewrite of complexity-protected level copy.
 - `src/config/levels/phases/foundations/level-05-mirror-forward.js` - Phase 2 prose-only rewrite of protected level copy.
+- `src/config/levels/phases/sensing/prediction-06-first-move.js` - Phase 3 prose-only rewrite.
+- `src/config/levels/phases/sensing/level-06-sensor-barrier-branch.js` - Phase 3 prose-only rewrite.
+- `src/config/levels/phases/sensing/level-07-watch-the-wall.js` - Phase 3 prose-only rewrite of complexity-protected level copy.
+- `src/config/levels/phases/sensing/level-08-find-the-human.js` - Phase 3 prose-only rewrite of complexity-protected level copy.
+- `src/config/levels/phases/sensing/level-09-find-the-enemy-flag.js` - Phase 3 prose-only rewrite.
 - `reports/development/guided-level-complexity-audit/copy-digest.md` - generated all-level digest.
 - `reports/development/plan-95-phase-copy-rewrites/progress.md` - this report.
 
@@ -56,6 +63,12 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 - `node --test --test-isolation=none tests/unit/level-copy-digest.test.js` - passed, 2/2 tests.
 - `npm.cmd run test:unit` - passed after the Phase 2 rewrite, 478/478 tests.
 - `npm.cmd run build` - passed after the Phase 2 rewrite; Vite production build completed successfully.
+- `npm.cmd run lint:levels` - passed for Phase 3 with warning exit behavior; no errors.
+- phase-only copy-voice diagnostic check - passed; 0 warnings across all five sensing levels.
+- `npm.cmd run level:copy-digest` - passed after the Phase 3 rewrite; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/level-copy-digest.test.js` - passed, 2/2 tests.
+- `npm.cmd run test:unit` - passed after the Phase 3 rewrite, 478/478 tests.
+- `npm.cmd run build` - passed after the Phase 3 rewrite; Vite production build completed successfully.
 - `git diff --check` - passed; reported only existing line-ending normalization warnings.
 
 ## Validation Checks Performed
@@ -67,6 +80,9 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 - Phase 2 began with 1 copy-voice warning in `mirror-forward` and ended with 0 across `foundations`.
 - The Phase 2 pass kept novice operational cues concrete: frozen opponents, flag position, barrier placement, the single action per ally turn, and runner-facing direction.
 - Protected-level checks confirm prose-only changes in `move-to-target`, `score-a-point`, and `mirror-forward`; the same boundary was confirmed for complexity-protected `barrier-detour`.
+- Phase 3 began with 1 copy-voice warning in `watch-the-wall` and ended with 0 across `sensing`.
+- The sensing copy names the actual static board features: the frozen lane runner, wall cell, human support square, enemy flag, and prediction starter program. Behavior evidence confirms no live opponent acts on the successful reference paths.
+- Complexity-protected `watch-the-wall` and `find-the-human` changed only student-facing prose; their protected lesson shape, board setup, toolbox, win condition, turn limit, and demo Blockly structure remain unchanged.
 - Digest tests now confirm that tutorial `demoTitle` and `demoCaption` are rendered alongside the other student-facing copy fields.
 - No spoiler warnings were introduced in the selected phase.
 - Protected `my-side-their-side` changed only prose fields: `description`, `introText`, `tips`, and tutorial-step title/body text. Its comments, mechanics, toolbox, win condition, failure condition, turn limit, board setup, NPC/tier metadata, and starter/reference structures were unchanged by this dispatch.
@@ -75,16 +91,18 @@ The digest is deterministic and regenerable. Two consecutive generations produce
 
 ## Problems Encountered And How Resolved
 
-- The repository has non-blocking warnings outside the completed phases, including copy-voice warnings in sensing, advanced logic, advanced teamplay, and optional levels, plus existing board-dynamics and turn-limit warnings. They remain outside this phase dispatch and were not silenced or modified.
+- The repository has non-blocking warnings outside the completed phases, including copy-voice warnings in advanced logic, advanced teamplay, and optional levels, plus existing board-dynamics and turn-limit warnings. They remain outside this phase dispatch and were not silenced or modified.
 - The first generator test command and direct generator command both passed before the packet-named npm command was rerun; the exact packet command was subsequently run and passed.
 - The first full Phase 2 unit run exposed a stale onboarding assertion for `quiet practice board`; the phrase was retained in the concise Level 1 intro because it remains truthful board orientation, and the rerun passed 478/478.
+- The first Phase 3 unit run exposed two authored tutorial-copy contract checks: the structural demo title `Example sensor branch` and the phrase `different object` in Find the Human's demo caption. Both were retained as truthful structural-demo orientation, and the rerun passed 478/478.
 
 ## Remaining Risks Or Follow-Ups
 
 - Copy tone is a curriculum judgment and should receive owner/orchestration review before landing.
 - The generated digest is intentionally a tracked report artifact; regenerate it after future level-copy or board changes before reviewing another phase.
 - The remaining out-of-phase copy warnings should be handled by later Plan 95 dispatches, not folded into this phase.
-- Phase 2 copy tone remains subject to orchestration review, especially because these levels form the student's first campaign impression.
+- The accepted foundation copy remains the campaign's novice-facing baseline for direct operational orientation.
+- Later phases should preserve Phase 3's balance: explain sensor vocabulary and visible board relationships directly while leaving the action choice and assembled program to the student.
 
 ## Phase 1 Review Outcome
 
@@ -107,3 +125,98 @@ Plan 95 remains `ready` because additional phase dispatches remain. Packet statu
 Accepted after orchestration review. The five-level sequence preserves novice operational cues, keeps fully protected and complexity-protected mechanics frozen, uses direct rule explanations without prescribing complete programs, and ends with zero foundations copy-voice warnings. The reusable distinction between teaching a first-use rule and revealing an assembled solution was added to the Plan 95 Phase 1 review learnings for later dispatches.
 
 ## Phase 2 Accepted: Yes
+
+## Phase 3 Sensing Review Outcome
+
+The `sensing` board is settled by default: its authored boards use frozen opponents, and behavior evidence shows no live enemy action on the passing reference paths. The revised copy therefore names board geometry and targets rather than inventing threats or future-level claims.
+
+Phase 3 changed only student-facing prose in the five sensing level files. Teacher-facing pedagogy remains covered by the existing teacher guidance; no TeacherGuide update was needed.
+
+The mechanics boundary and phase-specific lint result are accepted. Orchestration review requested a narrow prose-only repair to remove remaining answer-key and generated-copy phrasing in Levels 6, 8, and 9 before accepting the phase. Packet status and the development README remain owner/orchestrator controlled.
+
+## Phase 3 Narrow Repair Outcome
+
+Completed the requested prose-only repair in three sensing levels:
+
+- `sensor-barrier-branch` now turns the barrier demo caption into a coach question about the frozen runner.
+- `find-the-human` now uses the natural "ally's point of view" phrasing.
+- `find-the-enemy-flag` now points out that the flag can shift from above to directly ahead as the ally moves.
+
+Validation after the repair:
+
+- `npm.cmd run level:copy-digest` - passed; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/level-copy-digest.test.js` - passed, 2/2 tests.
+- phase-only copy-voice diagnostic check - passed; 0 warnings across all five sensing levels.
+- `git diff --check` - passed; reported only line-ending normalization warnings.
+
+Accepted after orchestration re-review. The repaired lines now read as teacher/coach guidance, and the Level 9 direction change matches the passing reference program: the ally moves up while the flag is above, then moves forward after becoming aligned. Plan 95 status stays `ready` because later phase dispatches remain.
+
+## Phase 3 Accepted: Yes
+
+## Phase 4 Movement Helpers Outcome
+
+The `movement-helpers` board is settled by the completed Plan 92 living-board pilot. This phase changed only student-facing prose in its seven level files; no setup, toolbox, win condition, fixture, NPC behavior, or Blockly structure changed.
+
+- Levels 10 and 11 retain direct novice operational cues for keyboard control, the human runner, and one action per ally turn.
+- Levels 12 and 14 describe their flag and wall boards without treating their harmless background Sentries as consequential threats.
+- Level 13 names the live Guard and its proximity-based movement without prescribing an action or assembled program.
+- Challenge 15 distinguishes the defender holding the lane from the other moving enemy, so its board hazards are concrete and accurate.
+- The protected and complexity-protected boundaries were preserved: Levels 10 and 11 are fully protected; Levels 12, 14, and the Challenge 15 bug hunt received prose-only changes.
+
+## Phase 4 Files Changed
+
+- `src/config/levels/phases/movement-helpers/level-10-human-runner-practice.js`
+- `src/config/levels/phases/movement-helpers/level-11-move-toward-flag.js`
+- `src/config/levels/phases/movement-helpers/level-12-bring-it-home.js`
+- `src/config/levels/phases/movement-helpers/level-13-enemy-nearby.js`
+- `src/config/levels/phases/movement-helpers/level-14-jump-the-gap.js`
+- `src/config/levels/phases/movement-helpers/bughunt-15-flag-phase.js`
+- `src/config/levels/phases/movement-helpers/level-15-dodge-and-deliver.js`
+- `reports/development/guided-level-complexity-audit/copy-digest.md` - regenerated.
+- `reports/development/plan-95-phase-copy-rewrites/progress.md` - this shared progress report.
+
+## Phase 4 Validation
+
+- `node scripts/dev/plan-status.js check plan-95-phase-copy-rewrites` - passed; packet is runnable.
+- `npm.cmd run lint:levels` - passed with the repository's existing warning exit behavior; 0 `copy-voice-*` warnings in `movement-helpers`.
+- phase-only copy-voice diagnostic check - passed; 0 warnings across all seven movement-helper levels.
+- `npm.cmd run level:copy-digest` - passed; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/guided-level-contracts.test.js tests/unit/level-copy-digest.test.js` - passed, 29/29 tests.
+- `npm.cmd run test:unit` - passed, 478/478 tests.
+- `npm.cmd test` - passed, 478/478 tests; runs the unit suite through the packet's broader test alias.
+- `npm.cmd run build` - passed; Vite production build completed successfully.
+- `git diff --check` - passed; reported only line-ending normalization warnings.
+
+## Phase 4 Problems And Resolution
+
+The first validation run found two existing authored-copy assertions for Challenge 15: its description needed to state that the defender is distinct from the moving enemy, and its intro needed the precise stationary-role wording `holds the lane`. The final prose satisfies both truthful board-role checks without changing the level mechanics or tests.
+
+## Phase 4 Remaining Risks Or Follow-Ups
+
+- The phase is ready for orchestration voice review; copy quality remains a curriculum judgment even with clean phase lint.
+- Existing out-of-phase lint warnings, including the pre-existing `jump-the-gap` turn-limit-floor warning, remain outside this prose-only dispatch.
+- Plan 95 remains `ready`; packet status and the development README remain owner/orchestrator controlled.
+
+Orchestration review accepted the mechanics boundary and validation evidence but requested a narrow prose repair: correct Level 12's implication that the flag changes the meaning of home, and distinguish Level 13's student-selected sensor distance from the Guard's separate authored activation radius.
+
+## Phase 4 Initial Review: Prose Repair Requested
+
+## Phase 4 Narrow Repair Outcome
+
+Completed the requested prose-only corrections in two movement-helper levels:
+
+- `bring-it-home` now says that the ally's next target changes after pickup; the home base itself remains fixed.
+- `enemy-nearby` now presents `Within 2` and `Within 3` as the ally's chosen warning distance, separate from the Guard's authored activation behavior.
+
+Validation after the repair:
+
+- `npm.cmd run level:copy-digest` - passed; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/guided-level-contracts.test.js tests/unit/level-copy-digest.test.js` - passed, 29/29 tests.
+- phase-only copy-voice diagnostic check - passed; 0 warnings across all seven movement-helper levels.
+- `git diff --check` - passed; reported only line-ending normalization warnings.
+
+The repair changes only `description`, `introText`, a tip, and a tutorial title/body. Mechanics, setup, toolboxes, win conditions, fixtures, NPC behavior, and Blockly structures remain unchanged.
+
+Accepted after orchestration re-review. Level 12 now keeps home fixed while changing the helper target after pickup. Level 13 treats `Within 2`/`Within 3` as student-selected warning distances and does not conflate them with the Guard's separate radius-1 activation rule. Plan 95 remains `ready` because later phase dispatches remain.
+
+## Phase 4 Accepted: Yes

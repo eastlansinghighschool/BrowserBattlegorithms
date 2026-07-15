@@ -10,13 +10,13 @@ export default {
   // Sentry (background motion) on the far side of the wall from the jump
   // lane (x=1-3); its vertical patrol column (x=10) never enters that lane.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
-  description: "Use Jump Forward as the one decisive action that clears a wall and lands on the goal side.",
-  introText: "This lesson is about a single leap. One Jump Forward should carry the ally over the wall and into the winning lane.",
+  description: "A wall splits the lane. The goal is on the far side.",
+  introText: "Jump Forward can clear the wall, but it only goes ahead and needs open ground to land.",
   tips: [
     "Jump Forward only goes forward.",
     "There is no backward jump in this game.",
     "The landing space still needs to be open.",
-    "This level is about noticing what one jump can do, not writing a long program."
+    "The wall seals the whole column."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -36,13 +36,13 @@ export default {
     {
       id: "level-14-jump",
       title: "Jump Is A One-Time Leap",
-      body: "Jump Forward moves two cells ahead and ignores the space in between, but you only get one jump each round. For this lesson, a single jump block is enough.",
+      body: "Jump Forward moves two cells ahead and ignores the space in between. You get one jump each round.",
       targetSelector: "#blockly-region"
     },
     {
       id: "level-14-no-backward-jump",
       title: "No Backward Jump",
-      body: "This game only supports jumping forward. The wall blocks the whole column, so the dramatic move here is to leap straight across it.",
+      body: "This game only supports jumping forward. The wall blocks the whole column; check which way the ally faces.",
       targetSelector: "#canvas-container"
     }
   ],

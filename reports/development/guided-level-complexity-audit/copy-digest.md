@@ -290,21 +290,21 @@ The same Move Forward block works when the ally faces left. Read the board orien
 
 - description:
 ~~~text
-Predict the ally's first move before you run the program.
+Trace the ally's first move before the board runs.
 ~~~
 - introText:
 ~~~text
-Read the starter code, choose your prediction, and then run the level to compare what happened.
+Read the starter blocks. Choose where the ally goes first, then start the level and see.
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: Predict Before You Run
+##### Step 1: Trace Before You Run
 - id: prediction-06-intro
 - demo Blockly: no
 - body:
 ~~~text
-Read the starter program, choose where the ally will move first, and then press Start Level to check your tracing.
+Read the starter blocks. Commit to the ally's first move, then press Start Level and check your trace.
 ~~~
 
 ### Level 6: Enemy Sensor Branch
@@ -321,27 +321,27 @@ Read the starter program, choose where the ally will move first, and then press 
 
 - description:
 ~~~text
-Use the generic sensor block to detect an enemy directly in front and route around it.
+A frozen enemy runner blocks the lane.
 ~~~
 - introText:
 ~~~text
-The sensing system becomes more flexible here. One sensor block shape can ask about different board objects — not just barriers.
+A frozen enemy runner stands ahead. The sensor's two menus can describe what the ally sees and where it sees it.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-The generic sensor block has two dropdowns: what to look for, and how to describe its position.
+Choose the object and its position in the sensor menus.
 ~~~
 - tip 2:
 ~~~text
-An enemy is sitting in the lane ahead — you need to sense it and choose a different move.
+The frozen enemy runner is directly in front of the ally.
 ~~~
 - tip 3:
 ~~~text
-Later levels will use this same block to sense flags, walls, and more.
+The sensor can watch runners as well as barriers.
 ~~~
 #### Tutorial Steps
-##### Step 1: One Block Shape, Many Sensor Ideas
+##### Step 1: Choose What To Watch
 - id: level-6-generic-sensor
 - demo Blockly: yes
 - demoTitle:
@@ -350,18 +350,18 @@ Example sensor branch
 ~~~
 - demoCaption:
 ~~~text
-This example detects a barrier directly in front and steps up to detour around it. Your level uses the same relation but a different object — swap the object dropdown to match what is actually in the lane.
+This demo watches a barrier directly ahead. What would you change so this branch watches the frozen runner?
 ~~~
 - body:
 ~~~text
-In an earlier level you used a block that checked for a barrier specifically. This new sensor block works the same way — but the dropdowns let you describe other objects and positions too. The demo below shows it checking for a barrier; your level needs you to check for something else.
+The sensor has two menus: one names what to watch, the other names where it is. This demo watches a barrier; the lane holds something else.
 ~~~
-##### Step 2: Route Around The Enemy
+##### Step 2: The Frozen Runner
 - id: level-6-barrier
 - demo Blockly: no
 - body:
 ~~~text
-An enemy runner is frozen in the lane ahead. Sense it directly in front and step up to go around — then resume forward progress once you are past it.
+A frozen enemy runner stands in the lane ahead. What should the ally notice before choosing a move?
 ~~~
 
 ### Level 7: Watch the Wall
@@ -374,28 +374,28 @@ An enemy runner is frozen in the lane ahead. Sense it directly in front and step
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-banned-phrase: tips[0] contains banned meta phrase "beginner-friendly" (charter S5 voice contract)
+- none
 
 - description:
 ~~~text
-Use the generic sensor to detect an edge or wall and steer around it.
+Walls close off parts of this map.
 ~~~
 - introText:
 ~~~text
-The same sensor family can notice map walls too, not just placed barriers.
+A wall is directly ahead of the ally. This sensor can watch the map itself, not only runners or barriers.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Edge or wall is a beginner-friendly sensing target in this phase.
+The Edge or Wall option watches map walls and edges.
 ~~~
 - tip 2:
 ~~~text
-This map uses real wall cells instead of a temporary barrier.
+The wall ahead is part of the map, not a placed barrier.
 ~~~
 - tip 3:
 ~~~text
-You still only get one move each ally turn.
+One action runs on each ally turn.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Walls Count Too
@@ -403,14 +403,14 @@ You still only get one move each ally turn.
 - demo Blockly: no
 - body:
 ~~~text
-The Edge or Wall option can notice map geometry. Here, the ally needs to react to wall cells in the way.
+The Edge or Wall option notices the map's walls and edges. This lane has a wall directly ahead.
 ~~~
-##### Step 2: Relation Means How The Object Is Positioned
+##### Step 2: Describe Where It Is
 - id: level-7-relation
 - demo Blockly: no
 - body:
 ~~~text
-The relation dropdown tells the sensor what kind of position to check. This level uses directly in front.
+The relation menu says where to look. Here, look directly in front of the ally.
 ~~~
 
 ### Level 8: Find the Human
@@ -427,51 +427,51 @@ The relation dropdown tells the sensor what kind of position to check. This leve
 
 - description:
 ~~~text
-Use directional sensing to move the ally toward the human runner.
+The marked support square waits beside the human runner.
 ~~~
 - introText:
 ~~~text
-Now the sensor can describe where something is on the board, not just whether it is immediately in front.
+The human runner is ahead and above the ally. Guide the ally to the highlighted square beside them.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Use the human runner as the sensed object.
+The human runner is the object to watch.
 ~~~
 - tip 2:
 ~~~text
-The highlighted support square next to the human is the goal, not the occupied human cell.
+The highlighted support square beside the human is the goal, not the occupied cell.
 ~~~
 - tip 3:
 ~~~text
-Think about how you would describe the human’s position from the ally’s point of view.
+Describe the human's position from the ally's point of view.
 ~~~
 - tip 4:
 ~~~text
-You may need more than one check to guide the ally to the support square.
+More than one check may help the ally reach the support square.
 ~~~
 #### Tutorial Steps
-##### Step 1: Use A Sensor To Find The Human
+##### Step 1: Find The Human
 - id: level-8-human
 - demo Blockly: yes
 - demoTitle:
 ~~~text
-Example support-route program
+A Direction Question
 ~~~
 - demoCaption:
 ~~~text
-This example sensor branch uses a different object than the one available here. Notice how the block has two dropdowns — one for what to sense and one for where to look.
+This example uses a different object. Notice its two menus: what to watch and where to look.
 ~~~
 - body:
 ~~~text
-The sensor block can now look for the human runner and describe whether that runner is forward, behind, above, or below. Your goal is to guide the ally to the marked support square beside the human.
+The sensor can watch the human runner and ask whether they are forward, behind, above, or below. The marked support square beside them is the goal.
 ~~~
-##### Step 2: Forward And Above Are Different Ideas
+##### Step 2: Two Directions
 - id: level-8-axes
 - demo Blockly: no
 - body:
 ~~~text
-Forward and behind use the ally's play direction. Above and below still use the screen.
+Forward and behind follow the ally's facing. Above and below follow the screen.
 ~~~
 
 ### Level 9: Find the Enemy Flag
@@ -488,39 +488,39 @@ Forward and behind use the ally's play direction. Above and below still use the 
 
 - description:
 ~~~text
-Use directional sensing to guide the ally to the enemy flag.
+The enemy flag waits ahead and above.
 ~~~
 - introText:
 ~~~text
-The same sensing pattern can point at goals like the enemy flag, not just runners.
+The sensor can watch the enemy flag, too. Guide the ally to the flag at the far side of the field.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-This time the target is the enemy flag instead of the human runner.
+The enemy flag is the object to watch.
 ~~~
 - tip 2:
 ~~~text
-The relation dropdown still describes the flag's position relative to the ally.
+The relation menu describes the flag's position from the ally.
 ~~~
 - tip 3:
 ~~~text
-Notice how the same sensor idea can shift from runners to goals.
+Runners and flags can both appear in the sensor menu.
 ~~~
 #### Tutorial Steps
-##### Step 1: Sense The Flag's Position
+##### Step 1: Watch The Enemy Flag
 - id: level-9-flag-sensor
 - demo Blockly: no
 - body:
 ~~~text
-The sensor block can also look for the enemy flag. Use the same forward, behind, above, and below ideas to steer toward it.
+The sensor can watch the enemy flag. Its relation menu describes where the flag is from the ally.
 ~~~
-##### Step 2: Reusable Thinking
+##### Step 2: Follow The Clues
 - id: level-9-reuse
 - demo Blockly: no
 - body:
 ~~~text
-You are reusing the same condition pattern on a different object. That is a big step toward more flexible programs.
+As the ally moves, the flag can shift from above to directly ahead. Keep checking where it is.
 ~~~
 
 ## Phase: movement-helpers
@@ -539,16 +539,16 @@ You are reusing the same condition pattern on a different object. That is a big 
 
 - description:
 ~~~text
-Use the human runner controls, then reach the goal only after you use Jump or Place Barrier first.
+Drive the human runner to the goal, but use Jump or Place Barrier first.
 ~~~
 - introText:
 ~~~text
-This level is about you, not the ally program. Move the human runner with the keyboard and use Jump or Place Barrier before reaching the goal.
+You are driving this runner. Use the keyboard, try Jump or Place Barrier, then head for the goal.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Use W A S D to move the human runner on screen.
+Use W A S D to move the human runner.
 ~~~
 - tip 2:
 ~~~text
@@ -556,33 +556,33 @@ Press F to jump, B to place a barrier, and X to stay still.
 ~~~
 - tip 3:
 ~~~text
-The goal only counts after you have used Jump or Place Barrier first.
+The goal counts only after Jump or Place Barrier.
 ~~~
 - tip 4:
 ~~~text
-The program panel stays on screen, but this lesson is about direct player control.
+Leave the program alone for this run; your keys drive the human runner.
 ~~~
 #### Tutorial Steps
-##### Step 1: Now You Control The Human Runner
+##### Step 1: You Drive This Runner
 - id: level-10-human-focus
 - demo Blockly: no
 - body:
 ~~~text
-This lesson pauses the ally idea for a moment so you can practice what the human runner does in the match.
+The human runner is yours this round. The ally is frozen while you try the match controls.
 ~~~
 ##### Step 2: Keyboard Controls
 - id: level-10-human-keys
 - demo Blockly: no
 - body:
 ~~~text
-Use W A S D to move. Press F to jump, B to place a barrier, and X to stay still. In free play, these human actions happen alongside your ally program.
+Use W A S D to move. Press F to jump, B to place a barrier, and X to stay still.
 ~~~
-##### Step 3: Try One Special Action First
+##### Step 3: Try A Special Action First
 - id: level-10-human-special
 - demo Blockly: no
 - body:
 ~~~text
-This challenge only passes if you reach the goal after you use Jump or Place Barrier first. Reaching the goal without one of those actions does not count yet.
+The goal counts only after you use Jump or Place Barrier. Reaching it first does not count yet.
 ~~~
 
 ### Level 11: Shortcut Block - Move Toward the Flag
@@ -599,24 +599,24 @@ This challenge only passes if you reach the goal after you use Jump or Place Bar
 
 - description:
 ~~~text
-Use the Move Toward helper block to take one smart step toward the enemy flag.
+The enemy flag is across an open field. Try Move Toward.
 ~~~
 - introText:
 ~~~text
-Move Toward is a shortcut block. It chooses one step toward a target, but it does not magically find a full path.
+Move Toward picks one step toward its target. The enemy flag is the only target on this open field.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-This helper chooses one move each turn, not a whole route.
+The helper chooses one move each turn, not a whole route.
 ~~~
 - tip 2:
 ~~~text
-It works best on open maps and simple corridors.
+This open field leaves room for the helper to work.
 ~~~
 - tip 3:
 ~~~text
-You can still compare it with the regular movement blocks.
+Regular movement blocks are still available.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Meet Move Toward
@@ -624,14 +624,14 @@ You can still compare it with the regular movement blocks.
 - demo Blockly: no
 - body:
 ~~~text
-This block takes one step toward the target you choose. Here the only target is the enemy flag.
+This block takes one step toward the target you choose. Here, that target is the enemy flag.
 ~~~
-##### Step 2: It Is A Helper, Not Magic
+##### Step 2: One Step At A Time
 - id: level-11-not-pathfinding
 - demo Blockly: no
 - body:
 ~~~text
-Move Toward is useful on open maps like this one. Later you will learn when helper moves work well and when you need more detailed logic.
+On open ground, the helper has room to work. Watch each step; it chooses one at a time.
 ~~~
 
 ### Level 12: Bring It Home
@@ -648,24 +648,24 @@ Move Toward is useful on open maps like this one. Later you will learn when help
 
 - description:
 ~~~text
-Use Move Toward for the trip out and the trip back.
+Once the ally picks up the flag, its next target must change.
 ~~~
 - introText:
 ~~~text
-The helper block now has two jobs: head toward the enemy flag first, then turn back toward home after pickup.
+The enemy flag is across the field. Once the ally carries it, the next target is home.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Think about how the target should change after pickup.
+Watch what changes after the flag pickup.
 ~~~
 - tip 2:
 ~~~text
-Move Toward enemy flag works on the way out, even when the route needs both horizontal and vertical steps.
+Move Toward can aim at a different target each turn.
 ~~~
 - tip 3:
 ~~~text
-Move Toward my base works on the way home.
+The ally needs a target for the trip home, too.
 ~~~
 #### Tutorial Steps
 ##### Step 1: One Helper, Two Targets
@@ -677,18 +677,18 @@ Example two-target program
 ~~~
 - demoCaption:
 ~~~text
-An if/else block checks a condition each turn and runs a different branch depending on the result. The condition and actions here are different from what this level needs — use this just to see the structure.
+This demo asks a different question. Notice how each branch can choose a target.
 ~~~
 - body:
 ~~~text
-This helper block can point at different goals. Here the ally should chase the enemy flag first and then head for home.
+This helper can point at different targets. The flag changes what the ally carries; what target should matter next?
 ~~~
-##### Step 2: Switch Targets After Pickup
+##### Step 2: After The Pickup
 - id: level-12-switch
 - demo Blockly: no
 - body:
 ~~~text
-The If I Have Enemy Flag condition is the bridge that tells the ally when to stop chasing the flag and start going home.
+Pickup changes the board. What target should matter once the ally is carrying the flag?
 ~~~
 
 ### Level 13: Enemy Nearby
@@ -705,24 +705,24 @@ The If I Have Enemy Flag condition is the bridge that tells the ally when to sto
 
 - description:
 ~~~text
-Use distance sensing to react when an enemy runner gets close.
+A Guard watches the lane. The ally needs to notice when it closes in.
 ~~~
 - introText:
 ~~~text
-Distance sensors use ideal move count, not line-of-sight. That means the game measures how many grid steps away something is.
+The Guard moves when a runner gets close. Within 2 and Within 3 count grid steps, not a straight line.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Within 2 spaces and within 3 spaces use Manhattan distance.
+Within 2 and Within 3 count grid steps.
 ~~~
 - tip 2:
 ~~~text
-Try giving the ally one response for danger and another response for normal progress.
+Choose how early the ally should react.
 ~~~
 - tip 3:
 ~~~text
-This level is easier if you think about ideal grid moves, not straight-line distance.
+Grid steps matter, not straight-line distance.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Distance Uses Grid Steps
@@ -734,18 +734,18 @@ Example nearby-enemy reaction
 ~~~
 - demoCaption:
 ~~~text
-This sensor branch uses an object and relation that are not available in this level. The structure is the same one you will use — pick the right object and relation from the dropdowns for this puzzle.
+This demo asks a different sensor question. Notice how a distance check selects one of two actions.
 ~~~
 - body:
 ~~~text
-Within 2 spaces means the target is close in ideal grid moves. It does not mean the target is visible in a straight line.
+Within 2 spaces means two ideal grid moves away. A clear straight line is not required.
 ~~~
-##### Step 2: Notice The Enemy Before It Is Too Close
+##### Step 2: Choose Your Warning Distance
 - id: level-13-nearby-enemy
 - demo Blockly: no
 - body:
 ~~~text
-Use the distance check to change the ally's move when the enemy runner gets nearby, then fall back to forward progress when the lane feels safe.
+The Guard moves when a runner gets close. How early should the ally react?
 ~~~
 
 ### Level 14: Jump the Gap
@@ -762,11 +762,11 @@ Use the distance check to change the ally's move when the enemy runner gets near
 
 - description:
 ~~~text
-Use Jump Forward as the one decisive action that clears a wall and lands on the goal side.
+A wall splits the lane. The goal is on the far side.
 ~~~
 - introText:
 ~~~text
-This lesson is about a single leap. One Jump Forward should carry the ally over the wall and into the winning lane.
+Jump Forward can clear the wall, but it only goes ahead and needs open ground to land.
 ~~~
 #### Tips
 - tip 1:
@@ -783,7 +783,7 @@ The landing space still needs to be open.
 ~~~
 - tip 4:
 ~~~text
-This level is about noticing what one jump can do, not writing a long program.
+The wall seals the whole column.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Jump Is A One-Time Leap
@@ -791,14 +791,14 @@ This level is about noticing what one jump can do, not writing a long program.
 - demo Blockly: no
 - body:
 ~~~text
-Jump Forward moves two cells ahead and ignores the space in between, but you only get one jump each round. For this lesson, a single jump block is enough.
+Jump Forward moves two cells ahead and ignores the space in between. You get one jump each round.
 ~~~
 ##### Step 2: No Backward Jump
 - id: level-14-no-backward-jump
 - demo Blockly: no
 - body:
 ~~~text
-This game only supports jumping forward. The wall blocks the whole column, so the dramatic move here is to leap straight across it.
+This game only supports jumping forward. The wall blocks the whole column; check which way the ally faces.
 ~~~
 
 ### Bug Hunt: Flag Phase
@@ -815,20 +815,20 @@ This game only supports jumping forward. The wall blocks the whole column, so th
 
 - description:
 ~~~text
-Trace the first action and repair the flag-phase bug before the lane turns into a full challenge.
+The starter takes the wrong flag-phase action. Trace its first branch.
 ~~~
 - introText:
 ~~~text
-This starter is almost right, but one branch is reversed. Read the first action carefully, then repair the flag switch so the ally chooses the right target at the right time.
+The flag changes hands, but the starter sends the ally toward the wrong target. Find the reversal.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-Only the first reached action runs on a turn, so start by checking the very top of the program.
+Only the first reached action runs, so start at the top of the program.
 ~~~
 - tip 2:
 ~~~text
-When the ally has the enemy flag, the return-home branch should take over.
+When the ally carries the enemy flag, a different target should matter.
 ~~~
 - tip 3:
 ~~~text
@@ -840,14 +840,14 @@ If the wrong branch runs first, the rest of the turn never gets a chance.
 - demo Blockly: no
 - body:
 ~~~text
-The starter is intentionally wrong. Trace the very first decision and ask whether the ally is headed toward the flag or back home when it should be doing the opposite.
+The starter is intentionally wrong. Trace the first decision: does the ally head toward the flag or back home at the right time?
 ~~~
 ##### Step 2: Repair The Flag Phase
 - id: bughunt-15-fix
 - demo Blockly: no
 - body:
 ~~~text
-This is a debugging level, not a blank slate. Keep the same shape, but fix the reversed target so the ally can switch cleanly between the two phases.
+This is a debugging level, not a blank slate. Keep the shape, but repair the reversed target.
 ~~~
 
 ### Challenge 15: Dodge and Deliver
@@ -864,39 +864,39 @@ This is a debugging level, not a blank slate. Keep the same shape, but fix the r
 
 - description:
 ~~~text
-Pick up the enemy flag and bring it home while one defender guards the lane and another enemy keeps moving.
+A defender guards the lane while another enemy keeps moving.
 ~~~
 - introText:
 ~~~text
-No new tools this time. One enemy holds the lane near the flag, and another keeps moving. Use what you know.
+A defender holds the lane near the flag while another enemy keeps moving. Bring the enemy flag home.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-One enemy guards the lane while another keeps moving. Watch both threats.
+One enemy guards the lane while another keeps moving. Watch both.
 ~~~
 - tip 2:
 ~~~text
-Checking the enemy's distance before committing to a direction can help you plan a safer route.
+Distance gives warning before a nearby enemy crowds the route.
 ~~~
 - tip 3:
 ~~~text
-The enemy flag needs to come all the way back home to score a point.
+The enemy flag must come all the way home to score.
 ~~~
 #### Tutorial Steps
-##### Step 1: A Real Game Situation
+##### Step 1: The Lane Is Contested
 - id: dodge-and-deliver-real-game
 - demo Blockly: no
 - body:
 ~~~text
-This is a real game situation — one enemy guards the lane and another keeps moving. Your program needs to make progress while staying out of trouble.
+One defender holds the lane near the flag. Another enemy keeps moving. The route will not stay empty.
 ~~~
-##### Step 2: Your Full Toolkit
+##### Step 2: Read The Field
 - id: dodge-and-deliver-toolkit
 - demo Blockly: no
 - body:
 ~~~text
-All the tools from the previous levels are here. There is no single right answer — think about how your ally should balance chasing the flag and handling both threats.
+No new blocks here. Read the flag, the defender, and the moving enemy before you choose a plan.
 ~~~
 
 ## Phase: resources-and-territory

@@ -5,13 +5,13 @@ import { GENERIC_SENSOR_BLOCKS, EXTENDED_MOVEMENT_BLOCKS } from "../../shared/to
 export default {
   id: "find-the-human",
   title: "Level 8: Find the Human",
-  description: "Use directional sensing to move the ally toward the human runner.",
-  introText: "Now the sensor can describe where something is on the board, not just whether it is immediately in front.",
+  description: "The marked support square waits beside the human runner.",
+  introText: "The human runner is ahead and above the ally. Guide the ally to the highlighted square beside them.",
   tips: [
-    "Use the human runner as the sensed object.",
-    "The highlighted support square next to the human is the goal, not the occupied human cell.",
-    "Think about how you would describe the human’s position from the ally’s point of view.",
-    "You may need more than one check to guide the ally to the support square."
+    "The human runner is the object to watch.",
+    "The highlighted support square beside the human is the goal, not the occupied cell.",
+    "Describe the human's position from the ally's point of view.",
+    "More than one check may help the ally reach the support square."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -40,17 +40,17 @@ export default {
   tutorialSteps: [
     {
       id: "level-8-human",
-      title: "Use A Sensor To Find The Human",
-      body: "The sensor block can now look for the human runner and describe whether that runner is forward, behind, above, or below. Your goal is to guide the ally to the marked support square beside the human.",
+      title: "Find The Human",
+      body: "The sensor can watch the human runner and ask whether they are forward, behind, above, or below. The marked support square beside them is the goal.",
       targetSelector: "#blockly-region",
       demoBlocklyXml: FIND_HUMAN_DEMO_XML,
-      demoTitle: "Example support-route program",
-      demoCaption: "This example sensor branch uses a different object than the one available here. Notice how the block has two dropdowns — one for what to sense and one for where to look."
+      demoTitle: "A Direction Question",
+      demoCaption: "This example uses a different object. Notice its two menus: what to watch and where to look."
     },
     {
       id: "level-8-axes",
-      title: "Forward And Above Are Different Ideas",
-      body: "Forward and behind use the ally's play direction. Above and below still use the screen.",
+      title: "Two Directions",
+      body: "Forward and behind follow the ally's facing. Above and below follow the screen.",
       targetSelector: "#canvas-container"
     }
   ],
