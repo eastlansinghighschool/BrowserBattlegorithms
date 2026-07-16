@@ -17,7 +17,10 @@ import {
   getProjectStartCalloutStorageKey,
   isProjectLevel,
   isProjectStartLevel,
-  renderProjectBadge
+  renderProjectBadge,
+  renderProjectIndicator,
+  renderProjectStartLessonCallout,
+  renderProjectStartWorkspaceCallout
 } from "../../src/ui/projectSignifiers.js";
 
 test("human practice level accepts F as the Team 1 jump key", () => {
@@ -63,13 +66,35 @@ test("project signifiers identify the project arc and render a distinct badge", 
 
   assert.equal(isProjectLevel(strategyStart), true);
   assert.equal(isProjectStartLevel(strategyStart), true);
-  assert.equal(getProjectDisplayName(strategyStart), "Strategy Brain");
+  assert.equal(getProjectDisplayName(strategyStart), "Field Decisions");
   assert.equal(getProjectStartCalloutStorageKey(strategyStart), "bba:project-start-callout-seen:strategy-brain");
   assert.match(renderProjectBadge(strategyStart), /Project/);
+  assert.match(renderProjectIndicator(strategyStart), /Project: Field Decisions/);
+  assert.match(renderProjectIndicator(strategyStart), /Step 1 of 6/);
+  assert.match(renderProjectStartLessonCallout(strategyStart), /same ally program/);
+  assert.match(renderProjectStartWorkspaceCallout(strategyStart), /Field Decisions/);
   assert.equal(isProjectLevel(strategyCapstone), true);
   assert.equal(isProjectStartLevel(strategyCapstone), false);
   assert.equal(isProjectLevel(ordinaryLevel), false);
   assert.equal(renderProjectBadge(ordinaryLevel), "");
+});
+
+test("project signifiers escape labels and render declarative stage continuity", () => {
+  const level = {
+    project: {
+      id: "safe-project",
+      label: "<Field Decisions>",
+      step: 2,
+      totalSteps: 6,
+      indicatorBody: "Use < and > safely."
+    }
+  };
+
+  const indicator = renderProjectIndicator(level);
+  assert.match(indicator, /Project: &lt;Field Decisions&gt;/);
+  assert.match(indicator, /Step 2 of 6/);
+  assert.match(indicator, /Use &lt; and &gt; safely\./);
+  assert.doesNotMatch(indicator, /Project: <Field Decisions>/);
 });
 
 test("free play defaults expose all eight directional sensor relations", () => {

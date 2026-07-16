@@ -7,7 +7,7 @@ export default {
   id: "how-far-away",
   title: "Level 24: How Far Away?",
   description: "Use a number comparison with distance to closest enemy.",
-  introText: "The Strategy Brain now measures distance to the closest enemy as a number. Compare that value to a threshold and move up when the defender is at or more than a certain distance to move in a diagonal pattern.",
+  introText: "Field Decisions now measures distance to the closest enemy as a number. Compare that value to a threshold and move up when the defender is at or more than a certain distance to move in a diagonal pattern.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

@@ -7,12 +7,12 @@ export default {
   id: "full-team-tactics",
   levelKind: "challenge",
   title: "Challenge 28: Full Team Tactics",
-  description: "Put your complete Strategy Brain to the test against live defenders.",
-  introText: "This is the final solo test of the Strategy Brain project. Three defenders are live, and your shared program should now do the whole job before team programming begins.",
+  description: "Put Field Decisions to the test against live defenders.",
+  introText: "This is the final live test for Field Decisions. You drive the human runner while one Blockly ally follows its saved program against three defenders.",
   tips: [
-    "You have the full Strategy Brain toolkit — sensing, territory, NOT, freeze, barriers, and more.",
+    "You have the full Field Decisions toolkit — sensing, territory, NOT, freeze, barriers, and more.",
     "Think about which tools matter most when an enemy is nearby and the whole program has to carry the run.",
-    "The next project changes everything — two allies will share one program."
+    "Next, Team Strategy Script runs one shared program on several allies and introduces runner-index roles."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -46,14 +46,14 @@ export default {
   tutorialSteps: [
     {
       id: "full-team-tactics-last-solo",
-      title: "One Last Solo Challenge",
-      body: "This is the capstone for your Strategy Brain. Use any part of the single-ally toolkit to score against live defenders.",
+      title: "Human Plus Ally Capstone",
+      body: "This is the capstone for Field Decisions. You drive the human runner while one Blockly ally uses the saved program.",
       targetSelector: "#canvas-container"
     },
     {
       id: "full-team-tactics-next",
       title: "What Comes Next",
-      body: "You have written programs that sense, decide, and use special actions. The next challenge asks you to do this for three enemies at once, but now with your ally as a teammate to your human runner.",
+      body: "Field Decisions gives one ally local rules. Next, Team Strategy Script uses runner index so one shared program can give several allies different jobs.",
       targetSelector: "#blockly-region"
     }
   ],

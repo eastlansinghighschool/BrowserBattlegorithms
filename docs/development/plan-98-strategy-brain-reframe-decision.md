@@ -1,11 +1,10 @@
 ---
 id: plan-98-strategy-brain-reframe-decision
 title: "Strategy Brain Reframe Decision"
-status: draft
+status: complete
+resolution: "Owner approved Option 3: visible Field Decisions one-ally local-rules arc; preserve strategy-brain id, keep runner-index roles in Team Strategy Script, and separate Challenge 28 live-human evidence."
 depends_on: [plan-85-campaign-rewrite-charter]
 gate: "before mutation; no source edits"
-superseded_by: null
-resolution: null
 summary: >-
   Orchestration-grade decision scan for Strategy Brain/project-arc reframing, preserving decentralized coordination goals and producing downstream options without source edits.
 ---

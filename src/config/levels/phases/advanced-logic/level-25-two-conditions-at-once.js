@@ -7,7 +7,7 @@ export default {
   id: "two-conditions-at-once",
   title: "Level 25: Two Conditions At Once",
   description: "Use AND so freeze only happens when the enemy is close and the team power is ready again.",
-  introText: "The same Strategy Brain can wait for two truths at once. Here it should only spend the freeze when both the distance and readiness checks say to act.",
+  introText: "The same Field Decisions program can wait for two truths at once. Here it should only spend the freeze when both the distance and readiness checks say to act.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -19,7 +19,7 @@ export default {
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
     { id: "level-23-and", title: "Both Must Be True", body: "AND is useful for a timed power: close enough to matter, and ready to use again. That is how the shared program decides when to spend its freeze.", targetSelector: "#blockly-region" },
-    { id: "level-23-lane", title: "Freeze Then Continue", body: "After the freeze is spent, the ally should keep moving toward the flag. The Strategy Brain should not get stuck on the special action.", targetSelector: "#canvas-container" }
+    { id: "level-23-lane", title: "Freeze Then Continue", body: "After the freeze is spent, the ally should keep moving toward the flag. Field Decisions should not get stuck on the special action.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

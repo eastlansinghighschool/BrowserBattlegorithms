@@ -7,7 +7,7 @@ export default {
   levelKind: "bug_hunt",
   title: "Bug Hunt: Boolean Trap",
   description: "A boolean operator is too eager, so the freeze fires before both facts are true.",
-  introText: "This is a repair checkpoint for the Strategy Brain. The shape is almost right, but the boolean choice needs to wait for both truths at the same time.",
+  introText: "This is a repair checkpoint for Field Decisions. The shape is almost right, but the boolean choice needs to wait for both truths at the same time.",
   tips: [
     "If a boolean uses OR where AND is needed, it can fire much too early.",
     "Think about what should be true together before the freeze happens.",

@@ -7,7 +7,7 @@ export default {
   id: "flip-the-answer",
   title: "Level 27: Flip The Answer",
   description: "Use NOT to reverse a boolean check.",
-  introText: "NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.  Use NOT to flip on my side into not on my side. That lets the Strategy Brain react after it crosses midfield.",
+  introText: "NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.  Use NOT to flip on my side into not on my side. That lets Field Decisions react after it crosses midfield.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,7 +18,7 @@ export default {
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 21 },
   tutorialSteps: [
     { id: "level-25-not", title: "Reverse The Boolean", body: "NOT is useful when the easier idea to say is the opposite of what you want to test. Your shared program can express the idea either way.", targetSelector: "#blockly-region" },
-    { id: "level-25-side", title: "Change After Crossing", body: "NOT reverses whatever boolean it wraps — a true becomes false and a false becomes true. Think about which condition is easier to express, and whether flipping it gets the Strategy Brain what it needs.", targetSelector: "#canvas-container" }
+    { id: "level-25-side", title: "Change After Crossing", body: "NOT reverses whatever boolean it wraps — a true becomes false and a false becomes true. Think about which condition is easier to express, and whether flipping it gets Field Decisions what it needs.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

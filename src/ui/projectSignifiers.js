@@ -71,28 +71,37 @@ export function renderProjectBadge(level) {
 }
 
 export function renderProjectIndicator(level) {
-  if (!isProjectLevel(level)) {
+  const project = getProjectMetadata(level);
+  if (!project) {
     return "";
   }
 
-  const projectName = escapeHtml(getProjectDisplayName(level));
+  const projectName = escapeHtml(project.label);
+  const stepText = Number.isInteger(project.step) && Number.isInteger(project.totalSteps)
+    ? `Step ${project.step} of ${project.totalSteps}`
+    : "";
+  const indicatorBody = escapeHtml(project.indicatorBody || "Shared code across this project.");
   return `
     <div class="lesson-project-indicator">
       <p class="lesson-project-indicator-label">Project: ${projectName}</p>
-      <p class="lesson-project-indicator-body">Shared code across this project.</p>
+      ${stepText ? `<p class="lesson-project-indicator-step" aria-label="Project ${stepText.toLowerCase()}">${stepText}</p>` : ""}
+      <p class="lesson-project-indicator-body">${indicatorBody}</p>
     </div>
   `;
 }
 
 export function renderProjectStartLessonCallout(level) {
-  if (!isProjectStartLevel(level)) {
+  const project = getProjectMetadata(level);
+  if (!isProjectStartLevel(level) || !project) {
     return "";
   }
+
+  const calloutBody = escapeHtml(project.startCalloutBody || "This project keeps one shared script. Going back tests the latest project script on an earlier scenario.");
 
   return `
     <div class="lesson-project-start-callout">
       <p class="lesson-project-start-callout-label">Project Start</p>
-      <p class="lesson-project-start-callout-body">This project keeps one shared script. Going back tests the latest project script on an earlier scenario.</p>
+      <p class="lesson-project-start-callout-body">${calloutBody}</p>
     </div>
   `;
 }
@@ -116,11 +125,12 @@ export function renderProjectStartWorkspaceCallout(level) {
   }
 
   const projectName = escapeHtml(getProjectDisplayName(level));
+  const workspaceCalloutBody = escapeHtml(getProjectMetadata(level)?.workspaceCalloutBody || "This icon means this level is part of a larger project. Changes will be saved across these levels.");
   return `
     <div class="blockly-project-callout" role="note" aria-label="Project start note for ${projectName}">
       <div class="blockly-project-callout-copy">
         <span class="blockly-project-callout-badge" aria-hidden="true">Project</span>
-        <p class="blockly-project-callout-body">This icon means this level is part of a larger project. Changes will be saved across these levels.</p>
+        <p class="blockly-project-callout-body">${workspaceCalloutBody}</p>
       </div>
       <button
         type="button"

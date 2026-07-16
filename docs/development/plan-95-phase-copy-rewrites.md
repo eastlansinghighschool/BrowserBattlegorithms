@@ -146,6 +146,8 @@ These are the current copy-voice lint hits, grouped by phase. This is the **floo
 
 **Board-settledness gate (charter S5 sequencing).** Only rewrite a phase whose board behavior is settled — copy must describe the board students actually see. `resources-and-territory` (settled by Plans 93/103) and `movement-helpers` (settled by Plan 92) are settled and are the safe first candidates; **resources-and-territory is recommended first** (freshly settled, three hits including the two this campaign just touched). For phases with no pending living-board packet (e.g. static foundations/sensing levels that will not receive board changes), the board is settled by default and their copy is safe to rewrite. If a phase has a living-board uplift still pending, defer its copy until that lands.
 
+**Advanced-logic identity gate (Plan 98 owner decision).** Do not begin the `advanced-logic` copy dispatch until the Field Decisions identity/continuity implementation packet is complete. That packet owns the visible project label, stable-id contract, project signifiers, and transition contract; Plan 95 then owns the complete student-facing prose pass for Levels 23-28. Do not let the two packets independently rewrite the same phase copy.
+
 ## Phase 1 Review Learnings
 
 The accepted `resources-and-territory` pass exposed several repeatable review rules. Apply these to every later phase dispatch:

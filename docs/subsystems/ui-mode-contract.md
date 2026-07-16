@@ -110,7 +110,7 @@ On project levels (L23-L28 `strategy-brain`, L29-L37 `team-strategy-script`), ad
 
 - **Project badge** — rendered by `src/ui/projectSignifiers.js` on the level card. Identifies which project arc this level belongs to.
 - **Project-start callout** — a one-time bubble near the Blockly panel explaining that code carries forward across levels. Persisted dismissal key: `bba:project-start-callout-seen:<projectId>`.
-- **Persistent project indicator** — remains visible throughout the project arc as a reminder that the workspace is shared.
+- **Persistent project indicator** — remains visible throughout the project arc as a reminder that the workspace is shared. When project metadata supplies `step` and `totalSteps`, it also renders a text stage label such as `Step 1 of 6`; Field Decisions uses this to show continuity without parsing level titles.
 
 These signals are driven by project metadata and local storage. They are not Blockly state.
 

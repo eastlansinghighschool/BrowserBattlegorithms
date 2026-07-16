@@ -18,7 +18,7 @@ export default {
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
   tutorialSteps: [
     { id: "level-24-or", title: "Either Warning Works", body: "OR is true when at least one of its inputs is true. That makes one branch react to two different kinds of danger without rewriting the whole program.", targetSelector: "#blockly-region" },
-    { id: "level-24-path", title: "Cross Then Turn", body: "Look at where the ally needs to go and what stands in the way. Think about when OR lets the Strategy Brain keep one rule for two situations.", targetSelector: "#canvas-container" }
+    { id: "level-24-path", title: "Cross Then Turn", body: "Look at where the ally needs to go and what stands in the way. Think about when OR lets Field Decisions keep one rule for two situations.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

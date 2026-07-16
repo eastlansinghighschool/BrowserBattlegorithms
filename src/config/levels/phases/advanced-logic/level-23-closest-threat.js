@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "closest-threat",
   title: "Level 23: Closest Threat",
-  description: "Start the Strategy Brain by using Move Toward on the closest enemy.",
-  introText: "This is the first step of your shared Strategy Brain. It learns to track the closest threat and begin a project-sized response.",
+  description: "Start Field Decisions by using Move Toward on the closest enemy.",
+  introText: "This is the first Field Decisions step. One saved ally program carries forward as the field changes.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -21,7 +21,7 @@ export default {
     {
       id: "level-21-advanced-layer",
       title: "A New Set Of Tools",
-      body: "This first project level introduces the Strategy Brain. The toolbox is broader now because later steps will add numbers and boolean choices; for the moment, focus on how Move Toward can track the nearest threat.",
+      body: "This first project level introduces Field Decisions. The toolbox is broader now because later steps will add numbers and boolean choices; for the moment, focus on how Move Toward can track the nearest threat.",
       targetSelector: "#blockly-region"
     },
     { id: "level-21-target", title: "A New Move Toward Target", body: "Closest enemy picks the nearest active opponent and steps toward them. Your shared program starts by deciding who matters most.", targetSelector: "#blockly-region" },

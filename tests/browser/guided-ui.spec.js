@@ -178,12 +178,13 @@ test("project levels show a project badge, project start callout, and persistent
   await page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Closest Threat" }).click();
   await dismissTutorial(page);
 
-  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
-  await expect(page.locator("#level-panel")).toContainText("Shared code across this project.");
-  await expect(page.locator("#blockly-region")).toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+  await expect(page.locator("#level-panel")).toContainText("Project: Field Decisions");
+  await expect(page.locator("#level-panel")).toContainText("Step 1 of 6");
+  await expect(page.locator("#level-panel")).toContainText("One saved ally program. Revise it as the field changes.");
+  await expect(page.locator("#blockly-region")).toContainText("Your blocks carry forward through Field Decisions. Revise the same ally program as the field changes.");
 
   await page.locator('#blockly-region [data-project-callout-action="dismiss"]').click();
-  await expect(page.locator("#blockly-region")).not.toContainText("This icon means this level is part of a larger project. Changes will be saved across these levels.");
+  await expect(page.locator("#blockly-region")).not.toContainText("Your blocks carry forward through Field Decisions. Revise the same ally program as the field changes.");
 
   await page.reload();
   await chooseGuided(page);
@@ -206,7 +207,8 @@ test("project capstones show both project and challenge framing, and escort the 
   await page.locator(".level-picker-trigger").click();
   await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Project");
   await expect(page.locator(".level-picker-popover .level-picker-item").filter({ hasText: "Full Team Tactics" })).toContainText("Challenge");
-  await expect(page.locator("#level-panel")).toContainText("Project: Strategy Brain");
+  await expect(page.locator("#level-panel")).toContainText("Project: Field Decisions");
+  await expect(page.locator("#level-panel")).toContainText("Step 6 of 6");
   await expect(page.locator("#level-panel")).toContainText("Challenge Level");
 
   await page.evaluate(() => {

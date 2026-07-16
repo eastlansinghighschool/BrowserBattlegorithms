@@ -8,9 +8,8 @@ Entry convention: new decisions should use a `**Date:** YYYY-MM-DD` field or an 
 
 - 2026-07-07: Adopt Bootstrap packet-status tooling in phases, starting with the core status scripts and local consumer manifest.
 - 2026-07-07: Keep existing packet docs in place for now; frontmatter migration and generated-index conversion are deferred to Plan 88.
+- 2026-07-16: Reframe the internal `strategy-brain` project as the student-facing **Field Decisions** arc. Keep one Blockly-controlled ally and the persistent shared workspace; preserve the `strategy-brain` id; reserve runner-index role coordination for Team Strategy Script; handle Challenge 28 live-human evidence separately.
 
 ## Proposed but not yet accepted
 
-- Plan 88: migrate packet docs to Bootstrap-compatible frontmatter and generated index conventions.
-- Plan 89: adopt Bootstrap agent prompts and falsification-check prose.
-- Plan 90: close out any remaining Bootstrap audit drift and path hygiene follow-ups.
+- None currently recorded.

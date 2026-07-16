@@ -155,7 +155,7 @@ Students should leave with the execution-model lesson: programs run one action a
 
 ### Bug Hunt 28 (after Prediction: Two Truths)
 
-- Concept introduced: repairing boolean logic before the Strategy Brain capstone. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
+- Concept introduced: repairing boolean logic before the Field Decisions capstone. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **5-10 minutes**.
 - Likely stuck points:
   - [predicted] students may know the branch words but not the boolean logic that controls them.
@@ -169,7 +169,7 @@ Students should leave with the execution-model lesson: programs run one action a
 - Extension idea:
   - Ask students to say the condition out loud in plain English before changing the blocks.
 
-### Strategy Brain Project (L23-L28)
+### Field Decisions Project (L23-L28)
 
 - Concept introduced: shared latest code across a project arc, closest-threat targeting, numeric comparisons, boolean composition, and a project-capstone mindset. See [the concept matrix](GUIDED_LEVEL_CONCEPT_MATRIX.md).
 - Expected time band: **30-45 minutes**.
@@ -184,11 +184,11 @@ Students should leave with the execution-model lesson: programs run one action a
 - Intervention prompts:
   - "How does the project remind you that code carries forward?"
   - "Which threat, distance, or side condition are you trying to reason about right now?"
-  - "What is the first branch that makes this Strategy Brain work?"
+  - "What is the first branch that makes this Field Decisions program work?"
 - Discussion question:
   - "How are `AND`, `OR`, and `NOT` like Java boolean expressions?"
 - Extension idea:
-  - Ask students to describe their Strategy Brain in terms of board facts: threat, distance, side, resource, and flag state.
+  - Ask students to describe their Field Decisions program in terms of board facts: threat, distance, side, resource, and flag state.
 
 ### Bug Hunt 37 (after Prediction: Role Split)
 
@@ -224,7 +224,7 @@ Students should leave with the execution-model lesson: programs run one action a
 | Theme | Best moment to ask | Prompt |
 | --- | --- | --- |
 | Conditional control flow | End of Foundations, after L5 | "Which part of your program runs only when the condition is true, and which part runs otherwise?" |
-| Boolean composition | Strategy Brain, after L27 | "Why do `AND`, `OR`, and `NOT` let you say something a single sensor cannot?" |
+| Boolean composition | Field Decisions, after L27 | "Why do `AND`, `OR`, and `NOT` let you say something a single sensor cannot?" |
 | Trace before run | Before any Challenge level | "Before you press Play, which branch will fire first and why?" |
 | Method-like decomposition via runner index | Start of Team Strategy Script, around L29-L31 | "How does `runner index` let one program behave like two role-specific methods?" |
 | Resource management | After L16-L21 or at Challenge 22 | "When should your code spend a timed resource instead of saving it for later?" |
@@ -243,7 +243,7 @@ Students should leave with the execution-model lesson: programs run one action a
 
 ## What to Do Next Session
 
-- After the guided campaign, move students into the project arcs already shipped in the packet index: **Strategy Brain** and **Team Strategy Script**.
+- After the guided campaign, move students into the project arcs already shipped in the packet index: **Field Decisions** and **Team Strategy Script**.
 - For open-ended practice, use **Free Play** with a map and team size that match the learning goal you want to discuss.
 - If a future **Tournament mode** ships, it fits naturally after Free Play as a classroom competition layer.
 - Revisit this kit after the first pilot session and replace the predicted pacing/stuck-point notes with classroom evidence.
