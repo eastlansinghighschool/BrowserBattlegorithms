@@ -6,12 +6,12 @@ export default {
   id: "show-what-you-know",
   levelKind: "challenge",
   title: "Challenge 22: Show What You Know",
-  description: "Score a point against live defenders using any tool you have learned so far.",
-  introText: "No new tools this time. Two enemies are active. Use what you know to score.",
+  description: "Score against live defenders holding the far side.",
+  introText: "Two defenders patrol the outer lanes while a third holds the middle. Reach their flag and bring it home.",
   tips: [
-    "You have movement, sensing, flag state, helper blocks, barriers, jumping, and freeze.",
-    "There is more than one way to win — experiment with what you have.",
-    "Freeze is a team power that can give you a window to act."
+    "The toolbox holds the tools you have earned: sensing, helpers, barriers, jumping, and freeze.",
+    "Watch the lanes first. More than one route can work.",
+    "Freeze can buy a short opening when a defender closes in."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -58,14 +58,14 @@ export default {
   tutorialSteps: [
     {
       id: "show-what-you-know-challenge",
-      title: "No New Tools",
-      body: "This level does not introduce anything new. Two enemies are active and you need to score a point — use any combination of what you have already learned.",
+      title: "Read The Field",
+      body: "The outer lanes have moving defenders, and one runner holds the middle. Your ally needs a route to the far flag and back.",
       targetSelector: "#canvas-container"
     },
     {
       id: "show-what-you-know-strategy",
-      title: "Think Like A Programmer",
-      body: "There is no single right program. Think about what conditions matter, what actions respond to them, and what your ally should do when the situation changes.",
+      title: "Make A Field Plan",
+      body: "Notice what changes near each defender, at the flag, and on the trip home. Build rules your ally can use when the field changes.",
       targetSelector: "#blockly-region"
     }
   ],

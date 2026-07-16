@@ -220,3 +220,61 @@ The repair changes only `description`, `introText`, a tip, and a tutorial title/
 Accepted after orchestration re-review. Level 12 now keeps home fixed while changing the helper target after pickup. Level 13 treats `Within 2`/`Within 3` as student-selected warning distances and does not conflate them with the Guard's separate radius-1 activation rule. Plan 95 remains `ready` because later phase dispatches remain.
 
 ## Phase 4 Accepted: Yes
+
+## Phase 5 Advanced Logic Outcome
+
+The owner selected `advanced-logic` after orchestration recommended it and Plan 104 completed the Field Decisions identity/continuity gate. The phase board is settled: no pending living-board packet changes its authored levels, and the current behavior evidence/digest were reviewed before copy mutation.
+
+This dispatch rewrote only student-facing prose in all ten advanced-logic entries: Challenge 22, the first five Field Decisions levels, the AND prediction checkpoint, both bug hunts, and Challenge 28. The revised briefings name the actual lane features and actors (barriers, frozen runners, the midfield line, the flag, patrollers, and live defenders), retain direct explanations for comparison and boolean tools, and ask students to decide the program rather than narrating a finished branch or route. Challenge 28 retains the required human-with-keys plus one-Blockly-ally framing and Team Strategy Script handoff.
+
+No protected level is in this phase. No TeacherGuide update was needed: the removed student-facing meta narration had no teacher-facing pedagogical content that lacked an existing durable home.
+
+## Phase 5 Files Changed
+
+- `src/config/levels/phases/advanced-logic/bughunt-22-readiness-order.js`
+- `src/config/levels/phases/advanced-logic/level-22-show-what-you-know.js`
+- `src/config/levels/phases/advanced-logic/level-23-closest-threat.js`
+- `src/config/levels/phases/advanced-logic/level-24-how-far-away.js`
+- `src/config/levels/phases/advanced-logic/level-25-two-conditions-at-once.js`
+- `src/config/levels/phases/advanced-logic/level-26-this-or-that.js`
+- `src/config/levels/phases/advanced-logic/level-27-flip-the-answer.js`
+- `src/config/levels/phases/advanced-logic/prediction-25-two-truths.js`
+- `src/config/levels/phases/advanced-logic/bughunt-28-boolean-trap.js`
+- `src/config/levels/phases/advanced-logic/level-28-full-team-tactics.js`
+- `reports/development/guided-level-complexity-audit/copy-digest.md` - regenerated.
+- `reports/development/plan-95-phase-copy-rewrites/progress.md` - this shared progress report.
+
+## Phase 5 Validation
+
+- `node scripts/dev/plan-status.js check plan-95-phase-copy-rewrites` - passed; packet was runnable before mutation.
+- `npm.cmd run lint:levels` - passed with the repository's warning exit behavior. The advanced-logic phase has 0 `copy-voice-banned-phrase`, `copy-voice-spoiler-phrase`, and `copy-voice-prose-length` warnings, down from the two pre-pass prose-length warnings in `how-far-away` and `flip-the-answer`.
+- `npm.cmd run level:copy-digest` - passed; regenerated the 46-level digest.
+- `node --test --test-isolation=none tests/unit/guided-level-contracts.test.js tests/unit/level-copy-digest.test.js` - passed, 29/29 tests.
+- `npm.cmd test` - passed, 479/479 tests.
+- `npm.cmd run build` - passed. Existing Blockly dynamic/static import and Vite chunk-size warnings remain.
+- Browser verification - passed at the Field Decisions start (Level 23), boolean middle (Level 25), and narrow 390x844 Challenge 28 capstone. The visible stage indicator, carried-program wording, AND prompt, human keyboard cue, one Blockly ally, and three-defender framing all matched the authored copy.
+- `git diff --check` - passed with only Git line-ending normalization notices.
+
+## Phase 5 Problems And Resolution
+
+- The first focused contract run found two existing authored-copy assertions: Challenge 22 must retain the factual phrases `Two enemies are active` and `live defenders`; the Level 24 demo caption must mention the sensor/pieces structure. The revised coach copy preserves those truthful cues, and the rerun passed.
+
+## Phase 5 Remaining Risks Or Follow-Ups
+
+- The capstone also displays the shared UI sentence `This level teaches direct keyboard control` from `src/ui/levels.js`. It is outside the phase-specific level-copy scope and lint surface, so it was not changed here. A future shared UI voice pass should rephrase it without altering keyboard-control behavior.
+- Out-of-phase lint warnings remain for advanced-teamplay and optional copy, plus existing non-copy level warnings. They are not waived or altered by this dispatch.
+- Copy quality remains subject to orchestration/owner review. Plan 95 remains `ready`; packet status and the development README are owner/orchestrator controlled.
+
+## Phase 5 Ready For Orchestration Review: Yes
+
+## Phase 5 Narrow Repair Outcome
+
+Completed the orchestration-requested prose and contract repair without changing mechanics, setup, toolboxes, win/failure conditions, fixtures, or Blockly XML:
+
+- Challenge 22 now names the two outer-lane patrols and the middle defender. Its focused contract assertion now protects those actual board roles instead of the stale phrase `Two enemies are active`.
+- Level 24 now describes the defender as patrolling, matching the `PATROL_INTERCEPT` behavior evidence.
+- Level 25 now states that Area Freeze starts ready to spend, rather than implying an initial cooldown.
+- Level 26 now frames OR as either warning asking the same thing, not as a priority-order decision.
+- Challenge 28 now describes the student's actual human-plus-Blockly-ally role instead of using the slogan-like `Field Decisions is on the field` line.
+
+The requested `npm.cmd run level:copy-digest`, phase lint, and 29 focused-test reruns were started after the edit, but the local terminal service stopped returning output or completing processes, including a plain `cmd /c echo hi` probe. The repair remains **pending validation rerun**; do not treat the prior Phase 5 acceptance recommendation as renewed until the commands complete successfully. Packet status remains owner-controlled `ready`.

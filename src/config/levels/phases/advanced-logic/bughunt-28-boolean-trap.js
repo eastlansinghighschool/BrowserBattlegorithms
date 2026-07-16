@@ -6,12 +6,12 @@ export default {
   id: "bughunt-28",
   levelKind: "bug_hunt",
   title: "Bug Hunt: Boolean Trap",
-  description: "A boolean operator is too eager, so the freeze fires before both facts are true.",
-  introText: "This is a repair checkpoint for Field Decisions. The shape is almost right, but the boolean choice needs to wait for both truths at the same time.",
+  description: "The freeze gate opens before the field is ready.",
+  introText: "A live defender starts in the lane, but the freeze branch opens too soon. Trace the two checks and repair the gate.",
   tips: [
-    "If a boolean uses OR where AND is needed, it can fire much too early.",
-    "Think about what should be true together before the freeze happens.",
-    "The bug is in the boolean choice, not in the rest of the pathing."
+    "A gate using OR can open when only one check is true.",
+    "Ask which two facts must be true together before the freeze fires.",
+    "The pathing is already there. Focus on the boolean gate."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -24,13 +24,13 @@ export default {
     {
       id: "bughunt-28-trace",
       title: "Trace The Boolean",
-      body: "Read the condition piece by piece. The branch should wait until the ally is close enough and the freeze is still ready.",
+      body: "Read the two checks piece by piece. Which facts should the freeze gate require together?",
       targetSelector: "#blockly-region"
     },
     {
       id: "bughunt-28-fix",
       title: "Repair The Gate",
-      body: "The starter is intentionally using the wrong boolean shape. Swap the operator so both facts have to be true before the special action runs.",
+      body: "The boolean gate has the wrong shape. Repair it so the freeze waits for the field you identified.",
       targetSelector: "#canvas-container"
     }
   ],

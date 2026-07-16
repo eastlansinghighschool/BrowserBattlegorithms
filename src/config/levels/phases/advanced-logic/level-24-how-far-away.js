@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "how-far-away",
   title: "Level 24: How Far Away?",
-  description: "Use a number comparison with distance to closest enemy.",
-  introText: "Field Decisions now measures distance to the closest enemy as a number. Compare that value to a threshold and move up when the defender is at or more than a certain distance to move in a diagonal pattern.",
+  description: "A barrier closes the center lane while a defender patrols ahead.",
+  introText: "The barrier and patrolling defender make distance matter. How far away is it when your ally should change course?",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -20,14 +20,14 @@ export default {
   tutorialSteps: [
     {
       id: "level-24-distance",
-      title: "Distance Is A Number Now",
-      body: "The new compare piece turns distance into a number you can check with <, <=, >, and the other operator choices. This level is where range becomes part of the strategy.",
+      title: "Distance Is A Number",
+      body: "The compare block checks a distance value with <, <=, >, and the other operators. Use it to ask how far the defender is from your ally.",
       targetSelector: "#blockly-region",
       demoTitle: "Example piece-by-piece selection",
-      demoCaption: "The demo shows how the new if/else block (found in the Advanced block drawer) can be built from smaller pieces. The sensor is familiar; the shape is the new idea.",
+      demoCaption: "The familiar sensor feeds a distance value into a compare block with two paths. The board decides which path matters.",
       demoBlocklyXml: BOOLEAN_SENSOR_SELECTION_DEMO_XML
     },
-    { id: "level-24-compare", title: "Choose A Move By Range", body: "The barrier and defender make the direct lane unreliable. Use the distance value to decide when the ally should break off and turn upward.", targetSelector: "#canvas-container" }
+    { id: "level-24-compare", title: "Read The Range", body: "The barrier blocks the center lane, and the defender patrols beyond it. Decide what distance should change your ally's plan.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

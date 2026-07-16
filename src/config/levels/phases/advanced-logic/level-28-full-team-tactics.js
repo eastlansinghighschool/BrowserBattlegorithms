@@ -7,12 +7,12 @@ export default {
   id: "full-team-tactics",
   levelKind: "challenge",
   title: "Challenge 28: Full Team Tactics",
-  description: "Put Field Decisions to the test against live defenders.",
-  introText: "This is the final live test for Field Decisions. You drive the human runner while one Blockly ally follows its saved program against three defenders.",
+  description: "Work beside your Blockly ally against three defenders.",
+  introText: "Drive the human runner with the keys while one Blockly ally follows its saved program. Three defenders guard the far side.",
   tips: [
-    "You have the full Field Decisions toolkit — sensing, territory, NOT, freeze, barriers, and more.",
-    "Think about which tools matter most when an enemy is nearby and the whole program has to carry the run.",
-    "Next, Team Strategy Script runs one shared program on several allies and introduces runner-index roles."
+    "Your ally carries the Field Decisions toolkit: sensing, territory, NOT, freeze, barriers, and more.",
+    "Watch the defenders and choose the rules that give your ally room to work.",
+    "Ahead: Team Strategy Script puts one shared program on several allies. Runner index gives them different jobs."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -47,7 +47,7 @@ export default {
     {
       id: "full-team-tactics-last-solo",
       title: "Human Plus Ally Capstone",
-      body: "This is the capstone for Field Decisions. You drive the human runner while one Blockly ally uses the saved program.",
+      body: "Drive the human runner with the keys while one Blockly ally follows its saved program. Work the same field together.",
       targetSelector: "#canvas-container"
     },
     {

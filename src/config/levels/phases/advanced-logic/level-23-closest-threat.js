@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "closest-threat",
   title: "Level 23: Closest Threat",
-  description: "Start Field Decisions by using Move Toward on the closest enemy.",
-  introText: "This is the first Field Decisions step. One saved ally program carries forward as the field changes.",
+  description: "A frozen runner waits above the main lane.",
+  introText: "Field Decisions begins here. Your saved ally program carries forward as the field changes. Decide whether the runner above the lane belongs in its path.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -20,12 +20,12 @@ export default {
   tutorialSteps: [
     {
       id: "level-21-advanced-layer",
-      title: "A New Set Of Tools",
-      body: "This first project level introduces Field Decisions. The toolbox is broader now because later steps will add numbers and boolean choices; for the moment, focus on how Move Toward can track the nearest threat.",
+      title: "One Program, Changing Field",
+      body: "Field Decisions keeps one ally program as the field changes. The toolbox is broad; begin by deciding what the runner above the lane should mean to your ally.",
       targetSelector: "#blockly-region"
     },
-    { id: "level-21-target", title: "A New Move Toward Target", body: "Closest enemy picks the nearest active opponent and steps toward them. Your shared program starts by deciding who matters most.", targetSelector: "#blockly-region" },
-    { id: "level-21-board", title: "Intercept The Runner", body: "This step is about tracking a threat, not chasing a flag. Watch how the target sits off the main lane and ask where the strategy should bend.", targetSelector: "#canvas-container" }
+    { id: "level-21-target", title: "A New Move Toward Target", body: "Closest enemy finds the nearest opponent and takes one step toward it. Which runner should your ally notice first?", targetSelector: "#blockly-region" },
+    { id: "level-21-board", title: "Runner Off The Lane", body: "The frozen runner is above the main lane, not on it. Watch how that position changes the ground ahead.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

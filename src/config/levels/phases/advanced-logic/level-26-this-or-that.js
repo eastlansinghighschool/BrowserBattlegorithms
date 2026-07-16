@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "this-or-that",
   title: "Level 26: This Or That",
-  description: "Use OR to react when either danger condition becomes true.",
-  introText: "This level has two danger checks: one for crossing into enemy territory, and one for an enemy runner nearby. OR lets either one trigger the same response.",
+  description: "Midfield and a frozen defender can both change the lane.",
+  introText: "Your ally crosses into enemy territory while a defender waits nearby. When should either warning ask the same thing of your ally?",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "midfieldPressure",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -17,8 +17,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 6, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
   tutorialSteps: [
-    { id: "level-24-or", title: "Either Warning Works", body: "OR is true when at least one of its inputs is true. That makes one branch react to two different kinds of danger without rewriting the whole program.", targetSelector: "#blockly-region" },
-    { id: "level-24-path", title: "Cross Then Turn", body: "Look at where the ally needs to go and what stands in the way. Think about when OR lets Field Decisions keep one rule for two situations.", targetSelector: "#canvas-container" }
+    { id: "level-24-or", title: "Either Warning Works", body: "OR is true when at least one input is true. One branch can notice both the midfield line and a nearby defender.", targetSelector: "#blockly-region" },
+    { id: "level-24-path", title: "Two Warnings, One Lane", body: "The midfield line and frozen defender are different warnings. Decide when they should ask the same thing of your ally.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

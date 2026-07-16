@@ -348,7 +348,7 @@ test("challenge 22 authors guided vertical patrol defenders near the center lane
       { slot: "npc3", gridX: 9, gridY: 7, cpuBehavior: NPC_BEHAVIORS.GUIDED_VERTICAL_PATROL }
     ]
   );
-  assert.match(level.introText, /Two enemies are active/i);
+  assert.match(level.introText, /Two defenders patrol the outer lanes while a third holds the middle/i);
   assert.match(level.description, /live defenders/i);
 });
 

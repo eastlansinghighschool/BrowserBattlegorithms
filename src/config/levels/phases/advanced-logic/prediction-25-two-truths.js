@@ -37,8 +37,8 @@ const PREDICTION_25_STARTER_XML = `
 export default {
   id: "prediction-25",
   title: "Prediction: Two Truths",
-  description: "Predict whether the AND branch runs before you observe the result.",
-  introText: "The starter program checks two truths at once. Pick whether the branch is true, then run it and compare the outcome.",
+  description: "Two checks face the lane. Will they both hold?",
+  introText: "The starter watches the runner and the space ahead. Choose whether both checks are true, then run it and see.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -71,7 +71,7 @@ export default {
     {
       id: "prediction-25-intro",
       title: "Trace Both Halves",
-      body: "The AND block only returns true when both inputs are true. Read the board, choose your answer, and then run to check the branch.",
+      body: "AND returns true only when both inputs are true. Read the runner and the space ahead, make your call, then run it.",
       targetSelector: "#level-panel"
     }
   ],

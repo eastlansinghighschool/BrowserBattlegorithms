@@ -1270,11 +1270,11 @@ Movement, sensing, helper actions, barriers, jumping, and freeze are on the tabl
 
 - description:
 ~~~text
-A stray action steals the turn before the barrier check can run.
+A stray move is crowding out the barrier order.
 ~~~
 - introText:
 ~~~text
-This program already knows how to place a barrier, but one move block sits in front of the real decision. Trace the order, fix the first action, and keep the barrier logic readable.
+The marked square needs a barrier, but a move is getting in the way. Trace which action reaches the runner first.
 ~~~
 #### Tips
 - tip 1:
@@ -1283,11 +1283,11 @@ Only the first action reached on a turn runs, so a move block can hide everythin
 ~~~
 - tip 2:
 ~~~text
-The barrier check is already there; the bug is that it never gets the chance to run first.
+The barrier branch is already on the board. Find out what stops the runner from reaching it.
 ~~~
 - tip 3:
 ~~~text
-Fixing a bug hunt usually means repairing the smallest broken piece, not rebuilding the whole program.
+Keep the repair small. Change only the part that blocks the barrier order.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Trace The Top Of The Stack
@@ -1295,14 +1295,14 @@ Fixing a bug hunt usually means repairing the smallest broken piece, not rebuild
 - demo Blockly: no
 - body:
 ~~~text
-The first action is the important one here. Ask what the runner does before the barrier check ever starts.
+Ask which action the runner reaches before it can consider the barrier branch.
 ~~~
 ##### Step 2: Put The Check First
 - id: bughunt-22-order
 - demo Blockly: no
 - body:
 ~~~text
-The fix should be small: move the readiness branch back to the front so the barrier action can run before any extra motion.
+The marked square is waiting. Repair the order so the barrier branch gets its turn.
 ~~~
 
 ### Challenge 22: Show What You Know
@@ -1319,39 +1319,39 @@ The fix should be small: move the readiness branch back to the front so the barr
 
 - description:
 ~~~text
-Score a point against live defenders using any tool you have learned so far.
+Score against live defenders holding the far side.
 ~~~
 - introText:
 ~~~text
-No new tools this time. Two enemies are active. Use what you know to score.
+Two enemies are active on the outer lanes while a third defender holds the middle. Reach their flag and bring it home.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-You have movement, sensing, flag state, helper blocks, barriers, jumping, and freeze.
+The toolbox holds the tools you have earned: sensing, helpers, barriers, jumping, and freeze.
 ~~~
 - tip 2:
 ~~~text
-There is more than one way to win — experiment with what you have.
+Watch the lanes first. More than one route can work.
 ~~~
 - tip 3:
 ~~~text
-Freeze is a team power that can give you a window to act.
+Freeze can buy a short opening when a defender closes in.
 ~~~
 #### Tutorial Steps
-##### Step 1: No New Tools
+##### Step 1: Read The Field
 - id: show-what-you-know-challenge
 - demo Blockly: no
 - body:
 ~~~text
-This level does not introduce anything new. Two enemies are active and you need to score a point — use any combination of what you have already learned.
+The outer lanes have moving defenders, and one runner holds the middle. Your ally needs a route to the far flag and back.
 ~~~
-##### Step 2: Think Like A Programmer
+##### Step 2: Make A Field Plan
 - id: show-what-you-know-strategy
 - demo Blockly: no
 - body:
 ~~~text
-There is no single right program. Think about what conditions matter, what actions respond to them, and what your ally should do when the situation changes.
+Notice what changes near each defender, at the flag, and on the trip home. Build rules your ally can use when the field changes.
 ~~~
 
 ### Level 23: Closest Threat
@@ -1368,35 +1368,35 @@ There is no single right program. Think about what conditions matter, what actio
 
 - description:
 ~~~text
-Start the Strategy Brain by using Move Toward on the closest enemy.
+A frozen runner waits above the main lane.
 ~~~
 - introText:
 ~~~text
-This is the first step of your shared Strategy Brain. It learns to track the closest threat and begin a project-sized response.
+Field Decisions begins here. Your saved ally program carries forward as the field changes. Decide whether the runner above the lane belongs in its path.
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: A New Set Of Tools
+##### Step 1: One Program, Changing Field
 - id: level-21-advanced-layer
 - demo Blockly: no
 - body:
 ~~~text
-This first project level introduces the Strategy Brain. The toolbox is broader now because later steps will add numbers and boolean choices; for the moment, focus on how Move Toward can track the nearest threat.
+Field Decisions keeps one ally program as the field changes. The toolbox is broad; begin by deciding what the runner above the lane should mean to your ally.
 ~~~
 ##### Step 2: A New Move Toward Target
 - id: level-21-target
 - demo Blockly: no
 - body:
 ~~~text
-Closest enemy picks the nearest active opponent and steps toward them. Your shared program starts by deciding who matters most.
+Closest enemy finds the nearest opponent and takes one step toward it. Which runner should your ally notice first?
 ~~~
-##### Step 3: Intercept The Runner
+##### Step 3: Runner Off The Lane
 - id: level-21-board
 - demo Blockly: no
 - body:
 ~~~text
-This step is about tracking a threat, not chasing a flag. Watch how the target sits off the main lane and ask where the strategy should bend.
+The frozen runner is above the main lane, not on it. Watch how that position changes the ground ahead.
 ~~~
 
 ### Level 24: How Far Away?
@@ -1409,20 +1409,20 @@ This step is about tracking a threat, not chasing a flag. Watch how the target s
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 39 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-Use a number comparison with distance to closest enemy.
+A barrier closes the center lane while a defender waits ahead.
 ~~~
 - introText:
 ~~~text
-The Strategy Brain now measures distance to the closest enemy as a number. Compare that value to a threshold and move up when the defender is at or more than a certain distance to move in a diagonal pattern.
+The barrier and defender make distance matter. How far away is the defender when your ally should change course?
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: Distance Is A Number Now
+##### Step 1: Distance Is A Number
 - id: level-24-distance
 - demo Blockly: yes
 - demoTitle:
@@ -1431,18 +1431,18 @@ Example piece-by-piece selection
 ~~~
 - demoCaption:
 ~~~text
-The demo shows how the new if/else block (found in the Advanced block drawer) can be built from smaller pieces. The sensor is familiar; the shape is the new idea.
+The familiar sensor feeds a distance value into a compare block with two paths. The board decides which path matters.
 ~~~
 - body:
 ~~~text
-The new compare piece turns distance into a number you can check with <, <=, >, and the other operator choices. This level is where range becomes part of the strategy.
+The compare block checks a distance value with <, <=, >, and the other operators. Use it to ask how far the defender is from your ally.
 ~~~
-##### Step 2: Choose A Move By Range
+##### Step 2: Read The Range
 - id: level-24-compare
 - demo Blockly: no
 - body:
 ~~~text
-The barrier and defender make the direct lane unreliable. Use the distance value to decide when the ally should break off and turn upward.
+The barrier blocks the center lane, and the defender waits beyond it. Decide what distance should change your ally's plan.
 ~~~
 
 ### Level 25: Two Conditions At Once
@@ -1459,11 +1459,11 @@ The barrier and defender make the direct lane unreliable. Use the distance value
 
 - description:
 ~~~text
-Use AND so freeze only happens when the enemy is close and the team power is ready again.
+A defender crowds the flag lane while freeze comes back online.
 ~~~
 - introText:
 ~~~text
-The same Strategy Brain can wait for two truths at once. Here it should only spend the freeze when both the distance and readiness checks say to act.
+The defender is close, and the team power may be ready. What has to be true before your ally spends that opening?
 ~~~
 #### Tips
 - none
@@ -1473,14 +1473,14 @@ The same Strategy Brain can wait for two truths at once. Here it should only spe
 - demo Blockly: no
 - body:
 ~~~text
-AND is useful for a timed power: close enough to matter, and ready to use again. That is how the shared program decides when to spend its freeze.
+AND is true only when both checks are true. Use it when the defender's distance and your team's readiness must agree.
 ~~~
-##### Step 2: Freeze Then Continue
+##### Step 2: After The Opening
 - id: level-23-lane
 - demo Blockly: no
 - body:
 ~~~text
-After the freeze is spent, the ally should keep moving toward the flag. The Strategy Brain should not get stuck on the special action.
+Once the power is spent, the field changes. What should the same program do while it waits to recharge?
 ~~~
 
 ### Level 26: This Or That
@@ -1497,11 +1497,11 @@ After the freeze is spent, the ally should keep moving toward the flag. The Stra
 
 - description:
 ~~~text
-Use OR to react when either danger condition becomes true.
+Midfield and a frozen defender can both change the lane.
 ~~~
 - introText:
 ~~~text
-This level has two danger checks: one for crossing into enemy territory, and one for an enemy runner nearby. OR lets either one trigger the same response.
+Your ally crosses into enemy territory while a defender waits nearby. Which warning should matter first when either one appears?
 ~~~
 #### Tips
 - none
@@ -1511,14 +1511,14 @@ This level has two danger checks: one for crossing into enemy territory, and one
 - demo Blockly: no
 - body:
 ~~~text
-OR is true when at least one of its inputs is true. That makes one branch react to two different kinds of danger without rewriting the whole program.
+OR is true when at least one input is true. One branch can notice both the midfield line and a nearby defender.
 ~~~
-##### Step 2: Cross Then Turn
+##### Step 2: Two Warnings, One Lane
 - id: level-24-path
 - demo Blockly: no
 - body:
 ~~~text
-Look at where the ally needs to go and what stands in the way. Think about when OR lets the Strategy Brain keep one rule for two situations.
+The midfield line and frozen defender are different warnings. Decide when they should ask the same thing of your ally.
 ~~~
 
 ### Level 27: Flip The Answer
@@ -1531,15 +1531,15 @@ Look at where the ally needs to go and what stands in the way. Think about when 
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 45 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-Use NOT to reverse a boolean check.
+Midfield splits the map, and your ally needs a rule for the far side.
 ~~~
 - introText:
 ~~~text
-NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.  Use NOT to flip on my side into not on my side. That lets the Strategy Brain react after it crosses midfield.
+The ally starts on your side, then crosses midfield. Can one flipped check describe what matters once it reaches enemy territory?
 ~~~
 #### Tips
 - none
@@ -1549,14 +1549,14 @@ NOT turns a true test into a false one and vice versa, which is often the cleane
 - demo Blockly: no
 - body:
 ~~~text
-NOT is useful when the easier idea to say is the opposite of what you want to test. Your shared program can express the idea either way.
+NOT flips a boolean: true becomes false, and false becomes true. Use it when the opposite check says the field situation more clearly.
 ~~~
-##### Step 2: Change After Crossing
+##### Step 2: After Midfield
 - id: level-25-side
 - demo Blockly: no
 - body:
 ~~~text
-NOT reverses whatever boolean it wraps — a true becomes false and a false becomes true. Think about which condition is easier to express, and whether flipping it gets the Strategy Brain what it needs.
+The ally's side changes at midfield. Decide whether reversing a territory check gives the far side its own rule.
 ~~~
 
 ### Prediction: Two Truths
@@ -1573,11 +1573,11 @@ NOT reverses whatever boolean it wraps — a true becomes false and a false beco
 
 - description:
 ~~~text
-Predict whether the AND branch runs before you observe the result.
+Two checks face the lane. Will they both hold?
 ~~~
 - introText:
 ~~~text
-The starter program checks two truths at once. Pick whether the branch is true, then run it and compare the outcome.
+The starter watches the runner and the space ahead. Choose whether both checks are true, then run it and see.
 ~~~
 #### Tips
 - none
@@ -1587,7 +1587,7 @@ The starter program checks two truths at once. Pick whether the branch is true, 
 - demo Blockly: no
 - body:
 ~~~text
-The AND block only returns true when both inputs are true. Read the board, choose your answer, and then run to check the branch.
+AND returns true only when both inputs are true. Read the runner and the space ahead, make your call, then run it.
 ~~~
 
 ### Bug Hunt: Boolean Trap
@@ -1604,24 +1604,24 @@ The AND block only returns true when both inputs are true. Read the board, choos
 
 - description:
 ~~~text
-A boolean operator is too eager, so the freeze fires before both facts are true.
+The freeze gate opens before the field is ready.
 ~~~
 - introText:
 ~~~text
-This is a repair checkpoint for the Strategy Brain. The shape is almost right, but the boolean choice needs to wait for both truths at the same time.
+A live defender starts in the lane, but the freeze branch opens too soon. Trace the two checks and repair the gate.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-If a boolean uses OR where AND is needed, it can fire much too early.
+A gate using OR can open when only one check is true.
 ~~~
 - tip 2:
 ~~~text
-Think about what should be true together before the freeze happens.
+Ask which two facts must be true together before the freeze fires.
 ~~~
 - tip 3:
 ~~~text
-The bug is in the boolean choice, not in the rest of the pathing.
+The pathing is already there. Focus on the boolean gate.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Trace The Boolean
@@ -1629,14 +1629,14 @@ The bug is in the boolean choice, not in the rest of the pathing.
 - demo Blockly: no
 - body:
 ~~~text
-Read the condition piece by piece. The branch should wait until the ally is close enough and the freeze is still ready.
+Read the two checks piece by piece. Which facts should the freeze gate require together?
 ~~~
 ##### Step 2: Repair The Gate
 - id: bughunt-28-fix
 - demo Blockly: no
 - body:
 ~~~text
-The starter is intentionally using the wrong boolean shape. Swap the operator so both facts have to be true before the special action runs.
+The boolean gate has the wrong shape. Repair it so the freeze waits for the field you identified.
 ~~~
 
 ### Challenge 28: Full Team Tactics
@@ -1653,39 +1653,39 @@ The starter is intentionally using the wrong boolean shape. Swap the operator so
 
 - description:
 ~~~text
-Put your complete Strategy Brain to the test against live defenders.
+Three defenders hold the far side. Field Decisions is on the field.
 ~~~
 - introText:
 ~~~text
-This is the final solo test of the Strategy Brain project. Three defenders are live, and your shared program should now do the whole job before team programming begins.
+Drive the human runner with the keys while one Blockly ally follows its saved program. Three defenders guard the far side.
 ~~~
 #### Tips
 - tip 1:
 ~~~text
-You have the full Strategy Brain toolkit — sensing, territory, NOT, freeze, barriers, and more.
+Your ally carries the Field Decisions toolkit: sensing, territory, NOT, freeze, barriers, and more.
 ~~~
 - tip 2:
 ~~~text
-Think about which tools matter most when an enemy is nearby and the whole program has to carry the run.
+Watch the defenders and choose the rules that give your ally room to work.
 ~~~
 - tip 3:
 ~~~text
-The next project changes everything — two allies will share one program.
+Ahead: Team Strategy Script puts one shared program on several allies. Runner index gives them different jobs.
 ~~~
 #### Tutorial Steps
-##### Step 1: One Last Solo Challenge
+##### Step 1: Human Plus Ally Capstone
 - id: full-team-tactics-last-solo
 - demo Blockly: no
 - body:
 ~~~text
-This is the capstone for your Strategy Brain. Use any part of the single-ally toolkit to score against live defenders.
+Drive the human runner with the keys while one Blockly ally follows its saved program. Work the same field together.
 ~~~
 ##### Step 2: What Comes Next
 - id: full-team-tactics-next
 - demo Blockly: no
 - body:
 ~~~text
-You have written programs that sense, decide, and use special actions. The next challenge asks you to do this for three enemies at once, but now with your ally as a teammate to your human runner.
+Field Decisions gives one ally local rules. Next, Team Strategy Script uses runner index so one shared program can give several allies different jobs.
 ~~~
 
 ## Phase: advanced-teamplay

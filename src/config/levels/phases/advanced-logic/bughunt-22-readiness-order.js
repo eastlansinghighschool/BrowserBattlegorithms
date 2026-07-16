@@ -6,12 +6,12 @@ export default {
   id: "bughunt-22",
   levelKind: "bug_hunt",
   title: "Bug Hunt: First Action Matters",
-  description: "A stray action steals the turn before the barrier check can run.",
-  introText: "This program already knows how to place a barrier, but one move block sits in front of the real decision. Trace the order, fix the first action, and keep the barrier logic readable.",
+  description: "A stray move is crowding out the barrier order.",
+  introText: "The marked square needs a barrier, but a move is getting in the way. Trace which action reaches the runner first.",
   tips: [
     "Only the first action reached on a turn runs, so a move block can hide everything after it.",
-    "The barrier check is already there; the bug is that it never gets the chance to run first.",
-    "Fixing a bug hunt usually means repairing the smallest broken piece, not rebuilding the whole program."
+    "The barrier branch is already on the board. Find out what stops the runner from reaching it.",
+    "Keep the repair small. Change only the part that blocks the barrier order."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -24,13 +24,13 @@ export default {
     {
       id: "bughunt-22-trace",
       title: "Trace The Top Of The Stack",
-      body: "The first action is the important one here. Ask what the runner does before the barrier check ever starts.",
+      body: "Ask which action the runner reaches before it can consider the barrier branch.",
       targetSelector: "#blockly-region"
     },
     {
       id: "bughunt-22-order",
       title: "Put The Check First",
-      body: "The fix should be small: move the readiness branch back to the front so the barrier action can run before any extra motion.",
+      body: "The marked square is waiting. Repair the order so the barrier branch gets its turn.",
       targetSelector: "#canvas-container"
     }
   ],

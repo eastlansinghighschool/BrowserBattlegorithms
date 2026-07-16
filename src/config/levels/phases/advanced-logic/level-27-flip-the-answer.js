@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "flip-the-answer",
   title: "Level 27: Flip The Answer",
-  description: "Use NOT to reverse a boolean check.",
-  introText: "NOT turns a true test into a false one and vice versa, which is often the cleanest way to say what you mean.  Use NOT to flip on my side into not on my side. That lets Field Decisions react after it crosses midfield.",
+  description: "Midfield splits the map, and your ally needs a rule for the far side.",
+  introText: "The ally starts on your side, then crosses midfield. Can one flipped check describe what matters once it reaches enemy territory?",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -17,8 +17,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 6, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 21 },
   tutorialSteps: [
-    { id: "level-25-not", title: "Reverse The Boolean", body: "NOT is useful when the easier idea to say is the opposite of what you want to test. Your shared program can express the idea either way.", targetSelector: "#blockly-region" },
-    { id: "level-25-side", title: "Change After Crossing", body: "NOT reverses whatever boolean it wraps — a true becomes false and a false becomes true. Think about which condition is easier to express, and whether flipping it gets Field Decisions what it needs.", targetSelector: "#canvas-container" }
+    { id: "level-25-not", title: "Reverse The Boolean", body: "NOT flips a boolean: true becomes false, and false becomes true. Use it when the opposite check says the field situation more clearly.", targetSelector: "#blockly-region" },
+    { id: "level-25-side", title: "After Midfield", body: "The ally's side changes at midfield. Decide whether reversing a territory check gives the far side its own rule.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

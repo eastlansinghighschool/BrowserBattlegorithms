@@ -6,8 +6,8 @@ import { STRATEGY_BRAIN_PROJECT, createProjectMetadata } from "../../shared/proj
 export default {
   id: "two-conditions-at-once",
   title: "Level 25: Two Conditions At Once",
-  description: "Use AND so freeze only happens when the enemy is close and the team power is ready again.",
-  introText: "The same Field Decisions program can wait for two truths at once. Here it should only spend the freeze when both the distance and readiness checks say to act.",
+  description: "A defender crowds the flag lane while Area Freeze is ready to spend.",
+  introText: "The defender is close, and the team power may be ready. What has to be true before your ally spends that opening?",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-23-and", title: "Both Must Be True", body: "AND is useful for a timed power: close enough to matter, and ready to use again. That is how the shared program decides when to spend its freeze.", targetSelector: "#blockly-region" },
-    { id: "level-23-lane", title: "Freeze Then Continue", body: "After the freeze is spent, the ally should keep moving toward the flag. Field Decisions should not get stuck on the special action.", targetSelector: "#canvas-container" }
+    { id: "level-23-and", title: "Both Must Be True", body: "AND is true only when both checks are true. Use it when the defender's distance and your team's readiness must agree.", targetSelector: "#blockly-region" },
+    { id: "level-23-lane", title: "After The Opening", body: "Once the power is spent, the field changes. What should the same program do while it waits to recharge?", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,
