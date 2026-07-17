@@ -267,7 +267,9 @@ No protected level is in this phase. No TeacherGuide update was needed: the remo
 
 ## Phase 5 Ready For Orchestration Review: Yes
 
-## Phase 5 Narrow Repair Outcome
+## Phase 5 Narrow Repair Outcome (Accepted)
+
+Accepted after orchestration re-review. The five requested copy corrections accurately describe the authored boards and mechanics, and the Challenge 22 assertion now protects the specific outer-patrol and middle-defender roles. Independent validation regenerated the 46-level copy digest, passed the 29 focused guided-level and digest tests, confirmed zero `copy-voice-*` warnings in `advanced-logic`, and passed scoped diff checking with only the repository's line-ending notice. Plan 95 remains open for the remaining phase dispatches.
 
 Completed the orchestration-requested prose and contract repair without changing mechanics, setup, toolboxes, win/failure conditions, fixtures, or Blockly XML:
 

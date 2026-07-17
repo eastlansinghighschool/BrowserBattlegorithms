@@ -1323,7 +1323,7 @@ Score against live defenders holding the far side.
 ~~~
 - introText:
 ~~~text
-Two enemies are active on the outer lanes while a third defender holds the middle. Reach their flag and bring it home.
+Two defenders patrol the outer lanes while a third holds the middle. Reach their flag and bring it home.
 ~~~
 #### Tips
 - tip 1:
@@ -1413,11 +1413,11 @@ The frozen runner is above the main lane, not on it. Watch how that position cha
 
 - description:
 ~~~text
-A barrier closes the center lane while a defender waits ahead.
+A barrier closes the center lane while a defender patrols ahead.
 ~~~
 - introText:
 ~~~text
-The barrier and defender make distance matter. How far away is the defender when your ally should change course?
+The barrier and patrolling defender make distance matter. How far away is it when your ally should change course?
 ~~~
 #### Tips
 - none
@@ -1442,7 +1442,7 @@ The compare block checks a distance value with <, <=, >, and the other operators
 - demo Blockly: no
 - body:
 ~~~text
-The barrier blocks the center lane, and the defender waits beyond it. Decide what distance should change your ally's plan.
+The barrier blocks the center lane, and the defender patrols beyond it. Decide what distance should change your ally's plan.
 ~~~
 
 ### Level 25: Two Conditions At Once
@@ -1459,7 +1459,7 @@ The barrier blocks the center lane, and the defender waits beyond it. Decide wha
 
 - description:
 ~~~text
-A defender crowds the flag lane while freeze comes back online.
+A defender crowds the flag lane while Area Freeze is ready to spend.
 ~~~
 - introText:
 ~~~text
@@ -1501,7 +1501,7 @@ Midfield and a frozen defender can both change the lane.
 ~~~
 - introText:
 ~~~text
-Your ally crosses into enemy territory while a defender waits nearby. Which warning should matter first when either one appears?
+Your ally crosses into enemy territory while a defender waits nearby. When should either warning ask the same thing of your ally?
 ~~~
 #### Tips
 - none
@@ -1653,7 +1653,7 @@ The boolean gate has the wrong shape. Repair it so the freeze waits for the fiel
 
 - description:
 ~~~text
-Three defenders hold the far side. Field Decisions is on the field.
+Work beside your Blockly ally against three defenders.
 ~~~
 - introText:
 ~~~text
