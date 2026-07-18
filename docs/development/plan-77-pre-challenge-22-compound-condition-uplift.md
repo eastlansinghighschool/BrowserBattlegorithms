@@ -1,5 +1,5 @@
 ---
-id: plan-77-pre-challenge-22-compound-condition-uplift
+id: plan-77
 title: "Pre-Challenge 22 Compound-Condition Uplift"
 status: superseded
 depends_on: []

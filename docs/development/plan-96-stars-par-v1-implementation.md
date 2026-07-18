@@ -1,8 +1,8 @@
 ---
-id: plan-96-stars-par-v1-implementation
+id: plan-96
 title: "Stars And Par V1 Implementation"
 status: draft
-depends_on: [plan-85-campaign-rewrite-charter, plan-86-dynamic-board-evidence-upgrade, plan-91-usage-tracker-v2-rewrite-semantics-amendment]
+depends_on: [plan-85, plan-86, plan-91]
 gate: "before mutation; likely split into smaller packets after prerequisite evidence is reviewed"
 superseded_by: null
 resolution: null

@@ -232,6 +232,12 @@ function readAllPackets(dir) {
   return findPacketFiles(dir).map(readPacket);
 }
 
+/** Return the canonical short packet id encoded by a descriptive filename. */
+function canonicalPacketId(basename) {
+  const match = String(basename).match(/^(plan-\d+[a-z]?)(?:-|$)/i);
+  return match ? match[1].toLowerCase() : null;
+}
+
 /** Index packets by their frontmatter id. */
 function indexById(packets) {
   const byId = {};
@@ -376,12 +382,9 @@ function lintPackets(packets, options = {}) {
     }
 
     if (p.fm.id) {
-      const idMatchesFilename =
-        p.fm.id === p.basename ||
-        p.basename.startsWith(p.fm.id + '-') ||
-        p.basename.startsWith(p.fm.id.replace(/-[^-]+$/, '') + '-');
-      if (!idMatchesFilename) {
-        error(`${loc}: frontmatter id "${p.fm.id}" does not match filename prefix`);
+      const canonicalId = canonicalPacketId(p.basename);
+      if (p.fm.id !== canonicalId) {
+        error(`${loc}: frontmatter id "${p.fm.id}" must equal canonical filename prefix "${canonicalId}"`);
       }
     }
 
@@ -803,6 +806,7 @@ module.exports = {
   renderPacketIndex,
   setPacketStatus,
   updateFrontmatterText,
+  canonicalPacketId,
   parsePacketSortKey,
   VALID_STATUSES,
   TERMINAL_STATUSES,

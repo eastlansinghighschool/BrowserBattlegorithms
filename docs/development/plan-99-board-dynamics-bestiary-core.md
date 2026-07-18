@@ -1,8 +1,8 @@
 ---
-id: plan-99-board-dynamics-bestiary-core
+id: plan-99
 title: "Board Dynamics And Bestiary Core"
 status: complete
-depends_on: [plan-85-campaign-rewrite-charter]
+depends_on: [plan-85]
 gate: "before adding a new NPC behavior beyond the Guard archetype, before renaming existing NPC_BEHAVIORS constants, before editing guided level content"
 superseded_by: null
 resolution: "Orchestrator-verified 2026-07-07: Guard is deterministic (lowest-id tie-break), reuses calculateMoveTowardsTarget, degrades to STAY_STILL when boxed in (no new halt path); tier lint correctly flags static-vs-live contradictions and warns on untiered, proven-contradictions-only as scoped; constants additive (no rename), zero guided-level content changed, guardPost/guardRadius wiring caveat documented in npc-and-cpu.md + Common Traps. 10 new tests, full suite 432/432, lint:levels and build pass. Note: tier-lint real-data path first exercised by Plan 92 (no shipped level is tiered yet)."

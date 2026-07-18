@@ -34,8 +34,8 @@ const PREDICTION_31_STARTER_XML = `
 export default {
   id: "prediction-31",
   title: "Prediction: Role Split",
-  description: "Predict which runner takes the forward job when one program runs on both allies.",
-  introText: "The shared program now runs on two allies. Pick which runner takes the first action, then run and compare the outcome.",
+  description: "One branch faces two allies. Which runner enters it?",
+  introText: "The same starter runs on both allies, but their indexes differ. Make your call before the first turn reveals the branch.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -68,7 +68,7 @@ export default {
     {
       id: "prediction-31-intro",
       title: "Trace the Runner Index",
-      body: "The same program runs on both allies, but runner index lets you choose which one takes the action. Read the branch, then make your prediction before you press Start Level.",
+      body: "The same program runs on both allies, but runner index can separate their branches. Read the check, then make your prediction before Start Level.",
       targetSelector: "#level-panel"
     }
   ],

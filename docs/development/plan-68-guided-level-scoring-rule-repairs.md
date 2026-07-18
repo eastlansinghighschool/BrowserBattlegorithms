@@ -1,5 +1,5 @@
 ---
-id: plan-68-guided-level-scoring-rule-repairs
+id: plan-68
 title: "Guided Level Scoring-Rule Repairs"
 status: complete
 depends_on: []

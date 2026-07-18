@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "freeze-support",
   title: "Level 34: Freeze Support",
-  description: "One ally spends the freeze while another keeps advancing.",
-  introText: "In this level, the lower ally is the freezer and the ally in line with the enemy flag runs to get it.",
+  description: "A patrolling defender guards the flag lane, and the team has one freeze power.",
+  introText: "Two allies wait near the flag lane as a defender patrols toward them. Area Freeze belongs to the whole team, so the approaching patrol creates an opening.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-32-role", title: "A Team Freeze Specialist", body: "Use runner index so only one ally spends the team freeze while the other keeps advancing. The freeze role should stay local and simple.", targetSelector: "#blockly-region" },
-    { id: "level-32-timing", title: "Support The Run", body: "The freezer should act early enough to open the lane for the attacker.", targetSelector: "#canvas-container" }
+    { id: "level-32-role", title: "One Team Power", body: "Runner index can give one ally the freeze branch. Because the power belongs to the team, its timing changes the field for both allies.", targetSelector: "#blockly-region" },
+    { id: "level-32-timing", title: "Watch The Opening", body: "The defender patrols beside the flag lane. Decide what should make the shared program spend its one opening.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

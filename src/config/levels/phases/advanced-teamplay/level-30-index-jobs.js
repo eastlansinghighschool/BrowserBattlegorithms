@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "index-jobs",
   title: "Level 30: Index Jobs",
-  description: "Use runner index comparisons so one ally attacks and the other patrols upward.",
-  introText: "The shared script is getting a job system. One ally is already pushing deep into enemy territory. Have that runner move out of the way, and send the other runner to score.",
+  description: "One ally is deep in enemy territory; the other waits near home.",
+  introText: "The two allies begin in very different places. Their shared script needs runner-index rules that fit the ground each one stands on.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1_2" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
   tutorialSteps: [
-    { id: "level-28-index-compare", title: "Compare The Index", body: "You can compare runner index to a number to choose different branches for different allies. That is how the shared script starts assigning jobs.", targetSelector: "#blockly-region" },
-    { id: "level-28-jobs", title: "Attacker And Patrol", body: "Each index value can be assigned a different role. Think about which ally is better positioned for the scoring job, and what the other should do to stay out of the way.", targetSelector: "#canvas-container" }
+    { id: "level-28-index-compare", title: "Compare The Index", body: "Compare runner index to a number to choose different branches for different allies. One shared script can still assign separate jobs.", targetSelector: "#blockly-region" },
+    { id: "level-28-jobs", title: "Read Their Positions", body: "One ally starts near the far flag while the other is back at home. Decide what each position asks of its runner.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

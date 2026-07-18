@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "jump-team",
   title: "Level 36: Jump Team",
-  description: "One ally uses the jump route while another takes a support path.",
-  introText: "Resources can be assigned by role too. This level gives one ally the dramatic jump job, but that jumper still has to keep moving afterward, using the same shared script as the rest of the team.",
+  description: "A wall splits the two allies as they leave home.",
+  introText: "One ally can jump the wall while the other faces a different lane. Runner index gives each runner a useful response.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -17,8 +17,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
   tutorialSteps: [
-    { id: "level-34-jump-role", title: "Give The Jump To One Ally", body: "Index can decide which ally gets the jump job and which ally avoids the obstacle.", targetSelector: "#blockly-region" },
-    { id: "level-34-wall", title: "One Dramatic Leap", body: "Only one ally should take the jump route. The second ally needs a different role, so the script stays decentralized.", targetSelector: "#canvas-container" }
+    { id: "level-34-jump-role", title: "Give The Jump To One Ally", body: "Runner index can send one ally to a jump branch while the other follows a different rule around the wall.", targetSelector: "#blockly-region" },
+    { id: "level-34-wall", title: "Two Sides Of The Wall", body: "The wall puts the allies in different situations. Decide what each runner should notice from its own lane.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

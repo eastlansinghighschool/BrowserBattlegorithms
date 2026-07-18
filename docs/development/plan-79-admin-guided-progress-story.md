@@ -1,5 +1,5 @@
 ---
-id: plan-79-admin-guided-progress-story
+id: plan-79
 title: "Admin Guided Progress Story"
 status: complete
 depends_on: []

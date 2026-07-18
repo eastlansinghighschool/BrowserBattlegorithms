@@ -1,8 +1,8 @@
 ---
-id: plan-100-dynamic-mechanic-necessity-lint
+id: plan-100
 title: "Dynamic Mechanic Necessity Lint"
 status: complete
-depends_on: [plan-86-dynamic-board-evidence-upgrade, plan-92-pre-challenge-15-living-board-pilot]
+depends_on: [plan-86, plan-92]
 gate: "before changing the win-condition-requires-named-mechanic rule's static path, before adding a new level-metadata field beyond the one specified here"
 superseded_by: null
 resolution: "Orchestrator-verified 2026-07-08: four-path rule correct — static structure checked first (no static+dynamic double-report), dynamic branch requires BOTH the annotation AND a discoverable fixture, and the naive-fixture map is consulted only inside the DYNAMIC branch so a stray fixture cannot silence an unannotated level (anti-bypass edge tested and passing). Linter stays static: loadNaiveSolutionIndex is an fs existence lookup at context-build, never runs a level. On disk: enemy-nearby false positive cleared, the three legitimately-unannotated levels still warn (move-toward-flag/closest-threat/prediction-31), lint exit 0, 8 new lint tests + Plan 99 tier tests green, full suite 455/455, build clean. Degenerate program extracted to a real fixture file, now also surfaced by the Plan 86 evidence generator (naive fixture: yes (fail)) as a bonus."

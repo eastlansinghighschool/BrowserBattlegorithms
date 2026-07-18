@@ -1,8 +1,8 @@
 ---
-id: plan-82-cohort-guided-learning-insight-audit
+id: plan-82
 title: "Cohort Guided Learning Insight Audit"
 status: complete
-depends_on: [plan-80-cohort-usage-privacy-workspace, plan-81-cohort-usage-dataset-and-baseline]
+depends_on: [plan-80, plan-81]
 gate: "before any source, level, UI, docs, or generated-data mutation"
 superseded_by: null
 resolution: "Completed and reviewed 2026-07-09. Three local-only aggregate cohort audits meet the privacy boundary, required report structure, denominator/confidence requirements, and repaired model-ID and catalog-label conventions; retention limits are documented as a major caveat. Plan 83 remains owner-gated for any tracked distillation."

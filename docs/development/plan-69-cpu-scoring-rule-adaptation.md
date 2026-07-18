@@ -1,5 +1,5 @@
 ---
-id: plan-69-cpu-scoring-rule-adaptation
+id: plan-69
 title: "CPU Scoring-Rule Adaptation"
 status: complete
 depends_on: []

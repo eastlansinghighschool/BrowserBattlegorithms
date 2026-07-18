@@ -7,7 +7,7 @@ export default {
   id: "this-or-that",
   title: "Level 26: This Or That",
   description: "Midfield and a frozen defender can both change the lane.",
-  introText: "Your ally crosses into enemy territory while a defender waits nearby. When should either warning ask the same thing of your ally?",
+  introText: "The territory line and frozen defender each give the ally a warning. Either warning can matter on the same turn.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "midfieldPressure",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

@@ -1,9 +1,9 @@
 ---
-id: plan-91-usage-tracker-v2-rewrite-semantics-amendment
+id: plan-91
 title: "Usage Tracker V2 Rewrite Semantics Amendment"
 status: complete
 resolution: "Completed and verified 2026-07-07. Plan 84 now records optional rewrite-aware Usage Tracker V2 fields, v1-compatible absence behavior, compact teacher-useful signal guidance, and neutral downstream implementation packet wording replacing the retired Plan 85/86/87 slot labels."
-depends_on: [plan-84-usage-tracker-v2-design-contract, plan-85-campaign-rewrite-charter]
+depends_on: [plan-84, plan-85]
 gate: "before mutation; this packet should not run until Plan 85 owner gate is resolved"
 summary: >-
   Amend Plan 84 before tracker implementation so Usage Tracker V2 can capture rewrite-aware semantics: arcs, board-dynamics tiers, bestiary encounters, stars/par/mastery outcomes, film-review summaries, and corrected downstream numbering.

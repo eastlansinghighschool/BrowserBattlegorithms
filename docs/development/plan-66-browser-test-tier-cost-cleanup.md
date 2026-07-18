@@ -1,5 +1,5 @@
 ---
-id: plan-66-browser-test-tier-cost-cleanup
+id: plan-66
 title: "Browser Test Tier Cost Cleanup"
 status: complete
 depends_on: []

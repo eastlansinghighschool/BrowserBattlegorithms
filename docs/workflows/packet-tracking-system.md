@@ -48,7 +48,7 @@ summary: >-
 
 | Field | Purpose |
 |---|---|
-| `id` | Short canonical id for `check` / `depends_on` lookups. Must match the file prefix (`plan-07` matches `plan-07-*.md`). |
+| `id` | Short canonical id for `check` / `depends_on` / `set` lookups and generated-index display. It must equal the file prefix (`plan-07` for `plan-07-*.md`). |
 | `title` | Human-readable name shown in the generated index. |
 | `status` | Hand-set lifecycle state (see §3). This is the only place status is written by hand. |
 | `depends_on` | List of packet ids whose work must be `complete` before this packet is runnable. `[]` if none. |
@@ -133,7 +133,7 @@ Error-level violations:
 - Terminal status (`complete`, `superseded`, `parked`) with `resolution: null`.
 - `status: superseded` with `superseded_by: null`.
 - Duplicate `id` values across packets.
-- `id` / filename mismatch (the id must equal or be a prefix of the basename).
+- `id` / filename mismatch (the id must equal the canonical short filename prefix, such as `plan-101` for `plan-101-title.md`).
 - Index markers stale (the content between `<!-- plan-index:begin -->` and `<!-- plan-index:end -->` in the README does not match what `render` would generate).
 
 Warn-level (reported but do not cause nonzero exit):

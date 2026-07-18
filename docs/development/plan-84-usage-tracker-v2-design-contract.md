@@ -1,5 +1,5 @@
 ---
-id: plan-84-usage-tracker-v2-design-contract
+id: plan-84
 title: "Usage Tracker V2 Design Contract"
 status: complete
 depends_on: []

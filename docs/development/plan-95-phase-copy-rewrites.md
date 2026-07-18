@@ -1,8 +1,9 @@
 ---
-id: plan-95-phase-copy-rewrites
+id: plan-95
 title: "Phase Copy Rewrites"
-status: ready
-depends_on: [plan-85-campaign-rewrite-charter, plan-94-copy-voice-contract-lint-warnings]
+status: complete
+resolution: "Orchestrator accepted all seven phase-scoped guided copy rewrites, the deterministic 46-level digest, zero copy-voice warnings, and the final factual-accuracy and campaign-rhythm repairs; mechanics remained unchanged."
+depends_on: [plan-85, plan-94]
 gate: "before each phase rewrite lands"
 summary: >-
   Rewrite student-facing guided copy one phase at a time after each phase's board behavior is settled, into the Plan 85 in-world scout/coach voice. First deliverable is a durable copy-digest generator (all level voice in one phase-grouped artifact, with lint hits and board context) that serves every phase dispatch, orchestration review, and future voice-aware plans. Each phase dispatch has a concrete floor — clear the Plan 94 copy-voice lint warnings for that phase (re-lint to zero or explicitly waive) — and a ceiling: a genuine voice pass over the phase's copy, not just silencing flagged lines. Voice-only rewrites are permitted in protected levels (S12 protects the lesson, not the prose); mechanics stay frozen. Recommended first phase: resources-and-territory, whose boards just settled (Plans 93/103).

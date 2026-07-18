@@ -1,5 +1,5 @@
 ---
-id: plan-41-keyboard-gemini-guided-playthrough
+id: plan-41
 title: "Keyboard-First Gemini Guided Playthrough Campaign"
 status: complete
 depends_on: []

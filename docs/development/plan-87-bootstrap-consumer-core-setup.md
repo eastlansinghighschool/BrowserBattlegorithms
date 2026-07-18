@@ -1,5 +1,5 @@
 ---
-id: plan-87-bootstrap-consumer-core-setup
+id: plan-87
 title: "Bootstrap Consumer Core Setup"
 status: complete
 depends_on: []

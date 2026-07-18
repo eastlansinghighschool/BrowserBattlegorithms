@@ -1,5 +1,5 @@
 ---
-id: plan-74-guided-reference-behavior-evidence
+id: plan-74
 title: "Guided Reference Behavior Evidence"
 status: complete
 depends_on: []

@@ -1,5 +1,5 @@
 ---
-id: plan-70-free-play-tactical-cpu-rut-escape
+id: plan-70
 title: "Free Play Tactical CPU Rut Escape"
 status: complete
 depends_on: []

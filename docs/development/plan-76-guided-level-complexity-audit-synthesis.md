@@ -1,5 +1,5 @@
 ---
-id: plan-76-guided-level-complexity-audit-synthesis
+id: plan-76
 title: "Guided Level Complexity Audit Synthesis"
 status: complete
 depends_on: []

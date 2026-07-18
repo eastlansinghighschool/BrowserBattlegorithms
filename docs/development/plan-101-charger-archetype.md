@@ -1,8 +1,8 @@
 ---
-id: plan-101-charger-archetype
+id: plan-101
 title: "Charger Archetype (Bestiary Core II)"
 status: complete
-depends_on: [plan-99-board-dynamics-bestiary-core, plan-92-pre-challenge-15-living-board-pilot]
+depends_on: [plan-99, plan-92]
 gate: "before adding a bestiary archetype beyond the Charger, before renaming existing NPC_BEHAVIORS constants, before editing guided level content"
 superseded_by: null
 resolution: "Orchestrator-verified 2026-07-08. getGuidedChargerAction confirmed on disk: idle-until-aligned -> commit-at-trigger -> straight-line charge -> stop-and-clear at wall/barrier/edge, no throw. Verified the emitted { actionType: MOVE, dx, dy } is the canonical delta-move shape (matches calculateMoveTowardsTarget / npcType1 / turnEngine case MOVE), not a novel shape. Tie-break row-before-column, nearest-along-line, lowest-id (localeCompare) is deterministic. isCellBlockedForRunner returns true out-of-bounds (movement.js:44) so edge-stop is honest. chargeRange wired opt-in through setup.js:98-100 in the same Number.isFinite block as guardPost/guardRadius; unbounded default per packet scope note. chargeDirection reset in Runner constructor (53) AND resetToInitial (161) - prevents a stale committed charge surviving a round reset (implementer-found, correct). 10 new Charger tests + full suite 463/463, lint:levels (only pre-existing untiered warnings, none from this packet), build all pass. No guided level content touched - pure Plan 93 infrastructure, mirroring Plan 99->92. Implementer correctly left status for orchestration."

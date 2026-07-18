@@ -1,5 +1,5 @@
 ---
-id: plan-86-dynamic-board-evidence-upgrade
+id: plan-86
 title: "Dynamic Board Evidence Upgrade"
 status: complete
 resolution: "Completed and verified 2026-07-07 after second repair pass. Confirmed stable traversal-based Blockly coverage ids, byte-stable behavior evidence regeneration, targeted 16-test suite pass, and Plan 86 evidence remains trace-observed execution evidence rather than proof of full semantic branch coverage."

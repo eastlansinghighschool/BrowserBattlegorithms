@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "barrier-specialist",
   title: "Level 35: Barrier Specialist",
-  description: "One ally places the team barrier to stop a patrolling NPC, opening the lane for the attacker.",
-  introText: "An enemy is patrolling up and down the column your attacker needs to cross. Without a barrier, it will be in the attacker's lane at exactly the wrong moment. Have one ally place the barrier to cap the patrol, then keep the attacker moving toward the flag.",
+  description: "A patroller crosses the row leading to the enemy flag.",
+  introText: "The patroller keeps cutting across the flag lane. Your team has one barrier and two allies. What role could change that crossing?",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 13 },
   tutorialSteps: [
-    { id: "level-35-index-barrier", title: "Only One Ally Should Place", body: "Use runner index so the support ally places the barrier early, then retreats. The attacker should keep advancing toward the flag every turn.", targetSelector: "#blockly-region" },
-    { id: "level-35-patrol", title: "Cap The Patrol Lane", body: "Watch where the patrolling NPC turns around. A barrier placed in its path limits how far it can travel, keeping the attacker's row clear.", targetSelector: "#canvas-container" }
+    { id: "level-35-index-barrier", title: "One Barrier Role", body: "Runner index can reserve the barrier branch for one ally while the other follows a different field rule.", targetSelector: "#blockly-region" },
+    { id: "level-35-patrol", title: "Watch The Patrol", body: "Watch where the patroller turns. A barrier in its path changes how far it can travel across the flag lane.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

@@ -5,8 +5,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT_TOOLBOX_BLOCKS } from "../../shared/projec
 export default {
   id: "optional-double-carrier-showdown",
   title: "Optional Lab: Double Carrier Showdown",
-  description: "Both teams start with a carrier. Your team cannot score while your own flag is away — stop the enemy carrier to unblock the run.",
-  introText: "Both teams start with a flag carrier already in motion. Under the scoring rules, your team cannot score while your own flag is away — stopping the enemy carrier is the only way to unblock your run. This lab is about using runner roles to escort your carrier and intercept theirs at the same time.",
+  description: "Both teams begin with a carrier, and neither can score while its own flag is away.",
+  introText: "You carry the enemy flag, but Team 2 carries yours. Bring your flag home before your carrier can score. The field needs escort and interception.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "wideScrimmage",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.WAIT_FOR_INPUT,
@@ -27,13 +27,13 @@ export default {
     {
       id: "optional-double-carrier-intro",
       title: "Two Carriers, One Decision",
-      body: "Your runner starts with the enemy flag, and Team 2 already has your flag. Your team cannot score while your own flag is away — stopping the enemy carrier is not optional, it is what unblocks the scoring run.",
+      body: "Your human runner starts with the enemy flag, and Team 2 already has yours. Your team cannot score until your own flag returns home.",
       targetSelector: "#canvas-container"
     },
     {
       id: "optional-double-carrier-roles",
       title: "Split Escort And Intercept",
-      body: "Use runner index and teammate-has-flag to give one ally escort duty and one ally interception duty. Intercepting the enemy carrier returns your flag home and unblocks the scoring run.",
+      body: "Runner index and teammate-has-flag can give allies different views of the two carriers. Decide who should watch each side of the field.",
       targetSelector: "#blockly-region"
     }
   ],

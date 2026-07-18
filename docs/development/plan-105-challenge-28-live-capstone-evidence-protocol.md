@@ -1,8 +1,8 @@
 ---
-id: plan-105-challenge-28-live-capstone-evidence-protocol
+id: plan-105
 title: "Challenge 28 Live Capstone Evidence Protocol"
 status: ready
-depends_on: [plan-104-field-decisions-identity-continuity]
+depends_on: [plan-104]
 gate: "owner review of the blank protocol before any classroom evidence is collected"
 superseded_by: null
 resolution: null

@@ -1,9 +1,9 @@
 ---
-id: plan-88-bootstrap-packet-frontmatter-index-migration
+id: plan-88
 title: "Bootstrap Packet Frontmatter And Generated Index Migration"
 status: complete
 resolution: "Completed and verified 2026-07-07 after dependency-frontmatter repair. Confirmed generated index is current, packet dependency brakes block Plans 81 and 90 appropriately, Plan 92 remains draft-gated, and Plan 80/89 readiness was restored after review correction."
-depends_on: [plan-87-bootstrap-consumer-core-setup]
+depends_on: [plan-87]
 gate: "before archiving, deleting, or renaming packet files; before changing packet semantics beyond status metadata"
 summary: >-
   After Plan 87, migrate packet docs to Bootstrap-compatible frontmatter and convert this README to the generated packet-index convention, preserving existing packet semantics and Plan 77's superseded state.

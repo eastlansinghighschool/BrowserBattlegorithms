@@ -1501,7 +1501,7 @@ Midfield and a frozen defender can both change the lane.
 ~~~
 - introText:
 ~~~text
-Your ally crosses into enemy territory while a defender waits nearby. When should either warning ask the same thing of your ally?
+The territory line and frozen defender each give the ally a warning. Either warning can matter on the same turn.
 ~~~
 #### Tips
 - none
@@ -1539,7 +1539,7 @@ Midfield splits the map, and your ally needs a rule for the far side.
 ~~~
 - introText:
 ~~~text
-The ally starts on your side, then crosses midfield. Can one flipped check describe what matters once it reaches enemy territory?
+Midfield is behind the ally now. On enemy territory, the same check can mean the opposite thing.
 ~~~
 #### Tips
 - none
@@ -1700,15 +1700,15 @@ Field Decisions gives one ally local rules. Next, Team Strategy Script uses runn
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 50 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-Two allies now share one workspace. Use runner index so one ally attacks and the other supports.
+Two allies share one program but need different jobs.
 ~~~
 - introText:
 ~~~text
-This is the beginning of Team Strategy Script.  You want the ally with runner index 0 to be doing the scoring in this level, not the ally with runner index 1. The same program runs on both allies, so runner index has to decide which one takes the scoring job.
+Team Strategy Script begins here. Two allies leave different lanes, but both run the same blocks. Runner index gives the shared program separate jobs.
 ~~~
 #### Tips
 - none
@@ -1718,14 +1718,14 @@ This is the beginning of Team Strategy Script.  You want the ally with runner in
 - demo Blockly: no
 - body:
 ~~~text
-Both allies run the same blocks every turn. The first ally has index 0 and the second has index 1. A check like "if runner index equals 0" means only the first ally follows that branch — the second skips it and does something else instead.
+Both allies run the same blocks every turn. The first has index 0 and the second has index 1. An index check can send them down different branches.
 ~~~
-##### Step 2: Index 0 And Index 1
+##### Step 2: Two Lanes
 - id: level-27-index
 - demo Blockly: no
 - body:
 ~~~text
-Only one ally should take the scoring job here. The other ally needs to stay clear of the lane so the shared script stays readable.
+One ally has a clear route to the flag. Look for a different job that keeps its teammate from crowding that lane.
 ~~~
 
 ### Level 30: Index Jobs
@@ -1742,11 +1742,11 @@ Only one ally should take the scoring job here. The other ally needs to stay cle
 
 - description:
 ~~~text
-Use runner index comparisons so one ally attacks and the other patrols upward.
+One ally is deep in enemy territory; the other waits near home.
 ~~~
 - introText:
 ~~~text
-The shared script is getting a job system. One ally is already pushing deep into enemy territory. Have that runner move out of the way, and send the other runner to score.
+The two allies begin in very different places. Their shared script needs runner-index rules that fit the ground each one stands on.
 ~~~
 #### Tips
 - none
@@ -1756,14 +1756,14 @@ The shared script is getting a job system. One ally is already pushing deep into
 - demo Blockly: no
 - body:
 ~~~text
-You can compare runner index to a number to choose different branches for different allies. That is how the shared script starts assigning jobs.
+Compare runner index to a number to choose different branches for different allies. One shared script can still assign separate jobs.
 ~~~
-##### Step 2: Attacker And Patrol
+##### Step 2: Read Their Positions
 - id: level-28-jobs
 - demo Blockly: no
 - body:
 ~~~text
-Each index value can be assigned a different role. Think about which ally is better positioned for the scoring job, and what the other should do to stay out of the way.
+One ally starts near the far flag while the other is back at home. Decide what each position asks of its runner.
 ~~~
 
 ### Level 31: First Two Defend
@@ -1780,11 +1780,11 @@ Each index value can be assigned a different role. Think about which ally is bet
 
 - description:
 ~~~text
-Teach range checks on runner index so two allies take one job and the third takes another.
+Three allies crowd a barrier in the center lane.
 ~~~
 - introText:
 ~~~text
-Now the team has three program-controlled allies. Index < 2 is a clean way to group the first two together and move them out of the way, while the third ally runs forward.
+Three allies share the field, but the first two face the same blocked row. An index range can group that pair and leave another job open.
 ~~~
 #### Tips
 - tip 1:
@@ -1797,14 +1797,14 @@ Stay Still can remove a barrier directly in front — remember that from an earl
 - demo Blockly: no
 - body:
 ~~~text
-Index < 2 can group the first two allies together while index 2 heads forward. That keeps the shared script simple and readable.
+An index range such as < 2 can group the first two allies. The remaining index can follow a different branch in the same program.
 ~~~
 ##### Step 2: Three Allies, One Program
 - id: level-29-three-allies
 - demo Blockly: no
 - body:
 ~~~text
-Two allies need to clear space so the third runner can finish the puzzle.
+The barrier makes the center row crowded. Decide which runners need the same response and which one needs a different route.
 ~~~
 
 ### Level 32: Escort The Carrier
@@ -1821,11 +1821,11 @@ Two allies need to clear space so the third runner can finish the puzzle.
 
 - description:
 ~~~text
-Combine teammate-has-flag with runner index to send one ally home and another into support mode.
+One ally begins with the enemy flag while another waits near home.
 ~~~
 - introText:
 ~~~text
-The lead ally starts with the flag already and should move back to base.  The other ally should move forward to support.
+Your lead ally already carries the flag. The second ally sees a different part of the field. The shared program needs local jobs for both runners.
 ~~~
 #### Tips
 - none
@@ -1835,14 +1835,14 @@ The lead ally starts with the flag already and should move back to base.  The ot
 - demo Blockly: no
 - body:
 ~~~text
-The lead ally begins as the carrier. Use teammate-has-flag plus index to send the second ally into position.
+The lead ally begins as the carrier. Teammate-has-flag and runner index can give the other ally a different response.
 ~~~
-##### Step 2: Escort The Return
+##### Step 2: Watch The Return
 - id: level-30-support
 - demo Blockly: no
 - body:
 ~~~text
-This challenge is about support movement, not chasing a new flag. The same script should protect the carrier and keep the lane open.
+The carrier and the nearby ally are not in the same situation. Build local rules that notice the flag and the lane around it.
 ~~~
 
 ### Level 33: Closest Enemy Defender
@@ -1859,11 +1859,11 @@ This challenge is about support movement, not chasing a new flag. The same scrip
 
 - description:
 ~~~text
-One ally attacks while another uses closest-enemy targeting as a defender.
+Two live defenders have crossed onto your side of the field.
 ~~~
 - introText:
 ~~~text
-This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side. The shared script is starting to split attack and defense.
+One ally has a route to the far flag while two defenders press close to home. The same program must notice both jobs.
 ~~~
 #### Tips
 - none
@@ -1873,14 +1873,14 @@ This is the first advanced level where one ally chases the goal and another reac
 - demo Blockly: no
 - body:
 ~~~text
-Use runner index to make the first ally attack and the second react to the closest enemy. Each ally is still running the same code, just with a different role.
+Runner index can give one ally a flag-focused branch and another a closest-enemy branch. Both still follow the same shared code.
 ~~~
-##### Step 2: Defend Your Side First
+##### Step 2: Pressure At Home
 - id: level-31-pressure
 - demo Blockly: no
 - body:
 ~~~text
-The defender’s job starts on your side of the field while the attacker keeps advancing.
+The two defenders are already on your side. Decide what the nearby ally should notice while its teammate works the far lane.
 ~~~
 
 ### Level 34: Freeze Support
@@ -1897,28 +1897,28 @@ The defender’s job starts on your side of the field while the attacker keeps a
 
 - description:
 ~~~text
-One ally spends the freeze while another keeps advancing.
+A patrolling defender guards the flag lane, and the team has one freeze power.
 ~~~
 - introText:
 ~~~text
-In this level, the lower ally is the freezer and the ally in line with the enemy flag runs to get it.
+Two allies wait near the flag lane as a defender patrols toward them. Area Freeze belongs to the whole team, so the approaching patrol creates an opening.
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: A Team Freeze Specialist
+##### Step 1: One Team Power
 - id: level-32-role
 - demo Blockly: no
 - body:
 ~~~text
-Use runner index so only one ally spends the team freeze while the other keeps advancing. The freeze role should stay local and simple.
+Runner index can give one ally the freeze branch. Because the power belongs to the team, its timing changes the field for both allies.
 ~~~
-##### Step 2: Support The Run
+##### Step 2: Watch The Opening
 - id: level-32-timing
 - demo Blockly: no
 - body:
 ~~~text
-The freezer should act early enough to open the lane for the attacker.
+The defender patrols beside the flag lane. Decide what should make the shared program spend its one opening.
 ~~~
 
 ### Level 35: Barrier Specialist
@@ -1931,32 +1931,32 @@ The freezer should act early enough to open the lane for the attacker.
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 47 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-One ally places the team barrier to stop a patrolling NPC, opening the lane for the attacker.
+A patroller crosses the row leading to the enemy flag.
 ~~~
 - introText:
 ~~~text
-An enemy is patrolling up and down the column your attacker needs to cross. Without a barrier, it will be in the attacker's lane at exactly the wrong moment. Have one ally place the barrier to cap the patrol, then keep the attacker moving toward the flag.
+The patroller keeps cutting across the flag lane. Your team has one barrier and two allies. What role could change that crossing?
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: Only One Ally Should Place
+##### Step 1: One Barrier Role
 - id: level-35-index-barrier
 - demo Blockly: no
 - body:
 ~~~text
-Use runner index so the support ally places the barrier early, then retreats. The attacker should keep advancing toward the flag every turn.
+Runner index can reserve the barrier branch for one ally while the other follows a different field rule.
 ~~~
-##### Step 2: Cap The Patrol Lane
+##### Step 2: Watch The Patrol
 - id: level-35-patrol
 - demo Blockly: no
 - body:
 ~~~text
-Watch where the patrolling NPC turns around. A barrier placed in its path limits how far it can travel, keeping the attacker's row clear.
+Watch where the patroller turns. A barrier in its path changes how far it can travel across the flag lane.
 ~~~
 
 ### Level 36: Jump Team
@@ -1969,15 +1969,15 @@ Watch where the patrolling NPC turns around. A barrier placed in its path limits
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 36 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-One ally uses the jump route while another takes a support path.
+A wall splits the two allies as they leave home.
 ~~~
 - introText:
 ~~~text
-Resources can be assigned by role too. This level gives one ally the dramatic jump job, but that jumper still has to keep moving afterward, using the same shared script as the rest of the team.
+One ally can jump the wall while the other faces a different lane. Runner index gives each runner a useful response.
 ~~~
 #### Tips
 - none
@@ -1987,14 +1987,14 @@ Resources can be assigned by role too. This level gives one ally the dramatic ju
 - demo Blockly: no
 - body:
 ~~~text
-Index can decide which ally gets the jump job and which ally avoids the obstacle.
+Runner index can send one ally to a jump branch while the other follows a different rule around the wall.
 ~~~
-##### Step 2: One Dramatic Leap
+##### Step 2: Two Sides Of The Wall
 - id: level-34-wall
 - demo Blockly: no
 - body:
 ~~~text
-Only one ally should take the jump route. The second ally needs a different role, so the script stays decentralized.
+The wall puts the allies in different situations. Decide what each runner should notice from its own lane.
 ~~~
 
 ### Prediction: Role Split
@@ -2011,11 +2011,11 @@ Only one ally should take the jump route. The second ally needs a different role
 
 - description:
 ~~~text
-Predict which runner takes the forward job when one program runs on both allies.
+One branch faces two allies. Which runner enters it?
 ~~~
 - introText:
 ~~~text
-The shared program now runs on two allies. Pick which runner takes the first action, then run and compare the outcome.
+The same starter runs on both allies, but their indexes differ. Make your call before the first turn reveals the branch.
 ~~~
 #### Tips
 - none
@@ -2025,7 +2025,7 @@ The shared program now runs on two allies. Pick which runner takes the first act
 - demo Blockly: no
 - body:
 ~~~text
-The same program runs on both allies, but runner index lets you choose which one takes the action. Read the branch, then make your prediction before you press Start Level.
+The same program runs on both allies, but runner index can separate their branches. Read the check, then make your prediction before Start Level.
 ~~~
 
 ### Bug Hunt: Role Split
@@ -2042,11 +2042,11 @@ The same program runs on both allies, but runner index lets you choose which one
 
 - description:
 ~~~text
-Two allies are taking the same job, so one role never gets a useful branch.
+Two allies are crowding the same lane.
 ~~~
 - introText:
 ~~~text
-This starter is a shared-program debugging checkpoint for the team-strategy arc. One runner should attack while the other stays out of the lane, but the else branch is wrong.
+The shared starter sends both allies toward the same ground. Trace the runner-index branches and find where their jobs stop being different.
 ~~~
 #### Tips
 - tip 1:
@@ -2055,11 +2055,11 @@ Runner index is what lets one program mean different jobs for different allies.
 ~~~
 - tip 2:
 ~~~text
-If two allies chase the same target, one of them is probably missing a distinct role.
+When two allies chase the same target, check whether one index lost its own branch.
 ~~~
 - tip 3:
 ~~~text
-A good fix gives each runner a useful local job without inventing a second program.
+Repair the local jobs without adding a second program.
 ~~~
 #### Tutorial Steps
 ##### Step 1: Trace The Roles
@@ -2067,14 +2067,14 @@ A good fix gives each runner a useful local job without inventing a second progr
 - demo Blockly: no
 - body:
 ~~~text
-This shared program should give each ally a different job. Check which runner index enters the attack branch and whether the other ally gets a support job.
+Trace each runner index through the shared program. Where do the two allies begin making the same choice?
 ~~~
 ##### Step 2: Split The Jobs
 - id: bughunt-37-fix
 - demo Blockly: no
 - body:
 ~~~text
-The bug is that the second branch duplicates the wrong target. Change it so the allies do not all chase the same thing.
+One branch is sending both runners to the same ground. Repair the split so each index has its own local job.
 ~~~
 
 ### Challenge 37: Advanced Scrimmage
@@ -2091,11 +2091,11 @@ The bug is that the second branch duplicates the wrong target. Change it so the 
 
 - description:
 ~~~text
-Use one shared program for three allies in a real capture-the-flag scrimmage.
+Three allies face three live defenders across a wide field.
 ~~~
 - introText:
 ~~~text
-This capstone brings together indexing, comparisons, movement helpers, and team strategy in one bigger match. It is the final test of the same shared program you have been improving all project long.
+Your team needs a point against three live defenders. One shared program must give each ally a useful local response as the field changes.
 ~~~
 #### Tips
 - none
@@ -2105,14 +2105,14 @@ This capstone brings together indexing, comparisons, movement helpers, and team 
 - demo Blockly: no
 - body:
 ~~~text
-This final level is a real scrimmage. One shared program has to divide attacking, defending, and support work across the team.
+Three allies run one shared program against three live defenders on the far side. Build local rules that give the team different work.
 ~~~
-##### Step 2: Score For Real
+##### Step 2: Bring A Point Home
 - id: level-35-real-score
 - demo Blockly: no
 - body:
 ~~~text
-The capstone only passes when your team actually scores a point in live play. Any ally can bring the point home, so focus on the role the script has assigned.
+A point is the goal. Any ally can carry it home, so watch what each runner sees as the scrimmage shifts.
 ~~~
 
 ## Phase: optional
@@ -2131,28 +2131,28 @@ The capstone only passes when your team actually scores a point in live play. An
 
 - description:
 ~~~text
-Try the Move Randomly block in a small sandbox challenge.
+A clear lane leaves the next move to chance.
 ~~~
 - introText:
 ~~~text
-This optional lab is here to show the random movement block directly. It is not part of the main advanced unlock path.
+Move Randomly chooses a direction each turn. Run the same program more than once and watch how the path changes.
 ~~~
 #### Tips
 - none
 #### Tutorial Steps
-##### Step 1: Optional Randomness Lab
+##### Step 1: A Random Direction
 - id: level-36-random
 - demo Blockly: no
 - body:
 ~~~text
-Move Randomly picks one of the four cardinal directions each turn. This lab is optional because randomness is harder to predict.
+Move Randomly picks one of the four directions each turn. The runner does not know which direction comes next.
 ~~~
-##### Step 2: Try A Few Runs
+##### Step 2: Run It Again
 - id: level-36-lab
 - demo Blockly: no
 - body:
 ~~~text
-Some attempts will finish faster than others. That is the point of the lab: to see how a random action feels in the game.
+One run may reach the marker quickly; another may wander. Watch what stays the same and what chance changes.
 ~~~
 
 ### Optional Lab: Double Carrier Showdown
@@ -2165,15 +2165,15 @@ Some attempts will finish faster than others. That is the point of the lab: to s
 - boardDynamicsTier: not set
 
 #### Copy-Voice Lint Hits
-- copy-voice-prose-length: introText is 55 words, over the ~35-word pre-play prose cap (charter S4)
+- none
 
 - description:
 ~~~text
-Both teams start with a carrier. Your team cannot score while your own flag is away — stop the enemy carrier to unblock the run.
+Both teams begin with a carrier, and neither can score while its own flag is away.
 ~~~
 - introText:
 ~~~text
-Both teams start with a flag carrier already in motion. Under the scoring rules, your team cannot score while your own flag is away — stopping the enemy carrier is the only way to unblock your run. This lab is about using runner roles to escort your carrier and intercept theirs at the same time.
+You carry the enemy flag, but Team 2 carries yours. Bring your flag home before your carrier can score. The field needs escort and interception.
 ~~~
 #### Tips
 - none
@@ -2183,12 +2183,12 @@ Both teams start with a flag carrier already in motion. Under the scoring rules,
 - demo Blockly: no
 - body:
 ~~~text
-Your runner starts with the enemy flag, and Team 2 already has your flag. Your team cannot score while your own flag is away — stopping the enemy carrier is not optional, it is what unblocks the scoring run.
+Your human runner starts with the enemy flag, and Team 2 already has yours. Your team cannot score until your own flag returns home.
 ~~~
 ##### Step 2: Split Escort And Intercept
 - id: optional-double-carrier-roles
 - demo Blockly: no
 - body:
 ~~~text
-Use runner index and teammate-has-flag to give one ally escort duty and one ally interception duty. Intercepting the enemy carrier returns your flag home and unblocks the scoring run.
+Runner index and teammate-has-flag can give allies different views of the two carriers. Decide who should watch each side of the field.
 ~~~

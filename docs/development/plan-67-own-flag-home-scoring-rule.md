@@ -1,5 +1,5 @@
 ---
-id: plan-67-own-flag-home-scoring-rule
+id: plan-67
 title: "Own-Flag-Home Scoring Rule"
 status: complete
 depends_on: []

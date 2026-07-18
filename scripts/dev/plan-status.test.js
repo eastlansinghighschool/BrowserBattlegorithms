@@ -29,6 +29,7 @@ const {
   generateIndexTable,
   lintPackets,
   setPacketStatus,
+  canonicalPacketId,
   detectEol,
   normalizeNewlines,
   parsePacketSortKey,
@@ -141,7 +142,7 @@ function makeFixtureWorkspace(packets, options = {}) {
 
   for (const packet of packets) {
     const text = makePacketText(packet);
-    fs.writeFileSync(path.join(docsDir, `${packet.id}.md`), text, 'utf8');
+    fs.writeFileSync(path.join(docsDir, `${packet.filename || packet.id}.md`), text, 'utf8');
   }
 
   const readmeText = options.readmeText || `# Packets\n\n${INDEX_BEGIN}\n${generateIndexTable(packets.map((packet) => makePacket(packet.id, packet)), indexById(packets.map((packet) => makePacket(packet.id, packet))))}\n${INDEX_END}\n`;
@@ -516,6 +517,26 @@ section('lint logic — id/filename mismatch (simulated)');
   assert(!mismatch, 'matching id/filename is clean');
 }
 
+section('lint logic — descriptive filename requires a canonical short id');
+
+{
+  const validPackets = [makePacket('plan-101-charger-archetype', { id: 'plan-101', status: 'ready' })];
+  const validIndex = generateIndexTable(validPackets, indexById(validPackets));
+  const validLint = lintPackets(validPackets, {
+    readmeText: INDEX_BEGIN + '\n' + validIndex + '\n' + INDEX_END + '\n',
+    reportsDir: path.join(os.tmpdir(), 'plan-status-no-reports'),
+  });
+  eq(validLint.errors, [], 'short id is valid for a descriptive filename');
+
+  const verbosePackets = [makePacket('plan-101-charger-archetype', { id: 'plan-101-charger-archetype', status: 'ready' })];
+  const verboseIndex = generateIndexTable(verbosePackets, indexById(verbosePackets));
+  const verboseLint = lintPackets(verbosePackets, {
+    readmeText: INDEX_BEGIN + '\n' + verboseIndex + '\n' + INDEX_END + '\n',
+    reportsDir: path.join(os.tmpdir(), 'plan-status-no-reports'),
+  });
+  assert(verboseLint.errors.some((message) => message.includes('must equal canonical filename prefix')), 'verbose id is rejected for a descriptive filename');
+}
+
 section('lint logic — duplicate ids (simulated)');
 
 {
@@ -558,6 +579,33 @@ section('setPacketStatus — valid non-terminal transition writes and re-renders
   assert(afterReadme !== beforeReadme, 'README index changed');
   eq(parseFrontmatter(afterPacket).status, 'ready', 'packet status updated to ready');
   assert(afterReadme.includes('`plan-01` | Plan One | ready'), 'README re-rendered with new status');
+}
+
+section('setPacketStatus — short id resolves a descriptive packet filename');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-101', filename: 'plan-101-charger-archetype', title: 'Charger Archetype', status: 'draft', summary: 'Adds a Charger.' },
+  ]);
+  const packetPath = path.join(workspace.docsDir, 'plan-101-charger-archetype.md');
+  const result = setPacketStatus('plan-101', 'ready', {
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+
+  assert(result.ok, 'short id updates a descriptive filename');
+  eq(parseFrontmatter(fs.readFileSync(packetPath, 'utf8')).id, 'plan-101', 'canonical short id remains in frontmatter');
+  eq(parseFrontmatter(fs.readFileSync(packetPath, 'utf8')).status, 'ready', 'descriptive packet status is updated');
+  assert(fs.readFileSync(workspace.readmePath, 'utf8').includes(String.fromCharCode(96) + 'plan-101' + String.fromCharCode(96) + ' | Charger Archetype | ready'), 'index displays the short id');
+}
+
+section('canonicalPacketId — descriptive filenames use a short id');
+
+{
+  eq(canonicalPacketId('plan-101-charger-archetype'), 'plan-101', 'descriptive filename resolves to short id');
+  eq(canonicalPacketId('plan-10b-follow-up'), 'plan-10b', 'letter suffix remains part of short id');
+  eq(canonicalPacketId('not-a-packet'), null, 'non-packet filename has no canonical id');
 }
 
 section('setPacketStatus — terminal without resolution is refused with no write');

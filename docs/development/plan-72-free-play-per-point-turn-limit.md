@@ -1,5 +1,5 @@
 ---
-id: plan-72-free-play-per-point-turn-limit
+id: plan-72
 title: "Free Play Per-Point Turn Limit"
 status: complete
 depends_on: []

@@ -1,8 +1,8 @@
 ---
-id: plan-81-cohort-usage-dataset-and-baseline
+id: plan-81
 title: "Cohort Usage Dataset And Baseline"
 status: complete
-depends_on: [plan-80-cohort-usage-privacy-workspace]
+depends_on: [plan-80]
 gate: "before adding dependencies, writing outside `local/usage-cohorts/`, committing generated cohort data, or making curriculum recommendations beyond deterministic baseline flags"
 superseded_by: null
 resolution: "Completed and verified 2026-07-08. Local-only cohort analysis CLI now preserves invalid-file counts in the baseline, propagates integrity and guided-progress review flags into anonymized tables, uses export-based wording, keeps generated cohort artifacts under ignored local/usage-cohorts/, and includes focused tests for anonymization, attempt reconstruction, file stats, review flags, and milestone non-regression."

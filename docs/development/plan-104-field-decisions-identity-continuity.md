@@ -1,8 +1,8 @@
 ---
-id: plan-104-field-decisions-identity-continuity
+id: plan-104
 title: "Field Decisions Identity And Continuity"
 status: complete
-depends_on: [plan-98-strategy-brain-reframe-decision]
+depends_on: [plan-98]
 gate: "orchestration review before the Plan 95 advanced-logic copy dispatch"
 superseded_by: null
 resolution: "Verified Field Decisions visible identity, six-step continuity, stable strategy-brain persistence, accurate Challenge 28 framing, and Team Strategy Script handoff; corrected one stale active teacher-facing reference during orchestration review."

@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "closest-enemy-defender",
   title: "Level 33: Closest Enemy Defender",
-  description: "One ally attacks while another uses closest-enemy targeting as a defender.",
-  introText: "This is the first advanced level where one ally chases the goal and another reacts to live enemies that have already crossed onto your side. The shared script is starting to split attack and defense.",
+  description: "Two live defenders have crossed onto your side of the field.",
+  introText: "One ally has a route to the far flag while two defenders press close to home. The same program must notice both jobs.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 18 },
   tutorialSteps: [
-    { id: "level-31-split", title: "Split The Team Jobs", body: "Use runner index to make the first ally attack and the second react to the closest enemy. Each ally is still running the same code, just with a different role.", targetSelector: "#blockly-region" },
-    { id: "level-31-pressure", title: "Defend Your Side First", body: "The defender’s job starts on your side of the field while the attacker keeps advancing.", targetSelector: "#canvas-container" }
+    { id: "level-31-split", title: "Split The Team Jobs", body: "Runner index can give one ally a flag-focused branch and another a closest-enemy branch. Both still follow the same shared code.", targetSelector: "#blockly-region" },
+    { id: "level-31-pressure", title: "Pressure At Home", body: "The two defenders are already on your side. Decide what the nearby ally should notice while its teammate works the far lane.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

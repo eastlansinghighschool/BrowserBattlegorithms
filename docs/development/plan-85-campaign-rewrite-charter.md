@@ -1,5 +1,5 @@
 ---
-id: plan-85-campaign-rewrite-charter
+id: plan-85
 title: "Campaign Rewrite Charter"
 status: complete
 depends_on: []

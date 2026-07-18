@@ -1,5 +1,5 @@
 ---
-id: plan-78-frozen-input-and-flag-home-reconciliation
+id: plan-78
 title: "Frozen Input And Flag-Home Reconciliation"
 status: complete
 depends_on: []

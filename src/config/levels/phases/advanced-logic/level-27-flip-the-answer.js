@@ -7,7 +7,7 @@ export default {
   id: "flip-the-answer",
   title: "Level 27: Flip The Answer",
   description: "Midfield splits the map, and your ally needs a rule for the far side.",
-  introText: "The ally starts on your side, then crosses midfield. Can one flipped check describe what matters once it reaches enemy territory?",
+  introText: "Midfield is behind the ally now. On enemy territory, the same check can mean the opposite thing.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,

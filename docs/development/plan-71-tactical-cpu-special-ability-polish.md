@@ -1,5 +1,5 @@
 ---
-id: plan-71-tactical-cpu-special-ability-polish
+id: plan-71
 title: "Tactical CPU Special Ability Polish"
 status: complete
 depends_on: []

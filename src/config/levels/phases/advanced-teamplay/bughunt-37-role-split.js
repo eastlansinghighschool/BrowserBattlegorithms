@@ -5,12 +5,12 @@ export default {
   id: "bughunt-37",
   levelKind: "bug_hunt",
   title: "Bug Hunt: Role Split",
-  description: "Two allies are taking the same job, so one role never gets a useful branch.",
-  introText: "This starter is a shared-program debugging checkpoint for the team-strategy arc. One runner should attack while the other stays out of the lane, but the else branch is wrong.",
+  description: "Two allies are crowding the same lane.",
+  introText: "The shared starter sends both allies toward the same ground. Trace the runner-index branches and find where their jobs stop being different.",
   tips: [
     "Runner index is what lets one program mean different jobs for different allies.",
-    "If two allies chase the same target, one of them is probably missing a distinct role.",
-    "A good fix gives each runner a useful local job without inventing a second program."
+    "When two allies chase the same target, check whether one index lost its own branch.",
+    "Repair the local jobs without adding a second program."
   ],
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
@@ -32,13 +32,13 @@ export default {
     {
       id: "bughunt-37-trace",
       title: "Trace The Roles",
-      body: "This shared program should give each ally a different job. Check which runner index enters the attack branch and whether the other ally gets a support job.",
+      body: "Trace each runner index through the shared program. Where do the two allies begin making the same choice?",
       targetSelector: "#blockly-region"
     },
     {
       id: "bughunt-37-fix",
       title: "Split The Jobs",
-      body: "The bug is that the second branch duplicates the wrong target. Change it so the allies do not all chase the same thing.",
+      body: "One branch is sending both runners to the same ground. Repair the split so each index has its own local job.",
       targetSelector: "#canvas-container"
     }
   ],

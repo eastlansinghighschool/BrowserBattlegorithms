@@ -7,8 +7,8 @@ export default {
   id: "advanced-scrimmage",
   levelKind: "challenge",
   title: "Challenge 37: Advanced Scrimmage",
-  description: "Use one shared program for three allies in a real capture-the-flag scrimmage.",
-  introText: "This capstone brings together indexing, comparisons, movement helpers, and team strategy in one bigger match. It is the final test of the same shared program you have been improving all project long.",
+  description: "Three allies face three live defenders across a wide field.",
+  introText: "Your team needs a point against three live defenders. One shared program must give each ally a useful local response as the field changes.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "wideScrimmage",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -19,8 +19,8 @@ export default {
   winCondition: { type: "team_scores_point", teamId: 1 },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 55 },
   tutorialSteps: [
-    { id: "level-35-capstone", title: "A Full Team Script", body: "This final level is a real scrimmage. One shared program has to divide attacking, defending, and support work across the team.", targetSelector: "#blockly-region" },
-    { id: "level-35-real-score", title: "Score For Real", body: "The capstone only passes when your team actually scores a point in live play. Any ally can bring the point home, so focus on the role the script has assigned.", targetSelector: "#canvas-container" }
+    { id: "level-35-capstone", title: "A Full Team Script", body: "Three allies run one shared program against three live defenders on the far side. Build local rules that give the team different work.", targetSelector: "#blockly-region" },
+    { id: "level-35-real-score", title: "Bring A Point Home", body: "A point is the goal. Any ally can carry it home, so watch what each runner sees as the scrimmage shifts.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

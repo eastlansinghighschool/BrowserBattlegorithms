@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "escort-the-carrier",
   title: "Level 32: Escort The Carrier",
-  description: "Combine teammate-has-flag with runner index to send one ally home and another into support mode.",
-  introText: "The lead ally starts with the flag already and should move back to base.  The other ally should move forward to support.",
+  description: "One ally begins with the enemy flag while another waits near home.",
+  introText: "Your lead ally already carries the flag. The second ally sees a different part of the field. The shared program needs local jobs for both runners.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_2", targetCell: { x: 5, y: 5 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
   tutorialSteps: [
-    { id: "level-30-teammate", title: "One Ally Has The Flag", body: "The lead ally begins as the carrier. Use teammate-has-flag plus index to send the second ally into position.", targetSelector: "#blockly-region" },
-    { id: "level-30-support", title: "Escort The Return", body: "This challenge is about support movement, not chasing a new flag. The same script should protect the carrier and keep the lane open.", targetSelector: "#canvas-container" }
+    { id: "level-30-teammate", title: "One Ally Has The Flag", body: "The lead ally begins as the carrier. Teammate-has-flag and runner index can give the other ally a different response.", targetSelector: "#blockly-region" },
+    { id: "level-30-support", title: "Watch The Return", body: "The carrier and the nearby ally are not in the same situation. Build local rules that notice the flag and the lane around it.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

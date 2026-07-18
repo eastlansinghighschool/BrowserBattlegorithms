@@ -279,4 +279,69 @@ Completed the orchestration-requested prose and contract repair without changing
 - Level 26 now frames OR as either warning asking the same thing, not as a priority-order decision.
 - Challenge 28 now describes the student's actual human-plus-Blockly-ally role instead of using the slogan-like `Field Decisions is on the field` line.
 
-The requested `npm.cmd run level:copy-digest`, phase lint, and 29 focused-test reruns were started after the edit, but the local terminal service stopped returning output or completing processes, including a plain `cmd /c echo hi` probe. The repair remains **pending validation rerun**; do not treat the prior Phase 5 acceptance recommendation as renewed until the commands complete successfully. Packet status remains owner-controlled `ready`.
+The implementer's first validation rerun was blocked when the local terminal service stopped returning output or completing processes, including a plain `cmd /c echo hi` probe. Orchestration subsequently completed the digest regeneration, phase lint, and 29 focused tests successfully, as recorded in the acceptance paragraph above. Packet status remains owner-controlled `ready`.
+
+## Phase 6 Advanced Teamplay Outcome
+
+The `advanced-teamplay` board is settled. This phase changed only student-facing prose across its eleven entries: Levels 29-37, the runner-index prediction checkpoint, and the role-split bug hunt. No mechanics, setup, toolboxes, project metadata, win/failure conditions, fixtures, NPC behavior, or Blockly XML changed.
+
+The revised copy introduces one shared program and runner-index roles directly, but grounds each mission in the actual field: different lanes, a carrier, barriers, walls, patrols, the far flag, and live defenders. It asks students to assign local jobs rather than prescribing a finished attacker/support script. The three overlength introductions (`one-program-two-allies`, `barrier-specialist`, and `jump-team`) are now below the pre-play cap.
+
+## Phase 7 Optional Outcome
+
+The `optional` board is settled. This phase changed only student-facing prose in both optional labs.
+
+- `optional-random-lab` directly explains per-turn random direction selection and invites students to compare repeated runs without curriculum-map narration.
+- `optional-double-carrier-showdown` states the own-flag-home scoring rule and human-carrier state plainly while leaving students to choose how runner-index roles observe the two carriers.
+
+The 55-word Double Carrier introduction is now below the pre-play cap. No runtime or level-structure field changed.
+
+## Phase 6 And 7 Files Changed
+
+- `src/config/levels/phases/advanced-teamplay/level-29-one-program-two-allies.js`
+- `src/config/levels/phases/advanced-teamplay/level-30-index-jobs.js`
+- `src/config/levels/phases/advanced-teamplay/level-31-first-two-defend.js`
+- `src/config/levels/phases/advanced-teamplay/level-32-escort-the-carrier.js`
+- `src/config/levels/phases/advanced-teamplay/level-33-closest-enemy-defender.js`
+- `src/config/levels/phases/advanced-teamplay/level-34-freeze-support.js`
+- `src/config/levels/phases/advanced-teamplay/level-35-barrier-specialist.js`
+- `src/config/levels/phases/advanced-teamplay/level-36-jump-team.js`
+- `src/config/levels/phases/advanced-teamplay/prediction-31-index-role-split.js`
+- `src/config/levels/phases/advanced-teamplay/bughunt-37-role-split.js`
+- `src/config/levels/phases/advanced-teamplay/level-37-advanced-scrimmage.js`
+- `src/config/levels/phases/optional/level-38-optional-random-lab.js`
+- `src/config/levels/phases/optional/level-39-optional-double-carrier-showdown.js`
+- `reports/development/guided-level-complexity-audit/copy-digest.md` - regenerated.
+- `reports/development/plan-95-phase-copy-rewrites/progress.md` - this shared progress report.
+
+## Phase 6 And 7 Validation
+
+- `npm.cmd run lint:levels` - passed with zero `copy-voice-banned-phrase`, `copy-voice-spoiler-phrase`, and `copy-voice-prose-length` warnings in both `advanced-teamplay` and `optional`.
+- `npm.cmd run level:copy-digest` - passed; regenerated the 46-level digest after each phase.
+- `node --test --test-isolation=none tests/unit/guided-level-contracts.test.js tests/unit/level-copy-digest.test.js` - passed, 29/29 tests after both final phases.
+- `npm.cmd test` - passed, 479/479 tests.
+- `npm.cmd run build` - passed. Existing Blockly dynamic/static import and Vite chunk-size warnings remain.
+- `git diff --check` - passed with only Git line-ending normalization notices.
+
+## Plan 95 Remaining Risks Or Follow-Ups
+
+- All seven selected copy phases now have zero phase-specific copy-voice warnings. Remaining lint warnings are non-copy warnings and are outside this packet's prose-only scope.
+- The shared keyboard-practice UI sentence in `src/ui/levels.js` remains a separate shared-UI voice follow-up, as previously recorded.
+- The final copy remains subject to orchestration/owner voice review. Plan 95 stays `ready`; do not change packet status or the generated packet index from this implementation thread.
+
+## Final Advanced Teamplay Repair
+
+- Level 34 now describes a defender patrolling toward the flag lane instead of falsely implying either ally begins in freeze range.
+- A whole-sequence rhythm review converted Levels 29, 31, 32, 33, 34, and 36 from repeated question-led introductions to varied declarative mission briefings. Level 35 retains its field-specific question as contrast. The final advanced-logic review also revoiced Levels 26 and 27, leaving the stronger distance and readiness questions in Levels 24 and 25 as contrast.
+- Challenge 37 now describes three live defenders without claiming all three move across the far side.
+- The final-phase count is corrected to seven selected copy phases.
+- The repair remained prose-only: no board setup, toolbox, fixture, NPC, win-condition, Blockly, or other runtime field changed.
+
+Validation for this repair:
+
+- `npm.cmd run level:copy-digest` - passed; digest regenerated for 46 levels.
+- `npm.cmd run lint:levels` - passed with zero `copy-voice-*` warnings in `advanced-teamplay` and `optional`; remaining output is pre-existing non-copy guidance.
+- `node --test --test-isolation=none tests/unit/guided-level-contracts.test.js tests/unit/level-copy-digest.test.js` - passed, 29/29 tests.
+- `git diff --check` - passed with only Git line-ending normalization notices.
+
+## Plan 95 Ready For Orchestration Review: Yes

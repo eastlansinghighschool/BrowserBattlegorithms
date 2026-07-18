@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "one-program-two-allies",
   title: "Level 29: One Program, Two Allies",
-  description: "Two allies now share one workspace. Use runner index so one ally attacks and the other supports.",
-  introText: "This is the beginning of Team Strategy Script.  You want the ally with runner index 0 to be doing the scoring in this level, not the ally with runner index 1. The same program runs on both allies, so runner index has to decide which one takes the scoring job.",
+  description: "Two allies share one program but need different jobs.",
+  introText: "Team Strategy Script begins here. Two allies leave different lanes, but both run the same blocks. Runner index gives the shared program separate jobs.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -18,8 +18,8 @@ export default {
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
   tutorialSteps: [
-    { id: "level-27-shared-program", title: "One Workspace, Two Allies", body: "Both allies run the same blocks every turn. The first ally has index 0 and the second has index 1. A check like \"if runner index equals 0\" means only the first ally follows that branch — the second skips it and does something else instead.", targetSelector: "#blockly-region" },
-    { id: "level-27-index", title: "Index 0 And Index 1", body: "Only one ally should take the scoring job here. The other ally needs to stay clear of the lane so the shared script stays readable.", targetSelector: "#canvas-container" }
+    { id: "level-27-shared-program", title: "One Workspace, Two Allies", body: "Both allies run the same blocks every turn. The first has index 0 and the second has index 1. An index check can send them down different branches.", targetSelector: "#blockly-region" },
+    { id: "level-27-index", title: "Two Lanes", body: "One ally has a clear route to the flag. Look for a different job that keeps its teammate from crowding that lane.", targetSelector: "#canvas-container" }
   ],
   setupOverrides: {
     pointsToWin: 1,

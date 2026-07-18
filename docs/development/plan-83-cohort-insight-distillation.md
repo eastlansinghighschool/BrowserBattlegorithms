@@ -1,8 +1,8 @@
 ---
-id: plan-83-cohort-insight-distillation
+id: plan-83
 title: "Cohort Insight Distillation"
 status: complete
-depends_on: [plan-80-cohort-usage-privacy-workspace, plan-81-cohort-usage-dataset-and-baseline, plan-82-cohort-guided-learning-insight-audit]
+depends_on: [plan-80, plan-81, plan-82]
 gate: "before writing any tracked cohort-derived conclusion, before citing exact cohort counts, before drafting implementation packets from cohort evidence"
 superseded_by: null
 resolution: "Completed and reviewed 2026-07-09 with explicit owner approval. The tracked distillation preserves Plan 82's privacy boundary, uses directional evidence only, documents the retention ceiling and uneven late-arc exposure, and identifies owner-gated candidate follow-ups without source changes."

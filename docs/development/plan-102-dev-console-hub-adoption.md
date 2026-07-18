@@ -1,8 +1,8 @@
 ---
-id: plan-102-dev-console-hub-adoption
+id: plan-102
 title: "Dev Console Hub Adoption"
 status: complete
-depends_on: [plan-87-bootstrap-consumer-core-setup, plan-88-bootstrap-packet-frontmatter-index-migration, plan-90-bootstrap-audit-closure-path-hygiene]
+depends_on: [plan-87, plan-88, plan-90]
 gate: "before adding dependencies, before executing mutating menu actions during implementation validation, before broadening the console into a general task runner"
 superseded_by: null
 resolution: "Implemented and reviewed; dev console hub adopted, argument wiring repaired, Bootstrap audit current, focused tests and full npm test pass."

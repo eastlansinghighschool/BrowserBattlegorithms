@@ -1,5 +1,5 @@
 ---
-id: plan-73-guided-level-dossier-generator
+id: plan-73
 title: "Guided Level Dossier Generator"
 status: complete
 depends_on: []

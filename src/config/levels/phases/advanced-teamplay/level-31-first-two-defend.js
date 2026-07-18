@@ -6,8 +6,8 @@ import { TEAM_STRATEGY_SCRIPT_PROJECT, createProjectMetadata } from "../../share
 export default {
   id: "first-two-defend",
   title: "Level 31: First Two Defend",
-  description: "Teach range checks on runner index so two allies take one job and the third takes another.",
-  introText: "Now the team has three program-controlled allies. Index < 2 is a clean way to group the first two together and move them out of the way, while the third ally runs forward.",
+  description: "Three allies crowd a barrier in the center lane.",
+  introText: "Three allies share the field, but the first two face the same blocked row. An index range can group that pair and leave another job open.",
   mode: GAME_MODES.PLAYER_VS_NPC,
   mapKey: "simpleAisle",
   humanTurnBehavior: HUMAN_TURN_BEHAVIORS.AUTO_SKIP,
@@ -17,8 +17,8 @@ export default {
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_3", targetCell: { x: 4, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
   tutorialSteps: [
-    { id: "level-29-range", title: "Index Ranges Create Teams", body: "Index < 2 can group the first two allies together while index 2 heads forward. That keeps the shared script simple and readable.", targetSelector: "#blockly-region" },
-    { id: "level-29-three-allies", title: "Three Allies, One Program", body: "Two allies need to clear space so the third runner can finish the puzzle.", targetSelector: "#canvas-container" }
+    { id: "level-29-range", title: "Index Ranges Create Teams", body: "An index range such as < 2 can group the first two allies. The remaining index can follow a different branch in the same program.", targetSelector: "#blockly-region" },
+    { id: "level-29-three-allies", title: "Three Allies, One Program", body: "The barrier makes the center row crowded. Decide which runners need the same response and which one needs a different route.", targetSelector: "#canvas-container" }
   ],
   tips: ["Stay Still can remove a barrier directly in front — remember that from an earlier level?"],
   setupOverrides: {
