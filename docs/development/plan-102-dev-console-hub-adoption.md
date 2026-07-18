@@ -267,7 +267,7 @@ Run from the repository root:
 ```powershell
 node scripts/dev/control-console.test.js
 npm run plan:lint
-npm run plan:check -- plan-102-dev-console-hub-adoption
+npm run plan:check -- plan-102
 node <bootstrap-repo>/scripts/bootstrap-audit.js . --report
 ```
 

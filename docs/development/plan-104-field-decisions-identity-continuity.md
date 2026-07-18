@@ -13,7 +13,7 @@ summary: >-
 
 ## Packet Metadata
 
-- Packet id: `plan-104-field-decisions-identity-continuity`
+- Packet id: `plan-104`
 - Packet title: Field Decisions Identity And Continuity
 - Status: (see frontmatter)
 - Owner/model: bounded frontend/content implementer
@@ -129,7 +129,7 @@ Contracts to preserve:
 
 ## Validation Checklist
 
-- [ ] `node scripts/dev/plan-status.js check plan-104-field-decisions-identity-continuity` passes before work.
+- [ ] `node scripts/dev/plan-status.js check plan-104` passes before work.
 - [ ] Internal project id and storage keys remain unchanged.
 - [ ] Field Decisions and `Step N of 6` appear in the appropriate visible project UI.
 - [ ] Challenge 28 copy distinguishes the human runner from the one coded ally.

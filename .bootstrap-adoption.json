@@ -4,8 +4,9 @@
   "capabilities": [
     {
       "capability": "packet-status-system",
-      "state": "adopted",
-      "capabilityVersion": "1.1.0"
+      "state": "ahead-of-bootstrap",
+      "capabilityVersion": "1.1.0",
+      "localRationale": "Canonical short packet IDs (for example, plan-101) are enforced for descriptive filenames and used by list, check, and set; a reverse-flow proposal is pending with Bootstrap."
     },
     {
       "capability": "packet-status-set-verb",

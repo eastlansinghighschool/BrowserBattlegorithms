@@ -13,7 +13,7 @@ summary: >-
 
 ## Packet Metadata
 
-- Packet id: `plan-105-challenge-28-live-capstone-evidence-protocol`
+- Packet id: `plan-105`
 - Packet title: Challenge 28 Live Capstone Evidence Protocol
 - Status: (see frontmatter)
 - Owner/model: curriculum/evidence implementer
@@ -122,7 +122,7 @@ Contracts to preserve:
 
 ## Validation Checklist
 
-- [ ] `node scripts/dev/plan-status.js check plan-105-challenge-28-live-capstone-evidence-protocol` passes before work.
+- [ ] `node scripts/dev/plan-status.js check plan-105` passes before work.
 - [ ] Blank protocol is complete and contains no student or cohort data.
 - [ ] Local path and `git check-ignore` instructions are explicit.
 - [ ] Human and ally behavior are recorded separately.
