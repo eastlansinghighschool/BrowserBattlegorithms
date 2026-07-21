@@ -75,6 +75,15 @@ Settled values for this packet (do not silently change):
 - Run-versions are **local-only by default**; this packet adds no export of their contents.
 - Static deployment, no new dependencies, no new PII (hashing reduces code exposure).
 
+## Carried Follow-Ups From Plan 106 Review (2026-07-21)
+
+These small items were recorded at plan-106 acceptance and ride this packet:
+
+- Add the missing negative-case test: exactly 400 events with no eviction must NOT flag `eventTailTruncated` (positive case is tested at `tests/unit/learning-ledger.test.js:214`; the code path is correct by inspection but untested).
+- Document the `durationMs` accumulation heuristic (30-minute-gap rule, `src/usage/learningLedger.js:106-111`) in `docs/subsystems/usage-and-admin.md`.
+- Rename or narrow the test-support accessor `app.usageTrackerSession` (`src/usage/usageTracker.js:471`) so it is clearly test scaffolding, not a general mutable-session backdoor.
+- Be aware: plan-106's Repair 4 put full workspace `xmlText` into `level_opened`/`level_started`/`level_completed` event payloads (permitted by the repair file's "XML (or its hash)" wording). This packet's pruning work must account for that event payload size when re-scoping caps and eviction order.
+
 ## Scope
 
 ### In Scope

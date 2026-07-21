@@ -1,4 +1,10 @@
 import { APP_VERSION } from "../config/appInfo.js";
+import {
+  createLearningLedger,
+  createSessionFlags,
+  hydrateAndBackfillSession,
+  updateLearningLedgerFromEvent
+} from "./learningLedger.js";
 
 export const USAGE_SCHEMA_VERSION = 1;
 export const USAGE_RETENTION_DAYS = 7;
@@ -111,7 +117,7 @@ export function createUsageSummary() {
 export function createUsageSession(overrides = {}) {
   const startedAt = overrides.startedAt || new Date().toISOString();
   return {
-    schemaVersion: overrides.schemaVersion || USAGE_SCHEMA_VERSION,
+    schemaVersion: overrides.schemaVersion || 2,
     sessionId: overrides.sessionId || generateUsageSessionId(),
     startedAt,
     updatedAt: overrides.updatedAt || startedAt,
@@ -119,7 +125,9 @@ export function createUsageSession(overrides = {}) {
     appVersion: overrides.appVersion || getAppVersion(),
     summary: overrides.summary ? cloneJson(overrides.summary) : createUsageSummary(),
     events: Array.isArray(overrides.events) ? cloneJson(overrides.events) : [],
-    snapshots: Array.isArray(overrides.snapshots) ? cloneJson(overrides.snapshots) : []
+    snapshots: Array.isArray(overrides.snapshots) ? cloneJson(overrides.snapshots) : [],
+    learningLedger: createLearningLedger(overrides.learningLedger),
+    flags: createSessionFlags(overrides.flags)
   };
 }
 
@@ -207,12 +215,23 @@ export function appendUsageEvent(session, type, data = {}, at = new Date().toISO
   session.events.push(event);
   if (session.events.length > USAGE_MAX_EVENTS) {
     session.events.splice(0, session.events.length - USAGE_MAX_EVENTS);
+    if (!session.flags) {
+      session.flags = createSessionFlags();
+    }
+    session.flags.eventTailTruncated = true;
+    session.flags.historyPartial = true;
   }
 
   const summary = session.summary;
   summary.totalEvents += 1;
 
   switch (type) {
+    case "level_opened":
+      ensureLevelIdList(summary, data.levelId);
+      summary.lastKnown.modeView = data.modeView || summary.lastKnown.modeView;
+      summary.lastKnown.levelId = data.levelId ?? summary.lastKnown.levelId;
+      summary.lastKnown.mapKey = data.mapKey ?? summary.lastKnown.mapKey;
+      break;
     case "mode_entered":
       summary.modeEntries[data.modeView === "FREE_PLAY" ? "freePlay" : "guided"] += 1;
       if (data.modeView === "FREE_PLAY") {
@@ -322,6 +341,7 @@ export function appendUsageEvent(session, type, data = {}, at = new Date().toISO
       break;
   }
 
+  updateLearningLedgerFromEvent(session, type, data, at);
   session.updatedAt = at;
   return event;
 }
@@ -380,7 +400,7 @@ export function addUsageSnapshot(session, type, data = {}, at = new Date().toISO
 export function createExportPayload(session, studentName, exportedAt = new Date().toISOString()) {
   const cleanStudentName = `${studentName || ""}`.trim();
   const payload = {
-    schemaVersion: session.schemaVersion || USAGE_SCHEMA_VERSION,
+    schemaVersion: USAGE_SCHEMA_VERSION,
     exportedAt,
     studentName: cleanStudentName,
     sessionId: session.sessionId,
@@ -413,7 +433,7 @@ export function normalizePersistedSession(session) {
     return null;
   }
   const normalized = createUsageSession({
-    schemaVersion: session.schemaVersion || USAGE_SCHEMA_VERSION,
+    schemaVersion: session.schemaVersion || 2,
     sessionId: session.sessionId || generateUsageSessionId(),
     startedAt: session.startedAt || new Date().toISOString(),
     updatedAt: session.updatedAt || session.startedAt || new Date().toISOString(),
@@ -421,7 +441,9 @@ export function normalizePersistedSession(session) {
     appVersion: session.appVersion || getAppVersion(),
     summary: session.summary || createUsageSummary(),
     events: session.events || [],
-    snapshots: session.snapshots || []
+    snapshots: session.snapshots || [],
+    learningLedger: session.learningLedger || createLearningLedger(),
+    flags: session.flags || createSessionFlags()
   });
   normalized.summary.lastKnown = {
     ...createLastKnownState(),
@@ -432,5 +454,5 @@ export function normalizePersistedSession(session) {
   normalized.summary.guided.levelIds = Array.isArray(session.summary?.guided?.levelIds)
     ? [...session.summary.guided.levelIds]
     : [];
-  return normalized;
+  return hydrateAndBackfillSession(normalized, USAGE_MAX_EVENTS);
 }

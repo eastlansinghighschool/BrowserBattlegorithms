@@ -305,6 +305,18 @@ export function enterGuidedMode(app) {
     levelId: state.currentLevelId,
     mapKey: state.currentMapKey
   });
+  if (currentLevel) {
+    app.usageTracker?.recordLevelOpened?.(currentLevel, {
+      modeView: state.currentModeView,
+      mapKey: state.currentMapKey
+    });
+  }
+  if (Array.isArray(state.levels)) {
+    const passedLevelIds = state.levels
+      .filter((level) => state.levelProgress[level.id] === LEVEL_STATUS.PASSED)
+      .map((level) => level.id);
+    app.usageTracker?.syncPassLedger?.(passedLevelIds);
+  }
   if (typeof app.hooks.onGuidedLevelSelected === "function" && currentLevel) {
     app.hooks.onGuidedLevelSelected(currentLevel);
   }
@@ -385,6 +397,8 @@ export function startLevel(app, levelId = app.state.currentLevelId) {
   return level;
 }
 
+// resetCurrentLevel re-enters guided mode, which records level_opened on the usage tracker.
+// This transition is idempotent in the durable learning ledger.
 export function resetCurrentLevel(app, reason = "manual_reset") {
   const { state } = app;
   app.hooks.clearBlocklyTracePlayback?.(app);
@@ -440,6 +454,12 @@ export function completeLevel(app, result, reason, options = {}) {
     }
     if (!state.suppressProgressPersistence) {
       savePersistedGuidedProgression(state);
+    }
+    if (Array.isArray(state.levels)) {
+      const passedLevelIds = state.levels
+        .filter((level) => state.levelProgress[level.id] === LEVEL_STATUS.PASSED)
+        .map((level) => level.id);
+      app.usageTracker?.syncPassLedger?.(passedLevelIds);
     }
   }
 

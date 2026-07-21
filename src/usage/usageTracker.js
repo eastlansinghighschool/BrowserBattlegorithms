@@ -12,6 +12,7 @@ import {
   createUsageSession,
   normalizePersistedSession
 } from "./usageFormat.js";
+import { syncPassLedger } from "./learningLedger.js";
 
 function isBrowserIndexedDbAvailable() {
   return typeof indexedDB !== "undefined";
@@ -277,6 +278,27 @@ export function initializeUsageTracking(app) {
     }, 600);
   }
 
+  function getLiveWorkspaceCapture() {
+    if (!app) {
+      return { xmlText: null, blockCount: null };
+    }
+    let xmlText = app.hooks?.getWorkspaceXmlText?.() || null;
+    let blockCounts = app.blocklyWorkspace ? countBlocklyBlockTypes(app.blocklyWorkspace) : null;
+
+    if (!xmlText && Array.isArray(session.snapshots) && session.snapshots.length > 0) {
+      xmlText = session.snapshots.at(-1)?.data?.xmlText || null;
+    }
+    if (!blockCounts && Array.isArray(session.snapshots) && session.snapshots.length > 0) {
+      blockCounts = session.snapshots.at(-1)?.data?.blockCounts || null;
+    }
+
+    const blockCount = blockCounts
+      ? Object.values(blockCounts).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0)
+      : null;
+
+    return { xmlText, blockCount };
+  }
+
   const tracker = {
     ready,
     recordModeEntered(modeView, details = {}) {
@@ -285,16 +307,37 @@ export function initializeUsageTracking(app) {
     recordFreePlayConfigured(details = {}) {
       return record("free_play_configured", details);
     },
+    recordLevelOpened(levelOrId, details = {}) {
+      const levelId = typeof levelOrId === "object" ? levelOrId?.id : levelOrId;
+      const live = getLiveWorkspaceCapture();
+      const payload = {
+        levelId: levelId || details.levelId || null,
+        modeView: details.modeView || app.state?.currentModeView || "GUIDED_LEVELS",
+        mapKey: details.mapKey || app.state?.currentMapKey || null,
+        blockCount: details.blockCount ?? live.blockCount,
+        xmlText: details.xmlText ?? live.xmlText,
+        ...details
+      };
+      return record("level_opened", payload);
+    },
+    syncPassLedger(passedLevelIds = []) {
+      syncPassLedger(session, passedLevelIds);
+      schedulePersist();
+    },
     recordLevelStarted(level, details = {}) {
+      const live = getLiveWorkspaceCapture();
       const payload = {
         levelId: level?.id || details.levelId || null,
         levelKind: level?.levelKind || details.levelKind || null,
         title: level?.title || details.title || null,
-        modeView: details.modeView || app.state.currentModeView,
-        mapKey: level?.mapKey || details.mapKey || app.state.currentMapKey,
-        turnNumber: app.state.currentTurnNumber,
-        attemptNumber: app.state.levelAttemptCount,
-        humanTurnBehavior: app.state.humanTurnBehavior
+        modeView: details.modeView || app.state?.currentModeView || null,
+        mapKey: level?.mapKey || details.mapKey || app.state?.currentMapKey || null,
+        turnNumber: app.state?.currentTurnNumber ?? null,
+        attemptNumber: app.state?.levelAttemptCount ?? null,
+        humanTurnBehavior: app.state?.humanTurnBehavior ?? null,
+        blockCount: details.blockCount ?? live.blockCount,
+        xmlText: details.xmlText ?? live.xmlText,
+        ...details
       };
       activeLevelContext = {
         levelId: payload.levelId,
@@ -304,17 +347,21 @@ export function initializeUsageTracking(app) {
       return record("level_started", payload);
     },
     recordLevelEnded(level, result, reason, details = {}) {
-      const startTurn = details.startTurnNumber ?? activeLevelContext?.startTurnNumber ?? details.turnNumber ?? app.state.currentTurnNumber;
-      const turnsSpent = Math.max(1, (details.turnNumber ?? app.state.currentTurnNumber) - startTurn + 1);
+      const startTurn = details.startTurnNumber ?? activeLevelContext?.startTurnNumber ?? details.turnNumber ?? app.state?.currentTurnNumber ?? 1;
+      const turnsSpent = Math.max(1, (details.turnNumber ?? app.state?.currentTurnNumber ?? 1) - startTurn + 1);
+      const live = getLiveWorkspaceCapture();
       const payload = {
         levelId: level?.id || details.levelId || null,
         levelKind: level?.levelKind || details.levelKind || null,
         result,
         reason,
-        modeView: details.modeView || app.state.currentModeView,
-        mapKey: level?.mapKey || details.mapKey || app.state.currentMapKey,
-        turnNumber: details.turnNumber ?? app.state.currentTurnNumber,
-        turnsSpent
+        modeView: details.modeView || app.state?.currentModeView || null,
+        mapKey: level?.mapKey || details.mapKey || app.state?.currentMapKey || null,
+        turnNumber: details.turnNumber ?? app.state?.currentTurnNumber ?? null,
+        turnsSpent,
+        blockCount: details.blockCount ?? live.blockCount,
+        xmlText: details.xmlText ?? live.xmlText,
+        ...details
       };
       activeLevelContext = null;
       return record("level_completed", payload);
@@ -421,5 +468,6 @@ export function initializeUsageTracking(app) {
   };
 
   app.usageTracker = tracker;
+  app.usageTrackerSession = session;
   return tracker;
 }

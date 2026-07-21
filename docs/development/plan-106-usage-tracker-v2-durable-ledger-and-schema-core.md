@@ -1,11 +1,10 @@
 ---
 id: plan-106
 title: "Usage Tracker V2 Durable Ledger And Schema Core"
-status: ready
+status: complete
+resolution: "Durable per-level learning ledger (Plan 81 rollup fields), level_opened capture, pass-ledger mirror, schema v2 core with v1 hydration/backfill, factual truncation flags. Accepted after Repair 01 re-review; follow-ups carried to plans 107/108."
 depends_on: [plan-84, plan-91]
 gate: "none; design contract settled by Plan 84 (D1-D4, B1-B7 accepted 2026-06-04)"
-superseded_by: null
-resolution: null
 summary: >-
   Build the Usage Tracker V2 durable per-level learning ledger and schema v2 core: incremental per-level rollups, level_opened records, guided pass-ledger mirroring, v1 back-compat hydration, and truncation/completeness flags. No pruning, retention, run-version, or export-shape changes; those are plans 107 and 108.
 ---

@@ -74,6 +74,10 @@ Contracts to preserve:
 - No new PII; boundary-only XML reduces code exposure relative to v1 — preserve that direction.
 - Synthetic data only for tests and the experiment; no real student exports in the repo or in `local/` analysis for this packet.
 
+## Carried Follow-Up From Plan 106 Review (2026-07-21)
+
+Plan 106's Repair 4 embedded full workspace `xmlText` in `level_opened`/`level_started`/`level_completed` event payloads (`src/usage/usageTracker.js:313-319, 340-345, 358-364`), and those events are cloned wholesale into the v1 export (`src/usage/usageFormat.js:414`). The similarity fingerprint ignores only `workspace_changed`/`workspace_snapshot` (`usageFormat.js:180-195`), so this XML now enters the Plan 04/16 fingerprint and inflates every v1 export. This packet's similarity experiment must explicitly cover this change: decide whether boundary/level events keep full XML or drop to hash-only in the v2 export, and verify fingerprint behavior against pre-plan-106 exports, not only against v1-with-XML. Record the decision in the progress report.
+
 ## Scope
 
 ### In Scope

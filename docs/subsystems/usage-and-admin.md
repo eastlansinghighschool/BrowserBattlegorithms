@@ -6,6 +6,7 @@ This note owns:
 - The usage event taxonomy: which events are canonical, which are noise, and how they are filtered for similarity detection.
 - The tracker → IndexedDB → export ladder.
 - How the SHA-256 integrity hash is computed and what it covers.
+- The V2 durable per-level learning ledger, schema V2 core, hydration, backfill, and guided pass-ledger mirroring.
 - The admin page surface: what a teacher sees, what anomaly flags mean, and how the browser analyzer relates to the CLI analyzer.
 - The regression harness: that its output files are generated artifacts, not committed fixtures.
 
@@ -18,8 +19,9 @@ This note does NOT own:
 
 | File | Role |
 |---|---|
+| `src/usage/learningLedger.js` | Usage Tracker V2 durable per-level learning ledger (Plan 84 Tier 1), schema V2 hydration, backfill, and pass ledger mirroring. |
 | `src/usage/usageTracker.js` | Session management, event recording, IndexedDB persistence, export payload assembly, SHA-256 hash via Web Crypto. |
-| `src/usage/usageFormat.js` | Canonical event structure, snapshot limits, fingerprint logic (noise filtering). |
+| `src/usage/usageFormat.js` | Canonical event structure, schema V2 session normalization, snapshot limits, fingerprint logic (noise filtering). |
 | `src/usage/usageAnalyzer.js` | Node-side CLI analyzer: hash verification, guided progress derivation, free-play summary, duplicate and similarity detection. |
 | `src/usage/usageAnalyzerBrowser.js` | Browser-side analyzer: same output semantics as the CLI, used by the admin page. |
 | `src/usage/guidedProgress.js` | Shared pure guided-progress derivation helper used by both analyzers and future cohort tooling. |
@@ -35,6 +37,21 @@ Usage data moves through three stages before a teacher can analyze it:
 2. **IndexedDB persistence**: the tracker persists the session to IndexedDB after each event so state survives page reload. On load, it hydrates from IndexedDB if a recent session exists.
 3. **Exported JSON file**: when the student clicks the usage export button and enters their name, the tracker assembles the canonical payload, computes the SHA-256 hash, and triggers a local JSON download. The file is never sent to a server.
 
+## Durable Learning Ledger & Schema V2 Core
+
+In Usage Tracker V2 (Plan 84 / Plan 106), sessions maintain an incremental per-level learning ledger (`session.learningLedger.guided`) and a mirror of cross-session pass progression (`session.learningLedger.passLedger`).
+
+### Core Invariants & Rules
+
+1. **Incremental & O(1)**: Every guided level the student interacts with maintains a ledger entry updated synchronously as events occur. It is never reconstructed from the event tail at read time.
+2. **Field Alignment**: Each entry uses Plan 81's `guided_level_rollup` field names: `reached`, `startedCount`, `completedCount`, `passedCount`, `failedCount`, `revisits`, `turnsSpent`, `durationMs`, `firstActivityAt`, `lastActivityAt`, `lastResult`, `passed`, `startBlockCount`, `endBlockCount`, and `finalXmlHash` (via FNV-1a starter-versioning digest).
+3. **Exempt from Eviction**: The durable ledger is retained across session lifecycles and is exempt from age-based event trimming.
+4. **Level Open Capture (`level_opened`)**: Opening a guided level records a durable `reached = true` marker even if the student never runs a program. `resetCurrentLevel` re-enters guided mode and fires `level_opened`, which is idempotent in the ledger.
+5. **Pass Ledger Mirroring**: `src/core/levels.js` remains the writer of record for `bba:guided-level-progress` in `localStorage`. The usage layer mirrors passed level IDs into `session.learningLedger.passLedger` and ensures matching ledger entries carry `reached = true` and `passed = true`.
+6. **Schema V2 Internal Hydration & Backfill**: Sessions stored internally use `schemaVersion: 2`. Legacy V1 sessions loaded from IndexedDB hydrate cleanly and perform a best-effort backfill from surviving events.
+7. **Strict Factual Flags**: Completeness and backfill status are surfaced via `session.flags` (`ledgerBackfilled`, `eventTailTruncated`, `historyPartial`). `ledgerBackfilled` is `true` only when backfill actually executed on a hydrated legacy session; `eventTailTruncated` is set only when event eviction occurs.
+8. **Export Compatibility**: Exported payload files remain V1-shaped (`schemaVersion: 1`) and contain no V2-only ledger fields until Plan 108.
+
 ## Canonical event taxonomy
 
 The following events are recorded by the tracker:
@@ -45,6 +62,7 @@ The following events are recorded by the tracker:
 | `session_resumed` | Signal | Marks that a prior session was hydrated from IndexedDB. |
 | `mode_entered` | Signal | Records which top-level mode (guided / free play) the student entered. |
 | `free_play_configured` | Signal | Records mode, team size, and map for a free-play session. |
+| `level_opened` | Signal | Records guided level open transition and reached marker. |
 | `level_started` | Signal | Records which guided level the student attempted. |
 | `level_completed` | Signal | Records level id, result (pass/fail), and turn count. |
 | `turn_action_completed` | Signal (bounded) | Records the action executed each turn; bounded to prevent log explosion. |
