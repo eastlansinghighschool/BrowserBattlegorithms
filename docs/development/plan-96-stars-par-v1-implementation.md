@@ -2,7 +2,7 @@
 id: plan-96
 title: "Stars And Par V1 Implementation"
 status: draft
-depends_on: [plan-85, plan-86, plan-91]
+depends_on: [plan-85, plan-86, plan-91, plan-106, plan-110]
 gate: "before mutation; likely split into smaller packets after prerequisite evidence is reviewed"
 superseded_by: null
 resolution: null
@@ -43,7 +43,7 @@ Depends on:
 - Plan 85 accepted, especially S6.
 - Plan 86 complete with par-candidate artifact.
 - Plan 91 complete.
-- Relevant Usage Tracker V2 implementation packets complete or explicitly coordinated.
+- Usage Tracker V2 schema foundation complete: plan-106 (durable ledger + schema v2 core) and plan-110 (rewrite-aware fields receptacle, which owns the star-outcome field slots). The full V2 chain is plans 106-110; only 106 and 110 gate this packet's star-field slice.
 
 Blocks:
 - Durable mastery feedback and usage analysis for rewritten levels.
