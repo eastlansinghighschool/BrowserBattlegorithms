@@ -158,7 +158,7 @@ function buildOneProgramTwoAlliesWrongXml() {
 
 function buildIndexJobsWrongXml() {
   return buildRunnerIndexComparisonXml(
-    1,
+    0,
     `<block type="battlegorithms_move_toward">
       <field name="TARGET">ENEMY_FLAG</field>
     </block>`,

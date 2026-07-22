@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { buildUsageExportWithIntegrity } from "../../src/usage/usageAnalyzer.js";
+import { computeUsageSha256Hex } from "../../src/usage/usageAnalyzer.js";
 
 function createSeededRandom(seedText) {
   let seed = 0;
@@ -178,19 +178,29 @@ function spreadEventTimestamps(payload, profile) {
     };
   });
 
-  const session = {
-    schemaVersion: payload.schemaVersion,
-    sessionId: payload.sessionId,
-    startedAt: toDate(startMs),
-    updatedAt: orderedEvents.at(-1)?.at || toDate(startMs),
-    appVersion: payload.appVersion,
-    summary: payload.summary,
+  // Preserve the original payload shape (including v2 fields: learningLedger,
+  // boundaryXmls, runVersionHashes, flags) and only rewrite the timestamps this
+  // spreader owns. Rebuilding via createExportPayload would reconstruct the
+  // payload from a stripped session object and hollow out the durable v2 fields.
+  // Note: timestamps inside learningLedger/boundaryXmls are left as exported;
+  // the spreader only adjusts the event/snapshot stream and session bounds.
+  const adjustedWithoutIntegrity = {
+    ...payload,
+    sessionStartedAt: toDate(startMs),
+    sessionUpdatedAt: orderedEvents.at(-1)?.at || toDate(startMs),
+    exportedAt: toDate(exportedAtMs),
     events: orderedEvents,
     snapshots: orderedSnapshots
   };
-
-  const adjusted = buildUsageExportWithIntegrity(session, profile.studentName, toDate(exportedAtMs));
-  return adjusted;
+  delete adjustedWithoutIntegrity.integrity;
+  const sha256 = computeUsageSha256Hex(adjustedWithoutIntegrity);
+  return {
+    ...adjustedWithoutIntegrity,
+    integrity: {
+      algorithm: "SHA-256",
+      sha256
+    }
+  };
 }
 
 export async function rewriteUsageExportFile(filePath, profile) {

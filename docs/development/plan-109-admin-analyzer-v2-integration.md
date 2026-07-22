@@ -75,6 +75,8 @@ Contracts to preserve:
 
 Plan 108's similarity experiment documented a **pre-existing detector limitation**: `similarSequencesDifferentNames` keys on event-attempt-sequence fingerprints, so a student who copies a final solution but arrives through a different attempt history is NOT flagged (verified by the Alice/Eve pair across export shapes). This is not a v2 regression — but when this packet makes the analyzer ledger-first, consider whether an honest label or review signal near the similarity output is warranted so teachers do not read "not flagged" as "independent work." Do not redesign similarity detection in this packet; if more than a label seems warranted, stop and surface.
 
+**Addendum (2026-07-22, regression-suite repair):** `compareUsageSummaries` requires EXACT fingerprint equality, and since plans 106/108 level events carry live-capture `xmlHash`. Exact equality plus workspace-identity content means two students who imported the SAME file still diverge (boot-time starter workspaces get random Blockly ids; any captured-state difference kills the match) — so in production the "similar event sequence" flag likely never fires at all. Verified empirically while repairing the regression suite: the Pat/Casey flag only fires because the harness now injects deterministic block ids and seeds level 1's workspace (see `tests/regression/usage-pipeline.spec.js`). Options for this packet to weigh and surface to the owner: strip `xmlHash` from the fingerprint (sequence-only, May-era semantics), normalize ids out of the usage hash (weakens import forensics), or accept import-forensic semantics with an honest label. Do not silently pick one — this is a product decision about what "similar work" means for teachers.
+
 ## Scope
 
 ### In Scope

@@ -8,8 +8,40 @@ import {
   REGRESSION_OUTPUT_DIR,
   resolveAttemptXmlText
 } from "./student-profiles.js";
+import { getLevelDefinitions } from "../../src/config/levels.js";
 
 const profiles = buildRegressionProfiles();
+
+// Independent catalog anchor for the cross-checks in assertExportedProfileSummary.
+// Anchored to the level catalog (not frozen literals) so legitimate campaign growth
+// does not stale these guards; the per-profile fail counts (6 / 11 / 3) are
+// profile-design constants matching the levelOverrides in PROFILE_PLANS
+// (tests/regression/student-profiles.js) and must be updated together.
+const REQUIRED_CAMPAIGN_LEVELS = getLevelDefinitions().filter((level) => !level.id.startsWith("optional-"));
+const REQUIRED_LEVEL_COUNT = REQUIRED_CAMPAIGN_LEVELS.length;
+const GABI_PASSED_COUNT = REQUIRED_CAMPAIGN_LEVELS.findIndex((level) => level.id === "jump-if-ready");
+
+// Fixtures and starter XML carry no block ids, and Blockly generates random ids
+// on every load — so two profiles loading the same program would serialize (and
+// hash) differently. Inject deterministic ids so profiles running the same
+// program produce identical workspace XML, faithfully simulating students who
+// imported the same shared program file (the Copy-Cat Casey story).
+function withDeterministicBlockIds(xmlText) {
+  let counter = 0;
+  return xmlText.replace(/<block (?![^>]*\bid=")/g, () => {
+    counter += 1;
+    return `<block id="bba-fixture-${counter}" `;
+  });
+}
+
+// Seed level 1's saved workspace with a deterministic-id copy of its starter so
+// the app's boot-time workspace load (which fires level_opened and the first
+// live-capture events) hashes identically across profiles. The sibling version
+// key matches the level's current starterXmlVersion so Plan 45's stale-replace
+// keeps the seeded content.
+const LEVEL_ONE = getLevelDefinitions().find((level) => level.id === "move-to-target");
+const LEVEL_ONE_SEEDED_STARTER = withDeterministicBlockIds(LEVEL_ONE.initialBlocklyXml);
+const LEVEL_ONE_STARTER_VERSION = LEVEL_ONE.starterXmlVersion || null;
 
 test("regression profiles append the correct passing attempt after each wrong attempt", () => {
   const sam = profiles.find((profile) => profile.name === "Struggling Sam");
@@ -49,12 +81,12 @@ async function prepareBrowserProfile(profile) {
   for (const level of profile.levels) {
     const attempts = [];
     for (const attempt of level.attempts) {
-      const xmlText = attempt.xmlFile
+      const rawXml = attempt.xmlFile
         ? await resolveAttemptXmlText({ xmlFile: attempt.xmlFile })
         : attempt.xmlInline || null;
       attempts.push({
         expectPass: attempt.expectPass,
-        xmlText,
+        xmlText: rawXml ? withDeterministicBlockIds(rawXml) : null,
         inputSequence: attempt.inputSequence || null
       });
     }
@@ -99,20 +131,12 @@ async function synthesizeProfileUsage(page, profile) {
           mapKey: level.mapKey
         });
         if (attempt.xmlText) {
-          hooks.app.usageTracker.recordWorkspaceImported?.({
-            modeView: hooks.app.state.currentModeView,
-            levelId: level.id,
-            mapKey: level.mapKey,
-            turnNumber: hooks.app.state.currentTurnNumber
-          });
-          hooks.app.usageTracker.recordWorkspaceSnapshot?.("workspace_imported", {
-            xmlText: attempt.xmlText,
-            blockCounts: {},
-            modeView: hooks.app.state.currentModeView,
-            levelId: level.id,
-            mapKey: level.mapKey,
-            turnNumber: hooks.app.state.currentTurnNumber
-          });
+          // Load the attempt's program into the visible workspace so live-capture
+          // xmlHash on subsequent events reflects the program being "run" (a real
+          // student's workspace holds their program at these moments). The import
+          // flow records workspace_imported + snapshot itself, so no manual
+          // recordWorkspaceImported/recordWorkspaceSnapshot calls are needed here.
+          hooks.loadWorkspaceXml?.(attempt.xmlText);
         }
         hooks.app.usageTracker.recordLevelEnded(level, attempt.expectPass ? "PASSED" : "FAILED", attempt.expectPass ? "simulated_success" : "simulated_failure", {
           startTurnNumber: hooks.app.state.currentLevelStartTurnNumber,
@@ -157,21 +181,21 @@ async function assertExportedProfileSummary(outputPath, profile) {
   expect(payload.summary.guided.attempts).toBe(expected.guided.attempts);
   expect(payload.summary.guided.levelIds).toEqual(expected.levelIds);
   if (profile.name === "Perfect Pat" || profile.name === "Copy-Cat Casey") {
-    expect(payload.summary.guided.passed).toBe(37);
-    expect(payload.summary.guided.completed).toBe(37);
+    expect(payload.summary.guided.passed).toBe(REQUIRED_LEVEL_COUNT);
+    expect(payload.summary.guided.completed).toBe(REQUIRED_LEVEL_COUNT);
     expect(payload.summary.guided.failed).toBe(0);
   } else if (profile.name === "Struggling Sam") {
-    expect(payload.summary.guided.passed).toBe(37);
+    expect(payload.summary.guided.passed).toBe(REQUIRED_LEVEL_COUNT);
     expect(payload.summary.guided.failed).toBe(6);
-    expect(payload.summary.guided.completed).toBe(43);
+    expect(payload.summary.guided.completed).toBe(REQUIRED_LEVEL_COUNT + 6);
   } else if (profile.name === "Challenged Charlie") {
-    expect(payload.summary.guided.passed).toBe(37);
+    expect(payload.summary.guided.passed).toBe(REQUIRED_LEVEL_COUNT);
     expect(payload.summary.guided.failed).toBe(11);
-    expect(payload.summary.guided.completed).toBe(48);
+    expect(payload.summary.guided.completed).toBe(REQUIRED_LEVEL_COUNT + 11);
   } else if (profile.name === "Gave-Up Gabi") {
-    expect(payload.summary.guided.passed).toBe(15);
+    expect(payload.summary.guided.passed).toBe(GABI_PASSED_COUNT);
     expect(payload.summary.guided.failed).toBe(3);
-    expect(payload.summary.guided.completed).toBe(18);
+    expect(payload.summary.guided.completed).toBe(GABI_PASSED_COUNT + 3);
     expect(payload.summary.guided.levelIds).toContain("jump-if-ready");
   }
 }
@@ -179,6 +203,16 @@ async function assertExportedProfileSummary(outputPath, profile) {
 test.describe.parallel("usage pipeline student profiles", () => {
   for (const profile of profiles) {
     test(profile.name, async ({ page }) => {
+      await page.addInitScript(({ xml, version }) => {
+        try {
+          window.localStorage.setItem("bba:guided-workspace:move-to-target", xml);
+          if (version) {
+            window.localStorage.setItem("bba:guided-workspace-version:move-to-target", version);
+          }
+        } catch {
+          // localStorage unavailable; the suite will surface any mismatch.
+        }
+      }, { xml: LEVEL_ONE_SEEDED_STARTER, version: LEVEL_ONE_STARTER_VERSION });
       await page.goto("/");
       await waitForHeavyReady(page);
       await chooseGuided(page);

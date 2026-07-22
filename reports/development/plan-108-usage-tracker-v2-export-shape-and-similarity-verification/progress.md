@@ -65,6 +65,7 @@ The similarity-detection verification experiment was executed across synthetic s
 - `cmd /c npm test`: **PASS** (527/527 unit tests passed, 0 failed; includes all 8 tests in `usage-v2-export.test.js`)
 - `cmd /c npm run build`: **PASS** (Vite production build succeeded cleanly)
 - `cmd /c npm run test:regression`: **FAILED (Pre-Existing)** — Global setup error (`Challenged Charlie`/`index-jobs` fixture assertion error at `student-profiles.js:408`). The suite aborts in global setup, so no regression specs execute; "zero new failures" is therefore true of zero executed specs, and Plan 108's effect on this suite is unobservable until the pre-existing fixture failure is triaged separately.
+  - **Update (2026-07-22, orchestrator):** the pre-existing failure was triaged to a stale `index-jobs` negative fixture (root-caused to level-revision commit `30864b8`) and repaired along with three further layers of staleness the red suite had been masking. The full regression suite now passes 7/7 WITH Plan 108's v2 export assertions included, and the `timestamp-spreader.js` v2-field-gutting defect (a Plan-108-adjacent harness gap this packet's review missed) is fixed. See commit message of the regression-repair commit for the full archeology.
 - `cmd /c npm run analyze:usage`: **PASS** (CLI script outputs usage syntax and cleanly analyzes V2 export payloads without crashing)
 
 ---
