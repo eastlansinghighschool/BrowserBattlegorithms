@@ -25,4 +25,5 @@ Plan 31's repair note is already complete in the packet index, so it is not repe
 | Sensor sandbox / API explorer | deferred | Trace playback already covers much of the intuition gap. |
 | Replay viewer UI / game history and replays | deferred | Separate from the RNG decision; build only if teachers ask for step-through replay. |
 | Advanced multi-ally coordination levels | deferred | Keep for post-project-saturation exploration. |
+| Code-aware / threshold-based similarity detection | deferred | Plan 109 review (decision log 2026-07-22): the exact-equality fingerprint + xmlHash makes the current flag import-forensic and rare. A future design packet should weigh threshold-based sequence similarity and/or id-normalized program hashing, with false-positive analysis (on-rails guided sequences, near-reference solutions) and classroom-evidence requirements. |
 | Automated barrier path counting | deferred | Useful only if level path-space audits prove necessary. |

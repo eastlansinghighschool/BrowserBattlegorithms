@@ -15,7 +15,7 @@ function formatDurationLabel(durationMs) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   if (minutes === 0 && seconds === 0) {
-    return "<1s approx";
+    return "—";
   }
   if (minutes === 0) {
     return `${seconds}s approx`;

@@ -49,6 +49,9 @@ function describeChallengeCounts(summary) {
 export async function summarizeUsagePayloadAsync(payload) {
   const verification = await verifyUsageExportAsync(payload);
   const summary = payload?.summary || {};
+  const schemaVersion = payload?.schemaVersion ?? 1;
+  const learningLedger = payload?.learningLedger || null;
+  const flags = payload?.flags || {};
   const eventFingerprint = getUsageEventFingerprint(payload?.events || []);
   const freePlayScores = summary.freePlay?.lastScores || { 1: 0, 2: 0 };
   const totalPlayTimeMs = Number(
@@ -72,27 +75,60 @@ export async function summarizeUsagePayloadAsync(payload) {
   const guidedProgress = deriveGuidedProgress({
     events: payload?.events || [],
     summary,
-    levelCatalog: GUIDED_LEVEL_PROGRESS_CATALOG
+    levelCatalog: GUIDED_LEVEL_PROGRESS_CATALOG,
+    learningLedger,
+    schemaVersion,
+    flags
   });
   const sessionSpanMinutes = Math.max(0, Math.round(totalPlayTimeMs / 60000));
+  const gpLevels = guidedProgress.guidedLevelProgress || [];
+  const isV2 = schemaVersion >= 2 && Boolean(learningLedger);
+
+  const guidedStarted = isV2
+    ? Math.max(Number(summary.guided?.started || 0), gpLevels.reduce((sum, e) => sum + e.startedCount, 0))
+    : Number(summary.guided?.started || 0);
+  const guidedCompleted = isV2
+    ? Math.max(Number(summary.guided?.completed || 0), gpLevels.reduce((sum, e) => sum + e.completedCount, 0))
+    : Number(summary.guided?.completed || 0);
+  const guidedPassed = isV2
+    ? Math.max(Number(summary.guided?.passed || 0), gpLevels.reduce((sum, e) => sum + e.passedCount, 0))
+    : Number(summary.guided?.passed || 0);
+  const guidedFailed = isV2
+    ? Math.max(Number(summary.guided?.failed || 0), gpLevels.reduce((sum, e) => sum + e.failedCount, 0))
+    : Number(summary.guided?.failed || 0);
+  const guidedAttempts = isV2
+    ? Math.max(Number(summary.guided?.attempts || 0), gpLevels.reduce((sum, e) => sum + e.startedCount, 0))
+    : Number(summary.guided?.attempts || 0);
+  const guidedTurns = isV2
+    ? Math.max(Number(summary.guided?.turns || 0), gpLevels.reduce((sum, e) => sum + e.turnsSpent, 0))
+    : Number(summary.guided?.turns || 0);
+  const challengeCompletions = isV2
+    ? Math.max(Number(summary.guided?.challengeCompletions || 0), gpLevels.reduce((sum, e) => sum + (e.isChallenge ? e.passedCount : 0), 0))
+    : Number(summary.guided?.challengeCompletions || 0);
+  const capstoneCompletions = isV2
+    ? Math.max(Number(summary.guided?.capstoneCompletions || 0), gpLevels.reduce((sum, e) => sum + (e.isCapstone ? e.passedCount : 0), 0))
+    : Number(summary.guided?.capstoneCompletions || 0);
+
   return {
     studentName: payload?.studentName || "",
     sessionId: payload?.sessionId || "",
     exportedAt: payload?.exportedAt || "",
     appVersion: payload?.appVersion || "",
+    schemaVersion,
+    flags,
     hashStatus: verification.ok ? "verified hash" : "hash mismatch",
     hash: verification.computedSha256 || "",
     totalEvents: Array.isArray(payload?.events) ? payload.events.length : 0,
     totalSnapshots: Array.isArray(payload?.snapshots) ? payload.snapshots.length : 0,
     guided: {
-      started: Number(summary.guided?.started || 0),
-      completed: Number(summary.guided?.completed || 0),
-      passed: Number(summary.guided?.passed || 0),
-      failed: Number(summary.guided?.failed || 0),
-      attempts: Number(summary.guided?.attempts || 0),
-      turns: Number(summary.guided?.turns || 0),
-      challengeCompletions: Number(summary.guided?.challengeCompletions || 0),
-      capstoneCompletions: Number(summary.guided?.capstoneCompletions || 0)
+      started: guidedStarted,
+      completed: guidedCompleted,
+      passed: guidedPassed,
+      failed: guidedFailed,
+      attempts: guidedAttempts,
+      turns: guidedTurns,
+      challengeCompletions,
+      capstoneCompletions
     },
     freePlay: {
       entered: Number(summary.freePlay?.entered || 0),
@@ -103,13 +139,13 @@ export async function summarizeUsagePayloadAsync(payload) {
       losses: Number(summary.freePlay?.losses || 0),
       lastScores: {
         1: Number(freePlayScores?.[1] || 0),
-      2: Number(freePlayScores?.[2] || 0)
+        2: Number(freePlayScores?.[2] || 0)
       }
     },
     playTimeMinutes: sessionSpanMinutes,
     sessionSpanMinutes,
     eventFingerprint,
-    challengeSummary: describeChallengeCounts(summary),
+    challengeSummary: describeChallengeCounts({ guided: { challengeCompletions, capstoneCompletions } }),
     suspiciousSignals,
     guidedProgress,
     needsReview: suspiciousSignals.length > 0 || guidedProgress.needsReview,

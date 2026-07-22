@@ -34,6 +34,7 @@ function formatSummaryLine(record) {
     `session=${record.sessionId || "(missing)"}`,
     `exported=${record.exportedAt || "(missing)"}`,
     `integrity=${hashLabel}`,
+    `schema=v${record.schemaVersion || 1}`,
     `guided=${guidedLabel}`,
     `challengeCount=${record.challengeSummary}`,
     `highestReached=${highestReached}`,
@@ -86,6 +87,11 @@ async function main() {
     if (record.suspiciousSignals.length) {
       console.log(`  signals: ${record.suspiciousSignals.join(", ")}`);
     }
+    if (record.reviewSignals?.length) {
+      for (const sig of record.reviewSignals) {
+        console.log(`  review: ${sig.message || sig.type}`);
+      }
+    }
   }
 
   if (comparisons.duplicateSessionIds.length) {
@@ -102,7 +108,7 @@ async function main() {
   }
   if (comparisons.similarSequencesDifferentNames.length) {
     for (const entry of comparisons.similarSequencesDifferentNames) {
-      console.log(formatFlagLine("similar event sequence", entry.labels || []));
+      console.log(formatFlagLine("similar event sequence (identical attempts + program states; strong but rare — 'not flagged' does not mean independent work)", entry.labels || []));
     }
   }
 }

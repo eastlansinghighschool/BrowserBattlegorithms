@@ -117,7 +117,7 @@ function renderFlags() {
     items.push(`<strong>Identical integrity hash:</strong> ${names} — files may be exact copies.`);
   }
   for (const { labels } of similarSequencesDifferentNames) {
-    items.push(`<strong>Similarity flag:</strong> ${labels.join(", ")} — identical event sequence under different names. Review recommended.`);
+    items.push(`<strong>Similarity flag:</strong> ${labels.join(", ")} — identical attempt sequence AND identical captured program states under different names. Strong evidence when it fires, but rare by design: "not flagged" does not mean independent work. Review recommended.`);
   }
 
   if (items.length === 0) {
@@ -378,6 +378,11 @@ function renderDetail(index) {
     ? `<ul class="adm-snapshot-list">${snapshots.map((snap) => snapshotItemHtml(snap)).join("")}</ul>`
     : `<p style="font-size:0.85rem;color:var(--adm-text-muted)">No snapshots recorded.</p>`;
 
+  const schemaVersion = summary.schemaVersion || 1;
+  const versionCaveat = schemaVersion >= 2
+    ? `Schema v2 file — guided progress derived from durable learning ledger.${summary.flags?.eventTailTruncated ? " (Event stream was truncated; the durable ledger preserves whatever progress was recorded before truncation.)" : ""}`
+    : "Schema v1 file — guided progress derived by replaying event history. (Older event tails may be truncated.)";
+
   detailContent.innerHTML = `
     <div class="adm-integrity-banner ${bannerClass}">
       <strong>${bannerLabel}</strong>
@@ -386,6 +391,7 @@ function renderDetail(index) {
 
     <div class="adm-detail-card adm-guided-story-card">
       <p class="adm-detail-card-title">Guided Progress Story</p>
+      <p style="font-size:0.8rem;color:var(--adm-text-muted);margin-bottom:0.4rem;">${escHtml(versionCaveat)}</p>
       <p class="adm-guided-story-lead">${escHtml(summaryLine)}</p>
       <div class="adm-detail-grid adm-guided-story-grid">
         ${statRow("Highest reached", progressCell(guidedProgress.highestReached))}
@@ -405,6 +411,7 @@ function renderDetail(index) {
         ${statRow("Student", escHtml(summary.studentName || "(blank)"))}
         ${statRow("Session ID", `<span class="adm-mono" title="${escHtml(summary.sessionId)}">${escHtml(summary.sessionId.slice(0, 20))}${summary.sessionId.length > 20 ? "…" : ""}</span>`)}
         ${statRow("Exported", escHtml(formatDate(summary.exportedAt)))}
+        ${statRow("Schema version", `v${schemaVersion}${summary.flags?.historyPartial ? " (partial history)" : ""}`)}
         ${statRow("App version", escHtml(summary.appVersion || "—"))}
         ${statRow("File", escHtml(fileName))}
       </div>

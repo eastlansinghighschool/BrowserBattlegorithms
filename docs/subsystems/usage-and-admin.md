@@ -149,14 +149,14 @@ The hash detects casual or accidental modification of the export file. It is not
 
 For each uploaded file, the admin page shows:
 
-- **Identity**: student name, session id, export timestamp.
+- **Identity**: student name, session id, export timestamp, schema version (`v1` / `v2`), and completeness status.
 - **Integrity**: hash status (`verified` / `tampered`).
 - **Guided progress**: highest reached, highest passed, highest passed challenge, contiguous pass-through evidence, revisits, and an accessible per-level sequence map.
 - **Guided level stats**: levels attempted, levels passed, turn counts, and approximate session span.
 - **Free play stats**: matches played, outcomes.
-- **Review evidence**: a compact `needs review` indicator for hash mismatch, unknown guided levels, and analyzer warnings.
-- **Anomaly flags**: duplicate session ids, identical integrity hashes, similar event fingerprints under different names.
-- **Detail view**: event list, snapshot list, suspicious signal summary, guided progress story, accessible sequence map, and exact per-level table.
+- **Review evidence**: a compact `needs review` indicator for hash mismatch, unknown guided levels, truncation signals, and analyzer warnings.
+- **Anomaly flags**: duplicate session ids, identical integrity hashes, similar event fingerprints under different names (clarified: matches attempt event sequences, not final code text).
+- **Detail view**: event list, snapshot list, suspicious signal summary, guided progress story with schema version caveat banner, accessible sequence map, and exact per-level table.
 
 Anomaly flags use careful language: `possible duplicate`, `similarity flag`, `review recommended`. The system does not claim certainty.
 
@@ -167,8 +167,15 @@ Both analyzers (`usageAnalyzerBrowser.js` and `usageAnalyzer.js`) produce the sa
 - **CLI analyzer**: runs in Node; uses Node `crypto`; accepts file paths as arguments; intended for local teacher use before the admin page existed.
 - **Browser analyzer**: runs in a browser worker or inline; uses Web Crypto; feeds the admin page UI.
 
-The two paths are designed to agree on hash verification and anomaly detection. If they diverge, that is a bug.
-They should also agree on guided progress semantics: the same ordered catalog, the same highest reached / highest passed milestones, and the same exact passed-challenge label.
+### V2 Analyzer Integration Contracts (Plan 109)
+
+1. **Ledger-First Reading**: When analyzing `schemaVersion: 2` exports, guided progress totals and per-level milestone stories read directly from the durable learning ledger (`learningLedger`) rather than replaying events.
+2. **V1 Back-Compatibility (B1)**: `schemaVersion: 1` or un-versioned files continue using event reconstruction, ensuring golden analysis parity for older exports.
+3. **Dual-Version & Completeness Labels**: Both analyzers surface `schemaVersion` (`v1` or `v2`) and plain-language completeness caveats (`historyPartial`, `eventTailTruncated`, `ledgerBackfilled`, `runVersionStoreTruncated`, `boundaryXmlsTruncated`) in both CLI output and Admin UI.
+4. **Display Fixes**: Sub-second level durations display `—` instead of `<1s approx`.
+5. **Similarity Framing**: Similarity flag output includes plain-language context clarifying that matching compares attempt event sequences, not final boundary code text.
+
+The two paths are designed to agree on hash verification, schema detection, guided progress derivation, and anomaly detection. If they diverge, that is a bug.
 
 ## Regression harness
 

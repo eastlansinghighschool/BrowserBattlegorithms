@@ -1,11 +1,9 @@
 ---
 id: plan-110
 title: "Usage Tracker V2 Rewrite-Aware Fields Receptacle"
-status: ready
+status: in-progress
 depends_on: [plan-106]
 gate: "none; Plan 91 settled the field list and its optional/additive semantics"
-superseded_by: null
-resolution: null
 summary: >-
   Extend the v2 ledger schema to accept Plan 91's rewrite-aware fields (arcs, board-dynamics tiers, bestiary encounters, stars/par/mastery, film-review summaries) as optional, additive, unpopulated fields, so plan-96 and later packets have a settled place to write them.
 ---

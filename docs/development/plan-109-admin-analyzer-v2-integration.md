@@ -1,7 +1,8 @@
 ---
 id: plan-109
 title: "Admin Analyzer V2 Integration"
-status: in-progress
+status: complete
+resolution: "Ledger-first V2 analyzer with v1 golden preservation, dual-version labels, truncation review signals, display fixes, CLI/browser parity. Owner ratified import-forensic similarity semantics with sharpened labels (decision log 2026-07-22); carried-over-session mismatch false-positive suppressed at acceptance. D4 cohort re-scope note recorded. Full regression suite green 7/7 against this code."
 depends_on: [plan-108]
 gate: "none beyond standard; CLI/browser parity is a hard requirement"
 summary: >-

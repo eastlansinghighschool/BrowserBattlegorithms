@@ -15,7 +15,7 @@ function formatDurationLabel(durationMs) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   if (minutes === 0 && seconds === 0) {
-    return "<1s approx";
+    return "—";
   }
   if (minutes === 0) {
     return `${seconds}s approx`;
@@ -257,7 +257,7 @@ export function formatGuidedProgressLabel(progressEntry) {
   return progressEntry.label || progressEntry.title || progressEntry.levelId || "—";
 }
 
-export function deriveGuidedProgress({ events = [], summary = {}, levelCatalog = [] } = {}) {
+export function deriveGuidedProgress({ events = [], summary = {}, levelCatalog = [], learningLedger = null, schemaVersion = 1, flags = {} } = {}) {
   const catalogEntries = Array.isArray(levelCatalog) ? levelCatalog : [];
   const progressById = new Map();
   const requiredEntries = [];
@@ -273,9 +273,6 @@ export function deriveGuidedProgress({ events = [], summary = {}, levelCatalog =
   const unknownEntryById = new Map();
   const unknownLevelIds = [];
   const reviewSignals = [];
-  const levelIdsFromSummary = new Set(Array.isArray(summary?.guided?.levelIds) ? summary.guided.levelIds.filter(Boolean) : []);
-  const activeAttempts = [];
-  let latestGuidedActivity = null;
 
   function getOrCreateProgressEntry(levelId) {
     if (progressById.has(levelId)) {
@@ -289,6 +286,187 @@ export function deriveGuidedProgress({ events = [], summary = {}, levelCatalog =
     }
     return unknownEntryById.get(levelId);
   }
+
+  const isV2 = (schemaVersion >= 2 || (learningLedger && typeof learningLedger.guided === "object" && Object.keys(learningLedger.guided).length > 0)) && Boolean(learningLedger && typeof learningLedger.guided === "object");
+
+  if (isV2) {
+    // ── V2 Ledger-First Read Path ──────────────────────────────────────────
+    const guidedLedger = learningLedger.guided || {};
+    const passLedgerSet = new Set(Array.isArray(learningLedger.passLedger) ? learningLedger.passLedger.map(normalizeLevelId) : []);
+
+    for (const [rawLevelId, ledgerEntry] of Object.entries(guidedLedger)) {
+      if (!ledgerEntry) continue;
+      const levelId = normalizeLevelId(rawLevelId);
+      if (!levelId) continue;
+
+      const entry = getOrCreateProgressEntry(levelId);
+      entry.reached = Boolean(ledgerEntry.reached) || Number(ledgerEntry.startedCount || 0) > 0 || Number(ledgerEntry.completedCount || 0) > 0 || Boolean(ledgerEntry.passed);
+      entry.startedCount = Number(ledgerEntry.startedCount || 0);
+      entry.completedCount = Number(ledgerEntry.completedCount || 0);
+      entry.passedCount = Number(ledgerEntry.passedCount || (ledgerEntry.passed ? 1 : 0));
+      entry.failedCount = Number(ledgerEntry.failedCount || 0);
+      entry.revisits = Number(ledgerEntry.revisits || 0);
+      entry.turnsSpent = Number(ledgerEntry.turnsSpent || 0);
+      entry.approximateDurationMs = Number(ledgerEntry.durationMs || 0);
+      entry.firstStartedAt = ledgerEntry.firstActivityAt || null;
+      entry.lastStartedAt = ledgerEntry.lastActivityAt || ledgerEntry.firstActivityAt || null;
+      entry.firstCompletedAt = ledgerEntry.lastResult ? (ledgerEntry.lastActivityAt || ledgerEntry.firstActivityAt) : null;
+      entry.lastCompletedAt = ledgerEntry.lastResult ? ledgerEntry.lastActivityAt : null;
+      entry.latestEventResult = ledgerEntry.lastResult || (ledgerEntry.passed ? "PASSED" : null);
+
+      if (ledgerEntry.passed || entry.passedCount > 0 || passLedgerSet.has(levelId)) {
+        entry.passed = true;
+        if (entry.passedCount === 0) {
+          entry.passedCount = 1;
+        }
+      }
+    }
+
+    for (const rawLevelId of passLedgerSet) {
+      const levelId = normalizeLevelId(rawLevelId);
+      if (!levelId) continue;
+      const entry = getOrCreateProgressEntry(levelId);
+      entry.reached = true;
+      entry.passed = true;
+      if (entry.passedCount === 0) {
+        entry.passedCount = 1;
+      }
+    }
+
+    let latestGuidedActivity = null;
+    for (const event of Array.isArray(events) ? events : []) {
+      const eventType = event?.type || "unknown";
+      const eventAt = event?.at || null;
+      const payload = event?.data && typeof event.data === "object" ? event.data : {};
+      const levelId = normalizeLevelId(payload.levelId);
+      const turnNumber = typeof payload.turnNumber === "number" && Number.isFinite(payload.turnNumber) ? payload.turnNumber : null;
+
+      if (levelId && (eventType === "level_started" || eventType === "level_completed")) {
+        const entry = getOrCreateProgressEntry(levelId);
+        updateEventTimestamps(entry, eventAt, eventType, payload.result || null, turnNumber);
+        latestGuidedActivity = buildActivitySnapshot(entry, eventType, eventAt, payload.result || null, turnNumber);
+      }
+    }
+
+    if (!latestGuidedActivity) {
+      let latestTime = 0;
+      let latestEntry = null;
+      const allEntries = [...progressById.values(), ...unknownEntries];
+      for (const entry of allEntries) {
+        const ts = toTimestamp(entry.lastStartedAt || entry.firstStartedAt);
+        if (ts !== null && ts >= latestTime) {
+          latestTime = ts;
+          latestEntry = entry;
+        }
+      }
+      if (latestEntry && latestEntry.reached) {
+        latestGuidedActivity = buildActivitySnapshot(
+          latestEntry,
+          latestEntry.completedCount > 0 ? "level_completed" : "level_started",
+          latestEntry.lastStartedAt || latestEntry.firstStartedAt,
+          latestEntry.latestEventResult,
+          latestEntry.latestTurnNumber
+        );
+      }
+    }
+
+    if (Array.isArray(events) && events.length > 0) {
+      let eventCompleted = 0;
+      for (const event of events) {
+        if (event?.type === "level_completed") eventCompleted++;
+      }
+      const ledgerCompleted = [...progressById.values(), ...unknownEntries].reduce((sum, e) => sum + e.completedCount, 0);
+      if (eventCompleted !== ledgerCompleted && !flags.eventTailTruncated && !flags.historyPartial && !flags.durableTiersCarriedFrom) {
+        reviewSignals.push({
+          type: "ledger_event_mismatch",
+          message: `Durable learning ledger reports ${ledgerCompleted} level completions, but event stream shows ${eventCompleted}. Using durable ledger as source of truth.`
+        });
+      }
+    }
+
+    if (flags.historyPartial) {
+      reviewSignals.push({
+        type: "history_partial",
+        message: "Session history is partial — early events or sessions were truncated."
+      });
+    }
+    if (flags.eventTailTruncated) {
+      reviewSignals.push({
+        type: "event_tail_truncated",
+        message: "Event stream was truncated; durable ledger used for guided progress."
+      });
+    }
+    if (flags.ledgerBackfilled) {
+      reviewSignals.push({
+        type: "ledger_backfilled",
+        message: "Durable ledger was backfilled from legacy session events."
+      });
+    }
+    if (flags.runVersionStoreTruncated) {
+      reviewSignals.push({
+        type: "run_version_store_truncated",
+        message: "Run-version store was trimmed due to storage byte budget."
+      });
+    }
+    if (flags.boundaryXmlsTruncated) {
+      reviewSignals.push({
+        type: "boundary_xmls_truncated",
+        message: "Boundary XML code snapshots were capped at 5 per level."
+      });
+    }
+
+    const progressEntries = [...requiredEntries, ...catalogEntries.filter((entry) => !entry.isRequiredProgression)];
+    const orderedProgressEntries = progressEntries
+      .map((catalogEntry) => {
+        const entry = progressById.get(catalogEntry.levelId);
+        if (!entry) return null;
+        return finalizeProgressEntry(entry);
+      })
+      .filter(Boolean);
+    for (const entry of unknownEntries) {
+      finalizeProgressEntry(entry);
+    }
+
+    const allProgressEntries = [...orderedProgressEntries, ...unknownEntries];
+    if (unknownLevelIds.length > 0) {
+      reviewSignals.unshift({
+        type: "unknown_level_ids",
+        levelIds: [...unknownLevelIds],
+        message: `Unknown guided level ids seen: ${unknownLevelIds.join(", ")}.`
+      });
+    }
+
+    const requiredByOrder = orderedProgressEntries.filter((entry) => entry.isRequiredProgression);
+    let contiguousPassedThrough = null;
+    for (const entry of requiredByOrder) {
+      if (entry.passedCount > 0) {
+        contiguousPassedThrough = entry;
+        continue;
+      }
+      break;
+    }
+
+    const highestReached = [...requiredByOrder].reverse().find((entry) => entry.reached) || null;
+    const highestPassed = [...requiredByOrder].reverse().find((entry) => entry.passedCount > 0) || null;
+    const highestPassedChallenge = [...allProgressEntries].reverse().find((entry) => entry.isChallenge && entry.passedCount > 0) || null;
+
+    return {
+      highestReached,
+      highestPassed,
+      highestPassedChallenge,
+      latestGuidedActivity,
+      contiguousPassedThrough,
+      guidedLevelProgress: allProgressEntries,
+      unknownLevelIds,
+      reviewSignals,
+      needsReview: reviewSignals.length > 0
+    };
+  }
+
+  // ── V1 Event Reconstruction Path (Original) ──────────────────────────
+  const levelIdsFromSummary = new Set(Array.isArray(summary?.guided?.levelIds) ? summary.guided.levelIds.filter(Boolean) : []);
+  const activeAttempts = [];
+  let latestGuidedActivity = null;
 
   function finishActiveAttempt(endAt, reason) {
     const attempt = activeAttempts.pop();
@@ -421,6 +599,19 @@ export function deriveGuidedProgress({ events = [], summary = {}, levelCatalog =
   trackSummaryMismatch(reviewSignals, "guided_failures", Number(summary?.guided?.failed || 0), observedFailed);
   trackSummaryMismatch(reviewSignals, "challenge_passes", Number(summary?.guided?.challengeCompletions || 0), observedChallengeCompletions);
   trackSummaryMismatch(reviewSignals, "capstone_passes", Number(summary?.guided?.capstoneCompletions || 0), observedCapstoneCompletions);
+
+  if (flags.historyPartial) {
+    reviewSignals.push({
+      type: "history_partial",
+      message: "Session history is partial — early events or sessions were truncated."
+    });
+  }
+  if (flags.eventTailTruncated) {
+    reviewSignals.push({
+      type: "event_tail_truncated",
+      message: "Event stream was truncated."
+    });
+  }
 
   if (unknownLevelIds.length > 0) {
     reviewSignals.unshift({
