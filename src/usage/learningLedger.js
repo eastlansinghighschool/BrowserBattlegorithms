@@ -75,7 +75,9 @@ export function createSessionFlags(overrides = {}) {
   return {
     ledgerBackfilled: Boolean(overrides.ledgerBackfilled),
     eventTailTruncated: Boolean(overrides.eventTailTruncated),
-    historyPartial: Boolean(overrides.historyPartial)
+    historyPartial: Boolean(overrides.historyPartial),
+    runVersionStoreTruncated: Boolean(overrides.runVersionStoreTruncated),
+    durableTiersCarriedFrom: overrides.durableTiersCarriedFrom || null
   };
 }
 

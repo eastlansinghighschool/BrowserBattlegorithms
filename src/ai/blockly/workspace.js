@@ -752,8 +752,11 @@ export function getFirstRunnableAction(app, runner) {
     Number(app.state.activeBlocklyTeamTab || 1) === Number(runner.team);
 
   if (shouldUseVisibleWorkspace) {
+    const xmlText = getWorkspaceXmlText(app);
     const eventBlock = ensureEventBlock(app);
-    return resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    app.usageTracker?.recordRunVersion?.(runner, app, xmlText);
+    return action;
   }
 
   const xmlText = getStoredWorkspaceXmlText(app, runner.team, buildDefaultWorkspaceXml());
@@ -762,7 +765,9 @@ export function getFirstRunnableAction(app, runner) {
     const xml = Blockly.utils.xml.textToDom(xmlText || buildDefaultWorkspaceXml());
     Blockly.Xml.domToWorkspace(xml, workspace);
     const eventBlock = getEventBlock(workspace);
-    return resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    app.usageTracker?.recordRunVersion?.(runner, app, xmlText);
+    return action;
   } finally {
     workspace.dispose();
   }
@@ -779,12 +784,14 @@ export function getFirstRunnableActionWithTrace(app, runner) {
     Number(app.state.activeBlocklyTeamTab || 1) === Number(runner.team);
 
   if (shouldUseVisibleWorkspace) {
+    const xmlText = getWorkspaceXmlText(app);
     const eventBlock = ensureEventBlock(app);
     const collector = createBlocklyTraceCollector(runner);
     const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null, collector);
     if (!action && eventBlock) {
       recordTraceStep(collector, eventBlock, "empty");
     }
+    app.usageTracker?.recordRunVersion?.(runner, app, xmlText);
     return { action, trace: collector.getSteps() };
   }
 
@@ -795,6 +802,7 @@ export function getFirstRunnableActionWithTrace(app, runner) {
     Blockly.Xml.domToWorkspace(xml, workspace);
     const eventBlock = getEventBlock(workspace);
     const action = resolveFirstRunnableAction(app.state, runner, eventBlock?.getNextBlock() || null);
+    app.usageTracker?.recordRunVersion?.(runner, app, xmlText);
     return { action, trace: null };
   } finally {
     workspace.dispose();

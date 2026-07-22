@@ -5,6 +5,10 @@ import {
   hydrateAndBackfillSession,
   updateLearningLedgerFromEvent
 } from "./learningLedger.js";
+import {
+  createRunVersionStore,
+  normalizeRunVersionStore
+} from "./runVersionStore.js";
 
 export const USAGE_SCHEMA_VERSION = 1;
 export const USAGE_RETENTION_DAYS = 7;
@@ -127,6 +131,7 @@ export function createUsageSession(overrides = {}) {
     events: Array.isArray(overrides.events) ? cloneJson(overrides.events) : [],
     snapshots: Array.isArray(overrides.snapshots) ? cloneJson(overrides.snapshots) : [],
     learningLedger: createLearningLedger(overrides.learningLedger),
+    runVersionStore: createRunVersionStore(overrides.runVersionStore),
     flags: createSessionFlags(overrides.flags)
   };
 }
@@ -188,10 +193,51 @@ export function getUsageEventFingerprint(events = []) {
     events
       .filter((event) => !FINGERPRINT_IGNORED_EVENT_TYPES.has(event?.type))
       .map((event) => ({
-      type: event.type || "unknown",
-      payload: getEventPayload(event)
+        type: event.type || "unknown",
+        payload: getEventPayload(event)
       }))
   );
+}
+
+// Eviction priority: lowest tier is evicted first.
+const EVENT_TIERS = [
+  ["workspace_changed"],
+  ["workspace_snapshot", "export_requested", "export_completed"],
+  ["tutorial_replayed"]
+];
+
+export function evictLowestValueEvents(events, targetCount) {
+  let removed = 0;
+  let remaining = events;
+  for (const tier of EVENT_TIERS) {
+    if (remaining.length <= targetCount) {
+      break;
+    }
+    const tierSet = new Set(tier);
+    const kept = [];
+    const evictable = [];
+    for (const event of remaining) {
+      if (tierSet.has(event?.type)) {
+        evictable.push(event);
+      } else {
+        kept.push(event);
+      }
+    }
+    const need = remaining.length - targetCount;
+    const evictCount = Math.min(need, evictable.length);
+    evictable.splice(0, evictCount);
+    removed += evictCount;
+    remaining = kept.concat(evictable);
+  }
+  // Fallback: evict oldest events if still over target.
+  if (remaining.length > targetCount) {
+    const over = remaining.length - targetCount;
+    removed += over;
+    remaining = remaining.slice(over);
+  }
+  events.length = 0;
+  events.push(...remaining);
+  return removed;
 }
 
 export function appendUsageEvent(session, type, data = {}, at = new Date().toISOString()) {
@@ -214,12 +260,14 @@ export function appendUsageEvent(session, type, data = {}, at = new Date().toISO
 
   session.events.push(event);
   if (session.events.length > USAGE_MAX_EVENTS) {
-    session.events.splice(0, session.events.length - USAGE_MAX_EVENTS);
-    if (!session.flags) {
-      session.flags = createSessionFlags();
+    const removed = evictLowestValueEvents(session.events, USAGE_MAX_EVENTS);
+    if (removed > 0) {
+      if (!session.flags) {
+        session.flags = createSessionFlags();
+      }
+      session.flags.eventTailTruncated = true;
+      session.flags.historyPartial = true;
     }
-    session.flags.eventTailTruncated = true;
-    session.flags.historyPartial = true;
   }
 
   const summary = session.summary;
@@ -359,9 +407,10 @@ export function addUsageSnapshot(session, type, data = {}, at = new Date().toISO
   };
 
   const previous = session.snapshots.at(-1);
+  // B7: snapshot coalescing drops `reason` from the dedupe signature so
+  // identical workspace state under different reasons collapses to one snapshot.
   const currentSignature = canonicalJsonStringify({
     type: snapshot.type,
-    reason: snapshot.data?.reason || null,
     blockCounts: snapshot.data?.blockCounts || null,
     xmlText: snapshot.data?.xmlText || null,
     modeView: snapshot.data?.modeView || null,
@@ -371,7 +420,6 @@ export function addUsageSnapshot(session, type, data = {}, at = new Date().toISO
   const previousSignature = previous
     ? canonicalJsonStringify({
         type: previous.type,
-        reason: previous.data?.reason || null,
         blockCounts: previous.data?.blockCounts || null,
         xmlText: previous.data?.xmlText || null,
         modeView: previous.data?.modeView || null,
@@ -443,6 +491,7 @@ export function normalizePersistedSession(session) {
     events: session.events || [],
     snapshots: session.snapshots || [],
     learningLedger: session.learningLedger || createLearningLedger(),
+    runVersionStore: session.runVersionStore || createRunVersionStore(),
     flags: session.flags || createSessionFlags()
   });
   normalized.summary.lastKnown = {
@@ -454,5 +503,9 @@ export function normalizePersistedSession(session) {
   normalized.summary.guided.levelIds = Array.isArray(session.summary?.guided?.levelIds)
     ? [...session.summary.guided.levelIds]
     : [];
+  normalizeRunVersionStore(normalized.runVersionStore);
+  if (normalized.runVersionStore?.flags?.runVersionStoreTruncated) {
+    normalized.flags.runVersionStoreTruncated = true;
+  }
   return hydrateAndBackfillSession(normalized, USAGE_MAX_EVENTS);
 }

@@ -1,11 +1,10 @@
 ---
 id: plan-107
 title: "Usage Tracker V2 Run-Version Store And Value-Based Pruning"
-status: ready
+status: complete
+resolution: "Run-version store (per-team free-play keying, D1/D2 windows, K=5, 2MB budget), value-based B2 pruning replacing FIFO, durable-tier carry-over at session rollover, quota-failure graceful degradation, B7 snapshot coalescing. Accepted after Repair 01 re-review; XML-cap session-multiplier caveat carried to plan-108."
 depends_on: [plan-106]
 gate: "none; design contract settled by Plan 84 (D1-D4, B1-B7); B6 values recorded in packet"
-superseded_by: null
-resolution: null
 summary: >-
   Build tier 2 of the Usage Tracker V2 model: the diff-deduped run-version store (last ~8 guided levels cross-session, last ~20 free-play runs, per-level cap K=5, ~2 MB byte budget) and value-based pruning replacing FIFO, including snapshot coalescing and age-eviction exemption for durable tiers.
 ---
@@ -68,7 +67,7 @@ Required reading:
 Settled values for this packet (do not silently change):
 
 - **D1:** guided run-versions retained for the last ~8 guided levels encountered, cross-session (level-keyed LRU), surviving browser restart within the retention window.
-- **D2:** free-play retains the last ~20 distinct (diff-deduped) run-versions by recency, regardless of age.
+- **D2 (amended 2026-07-21):** free-play run-versions are keyed **per team slot** (`freeplay:team1` / `freeplay:team2`, mirroring the existing per-team stored workspaces), each team key keeping its own last ~20 distinct (diff-deduped) run-versions by recency, regardless of age; the ~2 MB budget bounds the total (owner decision, `docs/decision-log.md` 2026-07-21 — supersedes the original single-bucket D2 wording, which interleaved PvP programs and defeated dedupe).
 - **B6 byte budget:** **~2 MB** total for the run-version store (owner decision 2026-07-21), enforced with graceful degradation.
 - **Per-level guided version cap K = 5:** keep first + last + most-recent-5 unique runs per level (owner decision, `docs/decision-log.md` 2026-07-21).
 - **Age-eviction posture:** the durable ledger and run-version store are exempt from age-based eviction; the existing 7-day / 20-session age rules apply only to ephemeral churn and raw event tails (owner decision, `docs/decision-log.md` 2026-07-21).

@@ -20,8 +20,9 @@ This note does NOT own:
 | File | Role |
 |---|---|
 | `src/usage/learningLedger.js` | Usage Tracker V2 durable per-level learning ledger (Plan 84 Tier 1), schema V2 hydration, backfill, and pass ledger mirroring. |
+| `src/usage/runVersionStore.js` | Usage Tracker V2 diff-deduped run-version store (Plan 84 Tier 2), D1/D2 retention windows, per-level K cap, byte budget. |
 | `src/usage/usageTracker.js` | Session management, event recording, IndexedDB persistence, export payload assembly, SHA-256 hash via Web Crypto. |
-| `src/usage/usageFormat.js` | Canonical event structure, schema V2 session normalization, snapshot limits, fingerprint logic (noise filtering). |
+| `src/usage/usageFormat.js` | Canonical event structure, schema V2 session normalization, snapshot limits, value-based event pruning, fingerprint logic. |
 | `src/usage/usageAnalyzer.js` | Node-side CLI analyzer: hash verification, guided progress derivation, free-play summary, duplicate and similarity detection. |
 | `src/usage/usageAnalyzerBrowser.js` | Browser-side analyzer: same output semantics as the CLI, used by the admin page. |
 | `src/usage/guidedProgress.js` | Shared pure guided-progress derivation helper used by both analyzers and future cohort tooling. |
@@ -44,13 +45,55 @@ In Usage Tracker V2 (Plan 84 / Plan 106), sessions maintain an incremental per-l
 ### Core Invariants & Rules
 
 1. **Incremental & O(1)**: Every guided level the student interacts with maintains a ledger entry updated synchronously as events occur. It is never reconstructed from the event tail at read time.
-2. **Field Alignment**: Each entry uses Plan 81's `guided_level_rollup` field names: `reached`, `startedCount`, `completedCount`, `passedCount`, `failedCount`, `revisits`, `turnsSpent`, `durationMs`, `firstActivityAt`, `lastActivityAt`, `lastResult`, `passed`, `startBlockCount`, `endBlockCount`, and `finalXmlHash` (via FNV-1a starter-versioning digest).
-3. **Exempt from Eviction**: The durable ledger is retained across session lifecycles and is exempt from age-based event trimming.
-4. **Level Open Capture (`level_opened`)**: Opening a guided level records a durable `reached = true` marker even if the student never runs a program. `resetCurrentLevel` re-enters guided mode and fires `level_opened`, which is idempotent in the ledger.
-5. **Pass Ledger Mirroring**: `src/core/levels.js` remains the writer of record for `bba:guided-level-progress` in `localStorage`. The usage layer mirrors passed level IDs into `session.learningLedger.passLedger` and ensures matching ledger entries carry `reached = true` and `passed = true`.
-6. **Schema V2 Internal Hydration & Backfill**: Sessions stored internally use `schemaVersion: 2`. Legacy V1 sessions loaded from IndexedDB hydrate cleanly and perform a best-effort backfill from surviving events.
-7. **Strict Factual Flags**: Completeness and backfill status are surfaced via `session.flags` (`ledgerBackfilled`, `eventTailTruncated`, `historyPartial`). `ledgerBackfilled` is `true` only when backfill actually executed on a hydrated legacy session; `eventTailTruncated` is set only when event eviction occurs.
-8. **Export Compatibility**: Exported payload files remain V1-shaped (`schemaVersion: 1`) and contain no V2-only ledger fields until Plan 108.
+2. **Three-tier model**: V2 separates durable learning ledger (Tier 1), run-version store (Tier 2), and ephemeral churn (Tier 3). The ledger is never evicted; run-versions are windowed by D1/D2; churn is evicted first.
+3. **Field Alignment**: Each entry uses Plan 81's `guided_level_rollup` field names: `reached`, `startedCount`, `completedCount`, `passedCount`, `failedCount`, `revisits`, `turnsSpent`, `durationMs`, `firstActivityAt`, `lastActivityAt`, `lastResult`, `passed`, `startBlockCount`, `endBlockCount`, and `finalXmlHash` (via FNV-1a starter-versioning digest).
+4. **Exempt from Eviction**: The durable ledger and the run-version store are retained across session lifecycles and are exempt from age-based event trimming. Age-based rules (7 days / 20 sessions) apply only to ephemeral churn and raw event tails.
+5. **Level Open Capture (`level_opened`)**: Opening a guided level records a durable `reached = true` marker even if the student never runs a program. `resetCurrentLevel` re-enters guided mode and fires `level_opened`, which is idempotent in the ledger.
+6. **Pass Ledger Mirroring**: `src/core/levels.js` remains the writer of record for `bba:guided-level-progress` in `localStorage`. The usage layer mirrors passed level IDs into `session.learningLedger.passLedger` and ensures matching ledger entries carry `reached = true` and `passed = true`.
+7. **Schema V2 Internal Hydration & Backfill**: Sessions stored internally use `schemaVersion: 2`. Legacy V1 sessions loaded from IndexedDB hydrate cleanly and perform a best-effort backfill from surviving events.
+8. **Strict Factual Flags**: Completeness and backfill status are surfaced via `session.flags` (`ledgerBackfilled`, `eventTailTruncated`, `historyPartial`). `ledgerBackfilled` is `true` only when backfill actually executed on a hydrated legacy session; `eventTailTruncated` is set only when event eviction occurs; `runVersionStoreTruncated` is set when the run-version store drops data due to budget pressure.
+9. **Export Compatibility**: Exported payload files remain V1-shaped (`schemaVersion: 1`) and contain no V2-only ledger fields until Plan 108.
+
+## Run-Version Store (Tier 2)
+
+The run-version store records the full XML of programs that were actually executed, diff-deduped against the last stored version for the same context. It is local-only by default; Plan 108 will expose a hash list and boundary XML for exports.
+
+### Retention windows
+
+| Window | Scope | Value | Behavior |
+|---|---|---|---|
+| D1 | Guided levels | last ~8 levels encountered | Level-keyed LRU by recency of last run-version; survives browser restart within the session retention window. |
+| D2 | Free play | last ~20 distinct run-versions per team | Per-team slot keying (`freeplay:team1` / `freeplay:team2`), mirroring per-team stored workspaces. Each team bucket has its own dedupe chain and ~20-version window. |
+| K | Guided per-level | first + last + most-recent-5 | Up to 7 unique versions per level (K + 2) so the first attempt and the most recent attempts are preserved. |
+
+### Byte budget
+
+The total run-version store is bounded to approximately **2 MB** (owner decision 2026-07-21). The per-team D2 windows are enforced independently; the 2 MB budget bounds the total across all team buckets. If adding a new version would exceed the budget, the store degrades gracefully:
+
+1. Evict oldest free-play versions first.
+2. Evict oldest guided-level windows next.
+3. If a single remaining version is larger than the budget, store nothing and set `runVersionStoreTruncated`.
+
+The durable ledger is never touched by this degradation.
+
+### Session rollover and durable-tier carry-over
+
+When a session expires under the v1 7-day / 20-session age/count rules, the new session inherits the prior session's durable learning ledger, pass-ledger mirror, and run-version store. The new session carries a `durableTiersCarriedFrom` flag pointing to the prior session id. Expired sessions' ephemeral churn and event tails do **not** carry over; only the durable tiers survive.
+
+### IndexedDB quota-failure graceful degradation
+
+If an IndexedDB `put` fails with a quota error, the tracker catches the rejection and runs an eviction cascade before retrying once:
+
+1. Evict lowest-value events (`workspace_changed`, then `workspace_snapshot` / `export_*`, then `tutorial_replayed`).
+2. Evict snapshots.
+3. Evict oldest free-play run versions.
+4. Evict oldest guided run-version windows.
+
+The durable ledger is never touched. If any data was discarded, `runVersionStoreTruncated`, `eventTailTruncated`, and `historyPartial` are set. The retry is attempted once; if it still fails the error is swallowed so student-facing flows continue. Non-quota persistence errors are swallowed without cascading.
+
+### Capture trigger
+
+A run-version is captured only when `getFirstRunnableAction` or `getFirstRunnableActionWithTrace` executes a program. It does **not** fire on workspace edits, imports, or snapshot churn. The hash is computed with the same FNV-1a normalization used by starter versioning, so formatting-only edits do not create spurious new versions.
 
 ## Canonical event taxonomy
 
@@ -77,6 +120,12 @@ The following events are recorded by the tracker:
 | `export_completed` | Signal | Records that the file was successfully downloaded. |
 
 Fingerprints for similarity detection intentionally exclude `workspace_changed` and `workspace_snapshot`. The goal is to detect similar *attempt sequences*, not similar workspace churn.
+
+`workspace_snapshot` coalescing (Plan 84 B7): the snapshot dedupe signature ignores `reason`, so identical workspace state captured under different reasons collapses to one snapshot. The 600 ms debounce is otherwise unchanged.
+
+**Snapshot cap disclosure:** the snapshot limit (`USAGE_MAX_SNAPSHOTS`) is enforced with `splice-from-front`. This is intentional: snapshots are churn-like periodic captures and the oldest snapshots are the least valuable. Value-based event eviction applies to the event tail, not snapshots.
+
+**XML-heavy event cap sizing:** `level_*` events can carry full `xmlText` payloads. The 400-event cap plus the B2 value cascade provide the primary bound: churn events are evicted first, and `level_opened` / `level_started` / `level_completed` are protected as signal events. As a backstop, the quota-failure cascade above discards snapshots and churn before any protected data. Rough worst-case math: 400 protected events × ~5 KB XML ≈ 2 MB, which is the same order as the run-version store budget; in practice the mix is dominated by small `workspace_changed` events, so the real payload stays well under typical browser quotas. A byte-cap safety valve is intentionally not implemented so that the count-based cap remains deterministic and testable.
 
 ## Integrity hash
 
@@ -135,6 +184,7 @@ When performing local classroom cohort analysis:
 ## Common traps
 
 - **Confusing workspace export with usage export.** The workspace XML export is a program portability file; the usage export is classroom evidence. See [file-pipelines.md](./file-pipelines.md).
+- **Treating `durationMs` as wall-clock session time.** The ledger's `durationMs` is accumulated from the delta between consecutive activity timestamps for a level, capped at a 30-minute gap. Long breaks do not inflate the value; it measures active engagement, not elapsed calendar time.
 - **Assuming `workspace_changed` is a high-signal event.** It fires on every edit and is excluded from fingerprinting because it is too noisy.
 - **Treating the regression output folder as committed fixtures.** Those files are regenerated each run.
 - **Assuming the hash guarantees identity.** The SHA-256 hash verifies file integrity; it does not prove who the file belongs to.

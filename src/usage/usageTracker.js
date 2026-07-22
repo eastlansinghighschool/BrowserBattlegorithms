@@ -10,9 +10,15 @@ import {
   createExportFilename,
   createExportPayload,
   createUsageSession,
+  evictLowestValueEvents,
   normalizePersistedSession
 } from "./usageFormat.js";
 import { syncPassLedger } from "./learningLedger.js";
+import {
+  inferRunVersionContext,
+  normalizeRunVersionStore,
+  recordRunVersion as recordRunVersionInStore
+} from "./runVersionStore.js";
 
 function isBrowserIndexedDbAvailable() {
   return typeof indexedDB !== "undefined";
@@ -137,9 +143,17 @@ async function pruneSessions(db) {
   });
 }
 
-function createTrackerSession() {
-  const session = createUsageSession();
-  appendUsageEvent(session, "session_started", { source: "fresh" });
+// Exported for unit testing rollover carry-over behavior.
+export function createTrackerSession(carriedDurableTiers = null) {
+  const session = createUsageSession({
+    learningLedger: carriedDurableTiers?.learningLedger,
+    runVersionStore: carriedDurableTiers?.runVersionStore
+  });
+  const source = carriedDurableTiers ? "carried_over" : "fresh";
+  appendUsageEvent(session, "session_started", { source });
+  if (carriedDurableTiers) {
+    session.flags.durableTiersCarriedFrom = carriedDurableTiers.previousSessionId || null;
+  }
   return session;
 }
 
@@ -209,7 +223,11 @@ export function initializeUsageTracking(app) {
         if (persisted && maybeContinueExistingSession(persisted)) {
           session = persisted;
         } else if (persisted) {
-          session = createTrackerSession();
+          session = createTrackerSession({
+            learningLedger: persisted.learningLedger,
+            runVersionStore: persisted.runVersionStore,
+            previousSessionId: persisted.sessionId
+          });
           appendUsageEvent(session, "session_resumed", {
             source: "new_session_after_retention_window",
             previousSessionId: persisted.sessionId || null
@@ -234,7 +252,7 @@ export function initializeUsageTracking(app) {
       if (!db) {
         return;
       }
-      await persistSession(db, session);
+      await persistWithGracefulDegradation(db, session);
       await pruneSessions(db);
     });
     return pendingPersist;
@@ -376,6 +394,27 @@ export function initializeUsageTracking(app) {
         levelId: details.levelId || app.state.currentLevelId
       });
     },
+    recordRunVersion(runner, appRef, xmlText) {
+      const state = appRef?.state || app?.state || {};
+      const context = inferRunVersionContext(state, runner);
+      if (!context) {
+        return { stored: false, reason: "no_context" };
+      }
+      const xml = xmlText || appRef?.hooks?.getWorkspaceXmlText?.() || app?.hooks?.getWorkspaceXmlText?.() || "";
+      if (!xml) {
+        return { stored: false, reason: "no_xml" };
+      }
+      const at = new Date().toISOString();
+      const result = recordRunVersionInStore(session.runVersionStore, context, xml, at);
+      if (result.stored) {
+        normalizeRunVersionStore(session.runVersionStore);
+        if (session.runVersionStore.flags.runVersionStoreTruncated) {
+          session.flags.runVersionStoreTruncated = true;
+        }
+      }
+      schedulePersist();
+      return result;
+    },
     recordScorePoint(details = {}) {
       return record("score_point", {
         runnerId: details.runnerId || null,
@@ -468,6 +507,87 @@ export function initializeUsageTracking(app) {
   };
 
   app.usageTracker = tracker;
-  app.usageTrackerSession = session;
+  // Test-scaffolding accessor only. Do not treat as a general mutable-session backdoor.
+  app.usageTrackerSessionInternal = session;
   return tracker;
+}
+function isQuotaError(error) {
+  if (!error) {
+    return false;
+  }
+  return (
+    error.name === "QuotaExceededError" ||
+    error.name === "QuotaExceeded" ||
+    error.code === 22 ||
+    error.code === 1014 ||
+    (typeof error.message === "string" && /quota/i.test(error.message))
+  );
+}
+
+function degradeSessionOnQuotaError(session) {
+  let discarded = false;
+
+  // 1. Evict churn: lowest-value events first.
+  if (Array.isArray(session.events) && session.events.length > 0) {
+    const targetCount = Math.max(0, Math.floor(session.events.length / 2));
+    const removed = evictLowestValueEvents(session.events, targetCount);
+    if (removed > 0) {
+      discarded = true;
+      session.flags.eventTailTruncated = true;
+      session.flags.historyPartial = true;
+    }
+  }
+
+  // 2. Evict snapshots (also churn).
+  if (Array.isArray(session.snapshots) && session.snapshots.length > 0) {
+    const removeCount = Math.ceil(session.snapshots.length / 2);
+    session.snapshots.splice(0, removeCount);
+    discarded = true;
+  }
+
+  // 3. Evict oldest free-play run versions.
+  if (session.runVersionStore?.freePlay) {
+    for (const bucket of Object.values(session.runVersionStore.freePlay)) {
+      if (bucket.versions?.length > 0) {
+        bucket.versions.shift();
+        discarded = true;
+      }
+    }
+  }
+
+  // 4. Evict oldest guided run-version window.
+  const guidedEntries = Object.values(session.runVersionStore?.guided || {});
+  if (guidedEntries.length > 0) {
+    const sorted = guidedEntries
+      .map((entry) => ({ entry, lastAt: entry.versions.at(-1)?.at || "" }))
+      .sort((a, b) => a.lastAt.localeCompare(b.lastAt));
+    delete session.runVersionStore.guided[sorted[0].entry.levelId];
+    discarded = true;
+  }
+
+  if (discarded) {
+    session.flags.runVersionStoreTruncated = true;
+  }
+  return discarded;
+}
+
+// Exported for unit testing with an injected persist function.
+export async function persistWithGracefulDegradation(db, session, persistFn = persistSession) {
+  try {
+    await persistFn(db, session);
+  } catch (error) {
+    if (!isQuotaError(error)) {
+      // Never throw into student-facing flows; cascade only runs for quota.
+      return;
+    }
+    const discarded = degradeSessionOnQuotaError(session);
+    if (discarded) {
+      session.flags.runVersionStoreTruncated = true;
+    }
+    try {
+      await persistFn(db, session);
+    } catch {
+      // Second attempt failed; swallow so the app keeps running.
+    }
+  }
 }

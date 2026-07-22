@@ -78,6 +78,8 @@ Contracts to preserve:
 
 Plan 106's Repair 4 embedded full workspace `xmlText` in `level_opened`/`level_started`/`level_completed` event payloads (`src/usage/usageTracker.js:313-319, 340-345, 358-364`), and those events are cloned wholesale into the v1 export (`src/usage/usageFormat.js:414`). The similarity fingerprint ignores only `workspace_changed`/`workspace_snapshot` (`usageFormat.js:180-195`), so this XML now enters the Plan 04/16 fingerprint and inflates every v1 export. This packet's similarity experiment must explicitly cover this change: decide whether boundary/level events keep full XML or drop to hash-only in the v2 export, and verify fingerprint behavior against pre-plan-106 exports, not only against v1-with-XML. Record the decision in the progress report.
 
+Additional plan-107 acceptance caveat: the subsystem note's XML-cap math (400 events × ~5 KB ≈ 2 MB) considers a single session only; up to 20 retained sessions multiply worst-case IndexedDB footprint into the tens of MB. Keep this in mind when sizing v2 export contents and when plan-109 labels file sizes for teachers.
+
 ## Scope
 
 ### In Scope
