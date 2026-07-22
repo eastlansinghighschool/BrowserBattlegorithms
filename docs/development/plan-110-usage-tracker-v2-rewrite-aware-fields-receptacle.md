@@ -1,7 +1,8 @@
 ---
 id: plan-110
 title: "Usage Tracker V2 Rewrite-Aware Fields Receptacle"
-status: in-progress
+status: complete
+resolution: "Plan 91 rewrite-aware receptacle: 11 optional additive ledger slots with exact name/vocabulary fidelity, S7 film-review guard resolved (charter in force), no producers, absence semantics tested. Star-group field names ratified at acceptance (decision log 2026-07-22, rename window before plan-96); forward-compat drop semantics pinned by test; vocabularies documented as documentary-only."
 depends_on: [plan-106]
 gate: "none; Plan 91 settled the field list and its optional/additive semantics"
 summary: >-

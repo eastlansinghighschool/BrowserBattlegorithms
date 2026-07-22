@@ -525,3 +525,98 @@ test("B2 cascade differs from plain FIFO eviction", () => {
   // Plain FIFO from the front would have removed level_completed first because it is oldest.
   assert.ok(session.events.length < initialEvents, "some events were removed");
 });
+
+// Plan 110 Rewrite-Aware Fields Receptacle Tests
+test("createGuidedLevelRollupEntry accepts Plan 91 rewrite-aware fields when populated", () => {
+  const entry = createGuidedLevelRollupEntry("level-rewrite-aware", {
+    arcId: "mission-arc-1",
+    arcStageIndex: 2,
+    arcStageCount: 3,
+    boardDynamicsTier: "timing-threat",
+    bestiaryEncounterIds: ["sentry", "patrol"],
+    starsEarned: 2,
+    parBeaten: true,
+    turnPar: 12,
+    masteryAchieved: true,
+    masteryCriterionId: "concept-used",
+    filmReviewSummary: { branchesFired: ["if_sensor"], unusedBlocks: [] }
+  });
+
+  assert.equal(entry.arcId, "mission-arc-1");
+  assert.equal(entry.arcStageIndex, 2);
+  assert.equal(entry.arcStageCount, 3);
+  assert.equal(entry.boardDynamicsTier, "timing-threat");
+  assert.deepEqual(entry.bestiaryEncounterIds, ["sentry", "patrol"]);
+  assert.equal(entry.starsEarned, 2);
+  assert.equal(entry.parBeaten, true);
+  assert.equal(entry.turnPar, 12);
+  assert.equal(entry.masteryAchieved, true);
+  assert.equal(entry.masteryCriterionId, "concept-used");
+  assert.deepEqual(entry.filmReviewSummary, { branchesFired: ["if_sensor"], unusedBlocks: [] });
+});
+
+test("createGuidedLevelRollupEntry omits unpopulated Plan 91 rewrite-aware fields from serialized key set", () => {
+  const unpopulated = createGuidedLevelRollupEntry("level-unpopulated");
+  const keys = Object.keys(unpopulated);
+
+  const rewriteFields = [
+    "arcId",
+    "arcStageIndex",
+    "arcStageCount",
+    "boardDynamicsTier",
+    "bestiaryEncounterIds",
+    "starsEarned",
+    "parBeaten",
+    "turnPar",
+    "masteryAchieved",
+    "masteryCriterionId",
+    "filmReviewSummary"
+  ];
+
+  for (const field of rewriteFields) {
+    assert.equal(keys.includes(field), false, `Field ${field} should be absent from unpopulated entry`);
+  }
+});
+
+test("createLearningLedger and hydrateAndBackfillSession tolerate unknown fields for forward compatibility", () => {
+  const customEntry = {
+    levelId: "level-forward-compat",
+    reached: true,
+    startedCount: 1,
+    futureExtensionField: "future-data"
+  };
+
+  const ledger = createLearningLedger({
+    guided: { "level-forward-compat": customEntry }
+  });
+
+  assert.ok(ledger.guided["level-forward-compat"]);
+  assert.equal(ledger.guided["level-forward-compat"].startedCount, 1);
+  // Unknown field should not crash creation
+});
+
+test("hydrateAndBackfillSession ignores unknown entry fields without rejecting them", () => {
+  // Forward compat: a future packet's fields must survive on disk without
+  // breaking hydration. Current semantics: entries are rebuilt from known
+  // keys, so unknown fields are DROPPED (ignored, not rejected) — pinned here
+  // so a future change to preserve or to crash is a deliberate decision.
+  const legacySession = createUsageSession({ sessionId: "session-forward-compat" });
+  delete legacySession.learningLedger;
+  delete legacySession.schemaVersion;
+  legacySession.events = [
+    {
+      id: "session-forward-compat:1",
+      type: "level_completed",
+      at: "2026-05-13T10:01:00.000Z",
+      data: { levelId: "move-to-target", result: "PASSED", futureExtensionField: "future-data" }
+    }
+  ];
+
+  hydrateAndBackfillSession(legacySession);
+  const entry = legacySession.learningLedger.guided["move-to-target"];
+  assert.ok(entry, "backfilled entry should exist");
+  assert.equal(entry.completedCount, 1);
+  assert.equal(entry.futureExtensionField, undefined);
+  assert.equal(legacySession.flags.ledgerBackfilled, true);
+});
+

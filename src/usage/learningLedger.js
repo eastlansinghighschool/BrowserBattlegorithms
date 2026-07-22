@@ -34,7 +34,7 @@ export function createGuidedLevelRollupEntry(levelId, overrides = {}) {
   const durationMs = Number.isFinite(overrides.durationMs) ? overrides.durationMs : 0;
   const passed = Boolean(overrides.passed) || passedCount > 0;
 
-  return {
+  const entry = {
     levelId: `${levelId}`.trim(),
     reached: Boolean(overrides.reached),
     startedCount,
@@ -52,6 +52,60 @@ export function createGuidedLevelRollupEntry(levelId, overrides = {}) {
     endBlockCount: Number.isFinite(overrides.endBlockCount) ? overrides.endBlockCount : null,
     finalXmlHash: overrides.finalXmlHash || null
   };
+
+  // ── Plan 91 / Plan 110 Rewrite-Aware Optional Fields Receptacle ────────
+  // All rewrite-aware fields below are optional and additive per Plan 91.
+  // Unset fields remain absent from the entry object (not null noise in exports).
+
+  // Mini-Arc metadata (unpopulated until campaign mini-arcs packet)
+  if (typeof overrides.arcId === "string" && overrides.arcId.length > 0) {
+    entry.arcId = overrides.arcId.trim();
+  }
+  if (Number.isFinite(overrides.arcStageIndex)) {
+    entry.arcStageIndex = overrides.arcStageIndex;
+  }
+  if (Number.isFinite(overrides.arcStageCount)) {
+    entry.arcStageCount = overrides.arcStageCount;
+  }
+
+  // Board Dynamics Tier (unpopulated until board dynamics tiering packet)
+  // Expected closed values per Plan 85 S1: static-prop, background-motion, timing-threat, collision-threat, scrimmage-threat
+  if (typeof overrides.boardDynamicsTier === "string" && overrides.boardDynamicsTier.length > 0) {
+    entry.boardDynamicsTier = overrides.boardDynamicsTier.trim();
+  }
+
+  // Bestiary Encounter Summaries (unpopulated until bestiary encounters packet)
+  if (Array.isArray(overrides.bestiaryEncounterIds)) {
+    entry.bestiaryEncounterIds = Array.from(new Set(overrides.bestiaryEncounterIds.filter(Boolean)));
+  } else if (overrides.bestiaryEncounterIds && typeof overrides.bestiaryEncounterIds === "object") {
+    entry.bestiaryEncounterIds = { ...overrides.bestiaryEncounterIds };
+  }
+
+  // Stars / Par / Mastery Outcome Fields (unpopulated until plan-96 stars/par v1)
+  if (Number.isFinite(overrides.starsEarned)) {
+    entry.starsEarned = Math.max(0, Math.min(3, Math.floor(overrides.starsEarned)));
+  }
+  if (typeof overrides.parBeaten === "boolean") {
+    entry.parBeaten = overrides.parBeaten;
+  }
+  if (Number.isFinite(overrides.turnPar)) {
+    entry.turnPar = overrides.turnPar;
+  }
+  if (typeof overrides.masteryAchieved === "boolean") {
+    entry.masteryAchieved = overrides.masteryAchieved;
+  }
+  // Closed mastery criterion vocabulary from Plan 85 S6:
+  // concept-used, no-wasted-resource, both-allies-active, no-collision, under-block-budget
+  if (typeof overrides.masteryCriterionId === "string" && overrides.masteryCriterionId.length > 0) {
+    entry.masteryCriterionId = overrides.masteryCriterionId.trim();
+  }
+
+  // Film Review Summary (unpopulated until post-level film review packet per Plan 85 S7)
+  if (overrides.filmReviewSummary && typeof overrides.filmReviewSummary === "object") {
+    entry.filmReviewSummary = { ...overrides.filmReviewSummary };
+  }
+
+  return entry;
 }
 
 export function createLearningLedger(overrides = {}) {
