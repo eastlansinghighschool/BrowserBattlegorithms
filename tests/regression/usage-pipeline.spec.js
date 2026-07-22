@@ -145,6 +145,11 @@ async function synthesizeProfileUsage(page, profile) {
 async function assertExportedProfileSummary(outputPath, profile) {
   const payload = JSON.parse(await readFile(outputPath, "utf8"));
   const expected = getExpectedRegressionProfileSummary(profile);
+  expect(payload.schemaVersion).toBe(2);
+  expect(payload.learningLedger).toBeDefined();
+  expect(payload.boundaryXmls).toBeDefined();
+  expect(payload.runVersionHashes).toBeDefined();
+  expect(payload.flags).toBeDefined();
   expect(payload.summary.guided.started).toBe(expected.guided.started);
   expect(payload.summary.guided.completed).toBe(expected.guided.completed);
   expect(payload.summary.guided.passed).toBe(expected.guided.passed);

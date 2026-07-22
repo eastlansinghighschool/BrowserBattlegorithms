@@ -241,7 +241,7 @@ test("createExportPayload preserves v1 export shape, schemaVersion: 1, and exclu
   const session = createUsageSession({ sessionId: "export-test-session" });
   appendUsageEvent(session, "level_opened", { levelId: "level-1" });
 
-  const payload = createExportPayload(session, "Test Student", "2026-07-21T12:00:00.000Z");
+  const payload = createExportPayload(session, "Test Student", "2026-07-21T12:00:00.000Z", { schemaVersion: 1 });
   assert.equal(payload.schemaVersion, 1);
   assert.equal(payload.studentName, "Test Student");
   assert.equal(payload.sessionId, "export-test-session");

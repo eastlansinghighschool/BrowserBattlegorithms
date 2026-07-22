@@ -282,3 +282,111 @@ export function getRunVersionDebugSummary(store) {
     bytes: computeRunVersionStoreBytes(store)
   };
 }
+
+export function getBoundaryXmlsForExport(session, kPerLevel = RUN_VERSION_GUIDED_PER_LEVEL_CAP) {
+  if (!session || typeof session !== "object") {
+    return { boundaryXmls: {}, truncated: false };
+  }
+  const boundaries = {};
+  let truncated = false;
+  const events = Array.isArray(session.events) ? session.events : [];
+  const storeGuided = session.runVersionStore?.guided || {};
+  const snapshots = Array.isArray(session.snapshots) ? session.snapshots : [];
+
+  // Find all real pass or level-ending fail completion events
+  for (const event of events) {
+    if (event?.type === "level_completed" && event.data?.levelId) {
+      const result = event.data.result;
+      if (result !== "PASSED" && result !== "FAILED") {
+        continue;
+      }
+      const levelId = `${event.data.levelId}`.trim();
+      const eventAt = event.at || session.updatedAt || new Date().toISOString();
+      let xmlText = event.data.xmlText || null;
+      let hash = event.data.xmlHash || null;
+      let xmlTextMissing = false;
+
+      if (!xmlText && storeGuided[levelId]?.versions?.length > 0) {
+        // Repair 2B: match latest stored version where v.at <= eventAt
+        const eligible = storeGuided[levelId].versions
+          .filter((v) => v.at && v.at <= eventAt)
+          .sort((a, b) => a.at.localeCompare(b.at));
+        const matching = eligible.at(-1);
+        if (matching) {
+          xmlText = matching.xmlText;
+          hash = matching.hash;
+        }
+      }
+
+      if (!xmlText && snapshots.length > 0) {
+        // Fallback: match latest snapshot where s.at <= eventAt
+        const eligibleSnap = snapshots
+          .filter((s) => s.data?.levelId === levelId && s.data?.xmlText && s.at && s.at <= eventAt)
+          .sort((a, b) => a.at.localeCompare(b.at));
+        const matchingSnap = eligibleSnap.at(-1);
+        if (matchingSnap) {
+          xmlText = matchingSnap.data.xmlText;
+          hash = hashRunVersionXml(xmlText);
+        }
+      }
+
+      if (!xmlText) {
+        xmlTextMissing = true;
+      } else if (!hash) {
+        hash = hashRunVersionXml(xmlText);
+      }
+
+      if (!boundaries[levelId]) {
+        boundaries[levelId] = [];
+      }
+
+      const boundaryEntry = {
+        at: eventAt,
+        result,
+        hash: hash || null,
+        xmlText: xmlText || null
+      };
+      if (xmlTextMissing) {
+        boundaryEntry.xmlTextMissing = true;
+      }
+
+      boundaries[levelId].push(boundaryEntry);
+    }
+  }
+
+  // Repair 4: Cap per level to kPerLevel most recent boundary XMLs and flag truncation
+  for (const levelId of Object.keys(boundaries)) {
+    if (boundaries[levelId].length > kPerLevel) {
+      boundaries[levelId] = boundaries[levelId].slice(-kPerLevel);
+      truncated = true;
+    }
+  }
+
+  return { boundaryXmls: boundaries, truncated };
+}
+
+export function getRunVersionHashesForExport(session) {
+  if (!session || typeof session !== "object") {
+    return { guided: {}, freePlay: {} };
+  }
+  const store = session.runVersionStore || {};
+  const guidedHashes = {};
+  for (const [levelId, entry] of Object.entries(store.guided || {})) {
+    if (Array.isArray(entry.versions)) {
+      guidedHashes[levelId] = entry.versions.map((v) => v.hash).filter(Boolean);
+    }
+  }
+
+  const freePlayHashes = {};
+  for (const [contextKey, bucket] of Object.entries(store.freePlay || {})) {
+    if (Array.isArray(bucket.versions)) {
+      freePlayHashes[contextKey] = bucket.versions.map((v) => v.hash).filter(Boolean);
+    }
+  }
+
+  return {
+    guided: guidedHashes,
+    freePlay: freePlayHashes
+  };
+}
+

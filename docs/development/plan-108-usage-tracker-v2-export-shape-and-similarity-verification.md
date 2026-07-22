@@ -1,11 +1,10 @@
 ---
 id: plan-108
 title: "Usage Tracker V2 Export Shape And Similarity Verification"
-status: ready
+status: complete
+resolution: "V2 export per D3: durable ledger + pass ledger + capped boundary XML (K=5, real pass/fail events only, at-or-before timestamp matching, hash-only fallback) + run-version hash list; XML stripped from events and snapshots (81% payload reduction). Gate experiment: v2 changes nothing the detector reads; detector's pre-existing final-code blindness recorded and carried to plan-109. Accepted after Repair 01 re-review."
 depends_on: [plan-107]
 gate: "before generated output: the similarity-detection experiment must be run and reported before the v2 export shape is accepted"
-superseded_by: null
-resolution: null
 summary: >-
   Ship the schema v2 export payload per D3 (durable ledger + pass ledger + full XML only at pass/fail boundaries, capped, + run-version hash list), and run the falsifiable experiment proving Plan 04/16 similarity detection still works on boundary-only export XML.
 ---

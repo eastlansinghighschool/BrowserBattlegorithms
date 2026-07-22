@@ -59,7 +59,7 @@ This note does NOT own:
 
 **Purpose:** Capture a session record that a teacher can analyze for learning evidence, completion, and potential duplicate submissions.
 
-**Format:** JSON. Contains structured session events, workspace snapshots, a canonical JSON string, and a SHA-256 integrity hash. Not a program file. Not importable into Blockly.
+**Format:** JSON. Contains structured session events, workspace snapshots, a canonical JSON string, and a SHA-256 integrity hash. Supports two schema versions: legacy `schemaVersion: 1` (event-reconstruction export with event XML) and `schemaVersion: 2` (Plan 108 V2 export carrying durable learning ledger, pass ledger, capped pass/fail boundary XMLs, run-version hash list, and completeness flags). In V2 exports, full `xmlText` is stripped from level events and snapshots (retaining `xmlHash`), ensuring full XML travels strictly inside `boundaryXmls`. Not a program file. Not importable into Blockly.
 
 **Flow:**
 - Capture: `usageTracker.js` records events throughout the session in memory, persisted to IndexedDB.

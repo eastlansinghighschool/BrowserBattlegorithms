@@ -52,7 +52,14 @@ In Usage Tracker V2 (Plan 84 / Plan 106), sessions maintain an incremental per-l
 6. **Pass Ledger Mirroring**: `src/core/levels.js` remains the writer of record for `bba:guided-level-progress` in `localStorage`. The usage layer mirrors passed level IDs into `session.learningLedger.passLedger` and ensures matching ledger entries carry `reached = true` and `passed = true`.
 7. **Schema V2 Internal Hydration & Backfill**: Sessions stored internally use `schemaVersion: 2`. Legacy V1 sessions loaded from IndexedDB hydrate cleanly and perform a best-effort backfill from surviving events.
 8. **Strict Factual Flags**: Completeness and backfill status are surfaced via `session.flags` (`ledgerBackfilled`, `eventTailTruncated`, `historyPartial`). `ledgerBackfilled` is `true` only when backfill actually executed on a hydrated legacy session; `eventTailTruncated` is set only when event eviction occurs; `runVersionStoreTruncated` is set when the run-version store drops data due to budget pressure.
-9. **Export Compatibility**: Exported payload files remain V1-shaped (`schemaVersion: 1`) and contain no V2-only ledger fields until Plan 108.
+9. **V2 Export Payload Shape & Boundary Rules (Plan 108)**:
+   - Exported payload files use `schemaVersion: 2`, carrying the durable learning ledger (`learningLedger`), pass/fail boundary XMLs (`boundaryXmls`), run-version hash list (`runVersionHashes`), completeness flags (`flags`), sanitized level events, and sanitized snapshots.
+   - **Boundary Definition**: A boundary XML entry exists ONLY for real pass (`result === "PASSED"`) or level-ending fail (`result === "FAILED"`) completion events in `session.events`. Abandoned or in-progress levels produce no boundary XML entries and never synthesize manufactured results.
+   - **Timestamp Matching Rule**: Boundary XML text is matched to a completion event by selecting the latest version in `session.runVersionStore` (or fallback `session.snapshots`) whose timestamp satisfies $v.at \le event.at$.
+   - **Hash Fallback**: If no eligible version exists at-or-before `event.at`, the boundary entry emits `hash` (from `event.data.xmlHash`), `result`, `at`, `xmlText: null`, and `xmlTextMissing: true`.
+   - **Snapshot & Event Sanitization**: Full `xmlText` is stripped from all level events and snapshots in V2 exports (retaining `xmlHash`), ensuring full XML text travels strictly inside `boundaryXmls`.
+   - **Boundary Truncation Flag**: When boundary entries for any level exceed $K=5$, entries are capped to the 5 most recent and `flags.boundaryXmlsTruncated` is set to `true`.
+   - **Integrity Hash**: SHA-256 integrity hash verification applies over the canonical V2 JSON payload without altering the hash mechanism.
 
 ## Run-Version Store (Tier 2)
 

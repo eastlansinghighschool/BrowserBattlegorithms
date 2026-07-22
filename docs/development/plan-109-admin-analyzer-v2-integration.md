@@ -1,11 +1,9 @@
 ---
 id: plan-109
 title: "Admin Analyzer V2 Integration"
-status: ready
+status: in-progress
 depends_on: [plan-108]
 gate: "none beyond standard; CLI/browser parity is a hard requirement"
-superseded_by: null
-resolution: null
 summary: >-
   Make the admin analyzer and CLI prefer v2 ledgers over event reconstruction, read both v1 and v2 exports honestly (B1), label old/truncated files, fold in known display fixes, and record the D4 cohort re-scope note.
 ---
@@ -72,6 +70,10 @@ Contracts to preserve:
 - The admin page stays local-only and out of the GitHub Pages build.
 - Analyzer philosophy: signal over noise, honest uncertainty, no surveillance framing.
 - Privacy: no new data surfaced beyond what v2 exports already carry.
+
+## Carried Follow-Up From Plan 108 Review (2026-07-22)
+
+Plan 108's similarity experiment documented a **pre-existing detector limitation**: `similarSequencesDifferentNames` keys on event-attempt-sequence fingerprints, so a student who copies a final solution but arrives through a different attempt history is NOT flagged (verified by the Alice/Eve pair across export shapes). This is not a v2 regression — but when this packet makes the analyzer ledger-first, consider whether an honest label or review signal near the similarity output is warranted so teachers do not read "not flagged" as "independent work." Do not redesign similarity detection in this packet; if more than a label seems warranted, stop and surface.
 
 ## Scope
 

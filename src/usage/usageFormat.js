@@ -2,15 +2,19 @@ import { APP_VERSION } from "../config/appInfo.js";
 import {
   createLearningLedger,
   createSessionFlags,
+  hashXml,
   hydrateAndBackfillSession,
   updateLearningLedgerFromEvent
 } from "./learningLedger.js";
 import {
+  RUN_VERSION_GUIDED_PER_LEVEL_CAP,
   createRunVersionStore,
+  getBoundaryXmlsForExport,
+  getRunVersionHashesForExport,
   normalizeRunVersionStore
 } from "./runVersionStore.js";
 
-export const USAGE_SCHEMA_VERSION = 1;
+export const USAGE_SCHEMA_VERSION = 2;
 export const USAGE_RETENTION_DAYS = 7;
 export const USAGE_MAX_SESSIONS = 20;
 export const USAGE_MAX_EVENTS = 400;
@@ -445,10 +449,110 @@ export function addUsageSnapshot(session, type, data = {}, at = new Date().toISO
   return snapshot;
 }
 
-export function createExportPayload(session, studentName, exportedAt = new Date().toISOString()) {
+export function sanitizeEventsForV2Export(events = []) {
+  if (!Array.isArray(events)) {
+    return [];
+  }
+  return events.map((event) => {
+    if (!event || typeof event !== "object") {
+      return event;
+    }
+    const cloned = cloneJson(event);
+    if (cloned.data && typeof cloned.data === "object") {
+      if (cloned.data.xmlText) {
+        // In V2 export (D3), full XML travels ONLY inside boundaryXmls.
+        // Level events retain xmlHash for hash reference, dropping xmlText.
+        if (!cloned.data.xmlHash) {
+          cloned.data.xmlHash = hashXml(cloned.data.xmlText);
+        }
+        delete cloned.data.xmlText;
+      }
+    }
+    return cloned;
+  });
+}
+
+export function sanitizeSnapshotsForV2Export(snapshots = []) {
+  if (!Array.isArray(snapshots)) {
+    return [];
+  }
+  return snapshots.map((snapshot) => {
+    if (!snapshot || typeof snapshot !== "object") {
+      return snapshot;
+    }
+    const cloned = cloneJson(snapshot);
+    if (cloned.data && typeof cloned.data === "object") {
+      if (cloned.data.xmlText) {
+        // In V2 export (D3), full XML travels ONLY inside boundaryXmls.
+        // Snapshots retain metadata and xmlHash for hash reference, dropping xmlText.
+        if (!cloned.data.xmlHash) {
+          cloned.data.xmlHash = hashXml(cloned.data.xmlText);
+        }
+        delete cloned.data.xmlText;
+      }
+    }
+    return cloned;
+  });
+}
+
+export function transformToPre106Baseline(v1Export) {
+  if (!v1Export || typeof v1Export !== "object") {
+    return v1Export;
+  }
+  const baseline = cloneJson(v1Export);
+  baseline.schemaVersion = 1;
+  if (Array.isArray(baseline.events)) {
+    baseline.events = baseline.events.map((event) => {
+      if (event && event.data) {
+        delete event.data.xmlText;
+        delete event.data.xmlHash;
+      }
+      return event;
+    });
+  }
+  delete baseline.learningLedger;
+  delete baseline.boundaryXmls;
+  delete baseline.runVersionHashes;
+  delete baseline.flags;
+  return baseline;
+}
+
+export function createExportPayload(session, studentName, exportedAt = new Date().toISOString(), options = {}) {
   const cleanStudentName = `${studentName || ""}`.trim();
+  const targetSchema = options.schemaVersion || 2;
+
+  if (targetSchema === 1) {
+    const v1Payload = {
+      schemaVersion: 1,
+      exportedAt,
+      studentName: cleanStudentName,
+      sessionId: session.sessionId,
+      appVersion: session.appVersion || getAppVersion(),
+      sessionStartedAt: session.startedAt,
+      sessionUpdatedAt: session.updatedAt,
+      summary: cloneJson({
+        ...session.summary,
+        totalPlayTimeMs: Math.max(0, Date.parse(exportedAt) - Date.parse(session.startedAt || exportedAt))
+      }),
+      events: cloneJson(session.events || []),
+      snapshots: cloneJson(session.snapshots || [])
+    };
+    v1Payload.summary.lastKnown = {
+      ...(v1Payload.summary.lastKnown || createLastKnownState()),
+      exportedAt
+    };
+    return v1Payload;
+  }
+
+  const boundaryResult = getBoundaryXmlsForExport(session, RUN_VERSION_GUIDED_PER_LEVEL_CAP);
+  const boundaryXmls = boundaryResult.boundaryXmls || {};
+  const flags = cloneJson(session.flags || createSessionFlags());
+  if (boundaryResult.truncated) {
+    flags.boundaryXmlsTruncated = true;
+  }
+
   const payload = {
-    schemaVersion: USAGE_SCHEMA_VERSION,
+    schemaVersion: 2,
     exportedAt,
     studentName: cleanStudentName,
     sessionId: session.sessionId,
@@ -459,8 +563,12 @@ export function createExportPayload(session, studentName, exportedAt = new Date(
       ...session.summary,
       totalPlayTimeMs: Math.max(0, Date.parse(exportedAt) - Date.parse(session.startedAt || exportedAt))
     }),
-    events: cloneJson(session.events || []),
-    snapshots: cloneJson(session.snapshots || [])
+    learningLedger: cloneJson(session.learningLedger || createLearningLedger()),
+    boundaryXmls,
+    runVersionHashes: getRunVersionHashesForExport(session),
+    flags,
+    events: sanitizeEventsForV2Export(session.events || []),
+    snapshots: sanitizeSnapshotsForV2Export(session.snapshots || [])
   };
 
   payload.summary.lastKnown = {
