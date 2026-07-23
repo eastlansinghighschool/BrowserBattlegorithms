@@ -1,11 +1,10 @@
 ---
 id: plan-105
 title: "Challenge 28 Live Capstone Evidence Protocol"
-status: ready
+status: complete
+resolution: "Blank Challenge 28 live-evidence protocol delivered: privacy boundary with mandatory check-ignore preflight, dual observation paths, human/ally decision matrix, objective-vs-interpretation separation with confidence tagging, rival-explanations falsification framework. Generated-evidence hand edit reverted at acceptance (generator-artifact purity); runVersionHashes pointer and level-id wording tidied. Owner gate: review the blank protocol before any classroom evidence is collected."
 depends_on: [plan-104]
 gate: "owner review of the blank protocol before any classroom evidence is collected"
-superseded_by: null
-resolution: null
 summary: >-
   Define a privacy-safe teacher/manual playtest and film-review protocol for Challenge 28, whose human-plus-ally play cannot be simulated by the automated behavior-evidence harness, without collecting or committing student data in this packet.
 ---
