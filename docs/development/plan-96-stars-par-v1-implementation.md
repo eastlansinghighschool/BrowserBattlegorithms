@@ -1,11 +1,11 @@
 ---
 id: plan-96
 title: "Stars And Par V1 Implementation"
-status: draft
+status: superseded
 depends_on: [plan-85, plan-86, plan-91, plan-106, plan-110]
 gate: "before mutation; likely split into smaller packets after prerequisite evidence is reviewed"
-superseded_by: null
-resolution: null
+superseded_by: plan-111
+resolution: "Split per its own mandated reassessment into plan-111 (evaluation core + tracker population), plan-112 (display UI), plan-113 (campaign-wide par/mastery authoring). Non-goals, closed vocabulary, protected-level rules, and stop conditions carried into the successors."
 summary: >-
   Implement Plan 85's stars/par mastery layer after par evidence, tracker semantics, and owner gate settle; packet explicitly requires reassessing whether to split by subsystem.
 ---
