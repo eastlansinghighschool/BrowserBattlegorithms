@@ -14,6 +14,10 @@ export default {
   // mission copy is owner-gated and lands with Plans 94/95, after boards
   // settle. This level ships with 3 tips (not 4) until then.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.COLLISION_THREAT,
+  // no honest criterion — 2-star max (concept mandatory per simulation evidence, decision log 2026-07-22).
+  starCriteria: {
+    turnPar: 10
+  },
   // Charter S8 / Plan 100: the distance sensor is required dynamically, not
   // structurally -- runner_reaches_cell can't encode "or the Guard captures
   // you." Proof is the degenerate fixture at

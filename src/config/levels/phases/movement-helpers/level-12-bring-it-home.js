@@ -14,6 +14,10 @@ export default {
   // therefore geometrically disjoint from the ally's reachable set (x<=10),
   // not just clear on the reference run's specific timing.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
+  // no honest criterion — 2-star max (concept mandatory per simulation evidence, decision log 2026-07-22).
+  starCriteria: {
+    turnPar: 25
+  },
   description: "Once the ally picks up the flag, its next target must change.",
   introText: "The enemy flag is across the field. Once the ally carries it, the next target is home.",
   tips: [

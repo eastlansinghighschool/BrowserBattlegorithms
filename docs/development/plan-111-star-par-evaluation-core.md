@@ -1,11 +1,10 @@
 ---
 id: plan-111
 title: "Star/Par Evaluation Core And Tracker Population"
-status: ready
+status: complete
+resolution: "Star/par evaluation core: pure evaluator + criterion registry (concept-used, fail-open), <= par semantics, monotonic ledger population through the real endLevel path, pilot pars 25/10/3 with 2-star-max per owner gate. Two gate rounds settled par semantics, arithmetic, and the anti-code-golf 2-star-max standard (decision log 2026-07-22). Cumulative-tier semantics ratified at acceptance; subsystem note bullets restored."
 depends_on: [plan-110]
 gate: "before mutation: owner sign-off on the pilot levels' proposed turnPar values and masteryCriterionId choices (presented in the preflight plan, before edits)"
-superseded_by: null
-resolution: null
 summary: >-
   Implement Plan 85 S6's star evaluation core: per-level star metadata schema, a pure star evaluator wired into the end-of-level path, and producer population of the ratified plan-110 ledger fields — piloted on movement-helpers levels 11-14 only. Supersedes the evaluation slice of plan-96.
 ---

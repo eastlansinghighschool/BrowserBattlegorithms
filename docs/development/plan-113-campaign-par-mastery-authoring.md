@@ -80,6 +80,7 @@ Contracts to preserve:
 - After owner approval: write the metadata into level definitions (phase-grouped commits if approved phase-by-phase).
 - Criterion registry extensions for criterion ids used beyond the pilot set, with unit tests.
 - The 7 non-runnable levels: propose and, after owner decision, record their treatment (options to present: par based on the fixed prediction/human path where one exists; pass-star-only; or explicitly excluded from stars with the reason documented in the level file comment).
+- Acceptance note from plan-111 (2026-07-22): star tiers are **cumulative** — `starsEarned` is 3 only when both `parBeaten` and `masteryAchieved` hold (decision log 2026-07-22). Author criteria against this: a mastery-meeting but slow run earns 1 star, so criteria should be things a student could plausibly achieve while also beating par, or the level's 3-star is effectively unreachable.
 - `npm run lint:levels` extension if the star-metadata lint from plan-111 should verify authored values (e.g. par < turn limit) — minimal and honest.
 
 ### Out of Scope

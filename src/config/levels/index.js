@@ -29,6 +29,7 @@ export function getLevelDefinitions() {
     legendItems: structuredClone(level.legendItems || []),
     tutorialSteps: structuredClone(level.tutorialSteps || []),
     project: level.project ? structuredClone(level.project) : null,
+    starCriteria: level.starCriteria ? structuredClone(level.starCriteria) : null,
     winCondition: { ...level.winCondition },
     failureConditions: Array.isArray(level.failureConditions)
       ? structuredClone(level.failureConditions)

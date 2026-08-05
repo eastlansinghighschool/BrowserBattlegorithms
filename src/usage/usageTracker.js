@@ -19,6 +19,7 @@ import {
   normalizeRunVersionStore,
   recordRunVersion as recordRunVersionInStore
 } from "./runVersionStore.js";
+import { evaluateLevelStars } from "../core/starEvaluation.js";
 
 function isBrowserIndexedDbAvailable() {
   return typeof indexedDB !== "undefined";
@@ -381,6 +382,12 @@ export function initializeUsageTracking(app) {
         xmlText: details.xmlText ?? live.xmlText,
         ...details
       };
+      const starEval = evaluateLevelStars(level, result, {
+        turnsSpent,
+        runnerActionHistory: app.state?.runnerActionHistory || {},
+        ...details
+      });
+      Object.assign(payload, starEval);
       activeLevelContext = null;
       return record("level_completed", payload);
     },

@@ -1,11 +1,9 @@
 ---
 id: plan-112
 title: "Star/Par Display UI"
-status: ready
+status: in-progress
 depends_on: [plan-111]
 gate: "before mutation: owner sign-off on star presentation copy and placement mockup (described in the preflight plan)"
-superseded_by: null
-resolution: null
 summary: >-
   Surface the plan-111 star outcomes to students: per-level stars in the guided level picker and a result-banner star/par summary, with mastery-not-grades copy and accessibility-first presentation. Supersedes the UI slice of plan-96.
 ---

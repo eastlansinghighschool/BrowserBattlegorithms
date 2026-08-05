@@ -10,6 +10,10 @@ export default {
   // Sentry (background motion) on the far side of the wall from the jump
   // lane (x=1-3); its vertical patrol column (x=10) never enters that lane.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
+  // no honest criterion — 2-star max (concept mandatory per simulation evidence, decision log 2026-07-22).
+  starCriteria: {
+    turnPar: 3
+  },
   description: "A wall splits the lane. The goal is on the far side.",
   introText: "Jump Forward can clear the wall, but it only goes ahead and needs open ground to land.",
   tips: [

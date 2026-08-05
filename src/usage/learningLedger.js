@@ -233,6 +233,25 @@ export function updateLearningLedgerFromEvent(session, type, data = {}, at = new
           entry.passedCount += 1;
           entry.passed = true;
           entry.lastResult = "PASSED";
+
+          if (Number.isFinite(data.starsEarned)) {
+            const newStars = Math.max(0, Math.min(3, Math.floor(data.starsEarned)));
+            entry.starsEarned = Number.isFinite(entry.starsEarned)
+              ? Math.max(entry.starsEarned, newStars)
+              : newStars;
+          }
+          if (typeof data.parBeaten === "boolean") {
+            entry.parBeaten = entry.parBeaten || data.parBeaten;
+          }
+          if (Number.isFinite(data.turnPar)) {
+            entry.turnPar = data.turnPar;
+          }
+          if (typeof data.masteryAchieved === "boolean") {
+            entry.masteryAchieved = entry.masteryAchieved || data.masteryAchieved;
+          }
+          if (typeof data.masteryCriterionId === "string" && data.masteryCriterionId.length > 0) {
+            entry.masteryCriterionId = data.masteryCriterionId.trim();
+          }
         } else if (result === "FAILED") {
           entry.failedCount += 1;
           entry.lastResult = "FAILED";

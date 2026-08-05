@@ -5,6 +5,7 @@ import { getFirstRunnableAction, loadWorkspaceXml } from "../../../src/ai/blockl
 import { handlePlayerInput, processTurnActions } from "../../../src/core/turnEngine.js";
 import { createApp } from "../../../src/core/state.js";
 import { initializeLevelState, startLevel } from "../../../src/core/levels.js";
+import { initializeUsageTracking } from "../../../src/usage/usageTracker.js";
 
 export function buildBlocklyAppWithXml(xmlText) {
   registerBattleBlocklyBlocks();
@@ -52,6 +53,7 @@ function normalizeHumanActionData(runner, actionData) {
 export function runGuidedLevelWithSolution(levelId, xmlText, options = {}) {
   registerBattleBlocklyBlocks();
   const app = createApp();
+  initializeUsageTracking(app);
   app.blocklyWorkspace = new Blockly.Workspace();
   app.hooks.getAIAllyAction = (runnerOverride = null) => {
     const runner = runnerOverride || app.state.allRunners.find((candidate) => candidate.team === 1 && !candidate.isHumanControlled && !candidate.isNPC);
