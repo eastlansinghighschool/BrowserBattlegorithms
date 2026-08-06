@@ -1,7 +1,8 @@
 ---
 id: plan-112
 title: "Star/Par Display UI"
-status: in-progress
+status: complete
+resolution: "Star/par display UI: picker star pills and result-banner star/par summary with owner-approved verbatim copy (decision log 2026-07-22), level-kind matrix incl. v1-history handling, read-only getGuidedStarState accessor, accessibility via shape + aria-labels. Acceptance: hollow accessor test replaced with real-tracker test; pass-reason suffix + score-point tailoring restored per owner decision; two stale Plan 95-era smoke assertions repaired; smoke suite green 61/61."
 depends_on: [plan-111]
 gate: "before mutation: owner sign-off on star presentation copy and placement mockup (described in the preflight plan)"
 summary: >-

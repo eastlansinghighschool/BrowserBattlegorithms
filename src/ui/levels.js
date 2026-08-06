@@ -26,6 +26,7 @@ import {
   enterFreePlay,
   enterGuidedMode,
   getCurrentLevel,
+  getLevelStarState,
   goToNextLevel,
   resetCurrentLevel,
   selectPredictionChoice,
@@ -348,6 +349,21 @@ function renderPredictionPrompt(app, level) {
   `;
 }
 
+export function renderLevelPickerStars(app, level) {
+  const { starsEarned, maxStarsOffered } = getLevelStarState(app, level);
+  if (maxStarsOffered === 0) {
+    return "";
+  }
+  const filled = "★".repeat(starsEarned);
+  const empty = "☆".repeat(Math.max(0, maxStarsOffered - starsEarned));
+  const starsText = `${filled}${empty}`;
+  const ariaLabel = maxStarsOffered === 1
+    ? `${starsEarned} star earned`
+    : `${starsEarned} of ${maxStarsOffered} stars earned`;
+
+  return `<span class="level-picker-stars" aria-label="${escapeHtml(ariaLabel)}">${starsText}</span>`;
+}
+
 function renderLevelPickerItems(app) {
   return app.state.levels
     .map((level) => {
@@ -359,7 +375,7 @@ function renderLevelPickerItems(app) {
       return `
         <button class="level-picker-item${currentClass}" data-level-id="${level.id}" ${disabled}>
           <span class="level-picker-item-title">${escapeHtml(level.title)}</span>
-          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""}${renderLevelSignifiers(level)}</span>
+          <span class="level-picker-item-meta">${escapeHtml(getLevelStatusLabel(status))}${status === LEVEL_STATUS.PASSED ? " ✓" : ""} ${renderLevelPickerStars(app, level)}${renderLevelSignifiers(level)}</span>
           <span class="level-picker-item-description">${escapeHtml(level.description)}</span>
         </button>
       `;
@@ -555,6 +571,43 @@ export function bindLevelPanel(app) {
   });
 }
 
+export function renderResultBannerMessage(app, currentLevel, resultReason) {
+  if (app.state.activeLevelResult === LEVEL_RESULT.FAILED) {
+    return `<p class="level-result failure">Level failed. ${escapeHtml(resultReason)}</p>`;
+  }
+  if (app.state.activeLevelResult !== LEVEL_RESULT.PASSED) {
+    return "";
+  }
+
+  const outcome = app.state.lastStarOutcome || null;
+  const starState = getLevelStarState(app, currentLevel);
+  const turnsSpent = outcome?.turnsSpent ?? app.state.currentTurnNumber ?? 1;
+  const starCriteria = currentLevel?.starCriteria;
+  const turnPar = outcome?.turnPar ?? starCriteria?.turnPar ?? starState.turnPar ?? null;
+  const starsEarned = outcome?.starsEarned ?? starState.starsEarned ?? 1;
+  const parBeaten = outcome?.parBeaten ?? starState.parBeaten ?? (typeof turnPar === "number" && turnsSpent <= turnPar);
+
+  let bannerText = "Level passed! ★";
+
+  if (starsEarned === 3) {
+    bannerText = `Level passed! ★★★ — Finished in ${turnsSpent} turns. Par beaten and mastery challenge completed!`;
+  } else if (starsEarned === 2) {
+    bannerText = `Level passed! ★★ — Finished in ${turnsSpent} turns (par is ${turnPar}). Par beaten!`;
+  } else if (typeof turnPar === "number" && turnPar > 0) {
+    bannerText = `Level passed! ★☆ — Finished in ${turnsSpent} turns. Beat par (${turnPar} turns) to earn a second star!`;
+  }
+
+  // Owner decision 2026-07-22: the humanized result reason follows the star
+  // line, restoring the pre-stars context including the score-point tailoring.
+  const reasonText = `${resultReason || ""}`.trim();
+  const reasonSuffix = currentLevel?.winCondition?.type === "team_scores_point"
+    ? `Scoring a point completed the challenge.${reasonText ? ` ${reasonText}` : ""}`
+    : reasonText;
+  const fullText = reasonSuffix ? `${bannerText} ${reasonSuffix}` : bannerText;
+
+  return `<p class="level-result success">${escapeHtml(fullText)}</p>`;
+}
+
 export function renderLevelPanel(app) {
   const panel = document.getElementById("level-panel");
   if (!panel) {
@@ -578,14 +631,7 @@ export function renderLevelPanel(app) {
   const canCollapse = typeof window !== "undefined" && window.innerWidth >= 1280;
   const panelCollapsed = syncLessonPanelShell(app);
   const resultReason = humanizeResultReason(app.state.lastLevelResultReason);
-  const successLead = currentLevel.winCondition.type === "team_scores_point"
-    ? "Level passed. Scoring a point completed the challenge."
-    : "Level passed.";
-  const resultMessage = app.state.activeLevelResult === LEVEL_RESULT.PASSED
-    ? `<p class="level-result success">${successLead} ${resultReason}</p>`
-    : app.state.activeLevelResult === LEVEL_RESULT.FAILED
-      ? `<p class="level-result failure">Level failed. ${resultReason}</p>`
-      : "";
+  const resultMessage = renderResultBannerMessage(app, currentLevel, resultReason);
 
   const pickerOpen = Boolean(app.ui.isLevelPickerOpen);
 
@@ -606,7 +652,7 @@ export function renderLevelPanel(app) {
       <div class="level-picker">
         <button class="level-picker-trigger" data-action="toggle-level-picker" aria-expanded="${pickerOpen ? "true" : "false"}">
           <span class="level-picker-trigger-label">${escapeHtml(currentLevel.title)}</span>
-          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))}${renderLevelSignifiers(currentLevel)}</span>
+          <span class="level-picker-trigger-meta">${escapeHtml(getLevelStatusLabel(app.state.currentLevelStatus))} ${renderLevelPickerStars(app, currentLevel)}${renderLevelSignifiers(currentLevel)}</span>
         </button>
         ${pickerOpen ? `<div class="level-picker-popover">${renderLevelPickerItems(app)}</div>` : ""}
       </div>

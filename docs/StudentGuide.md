@@ -14,6 +14,12 @@
 - Press **Start Level** to run the level.
 - Press **Reset Level** to restore the board without losing your code.
 
+## Stars and Par
+
+- The first star is awarded for passing the level.
+- Some levels offer an optional second star for beating turn par — solving the mission within a target turn limit.
+- Stars measure iteration and efficiency as optional challenges, never grades. You can retry any level at any time to test new ideas.
+
 ## Free Play
 
 - Choose a mode:

@@ -20,6 +20,7 @@ import { createRandomizedFreePlayTeamSetup, getGameModeForFreePlayMode, getTeamF
 import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
 import { emit, finalizeTurnEventLog } from "./events.js";
+import { evaluateLevelStars } from "./starEvaluation.js";
 
 const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
 
@@ -256,6 +257,48 @@ function getFailureConditions(level) {
   return level.failureCondition ? [level.failureCondition] : [];
 }
 
+export function getLevelStarState(app, level) {
+  if (!level) {
+    return { starsEarned: 0, maxStarsOffered: 0, parBeaten: false, turnPar: null, isPassed: false };
+  }
+  const levelId = level.id;
+  const isPassed = app?.state?.levelProgress?.[levelId] === LEVEL_STATUS.PASSED;
+  const starState = app?.usageTracker?.getGuidedStarState?.(levelId) || null;
+
+  let starsEarned = 0;
+  if (starState && typeof starState.starsEarned === "number") {
+    starsEarned = starState.starsEarned;
+  } else if (isPassed) {
+    starsEarned = 1;
+  }
+
+  let maxStarsOffered = 0;
+  if (level.starCriteria) {
+    maxStarsOffered = 1;
+    if (typeof level.starCriteria.turnPar === "number" && Number.isFinite(level.starCriteria.turnPar)) {
+      maxStarsOffered += 1;
+    }
+    if (typeof level.starCriteria.masteryCriterionId === "string" && level.starCriteria.masteryCriterionId.trim().length > 0) {
+      maxStarsOffered += 1;
+    }
+  } else if (isPassed) {
+    maxStarsOffered = 1;
+  } else {
+    maxStarsOffered = 0;
+  }
+
+  const turnPar = level.starCriteria?.turnPar || starState?.turnPar || null;
+  const parBeaten = starState?.parBeaten ?? (starState?.starsEarned >= 2);
+
+  return {
+    starsEarned,
+    maxStarsOffered,
+    parBeaten,
+    turnPar,
+    isPassed
+  };
+}
+
 export function getLevelStateSnapshot(app) {
   const { state } = app;
   return {
@@ -447,6 +490,13 @@ export function completeLevel(app, result, reason, options = {}) {
   }
 
   if (result === LEVEL_RESULT.PASSED) {
+    const startTurn = state.currentLevelStartTurnNumber ?? 1;
+    const turnsSpent = Math.max(1, (state.currentTurnNumber ?? 1) - startTurn + 1);
+    const currentLvl = getCurrentLevel(app);
+    state.lastStarOutcome = {
+      ...evaluateLevelStars(currentLvl, result, { turnsSpent, runnerActionHistory: state.runnerActionHistory }),
+      turnsSpent
+    };
     state.levelProgress[state.currentLevelId] = LEVEL_STATUS.PASSED;
     const nextLevelId = getNextLevelId(state, state.currentLevelId);
     if (nextLevelId && state.levelProgress[nextLevelId] === LEVEL_STATUS.LOCKED) {
@@ -461,6 +511,8 @@ export function completeLevel(app, result, reason, options = {}) {
         .map((level) => level.id);
       app.usageTracker?.syncPassLedger?.(passedLevelIds);
     }
+  } else {
+    state.lastStarOutcome = null;
   }
 
   state.currentLevelStatus = state.levelProgress[state.currentLevelId];

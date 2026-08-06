@@ -57,7 +57,7 @@ test("level 6 tutorial can open a read-only demo without replacing the learner w
     hooks.startCurrentLevelTutorial(true);
   });
 
-  await expect(page.locator("#tutorial-overlay")).toContainText("One Block Shape, Many Sensor Ideas");
+  await expect(page.locator("#tutorial-overlay")).toContainText("Choose What To Watch");
   await expect(page.locator(".tutorial-demo-blockly")).toBeVisible();
   await expect(page.locator("#blockly-region")).toContainText("Move Forward");
 });

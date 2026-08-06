@@ -474,6 +474,21 @@ export function initializeUsageTracking(app) {
     getDebugSnapshot() {
       return cloneJson(session);
     },
+    getGuidedStarState(levelId) {
+      if (!levelId) return null;
+      const key = `${levelId}`.trim();
+      const entry = session.learningLedger?.guided?.[key];
+      if (!entry) return null;
+      return {
+        reached: Boolean(entry.reached),
+        passed: Boolean(entry.passed),
+        starsEarned: Number.isFinite(entry.starsEarned) ? entry.starsEarned : (entry.passed ? 1 : 0),
+        parBeaten: Boolean(entry.parBeaten),
+        turnPar: Number.isFinite(entry.turnPar) ? entry.turnPar : null,
+        masteryAchieved: Boolean(entry.masteryAchieved),
+        masteryCriterionId: entry.masteryCriterionId || null
+      };
+    },
     async exportUsageFile(studentName) {
       const cleanName = `${studentName || ""}`.trim();
       if (!cleanName) {

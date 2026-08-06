@@ -1,11 +1,9 @@
 ---
 id: plan-113
 title: "Campaign-Wide Par And Mastery Authoring"
-status: ready
+status: in-progress
 depends_on: [plan-111]
 gate: "before mutation: owner approval of the full authored par/mastery metadata table (proposed with evidence in the preflight plan); owner may approve phase-by-phase"
-superseded_by: null
-resolution: null
 summary: >-
   Author turnPar and masteryCriterionId for the remaining runnable guided levels using Plan 86 par-candidate evidence and behavior dossiers, extend the plan-111 criterion registry as needed, and settle the treatment of the 7 non-runnable levels. Supersedes the criteria-authoring slice of plan-96.
 ---

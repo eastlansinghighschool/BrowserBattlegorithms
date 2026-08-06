@@ -55,7 +55,7 @@ test("prediction levels expose a native radiogroup for keyboard navigation and r
   await dismissTutorial(page);
 
   await expect(page.locator("#prediction-prompt-prediction-31")).toHaveText("Which runner will move forward on the first turn?");
-  await expect(page.locator("#level-panel")).toContainText("The shared program now runs on two allies.");
+  await expect(page.locator("#level-panel")).toContainText("One branch faces two allies. Which runner enters it?");
 
   await page.getByLabel("Runner 0").focus();
   await page.keyboard.press("ArrowDown");
