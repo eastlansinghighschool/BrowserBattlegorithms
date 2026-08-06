@@ -1,11 +1,9 @@
 ---
 id: plan-97
 title: "Inversion Level Prototype"
-status: draft
+status: ready
 depends_on: [plan-85]
-gate: "before mutation; owner must select prototype placement and interaction shape"
-superseded_by: null
-resolution: null
+gate: "resolved 2026-07-22: owner selected Optional Lab placement + prediction-checkpoint multiple-choice mechanics"
 summary: >-
   Prototype a small "read the program, choose/predict the board" inversion level if the owner selects placement and interaction shape.
 ---
@@ -91,6 +89,8 @@ Read before editing:
 
 Required behavior:
 - Owner must choose where the prototype lives before implementation.
+
+**Resolved (owner decision, 2026-07-22):** placement = Optional Lab (with the existing optional labs at campaign end); interaction shape = reuse the prediction-checkpoint multiple-choice mechanics (locked program + 2–3 board/outcome choices, student commits, then sees the run). Prototype subject: a conditional program whose candidate boards differ on whether the condition ever fires (exercises first-action-reached and boolean evaluation). One level; stays optional.
 
 ### 2. Locked Program
 
