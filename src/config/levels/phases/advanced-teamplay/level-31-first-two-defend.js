@@ -16,6 +16,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_3", targetCell: { x: 4, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
+  starCriteria: {
+    turnPar: 5,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-29-range", title: "Index Ranges Create Teams", body: "An index range such as < 2 can group the first two allies. The remaining index can follow a different branch in the same program.", targetSelector: "#blockly-region" },
     { id: "level-29-three-allies", title: "Three Allies, One Program", body: "The barrier makes the center row crowded. Decide which runners need the same response and which one needs a different route.", targetSelector: "#canvas-container" }

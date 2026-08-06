@@ -39,6 +39,10 @@ export default {
   initialBlocklyXml: BUGHUNT_15_STARTER_XML,
   winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 40 },
+  // 2-star max: flag phase debugging repair.
+  starCriteria: {
+    turnPar: 21
+  },
   tutorialSteps: [
     {
       id: "bughunt-15-trace",

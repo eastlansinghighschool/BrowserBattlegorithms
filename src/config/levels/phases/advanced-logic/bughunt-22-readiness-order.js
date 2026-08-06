@@ -20,6 +20,10 @@ export default {
   initialBlocklyXml: BUGHUNT_22_STARTER_XML,
   winCondition: { type: "barrier_exists_at_cell", targetCell: { x: 4, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 8 },
+  // 2-star max: first action order repair.
+  starCriteria: {
+    turnPar: 3
+  },
   tutorialSteps: [
     {
       id: "bughunt-22-trace",

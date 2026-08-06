@@ -43,6 +43,7 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1 },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 60 },
+  // Non-runnable human-plus-ally capstone: pass-star-only (Plan 105 protocol).
   tutorialSteps: [
     {
       id: "full-team-tactics-last-solo",

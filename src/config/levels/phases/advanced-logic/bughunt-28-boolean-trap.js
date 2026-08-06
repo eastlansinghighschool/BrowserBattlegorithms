@@ -19,7 +19,11 @@ export default {
   toolboxBlockTypes: [...STRATEGY_BRAIN_PROJECT_TOOLBOX_BLOCKS],
   initialBlocklyXml: BUGHUNT_28_STARTER_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
+  // 2-star max: boolean trap repair.
+  starCriteria: {
+    turnPar: 14
+  },
   tutorialSteps: [
     {
       id: "bughunt-28-trace",

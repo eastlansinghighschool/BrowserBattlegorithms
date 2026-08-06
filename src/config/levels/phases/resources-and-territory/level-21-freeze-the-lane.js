@@ -34,6 +34,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 10
   },
+  // 2-star max: freeze power is concept-mandatory.
+  starCriteria: {
+    turnPar: 7
+  },
   tutorialSteps: [
     {
       id: "level-20-freeze",

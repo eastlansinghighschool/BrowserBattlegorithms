@@ -16,6 +16,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 6, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
+  // 2-star max: OR logic is concept-mandatory.
+  starCriteria: {
+    turnPar: 9
+  },
   tutorialSteps: [
     { id: "level-24-or", title: "Either Warning Works", body: "OR is true when at least one input is true. One branch can notice both the midfield line and a nearby defender.", targetSelector: "#blockly-region" },
     { id: "level-24-path", title: "Two Warnings, One Lane", body: "The midfield line and frozen defender are different warnings. Decide when they should ask the same thing of your ally.", targetSelector: "#canvas-container" }

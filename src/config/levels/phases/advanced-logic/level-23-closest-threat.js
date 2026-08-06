@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 3 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
+  // 2-star max: move toward closest enemy is concept-mandatory.
+  starCriteria: {
+    turnPar: 7
+  },
   tutorialSteps: [
     {
       id: "level-21-advanced-layer",

@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
+  starCriteria: {
+    turnPar: 14,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-27-shared-program", title: "One Workspace, Two Allies", body: "Both allies run the same blocks every turn. The first has index 0 and the second has index 1. An index check can send them down different branches.", targetSelector: "#blockly-region" },
     { id: "level-27-index", title: "Two Lanes", body: "One ally has a clear route to the flag. Look for a different job that keeps its teammate from crowding that lane.", targetSelector: "#canvas-container" }

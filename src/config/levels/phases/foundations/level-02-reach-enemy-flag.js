@@ -25,6 +25,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 14
   },
+  // 2-star max: backward movement is concept-mandatory.
+  starCriteria: {
+    turnPar: 3
+  },
   tutorialSteps: [
     {
       id: "level-2-goal",

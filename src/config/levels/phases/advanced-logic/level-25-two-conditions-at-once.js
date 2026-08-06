@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
+  // 2-star max: AND logic is concept-mandatory.
+  starCriteria: {
+    turnPar: 7
+  },
   tutorialSteps: [
     { id: "level-23-and", title: "Both Must Be True", body: "AND is true only when both checks are true. Use it when the defender's distance and your team's readiness must agree.", targetSelector: "#blockly-region" },
     { id: "level-23-lane", title: "After The Opening", body: "Once the power is spent, the field changes. What should the same program do while it waits to recharge?", targetSelector: "#canvas-container" }

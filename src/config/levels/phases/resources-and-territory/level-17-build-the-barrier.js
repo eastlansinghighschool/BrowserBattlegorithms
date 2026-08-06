@@ -25,6 +25,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 4
   },
+  // 2-star max: barrier placement is concept-mandatory.
+  starCriteria: {
+    turnPar: 3
+  },
   tutorialSteps: [
     {
       id: "level-16-place-barrier",

@@ -28,6 +28,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 8
   },
+  // 2-star max: jump gap is concept-mandatory.
+  starCriteria: {
+    turnPar: 4
+  },
   tutorialSteps: [
     {
       id: "level-15-ready",

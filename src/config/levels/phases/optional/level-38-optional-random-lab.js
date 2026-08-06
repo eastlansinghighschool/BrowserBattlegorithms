@@ -13,6 +13,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 2, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
+  // 2-star max: optional lab.
+  starCriteria: {
+    turnPar: 3
+  },
   tutorialSteps: [
     { id: "level-36-random", title: "A Random Direction", body: "Move Randomly picks one of the four directions each turn. The runner does not know which direction comes next.", targetSelector: "#blockly-region" },
     { id: "level-36-lab", title: "Run It Again", body: "One run may reach the marker quickly; another may wander. Watch what stays the same and what chance changes.", targetSelector: "#canvas-container" }

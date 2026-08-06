@@ -16,7 +16,11 @@ export default {
   moveTowardTargetTypes: [MOVE_TOWARD_TARGETS.ENEMY_FLAG],
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1_2" },
-  failureCondition: { type: "turn_limit_exceeded", maxTurns: 10 },
+  failureCondition: { type: "turn_limit_exceeded", maxTurns: 12 },
+  starCriteria: {
+    turnPar: 11,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-28-index-compare", title: "Compare The Index", body: "Compare runner index to a number to choose different branches for different allies. One shared script can still assign separate jobs.", targetSelector: "#blockly-region" },
     { id: "level-28-jobs", title: "Read Their Positions", body: "One ally starts near the far flag while the other is back at home. Decide what each position asks of its runner.", targetSelector: "#canvas-container" }

@@ -70,6 +70,36 @@ registerCriterionEvaluator("concept-used", (context) => {
   return false;
 });
 
+/**
+ * both-allies-active: Mechanically checks whether both (or all) player-team ally runners
+ * (team 1, non-human, non-NPC, identified via appState.allRunners team metadata) executed at least
+ * one action during the level run (including STAY_STILL).
+ */
+registerCriterionEvaluator("both-allies-active", (context) => {
+  const { details } = context;
+  const actionHistory = details?.runnerActionHistory || {};
+  const appState = details?.appState;
+
+  if (!appState || !Array.isArray(appState.allRunners)) {
+    return false;
+  }
+
+  // Identify player team ally runners using team metadata on appState.allRunners
+  const playerAllyRunners = appState.allRunners.filter(
+    (runner) => runner.team === 1 && !runner.isHumanControlled && !runner.isNPC
+  );
+
+  if (playerAllyRunners.length < 2) {
+    return false;
+  }
+
+  // Check if every player ally runner has executed at least one action (STAY_STILL counts as active)
+  return playerAllyRunners.every((runner) => {
+    const history = actionHistory[runner.id];
+    return Array.isArray(history) && history.length > 0;
+  });
+});
+
 // ── Pure Star Evaluator ──────────────────────────────────────────────────────
 
 /**

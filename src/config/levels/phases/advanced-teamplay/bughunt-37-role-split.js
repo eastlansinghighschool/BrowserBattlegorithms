@@ -28,6 +28,10 @@ export default {
   initialBlocklyXml: BUGHUNT_37_STARTER_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
+  // 2-star max: role split debugging repair.
+  starCriteria: {
+    turnPar: 14
+  },
   tutorialSteps: [
     {
       id: "bughunt-37-trace",

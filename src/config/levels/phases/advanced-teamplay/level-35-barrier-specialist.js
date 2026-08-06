@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 13 },
+  starCriteria: {
+    turnPar: 12,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-35-index-barrier", title: "One Barrier Role", body: "Runner index can reserve the barrier branch for one ally while the other follows a different field rule.", targetSelector: "#blockly-region" },
     { id: "level-35-patrol", title: "Watch The Patrol", body: "Watch where the patroller turns. A barrier in its path changes how far it can travel across the flag lane.", targetSelector: "#canvas-container" }

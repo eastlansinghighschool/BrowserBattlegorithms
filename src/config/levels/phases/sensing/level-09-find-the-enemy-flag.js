@@ -35,6 +35,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 14
   },
+  // 2-star max: flag sensing is concept-mandatory.
+  starCriteria: {
+    turnPar: 13
+  },
   tutorialSteps: [
     {
       id: "level-9-flag-sensor",

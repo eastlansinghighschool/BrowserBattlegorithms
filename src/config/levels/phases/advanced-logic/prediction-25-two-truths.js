@@ -67,6 +67,7 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 6
   },
+  // Non-runnable prediction checkpoint: pass-star-only.
   tutorialSteps: [
     {
       id: "prediction-25-intro",

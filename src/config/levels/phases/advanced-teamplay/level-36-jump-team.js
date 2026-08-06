@@ -16,6 +16,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 4 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 15 },
+  starCriteria: {
+    turnPar: 5,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-34-jump-role", title: "Give The Jump To One Ally", body: "Runner index can send one ally to a jump branch while the other follows a different rule around the wall.", targetSelector: "#blockly-region" },
     { id: "level-34-wall", title: "Two Sides Of The Wall", body: "The wall puts the allies in different situations. Decide what each runner should notice from its own lane.", targetSelector: "#canvas-container" }

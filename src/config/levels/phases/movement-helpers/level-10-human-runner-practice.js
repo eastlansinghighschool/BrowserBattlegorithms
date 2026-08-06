@@ -31,6 +31,7 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 200
   },
+  // S12 fully protected human-runner level: pass-star-only.
   tutorialSteps: [
     {
       id: "level-10-human-focus",

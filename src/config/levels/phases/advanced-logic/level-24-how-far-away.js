@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 5, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 17 },
+  // 2-star max: numeric distance compare is concept-mandatory.
+  starCriteria: {
+    turnPar: 8
+  },
   tutorialSteps: [
     {
       id: "level-24-distance",

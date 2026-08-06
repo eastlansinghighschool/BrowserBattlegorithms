@@ -47,6 +47,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 40 },
+  // 2-star max: synthesis challenge concept-mandatory.
+  starCriteria: {
+    turnPar: 21
+  },
   tutorialSteps: [
     {
       id: "dodge-and-deliver-real-game",

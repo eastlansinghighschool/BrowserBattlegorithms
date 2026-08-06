@@ -33,6 +33,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 14
   },
+  // 2-star max: detour branch is concept-mandatory.
+  starCriteria: {
+    turnPar: 8
+  },
   tutorialSteps: [
     {
       id: "level-4-barrier",

@@ -494,7 +494,11 @@ export function completeLevel(app, result, reason, options = {}) {
     const turnsSpent = Math.max(1, (state.currentTurnNumber ?? 1) - startTurn + 1);
     const currentLvl = getCurrentLevel(app);
     state.lastStarOutcome = {
-      ...evaluateLevelStars(currentLvl, result, { turnsSpent, runnerActionHistory: state.runnerActionHistory }),
+      ...evaluateLevelStars(currentLvl, result, {
+        turnsSpent,
+        runnerActionHistory: state.runnerActionHistory,
+        appState: state
+      }),
       turnsSpent
     };
     state.levelProgress[state.currentLevelId] = LEVEL_STATUS.PASSED;

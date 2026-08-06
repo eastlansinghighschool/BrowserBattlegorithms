@@ -29,6 +29,7 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 14
   },
+  // S12 fully protected baseline: pass-star-only.
   tutorialSteps: [
     {
       id: "level-11-helper",

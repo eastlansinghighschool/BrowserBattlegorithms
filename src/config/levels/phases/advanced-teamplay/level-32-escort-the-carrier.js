@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1_2", targetCell: { x: 5, y: 5 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 20 },
+  starCriteria: {
+    turnPar: 5,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-30-teammate", title: "One Ally Has The Flag", body: "The lead ally begins as the carrier. Teammate-has-flag and runner index can give the other ally a different response.", targetSelector: "#blockly-region" },
     { id: "level-30-support", title: "Watch The Return", body: "The carrier and the nearby ally are not in the same situation. Build local rules that notice the flag and the lane around it.", targetSelector: "#canvas-container" }

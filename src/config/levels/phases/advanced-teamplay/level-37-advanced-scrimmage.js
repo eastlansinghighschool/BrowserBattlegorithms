@@ -18,6 +18,7 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1 },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 55 },
+  // Deferred star metadata: pass-star-only this round due to documented step-9 checkpoint fixture debt (guided-project-solutions.test.js:31-45).
   tutorialSteps: [
     { id: "level-35-capstone", title: "A Full Team Script", body: "Three allies run one shared program against three live defenders on the far side. Build local rules that give the team different work.", targetSelector: "#blockly-region" },
     { id: "level-35-real-score", title: "Bring A Point Home", body: "A point is the goal. Any ally can carry it home, so watch what each runner sees as the scrimmage shifts.", targetSelector: "#canvas-container" }

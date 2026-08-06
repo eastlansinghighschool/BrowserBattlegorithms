@@ -16,6 +16,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_cell", runnerId: "runner_1_AI_AllyP1", targetCell: { x: 6, y: 2 } },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 21 },
+  // 2-star max: NOT logic is concept-mandatory.
+  starCriteria: {
+    turnPar: 9
+  },
   tutorialSteps: [
     { id: "level-25-not", title: "Reverse The Boolean", body: "NOT flips a boolean: true becomes false, and false becomes true. Use it when the opposite check says the field situation more clearly.", targetSelector: "#blockly-region" },
     { id: "level-25-side", title: "After Midfield", body: "The ally's side changes at midfield. Decide whether reversing a territory check gives the far side its own rule.", targetSelector: "#canvas-container" }

@@ -23,6 +23,7 @@ export default {
     { type: "team_scores_point", teamId: 2 },
     { type: "turn_limit_exceeded", maxTurns: 20 }
   ],
+  // Non-runnable human-input lab: pass-star-only.
   tutorialSteps: [
     {
       id: "optional-double-carrier-intro",

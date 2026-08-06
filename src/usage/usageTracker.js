@@ -385,6 +385,7 @@ export function initializeUsageTracking(app) {
       const starEval = evaluateLevelStars(level, result, {
         turnsSpent,
         runnerActionHistory: app.state?.runnerActionHistory || {},
+        appState: app.state,
         ...details
       });
       Object.assign(payload, starEval);

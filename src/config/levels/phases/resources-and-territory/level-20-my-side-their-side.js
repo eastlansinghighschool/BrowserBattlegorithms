@@ -53,6 +53,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 12
   },
+  // 2-star max: territory conditional is structurally concept-mandatory.
+  starCriteria: {
+    turnPar: 11
+  },
   tutorialSteps: [
     {
       id: "level-19-territory",

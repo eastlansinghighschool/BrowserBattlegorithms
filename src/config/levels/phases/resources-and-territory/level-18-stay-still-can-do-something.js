@@ -37,6 +37,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 8
   },
+  // 2-star max: stay still action is concept-mandatory.
+  starCriteria: {
+    turnPar: 6
+  },
   tutorialSteps: [
     {
       id: "level-17-stay-still",

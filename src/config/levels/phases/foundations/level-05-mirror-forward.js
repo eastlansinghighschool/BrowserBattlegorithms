@@ -26,6 +26,7 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 6
   },
+  // S12 fully protected level: pass-star-only.
   tutorialSteps: [
     {
       id: "level-5-mirror",

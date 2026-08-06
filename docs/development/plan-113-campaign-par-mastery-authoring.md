@@ -1,7 +1,8 @@
 ---
 id: plan-113
 title: "Campaign-Wide Par And Mastery Authoring"
-status: in-progress
+status: complete
+resolution: "Campaign-wide star authoring complete: 34 levels with approved pars (formula ref + max(2, ceil(ref*0.15))), both-allies-active star-3 criteria on Phase 6 levels 29-36 with explicit appState wiring and real-catalog tests, turn-limit bumps bughunt-28 12->15 / index-jobs 10->12, S12/non-runnable/advanced-scrimmage treatments per owner gate (decision log 2026-07-22). Lint 0 errors, no new warnings."
 depends_on: [plan-111]
 gate: "before mutation: owner approval of the full authored par/mastery metadata table (proposed with evidence in the preflight plan); owner may approve phase-by-phase"
 summary: >-

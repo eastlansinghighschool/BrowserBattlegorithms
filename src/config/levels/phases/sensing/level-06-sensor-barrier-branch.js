@@ -36,6 +36,10 @@ export default {
     type: "turn_limit_exceeded",
     maxTurns: 14
   },
+  // 2-star max: enemy sensor branch is concept-mandatory.
+  starCriteria: {
+    turnPar: 8
+  },
   tutorialSteps: [
     {
       id: "level-6-generic-sensor",

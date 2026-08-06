@@ -17,6 +17,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "runner_reaches_enemy_flag", runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 18 },
+  starCriteria: {
+    turnPar: 12,
+    masteryCriterionId: "both-allies-active"
+  },
   tutorialSteps: [
     { id: "level-31-split", title: "Split The Team Jobs", body: "Runner index can give one ally a flag-focused branch and another a closest-enemy branch. Both still follow the same shared code.", targetSelector: "#blockly-region" },
     { id: "level-31-pressure", title: "Pressure At Home", body: "The two defenders are already on your side. Decide what the nearby ally should notice while its teammate works the far lane.", targetSelector: "#canvas-container" }
