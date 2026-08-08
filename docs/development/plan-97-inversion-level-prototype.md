@@ -1,7 +1,7 @@
 ---
 id: plan-97
 title: "Inversion Level Prototype"
-status: ready
+status: in-progress
 depends_on: [plan-85]
 gate: "resolved 2026-07-22: owner selected Optional Lab placement + prediction-checkpoint multiple-choice mechanics"
 summary: >-
