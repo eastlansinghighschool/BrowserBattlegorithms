@@ -24,7 +24,7 @@ import { runGuidedLevelWithHumanScript, runGuidedLevelWithSolution } from "./hel
 
 test("level definitions load with the expected starter and advanced level order", () => {
   const levels = getLevelDefinitions();
-  assert.equal(levels.length, 46);
+  assert.equal(levels.length, 47);
   assert.deepEqual(
     levels.map((level) => level.id),
     [
@@ -73,7 +73,8 @@ test("level definitions load with the expected starter and advanced level order"
       "bughunt-37",
       "advanced-scrimmage",
       "optional-random-lab",
-      "optional-double-carrier-showdown"
+      "optional-double-carrier-showdown",
+      "optional-inversion-lab"
     ]
   );
 
@@ -91,8 +92,9 @@ test("level definitions load with the expected starter and advanced level order"
   assert.ok(levels[41].title.startsWith("Prediction"));
   assert.equal(levels[42].id, "bughunt-37");
   assert.ok(levels[43].title.startsWith("Challenge 37"));
-  assert.equal(levels.at(-2).id, "optional-random-lab");
-  assert.equal(levels.at(-1).id, "optional-double-carrier-showdown");
+  assert.equal(levels.at(-3).id, "optional-random-lab");
+  assert.equal(levels.at(-2).id, "optional-double-carrier-showdown");
+  assert.equal(levels.at(-1).id, "optional-inversion-lab");
 });
 
 test("guided mode cold start: level 1 available, all others locked", () => {
@@ -674,8 +676,9 @@ test("guided level manifest provides a lightweight sanity check of the campaign"
 
   assert.equal(GUIDED_LEVEL_MANIFEST.length, levels.length);
   assert.equal(GUIDED_LEVEL_MANIFEST[0].id, "move-to-target");
-  assert.equal(GUIDED_LEVEL_MANIFEST.at(-2).id, "optional-random-lab");
-  assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-double-carrier-showdown");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-3).id, "optional-random-lab");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-2).id, "optional-double-carrier-showdown");
+  assert.equal(GUIDED_LEVEL_MANIFEST.at(-1).id, "optional-inversion-lab");
   assert.equal(GUIDED_LEVEL_MANIFEST[15].id, "bughunt-15");
   assert.ok(GUIDED_LEVEL_MANIFEST[16].title.startsWith("Challenge 15"));
 });

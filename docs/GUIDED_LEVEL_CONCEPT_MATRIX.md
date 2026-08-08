@@ -50,6 +50,8 @@ This matrix tracks what each guided level introduces so the tutorial copy can av
 | **Challenge 37** | **Advanced scrimmage** | **live team scrimmage** | **combined capstone** | **Levels 23-37** |
 | Optional Lab: Move Randomly | randomness in action choice | randomness in action | `Move Randomly` | movement basics |
 | Optional Lab: Double Carrier Showdown | own-flag-home scoring; escort and intercept coordination | scoring is blocked when own flag is away; carrier interception unblocks the score; runner index roles | `runner index`, `teammate-has-flag`, `Move Toward` | Levels 19, 29-37, the carrier collision rule, and the own-flag-home scoring rule |
+| Optional Lab: Code Inversion | code-to-board reasoning | predict which board setup satisfies a locked program | inversion checkpoint; no new Blockly idea | IF/ELSE, square-ahead-blocked sensing |
+
 
 Note: the Field Decisions project arc also makes `count-within` available in the toolbox from Level 23 onward. The block is additive rather than a separately taught lesson, so the matrix still treats the first authored count-and-threshold lesson as future work.
 

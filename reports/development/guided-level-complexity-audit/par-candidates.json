@@ -494,7 +494,7 @@
       },
       {
         "fixtureKind": "project final",
-        "turnsElapsed": 11,
+        "turnsElapsed": 13,
         "blockCount": 25,
         "distinctActionTypes": [
           "MOVE_BACKWARD",
@@ -701,5 +701,9 @@
   "optional-double-carrier-showdown": {
     "runnable": false,
     "notApplicableReason": "human-input level requires live player input"
+  },
+  "optional-inversion-lab": {
+    "runnable": false,
+    "notApplicableReason": "prediction checkpoint requires a prediction choice before play"
   }
 }

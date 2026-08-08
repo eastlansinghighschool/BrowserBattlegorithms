@@ -111,6 +111,20 @@ test("reference solution toolbox compatibility reports missing blocks", () => {
   assert.equal(diagnostics[0].contract, "reference-solution-toolbox-compatibility");
 });
 
+test("reference solution toolbox compatibility skips intentionally empty toolbox levels", () => {
+  const level = createLevel({ id: "empty-toolbox-locked", toolboxBlockTypes: [] });
+  const ref = new Map([
+    [
+      "empty-toolbox-locked",
+      {
+        filePath: "/abs/empty-toolbox-locked.xml",
+        xmlText: `<xml><block type="battlegorithms_on_each_turn"><next><block type="battlegorithms_move_forward"></block></next></block></xml>`
+      }
+    ]
+  ]);
+  assert.deepEqual(checkReferenceSolutionToolboxCompatibility([level], { referenceSolutionsByLevelId: ref }), []);
+});
+
 test("demo Blockly comparison ignores layout but flags identical programs", () => {
   const level = createLevel({
     id: "demo",

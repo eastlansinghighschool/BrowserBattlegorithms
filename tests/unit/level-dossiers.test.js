@@ -150,6 +150,6 @@ test("summary index generation contains relative links to generated dossier file
   assert.match(summary, /\[dossier\]\(level-dossiers\/01-move-to-target\.md\)/);
   assert.match(summary, /\[behavior\]\(behavior-evidence\/01-move-to-target\.md\)/);
   assert.match(summary, /\[dossier\]\(level-dossiers\/46-optional-double-carrier-showdown\.md\)/);
-  assert.equal(result.dossiers.length, 46);
+  assert.equal(result.dossiers.length, 47);
   assert.equal(await fs.stat(path.join(tempDir, "level-dossiers", "01-move-to-target.md")).then(() => true), true);
 });

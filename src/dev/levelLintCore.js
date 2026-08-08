@@ -273,6 +273,10 @@ export function checkReferenceSolutionToolboxCompatibility(levels, { referenceSo
   const diagnostics = [];
 
   for (const level of levels) {
+    // Intentionally empty toolbox (e.g., locked-program inversion/prediction levels): fixture-to-toolbox compatibility is vacuous.
+    if (Array.isArray(level.toolboxBlockTypes) && level.toolboxBlockTypes.length === 0) {
+      continue;
+    }
     const ref = getLevelRef(level, referenceSolutionsByLevelId);
     if (!ref) {
       continue;
