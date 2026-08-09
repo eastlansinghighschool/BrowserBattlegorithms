@@ -71,6 +71,7 @@ Canonical prompt templates live in `docs/agent-starting-prompts/`.
 | `plan-111` | Star/Par Evaluation Core And Tracker Population | complete | Implement Plan 85 S6's star evaluation core: per-level star metadata schema, a pure star evaluator wired into the end-of-level path, and producer population of the ratified plan-110 ledger fields — piloted on movement-helpers levels 11-14 only. Supersedes the evaluation slice of plan-96. |
 | `plan-112` | Star/Par Display UI | complete | Surface the plan-111 star outcomes to students: per-level stars in the guided level picker and a result-banner star/par summary, with mastery-not-grades copy and accessibility-first presentation. Supersedes the UI slice of plan-96. |
 | `plan-113` | Campaign-Wide Par And Mastery Authoring | complete | Author turnPar and masteryCriterionId for the remaining runnable guided levels using Plan 86 par-candidate evidence and behavior dossiers, extend the plan-111 criterion registry as needed, and settle the treatment of the 7 non-runnable levels. Supersedes the criteria-authoring slice of plan-96. |
+| `plan-114` | Advanced Scrimmage Capstone Winnability Repair | ready | Diagnose and repair Challenge 37 (advanced-scrimmage) winnability: both canonical fixtures (step-9 checkpoint and final) fail the current level at turn 56 against a 55-turn limit per behavior evidence, so the capstone may currently have no passing reference solution. Evidence-first, then a gated repair, then the deferred star metadata. |
 <!-- plan-index:end -->
 
 ### Archived Packets
