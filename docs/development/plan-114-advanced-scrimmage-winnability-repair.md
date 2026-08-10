@@ -69,6 +69,7 @@ Required reading:
 Contracts to preserve:
 
 - The NPC layout and board stay as-is unless the evidence phase proves they are the defect — and even then, changing them needs explicit owner approval (it invalidates living-board evidence).
+- **Human-runner handling:** advanced-scrimmage has a human-slot runner (`level-37-advanced-scrimmage.js:33`) authored `humanTurnBehavior: AUTO_SKIP` — the human runner is parked, and canonical play is the shared program running the AI allies. The harness evaluates this level without human input (that is how the existing 56-turn failure evidence was produced). Do not script human-runner moves into the canonical fixture. If the evidence shows the level is only winnable by driving the human runner, that contradicts the level's shared-program capstone design — STOP and surface to the owner.
 - The repaired checkpoint fixture must remain a program a student could plausibly have written by following the L29–36 arc — no superhuman tuning, no blocks outside the project toolbox.
 - Reference-solution tests must assert the repaired fixture PASSES (the S8 discipline: the claim is falsifiable).
 - Tests aligned with authored level count/order/toolbox restrictions stay aligned.
