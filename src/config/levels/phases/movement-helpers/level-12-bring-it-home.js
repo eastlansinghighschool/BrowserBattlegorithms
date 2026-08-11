@@ -14,7 +14,7 @@ export default {
   // therefore geometrically disjoint from the ally's reachable set (x<=10),
   // not just clear on the reference run's specific timing.
   boardDynamicsTier: BOARD_DYNAMICS_TIERS.BACKGROUND_MOTION,
-  // no honest criterion — 2-star max (concept mandatory per simulation evidence, decision log 2026-07-22).
+  // no honest criterion — 2-star max (concept mandatory per simulation evidence, decision log 2026-08-05).
   starCriteria: {
     turnPar: 25
   },

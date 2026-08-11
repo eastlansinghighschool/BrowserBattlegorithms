@@ -2,7 +2,7 @@
 id: plan-112
 title: "Star/Par Display UI"
 status: complete
-resolution: "Star/par display UI: picker star pills and result-banner star/par summary with owner-approved verbatim copy (decision log 2026-07-22), level-kind matrix incl. v1-history handling, read-only getGuidedStarState accessor, accessibility via shape + aria-labels. Acceptance: hollow accessor test replaced with real-tracker test; pass-reason suffix + score-point tailoring restored per owner decision; two stale Plan 95-era smoke assertions repaired; smoke suite green 61/61."
+resolution: "Star/par display UI: picker star pills and result-banner star/par summary with owner-approved verbatim copy (decision log 2026-08-05), level-kind matrix incl. v1-history handling, read-only getGuidedStarState accessor, accessibility via shape + aria-labels. Acceptance: hollow accessor test replaced with real-tracker test; pass-reason suffix + score-point tailoring restored per owner decision; two stale Plan 95-era smoke assertions repaired; smoke suite green 61/61."
 depends_on: [plan-111]
 gate: "before mutation: owner sign-off on star presentation copy and placement mockup (described in the preflight plan)"
 summary: >-
@@ -16,7 +16,7 @@ summary: >-
 - Packet title: Star/Par Display UI
 - Status: (see frontmatter)
 - Owner/model: implementation agent
-- Date: 2026-07-22
+- Date: 2026-07-23
 - Packet type: implementation / frontend
 - Mutation level: source-code, tests, docs
 - Approval gate: before mutation — owner sign-off on star presentation copy and placement (described in the preflight plan; no pixel-perfect mockup required, but copy is quoted verbatim for approval).

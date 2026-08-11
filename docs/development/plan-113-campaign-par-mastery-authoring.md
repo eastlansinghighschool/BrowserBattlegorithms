@@ -2,7 +2,7 @@
 id: plan-113
 title: "Campaign-Wide Par And Mastery Authoring"
 status: complete
-resolution: "Campaign-wide star authoring complete: 34 levels with approved pars (formula ref + max(2, ceil(ref*0.15))), both-allies-active star-3 criteria on Phase 6 levels 29-36 with explicit appState wiring and real-catalog tests, turn-limit bumps bughunt-28 12->15 / index-jobs 10->12, S12/non-runnable/advanced-scrimmage treatments per owner gate (decision log 2026-07-22). Lint 0 errors, no new warnings."
+resolution: "Campaign-wide star authoring complete: 34 levels with approved pars (formula ref + max(2, ceil(ref*0.15))), both-allies-active star-3 criteria on Phase 6 levels 29-36 with explicit appState wiring and real-catalog tests, turn-limit bumps bughunt-28 12->15 / index-jobs 10->12, S12/non-runnable/advanced-scrimmage treatments per owner gate (decision log 2026-08-05). Lint 0 errors, no new warnings."
 depends_on: [plan-111]
 gate: "before mutation: owner approval of the full authored par/mastery metadata table (proposed with evidence in the preflight plan); owner may approve phase-by-phase"
 summary: >-
@@ -16,7 +16,7 @@ summary: >-
 - Packet title: Campaign-Wide Par And Mastery Authoring
 - Status: (see frontmatter)
 - Owner/model: implementation agent + owner curriculum review
-- Date: 2026-07-22
+- Date: 2026-07-23
 - Packet type: implementation / docs (level metadata)
 - Mutation level: source-code (level metadata), tests, docs
 - Approval gate: before mutation — owner approval of the full authored metadata table (turnPar + masteryCriterionId per level, with the evidence for each), presented in the preflight plan. Owner may approve phase-by-phase; the packet then lands in matching phase commits.
@@ -79,8 +79,8 @@ Contracts to preserve:
 - After owner approval: write the metadata into level definitions (phase-grouped commits if approved phase-by-phase).
 - Criterion registry extensions for criterion ids used beyond the pilot set, with unit tests.
 - The 7 non-runnable levels: propose and, after owner decision, record their treatment (options to present: par based on the fixed prediction/human path where one exists; pass-star-only; or explicitly excluded from stars with the reason documented in the level file comment).
-- Acceptance note from plan-111 (2026-07-22): star tiers are **cumulative** — `starsEarned` is 3 only when both `parBeaten` and `masteryAchieved` hold (decision log 2026-07-22). Author criteria against this: a mastery-meeting but slow run earns 1 star, so criteria should be things a student could plausibly achieve while also beating par, or the level's 3-star is effectively unreachable.
-- **Gate-approved scope amendment (2026-07-22):** two turn-limit mechanics changes are in scope — `bughunt-28` maxTurns 12→15 and `index-jobs` 10→12 (owner decision, decision log 2026-07-22) — with corresponding updates to any level-lint expectations and behavior-evidence notes that cite the old limits. `advanced-scrimmage` is pass-star-only this round (fixture debt documented; do NOT change its turn limit).
+- Acceptance note from plan-111 (2026-08-05): star tiers are **cumulative** — `starsEarned` is 3 only when both `parBeaten` and `masteryAchieved` hold (decision log 2026-08-05). Author criteria against this: a mastery-meeting but slow run earns 1 star, so criteria should be things a student could plausibly achieve while also beating par, or the level's 3-star is effectively unreachable.
+- **Gate-approved scope amendment (2026-08-05):** two turn-limit mechanics changes are in scope — `bughunt-28` maxTurns 12→15 and `index-jobs` 10→12 (owner decision, decision log 2026-08-05) — with corresponding updates to any level-lint expectations and behavior-evidence notes that cite the old limits. `advanced-scrimmage` is pass-star-only this round (fixture debt documented; do NOT change its turn limit).
 - `npm run lint:levels` extension if the star-metadata lint from plan-111 should verify authored values (e.g. par < turn limit) — minimal and honest.
 
 ### Out of Scope

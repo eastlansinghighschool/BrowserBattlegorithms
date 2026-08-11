@@ -17,7 +17,7 @@ summary: >-
 - Packet title: Collision And Waste Event Tracking
 - Status: (see frontmatter)
 - Owner/model: implementation agent
-- Date: 2026-08-08
+- Date: 2026-08-10
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note)
 - Approval gate: before mutation — owner approves the exact counter definitions (what counts as a collision; what counts as a wasted resource use), presented with event-log evidence in the preflight plan.
@@ -49,14 +49,14 @@ Blocks:
 - The star-3 criteria expansion authoring packet.
 
 Why this packet exists:
-Plan-113's gate audit proved that no collision or resource-waste data exists at level end, so every scrimmage/resource level went 2-star max and star 3 currently exists only on Phase 6 multi-ally levels. The owner ratified that shape and deferred this tracking to the backlog (decision log 2026-07-22). This packet builds the missing instrumentation from the Plan 35 event log (`state.eventLog` already records `runner.actionResolved`, `runner.blockedOrBounced`, and collision/freeze outcomes), keeping the star layer's honesty standard: criteria must measure something real.
+Plan-113's gate audit proved that no collision or resource-waste data exists at level end, so every scrimmage/resource level went 2-star max and star 3 currently exists only on Phase 6 multi-ally levels. The owner ratified that shape and deferred this tracking to the backlog (decision log 2026-08-05). This packet builds the missing instrumentation from the Plan 35 event log (`state.eventLog` already records `runner.actionResolved`, `runner.blockedOrBounced`, and collision/freeze outcomes), keeping the star layer's honesty standard: criteria must measure something real.
 
 ## Authority And Contracts
 
 Required reading:
 
 - `docs/development/plan-113-campaign-par-mastery-authoring.md` progress report + gate decisions (why the criteria were dropped).
-- `docs/decision-log.md` — 2026-07-22 entries (star-3 shape, this deferral).
+- `docs/decision-log.md` — 2026-08-05 entries (star-3 shape, this deferral).
 - Plan 35's event log: find the emission sites (`rg "emit\\(" src/core`) and `docs/subsystems/turn-engine.md` for the event taxonomy (9 v1 kinds including `runner.actionResolved`, `runner.blockedOrBounced`).
 - `src/usage/learningLedger.js` Plan 37 note: `resource_no_readiness_guard` learning-moment (prior art for "wasted" semantics).
 - `src/core/levels.js` end-of-level path and `src/usage/usageTracker.js` `recordLevelEnded` (plan-111's wiring — where counters must land).

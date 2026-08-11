@@ -2,7 +2,7 @@
 id: plan-111
 title: "Star/Par Evaluation Core And Tracker Population"
 status: complete
-resolution: "Star/par evaluation core: pure evaluator + criterion registry (concept-used, fail-open), <= par semantics, monotonic ledger population through the real endLevel path, pilot pars 25/10/3 with 2-star-max per owner gate. Two gate rounds settled par semantics, arithmetic, and the anti-code-golf 2-star-max standard (decision log 2026-07-22). Cumulative-tier semantics ratified at acceptance; subsystem note bullets restored."
+resolution: "Star/par evaluation core: pure evaluator + criterion registry (concept-used, fail-open), <= par semantics, monotonic ledger population through the real endLevel path, pilot pars 25/10/3 with 2-star-max per owner gate. Two gate rounds settled par semantics, arithmetic, and the anti-code-golf 2-star-max standard (decision log 2026-08-05). Cumulative-tier semantics ratified at acceptance; subsystem note bullets restored."
 depends_on: [plan-110]
 gate: "before mutation: owner sign-off on the pilot levels' proposed turnPar values and masteryCriterionId choices (presented in the preflight plan, before edits)"
 summary: >-
@@ -16,7 +16,7 @@ summary: >-
 - Packet title: Star/Par Evaluation Core And Tracker Population
 - Status: (see frontmatter)
 - Owner/model: implementation agent
-- Date: 2026-07-22
+- Date: 2026-07-23
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note)
 - Approval gate: before mutation — owner sign-off on the pilot levels' proposed `turnPar` values and `masteryCriterionId` choices, presented with evidence in the preflight plan summary before any edits.

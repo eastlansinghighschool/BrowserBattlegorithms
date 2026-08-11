@@ -67,6 +67,10 @@ When reviewing another model's work:
 - Prefer a short list of actionable recommendations over a broad rewrite.
 - Verify any subsystem note touched by the work still reads true post-change.
 
+When date-stamping anything (decision-log entries, packet dates, progress reports, review notes):
+
+- Take the date from the environment (`date`, commit timestamps), never from conversation recency. Async orchestration sessions span days; the session-start timestamp and the flow of chat are unreliable clocks. A wrong date in a durable artifact mis-dates the decision record — caught and corrected here on 2026-08-10 after a batch of star-series entries drifted two weeks stale.
+
 ## Packet Creation Rules
 
 When creating or revising packets:

@@ -69,6 +69,8 @@ Upstream: `bootstrap-capabilities.json` ledger (12 capabilities), catalog `docs/
 
 **Reverse-flow answer:** our short-ID proposal landed upstream (their plan-18, complete). Nothing new in our local conventions is a pending reverse-flow candidate. Our newer local conventions (repair files, `delivered` status, gate-first packets, dated decision log) all have upstream equivalents — adoption is low-friction.
 
+**Reverse-flow candidate to carry upstream (added 2026-08-10, owner request):** a date-stamping rule for orchestrator/implementer prompts — "take dates from the environment (`date`, commit timestamps), never from conversation recency; async sessions span days and session-start timestamps go stale." The owner reports seeing this orchestrator mistake in multiple repos; it happened here (a batch of decision-log entries drifted two weeks stale and had to be corrected from commit evidence). Recommend proposing it upstream for the shared prompt conventions (agent-starting-prompts capability) during this packet.
+
 ## Triage Recommendations (owner gate)
 
 | Capability | Recommendation | Why |

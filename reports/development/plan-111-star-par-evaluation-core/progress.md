@@ -65,7 +65,7 @@ Implemented Plan 111 (Star/Par Evaluation Core And Tracker Population), building
    - *Resolution:* Corrected turnPar to 25 and aligned formula and table per owner gate requirement.
 2. **Discriminating power for mastery criteria on pilot levels:**
    - *Problem:* Empirical simulations proved all 3 non-protected pilot levels require their core concept to pass (100% concept-mandatory), so `concept-used` would award Star 3 to every pass.
-   - *Resolution:* Per owner decision (2026-07-22 decision log entry), pilot levels are designated as 2-star max (`turnPar` only, no `masteryCriterionId`). `concept-used` was implemented in the registry for Plan 113 where concepts are optional.
+   - *Resolution:* Per owner decision (2026-08-05 decision log entry), pilot levels are designated as 2-star max (`turnPar` only, no `masteryCriterionId`). `concept-used` was implemented in the registry for Plan 113 where concepts are optional.
 
 ## Remaining Risks or Follow-ups
 

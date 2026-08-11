@@ -7,7 +7,7 @@ Implemented Plan 112 (Star/Par Display UI), surfacing star outcomes and turn par
 - Added `getGuidedStarState(levelId)` read accessor to `app.usageTracker` in `src/usage/usageTracker.js` to cleanly read durable learning ledger star state (`starsEarned`, `parBeaten`, `turnPar`, `masteryAchieved`, `masteryCriterionId`) without touching test scaffolding (`usageTrackerSessionInternal`).
 - Created `getLevelStarState(app, level)` helper in `src/core/levels.js` to encapsulate level-kind star logic (metadata levels vs protected pass-only levels vs no-metadata levels) and v1 history fallback.
 - Updated `completeLevel` in `src/core/levels.js` to evaluate and store `state.lastStarOutcome` upon level completion.
-- Updated `src/ui/levels.js` with `renderLevelPickerStars` and `renderResultBannerMessage` implementing the verbatim owner-approved student-facing copy from the 2026-07-22 decision log:
+- Updated `src/ui/levels.js` with `renderLevelPickerStars` and `renderResultBannerMessage` implementing the verbatim owner-approved student-facing copy from the 2026-08-05 decision log:
   - 1-Star pass: `Level passed! ★☆ — Finished in {turnsSpent} turns. Beat par ({turnPar} turns) to earn a second star!`
   - 2-Star pass: `Level passed! ★★ — Finished in {turnsSpent} turns (par is {turnPar}). Par beaten!`
   - 3-Star pass: `Level passed! ★★★ — Finished in {turnsSpent} turns. Par beaten and mastery challenge completed!`

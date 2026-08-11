@@ -18,7 +18,7 @@
    - **`bughunt-28`:** `maxTurns` bumped 12 -> **15**, `turnPar: 14` (2-star max).
    - **`index-jobs`:** `maxTurns` bumped 10 -> **12**, `turnPar: 11`, `masteryCriterionId: "both-allies-active"`.
    - **Phase 6 Levels 29, 31–36 (`one-program-two-allies`, `first-two-defend`, `escort-the-carrier`, `closest-enemy-defender`, `freeze-support`, `barrier-specialist`, `jump-team`):** `turnPar` authored with `masteryCriterionId: "both-allies-active"`.
-   - **All 26 other runnable guided levels:** Authored `turnPar` matching the approved generous formula (`refTurns + max(2, ceil(refTurns * 0.15))`, decision log 2026-07-22; corrected at orchestrator review — an earlier line here misstated the formula) with explicit 2-star max level comments.
+   - **All 26 other runnable guided levels:** Authored `turnPar` matching the approved generous formula (`refTurns + max(2, ceil(refTurns * 0.15))`, decision log 2026-08-05; corrected at orchestrator review — an earlier line here misstated the formula) with explicit 2-star max level comments.
    - **`advanced-scrimmage`:** Deferred star metadata with level comment citing step-9 fixture debt (`guided-project-solutions.test.js:31-45`).
    - **5 S12 fully protected levels & 7 non-runnable/human-input levels:** Preserved as pass-star-only with explicit level comments.
 

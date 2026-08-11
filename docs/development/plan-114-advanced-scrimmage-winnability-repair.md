@@ -60,7 +60,7 @@ Required reading:
 - `reports/development/guided-level-complexity-audit/level-dossiers/44-advanced-scrimmage.md` — level structure dossier.
 - `src/config/levels/phases/advanced-teamplay/level-37-advanced-scrimmage.js` — the level definition.
 - `tests/unit/fixtures/guidedProjectSolutions.js` — step/final fixture resolution; `tests/unit/helpers/testHarness.js` — `runGuidedLevelWithSolution`.
-- `docs/decision-log.md` — 2026-07-22 star entries (par formula, cumulative tiers, discriminating power, deferral decision).
+- `docs/decision-log.md` — 2026-08-05 star entries (par formula, cumulative tiers, discriminating power, deferral decision).
 - `docs/subsystems/turn-engine.md` — collision/freeze rules if the repair involves route timing.
 - Plan 26 (guided vertical patrol) and Plan 23 (Challenge 15 defender/wanderer) in the archive — precedents for tuning levels to live NPC behavior.
 
