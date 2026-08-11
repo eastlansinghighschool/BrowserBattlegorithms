@@ -30,15 +30,15 @@
 - project fixture XML present: yes
 
 ## Lesson Copy
-- objective: Use one shared program for three allies in a real capture-the-flag scrimmage.
-- intro: This capstone brings together indexing, comparisons, movement helpers, and team strategy in one bigger match. It is the final test of the same shared program you have been improving all project long.
+- objective: Three allies face three live defenders across a wide field.
+- intro: Your team needs a point against three live defenders. One shared program must give each ally a useful local response as the field changes.
 - tips: not found
 - tutorial steps:
   - 1. A Full Team Script (level-35-capstone)
-    - body: This final level is a real scrimmage. One shared program has to divide attacking, defending, and support work across the team.
+    - body: Three allies run one shared program against three live defenders on the far side. Build local rules that give the team different work.
     - demo Blockly: not found
-  - 2. Score For Real (level-35-real-score)
-    - body: The capstone only passes when your team actually scores a point in live play. Any ally can bring the point home, so focus on the role the script has assigned.
+  - 2. Bring A Point Home (level-35-real-score)
+    - body: A point is the goal. Any ally can carry it home, so watch what each runner sees as the scrimmage shifts.
     - demo Blockly: not found
 
 ## Board / Setup Facts
@@ -139,11 +139,11 @@
 - status: not found
 ### Project XML Fixtures
 - Project step fixture 9: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/step-09.xml`
-  - metrics: blocks 5; distinct types 4; actions 2; conditions 1; boolean/comparison/value 1; max depth 3; decision points 1; runner index 0; resource readiness 0
-  - distinct block types: 4 types: `battlegorithms_boolean_have_enemy_flag`, `battlegorithms_if_boolean_else`, `battlegorithms_move_toward`, `battlegorithms_on_each_turn`
+  - metrics: blocks 32; distinct types 16; actions 8; conditions 7; boolean/comparison/value 16; max depth 8; decision points 13; runner index 1; resource readiness 1
+  - distinct block types: 16 types: `battlegorithms_boolean_area_freeze_ready`, `battlegorithms_boolean_have_enemy_flag`, `battlegorithms_boolean_on_enemy_side`, `battlegorithms_boolean_on_my_side`, `battlegorithms_boolean_sensor_matches`, `battlegorithms_freeze_opponents`, `battlegorithms_if_boolean_else`, `battlegorithms_logic_and`, ...
 - Project final fixture: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/final.xml`
-  - metrics: blocks 25; distinct types 11; actions 8; conditions 7; boolean/comparison/value 9; max depth 7; decision points 10; runner index 3; resource readiness 2
-  - distinct block types: 11 types: `battlegorithms_if_boolean_else`, `battlegorithms_if_can_jump_else`, `battlegorithms_if_have_enemy_flag_else`, `battlegorithms_if_teammate_has_flag_else`, `battlegorithms_jump_forward`, `battlegorithms_move_forward`, `battlegorithms_move_toward`, `battlegorithms_on_each_turn`, ...
+  - metrics: blocks 32; distinct types 16; actions 8; conditions 7; boolean/comparison/value 16; max depth 8; decision points 13; runner index 1; resource readiness 1
+  - distinct block types: 16 types: `battlegorithms_boolean_area_freeze_ready`, `battlegorithms_boolean_have_enemy_flag`, `battlegorithms_boolean_on_enemy_side`, `battlegorithms_boolean_on_my_side`, `battlegorithms_boolean_sensor_matches`, `battlegorithms_freeze_opponents`, `battlegorithms_if_boolean_else`, `battlegorithms_logic_and`, ...
 
 ## Facts Only
 - shared workspace project team-strategy-script step 9

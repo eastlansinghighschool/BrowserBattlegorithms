@@ -86,7 +86,6 @@ test('Plan 113: S12, prediction, human-input, and deferred levels remain pass-st
     'prediction-25',
     'full-team-tactics',
     'prediction-31',
-    'advanced-scrimmage',
     'optional-double-carrier-showdown'
   ];
 

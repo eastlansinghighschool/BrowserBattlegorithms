@@ -3,92 +3,121 @@
     <next>
       <block type="battlegorithms_if_boolean_else">
         <value name="BOOL">
-          <block type="battlegorithms_value_compare">
-            <field name="OPERATOR">EQ</field>
-            <value name="LEFT">
-              <block type="battlegorithms_value_runner_index"></block>
-            </value>
-            <value name="RIGHT">
-              <block type="battlegorithms_value_number">
-                <field name="VALUE">0</field>
-              </block>
-            </value>
-          </block>
+          <block type="battlegorithms_boolean_have_enemy_flag"></block>
         </value>
         <statement name="DO">
-          <block type="battlegorithms_if_have_enemy_flag_else">
-            <statement name="DO">
-              <block type="battlegorithms_move_toward">
-                <field name="TARGET">MY_BASE</field>
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_logic_and">
+                <value name="LEFT">
+                  <block type="battlegorithms_logic_not">
+                    <value name="VALUE">
+                      <block type="battlegorithms_boolean_sensor_matches">
+                        <field name="OBJECT">EDGE_OR_WALL</field>
+                        <field name="RELATION">DIRECTLY_ABOVE</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_logic_not">
+                    <value name="VALUE">
+                      <block type="battlegorithms_boolean_on_my_side"></block>
+                    </value>
+                  </block>
+                </value>
               </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_move_up_screen"></block>
             </statement>
             <statement name="ELSE">
               <block type="battlegorithms_move_toward">
-                <field name="TARGET">ENEMY_FLAG</field>
+                <field name="TARGET">MY_BASE</field>
               </block>
             </statement>
           </block>
         </statement>
         <statement name="ELSE">
-          <block type="battlegorithms_if_teammate_has_flag_else">
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_value_compare">
+                <field name="OPERATOR">EQ</field>
+                <value name="LEFT">
+                  <block type="battlegorithms_value_runner_index"></block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_value_number">
+                    <field name="VALUE">0</field>
+                  </block>
+                </value>
+              </block>
+            </value>
             <statement name="DO">
-              <block type="battlegorithms_move_toward">
-                <field name="TARGET">MY_BASE</field>
+              <block type="battlegorithms_if_boolean_else">
+                <value name="BOOL">
+                  <block type="battlegorithms_boolean_on_my_side"></block>
+                </value>
+                <statement name="DO">
+                  <block type="battlegorithms_if_boolean_else">
+                    <value name="BOOL">
+                      <block type="battlegorithms_boolean_sensor_matches">
+                        <field name="OBJECT">HUMAN_RUNNER</field>
+                        <field name="RELATION">DIRECTLY_ABOVE</field>
+                      </block>
+                    </value>
+                    <statement name="DO">
+                      <block type="battlegorithms_move_forward"></block>
+                    </statement>
+                    <statement name="ELSE">
+                      <block type="battlegorithms_if_boolean_else">
+                        <value name="BOOL">
+                          <block type="battlegorithms_logic_not">
+                            <value name="VALUE">
+                              <block type="battlegorithms_boolean_sensor_matches">
+                                <field name="OBJECT">EDGE_OR_WALL</field>
+                                <field name="RELATION">DIRECTLY_ABOVE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="battlegorithms_move_up_screen"></block>
+                        </statement>
+                        <statement name="ELSE">
+                          <block type="battlegorithms_move_toward">
+                            <field name="TARGET">ENEMY_FLAG</field>
+                          </block>
+                        </statement>
+                      </block>
+                    </statement>
+                  </block>
+                </statement>
+                <statement name="ELSE">
+                  <block type="battlegorithms_move_toward">
+                    <field name="TARGET">ENEMY_FLAG</field>
+                  </block>
+                </statement>
               </block>
             </statement>
             <statement name="ELSE">
               <block type="battlegorithms_if_boolean_else">
                 <value name="BOOL">
-                  <block type="battlegorithms_value_compare">
-                    <field name="OPERATOR">EQ</field>
+                  <block type="battlegorithms_logic_and">
                     <value name="LEFT">
-                      <block type="battlegorithms_value_runner_index"></block>
+                      <block type="battlegorithms_boolean_on_enemy_side"></block>
                     </value>
                     <value name="RIGHT">
-                      <block type="battlegorithms_value_number">
-                        <field name="VALUE">1</field>
-                      </block>
+                      <block type="battlegorithms_boolean_area_freeze_ready"></block>
                     </value>
                   </block>
                 </value>
                 <statement name="DO">
-                  <block type="battlegorithms_move_forward"></block>
+                  <block type="battlegorithms_freeze_opponents"></block>
                 </statement>
                 <statement name="ELSE">
-                  <block type="battlegorithms_if_boolean_else">
-                    <value name="BOOL">
-                      <block type="battlegorithms_value_compare">
-                        <field name="OPERATOR">EQ</field>
-                        <value name="LEFT">
-                          <block type="battlegorithms_value_runner_index"></block>
-                        </value>
-                        <value name="RIGHT">
-                          <block type="battlegorithms_value_number">
-                            <field name="VALUE">2</field>
-                          </block>
-                        </value>
-                      </block>
-                    </value>
-                    <statement name="DO">
-                      <block type="battlegorithms_if_can_jump_else">
-                        <statement name="DO">
-                          <block type="battlegorithms_jump_forward"></block>
-                        </statement>
-                        <statement name="ELSE">
-                          <block type="battlegorithms_move_forward"></block>
-                        </statement>
-                      </block>
-                    </statement>
-                    <statement name="ELSE">
-                      <block type="battlegorithms_if_can_jump_else">
-                        <statement name="DO">
-                          <block type="battlegorithms_jump_forward"></block>
-                        </statement>
-                        <statement name="ELSE">
-                          <block type="battlegorithms_move_forward"></block>
-                        </statement>
-                      </block>
-                    </statement>
+                  <block type="battlegorithms_move_toward">
+                    <field name="TARGET">ENEMY_FLAG</field>
                   </block>
                 </statement>
               </block>
