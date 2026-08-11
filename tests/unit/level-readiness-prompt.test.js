@@ -134,10 +134,9 @@ test("prompt renderer separates observed facts from recommendations and sanitize
 });
 
 test("project and human-input levels render the appropriate readiness framing", async () => {
-  const projectPrompt = formatLevelReadinessPrompt(await buildLevelReadinessResult("advanced-scrimmage"));
+  const projectPrompt = formatLevelReadinessPrompt(await buildLevelReadinessResult("index-jobs"));
   assert.match(projectPrompt, /team-strategy-script/);
-  assert.match(projectPrompt, /Documented step exception for advanced-scrimmage/);
-  assert.match(projectPrompt, /Documented cumulative exception for advanced-scrimmage/);
+  assert.match(projectPrompt, /Documented cumulative exception for index-jobs/);
 
   const humanPrompt = formatLevelReadinessPrompt(await buildLevelReadinessResult("human-runner-practice"));
   assert.match(humanPrompt, /runtime: not applicable/);

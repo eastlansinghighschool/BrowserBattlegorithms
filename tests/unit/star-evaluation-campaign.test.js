@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { getLevelDefinitions } from '../../src/config/levels.js';
 import { evaluateLevelStars, getCriterionEvaluator } from '../../src/core/starEvaluation.js';
 import { LEVEL_RESULT } from '../../src/config/constants.js';
+import { runGuidedLevelWithSolution } from './helpers/testHarness.js';
 
 test('Plan 113: Campaign star metadata authoring validation', () => {
   const levels = getLevelDefinitions();
@@ -158,4 +159,127 @@ test('Plan 113: both-allies-active evaluator functionality & team metadata requi
     }
   });
   assert.equal(nonStandardResult, true, 'Team metadata on appState.allRunners must drive selection regardless of ID string formatting');
+});
+
+test('Plan 114: advanced-scrimmage discriminating power - idled support allies cause failure', () => {
+  const idledSupportXml = `
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="battlegorithms_on_each_turn" x="24" y="24">
+    <next>
+      <block type="battlegorithms_if_boolean_else">
+        <value name="BOOL">
+          <block type="battlegorithms_boolean_have_enemy_flag"></block>
+        </value>
+        <statement name="DO">
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_logic_and">
+                <value name="LEFT">
+                  <block type="battlegorithms_logic_not">
+                    <value name="VALUE">
+                      <block type="battlegorithms_boolean_sensor_matches">
+                        <field name="OBJECT">EDGE_OR_WALL</field>
+                        <field name="RELATION">DIRECTLY_ABOVE</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_logic_not">
+                    <value name="VALUE">
+                      <block type="battlegorithms_boolean_on_my_side"></block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_move_up_screen"></block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_move_toward">
+                <field name="TARGET">MY_BASE</field>
+              </block>
+            </statement>
+          </block>
+        </statement>
+        <statement name="ELSE">
+          <block type="battlegorithms_if_boolean_else">
+            <value name="BOOL">
+              <block type="battlegorithms_value_compare">
+                <field name="OPERATOR">EQ</field>
+                <value name="LEFT">
+                  <block type="battlegorithms_value_runner_index"></block>
+                </value>
+                <value name="RIGHT">
+                  <block type="battlegorithms_value_number">
+                    <field name="VALUE">0</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO">
+              <block type="battlegorithms_if_boolean_else">
+                <value name="BOOL">
+                  <block type="battlegorithms_boolean_on_my_side"></block>
+                </value>
+                <statement name="DO">
+                  <block type="battlegorithms_if_boolean_else">
+                    <value name="BOOL">
+                      <block type="battlegorithms_boolean_sensor_matches">
+                        <field name="OBJECT">HUMAN_RUNNER</field>
+                        <field name="RELATION">DIRECTLY_ABOVE</field>
+                      </block>
+                    </value>
+                    <statement name="DO">
+                      <block type="battlegorithms_move_forward"></block>
+                    </statement>
+                    <statement name="ELSE">
+                      <block type="battlegorithms_if_boolean_else">
+                        <value name="BOOL">
+                          <block type="battlegorithms_logic_not">
+                            <value name="VALUE">
+                              <block type="battlegorithms_boolean_sensor_matches">
+                                <field name="OBJECT">EDGE_OR_WALL</field>
+                                <field name="RELATION">DIRECTLY_ABOVE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <statement name="DO">
+                          <block type="battlegorithms_move_up_screen"></block>
+                        </statement>
+                        <statement name="ELSE">
+                          <block type="battlegorithms_move_toward">
+                            <field name="TARGET">ENEMY_FLAG</field>
+                          </block>
+                        </statement>
+                      </block>
+                    </statement>
+                  </block>
+                </statement>
+                <statement name="ELSE">
+                  <block type="battlegorithms_move_toward">
+                    <field name="TARGET">ENEMY_FLAG</field>
+                  </block>
+                </statement>
+              </block>
+            </statement>
+            <statement name="ELSE">
+              <block type="battlegorithms_stay_still"></block>
+            </statement>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>
+  `;
+
+  const { app } = runGuidedLevelWithSolution('advanced-scrimmage', idledSupportXml);
+  assert.equal(
+    app.state.activeLevelResult,
+    LEVEL_RESULT.FAILED,
+    'Idling support allies in advanced-scrimmage must fail the level, proving both-allies-active discriminating power'
+  );
 });

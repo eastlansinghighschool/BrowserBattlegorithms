@@ -12,6 +12,7 @@ import {
   getProjectStepReferenceSolution
 } from "./fixtures/guidedProjectSolutions.js";
 import { runGuidedLevelWithSolution } from "./helpers/testHarness.js";
+import { PROJECT_READINESS_POLICY } from "../../src/dev/levelReadinessProjectPolicy.js";
 
 const PROJECT_ORDER = [
   {
@@ -86,6 +87,23 @@ test("project checkpoint fixtures exist for every authored project step", () => 
       const xmlText = getProjectStepReferenceSolution(projectId, level.project.step);
       assert.ok(xmlText, `${projectId} step ${level.project.step} should have a checkpoint fixture`);
     }
+  }
+});
+
+test("guided project exception policies in tests and PROJECT_READINESS_POLICY remain synchronized", () => {
+  for (const { projectId, stepExceptions = {}, cumulativeExceptions = {} } of PROJECT_ORDER) {
+    const policy = PROJECT_READINESS_POLICY[projectId];
+    assert.ok(policy, `PROJECT_READINESS_POLICY must exist for ${projectId}`);
+    assert.deepEqual(
+      stepExceptions,
+      policy.stepExceptions || {},
+      `stepExceptions maps must agree for ${projectId}`
+    );
+    assert.deepEqual(
+      cumulativeExceptions,
+      policy.cumulativeExceptions || {},
+      `cumulativeExceptions maps must agree for ${projectId}`
+    );
   }
 });
 

@@ -11,13 +11,13 @@
 - summary index: [behavior-summary-index](../behavior-summary-index.md)
 
 ## Fixture Overview
-- status: documented exception
+- status: pass
 - runnable fixture count: 2
-- project checkpoint: documented exception (documented exception)
+- project checkpoint: pass
   - fixture path: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/step-09.xml`
   - turns elapsed: 41
   - lastLevelResultReason: win_condition_met
-- project final: documented exception (documented exception)
+- project final: pass
   - fixture path: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/final.xml`
   - turns elapsed: 41
   - lastLevelResultReason: win_condition_met
@@ -28,18 +28,17 @@
 ## Runtime Evidence
 | fixture kind | run status | turns | scores | reference actions | live enemy acted | enemy interactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| project checkpoint | documented exception | 41 | Team 1: 1, Team 2: 0 | 83 | yes | runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_2_Npc1, team=2, reason=runner_collision_bounce); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall) |
-| project final | documented exception | 41 | Team 1: 1, Team 2: 0 | 83 | yes | runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_2_Npc1, team=2, reason=runner_collision_bounce); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall) |
+| project checkpoint | pass | 41 | Team 1: 1, Team 2: 0 | 83 | yes | runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_2_Npc1, team=2, reason=runner_collision_bounce); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall) |
+| project final | pass | 41 | Team 1: 1, Team 2: 0 | 83 | yes | runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall); runner.blockedOrBounced (runner=runner_2_Npc1, team=2, reason=runner_collision_bounce); runner.blockedOrBounced (runner=runner_1_AI_AllyP1_3, team=1, reason=wall) |
 
 ### project checkpoint
 - fixture path: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/step-09.xml`
-- run status: documented exception
+- run status: pass
 - result: PASSED
 - turns elapsed: 41
 - activeLevelResult: PASSED
 - lastLevelResultReason: win_condition_met
 - team scores: Team 1: 1, Team 2: 0
-- documented exception: The step-09 fixture for advanced-scrimmage has not yet been tuned to the current NPC layout (NPC2 at (10,4) guards the flag at (11,4), making the direct escape route unavailable to simple scripts). A reliable capstone solution is pending.
 - score / blocked-scoring events: team.scored
 - flag pickup / drop events: flag.pickedUp (carrier=runner_1_AI_AllyP1, flagTeam=2)
 - resource unavailable events: none observed
@@ -490,13 +489,12 @@
 
 ### project final
 - fixture path: `tests/unit/fixtures/guided-project-solutions/team-strategy-script/final.xml`
-- run status: documented exception
+- run status: pass
 - result: PASSED
 - turns elapsed: 41
 - activeLevelResult: PASSED
 - lastLevelResultReason: win_condition_met
 - team scores: Team 1: 1, Team 2: 0
-- documented exception: The cumulative Team Strategy Script checkpoint is role-based but still short of the final scrimmage's full live-board timing.
 - score / blocked-scoring events: team.scored
 - flag pickup / drop events: flag.pickedUp (carrier=runner_1_AI_AllyP1, flagTeam=2)
 - resource unavailable events: none observed

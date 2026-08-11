@@ -55,25 +55,23 @@ test("ordinary level readiness result includes the expected shape and passing re
 });
 
 test("project level readiness reports documented exception metadata", async () => {
-  const result = await buildLevelReadinessResult("advanced-scrimmage");
+  const result = await buildLevelReadinessResult("index-jobs");
 
   assert.equal(result.project.id, "team-strategy-script");
   assert.equal(result.fixtures.referenceSolution.applicability, "not_applicable");
-  assert.equal(result.fixtures.project.step.path.endsWith("step-09.xml"), true);
+  assert.equal(result.fixtures.project.step.path.endsWith("step-02.xml"), true);
   assert.equal(result.fixtures.project.step.exists, true);
-  assert.equal(result.fixtures.project.step.documentedException.length > 0, true);
   assert.equal(result.fixtures.project.final.path.endsWith("final.xml"), true);
   assert.equal(result.fixtures.project.final.exists, true);
   assert.equal(result.fixtures.project.final.documentedException.length > 0, true);
   assert.equal(result.runtime.kind, "project");
-  assert.equal(result.runtime.step.documentedException.length > 0, true);
   assert.equal(result.runtime.final.documentedException.length > 0, true);
   assert.ok(result.runtime.step.eventTail.length > 0);
   assert.ok(result.runtime.final.eventTail.length > 0);
   assert.equal(typeof result.runtime.step.finalTurnState, "string");
   assert.equal(typeof result.runtime.final.mainGameState, "string");
   assert.equal(result.checks.some((check) => check.id === "reference-runtime"), false);
-  assert.equal(result.checks.find((check) => check.id === "project-step-runtime")?.status, "warning");
+  assert.equal(result.checks.find((check) => check.id === "project-step-runtime")?.status, "pass");
   assert.equal(result.checks.find((check) => check.id === "project-final-runtime")?.status, "warning");
 });
 

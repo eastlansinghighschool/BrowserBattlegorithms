@@ -21,7 +21,7 @@ test("ordinary levels expose a single reference-run summary with trace and event
 });
 
 test("project levels expose both checkpoint runs and documented exception text", async () => {
-  const result = await buildLevelReadinessResult("advanced-scrimmage");
+  const result = await buildLevelReadinessResult("index-jobs");
   const model = buildWorkbenchRunPanelModel(result);
 
   assert.equal(model.status, "warning");
@@ -29,7 +29,6 @@ test("project levels expose both checkpoint runs and documented exception text",
   assert.match(model.copyText, /Project step checkpoint/);
   assert.match(model.copyText, /Project final checkpoint/);
   assert.match(model.copyText, /Documented exception:/);
-  assert.ok(model.runs[0].documentedException);
   assert.ok(model.runs[1].documentedException);
 });
 

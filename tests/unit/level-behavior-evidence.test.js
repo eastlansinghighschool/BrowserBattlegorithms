@@ -48,9 +48,9 @@ test("behavior evidence reports a not-run reason for a prediction level", async 
 
 test("behavior evidence reports project fixture policy status for a project level", async () => {
   const { entries } = await getEvidenceData();
-  const entry = entries.find((candidate) => candidate.id === "advanced-scrimmage");
+  const entry = entries.find((candidate) => candidate.id === "index-jobs");
 
-  assert.ok(entry, "expected advanced-scrimmage behavior evidence");
+  assert.ok(entry, "expected index-jobs behavior evidence");
   assert.equal(entry.notApplicableReason, null);
   assert.equal(entry.runs.some((run) => run.status === "documented exception"), true);
   assert.equal(entry.runs.length >= 2, true);

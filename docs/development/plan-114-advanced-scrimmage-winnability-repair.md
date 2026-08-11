@@ -1,7 +1,8 @@
 ---
 id: plan-114
 title: "Advanced Scrimmage Capstone Winnability Repair"
-status: in-progress
+status: complete
+resolution: "Advanced-scrimmage capstone repaired: step-09 and final fixtures replaced with the verified 41-turn role-differentiated passing program (limit unchanged at 55), starCriteria { turnPar: 48, both-allies-active } closing the plan-113 deferral, BOTH parallel exception registries synchronized with a pinning test, evidence artifacts honestly show pass. Repair 01 fixed the missed levelReadinessProjectPolicy.js registry, lint count, and made discriminating power durable via harness test."
 depends_on: [plan-113]
 gate: "before mutation: owner approval of the chosen repair approach (fixture tuning vs turn-limit change vs both), after the evidence phase reports"
 summary: >-
