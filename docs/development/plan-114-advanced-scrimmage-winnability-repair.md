@@ -1,11 +1,9 @@
 ---
 id: plan-114
 title: "Advanced Scrimmage Capstone Winnability Repair"
-status: ready
+status: in-progress
 depends_on: [plan-113]
 gate: "before mutation: owner approval of the chosen repair approach (fixture tuning vs turn-limit change vs both), after the evidence phase reports"
-superseded_by: null
-resolution: null
 summary: >-
   Diagnose and repair Challenge 37 (advanced-scrimmage) winnability: both canonical fixtures (step-9 checkpoint and final) fail the current level at turn 56 against a 55-turn limit per behavior evidence, so the capstone may currently have no passing reference solution. Evidence-first, then a gated repair, then the deferred star metadata.
 ---

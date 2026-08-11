@@ -1,44 +1,43 @@
 ---
 id: plan-115
-title: "Bootstrap Capability Catch-Up Audit"
+title: "Bootstrap Capability Catch-Up Adoption"
 status: ready
 depends_on: []
-gate: "before mutation: owner approval of the triage list (which upstream capabilities to adopt, skip, or defer); the audit itself is scan-only"
+gate: "before mutation: owner approval of the triage list below (per-capability adopt/skip/defer); audit findings are already recorded in this packet"
 superseded_by: null
 resolution: null
 summary: >-
-  Re-run the Bootstrap capability audit against upstream changes since the last audit (2026-07-07), triage new or changed capabilities against the adoption manifest, and adopt approved items — including checking whether our pending reverse-flow proposal (canonical short packet IDs) landed upstream.
+  Adopt the Bootstrap capabilities we are behind on or missing, per the completed 2026-08-10 upstream audit: resync packet-status-system to 1.3.0 (our ahead-of-bootstrap claim is stale), agent-starting-prompts to 1.5.0, and evaluate the four new upstream capabilities (subagent-delegation, review-response-tiers, advisor-consultation, commit-discipline) for adoption.
 ---
-# Plan 115: Bootstrap Capability Catch-Up Audit
+# Plan 115: Bootstrap Capability Catch-Up Adoption
 
 ## Packet Metadata
 
 - Packet id: `plan-115`
-- Packet title: Bootstrap Capability Catch-Up Audit
+- Packet title: Bootstrap Capability Catch-Up Adoption
 - Status: (see frontmatter)
-- Owner/model: scan-first implementation agent
-- Date: 2026-08-08
-- Packet type: scan-only first, then gated adoption
-- Mutation level: none during audit; source-code/docs only for owner-approved adoptions
-- Approval gate: before mutation — owner approves the triage list before any adoption work
+- Owner/model: implementation agent
+- Date: 2026-08-10 (audit performed 2026-08-10 by orchestration)
+- Packet type: integration / tooling
+- Mutation level: source-code (tooling/prompts/docs) only for owner-approved adoptions
+- Approval gate: before mutation — owner approves the triage list in this packet
 - Depends on: none (plans 87–90 are the adoption history)
 - Blocks: nothing
 - Expected artifacts:
-  - audit report (capabilities added/changed upstream since 2026-07-07, per-capability triage recommendation)
-  - updated `.bootstrap-adoption.json` manifest (states and versions)
-  - any owner-approved adoption changes, each small and separately validated
+  - per-capability adoption changes (approved subset only), each small and separately validated
+  - updated `.bootstrap-adoption.json` (truthful states/versions, `lastBootstrapAudit: 2026-08-10`)
   - progress report
 - Progress report folder: `reports/development/plan-115-bootstrap-capability-catch-up/`
 - Progress report file: `reports/development/plan-115-bootstrap-capability-catch-up/progress.md`
 
 ## Packet Summary
 
-Goal: Bring our Bootstrap adoption manifest current: find what upstream Bootstrap has added or changed since the last audit (2026-07-07, `bootstrapVersion 0.1.0`), triage each capability as adopt / skip / defer with reasons, and implement only owner-approved adoptions.
+Goal: Bring our Bootstrap adoption current per the completed audit (below). The scan is done; this packet is triage + approved adoption.
 
 Non-goals:
-- Do not adopt anything without owner approval of the triage list.
-- Do not redesign local customizations to match upstream wholesale (e.g. our packet-status system is deliberately `ahead-of-bootstrap`; local wins stay unless upstream's version is strictly better AND the owner agrees).
-- Do not touch packet content, game code, or deployment.
+- Do not adopt anything not approved by the owner.
+- Do not redesign local conventions to match upstream where we intentionally diverge; local wins stay unless upstream is strictly better AND the owner agrees.
+- Do not touch packet content, game code, levels, or deployment.
 - No new dependencies without explicit owner approval.
 
 Depends on:
@@ -48,91 +47,123 @@ Blocks:
 - Nothing.
 
 Why this packet exists:
-Plans 87–90 adopted Bootstrap's packet-status core, prompts, falsification check, and dev-console hub, leaving a manifest (`.bootstrap-adoption.json`) with `lastBootstrapAudit: 2026-07-07`. Since then this project has evolved the conventions significantly (repair-file pattern, delivered/in-progress review cycle, gate-first packets, decision-log practice), and one manifest entry (`packet-status-system`, state `ahead-of-bootstrap`) has a reverse-flow proposal pending upstream. Tooling ecosystems drift; a periodic catch-up prevents silent divergence in both directions — us missing useful upstream improvements, and upstream conventions we rely on changing under us.
+Our last Bootstrap audit was 2026-07-07. The upstream moved substantially since: our convention (canonical short packet IDs) landed upstream as packet-status-system 1.2.0 and 1.3.0 added the orchestrator-owned review-cycle semantics we now practice; upstream's 2026-07-25 fleet scan explicitly flagged this repo as a consumer-resync candidate; and four new upstream capabilities exist that match (or formalize) conventions we evolved locally. Catching up keeps the shared contract truthful in both directions.
+
+## Audit Findings (2026-08-10, upstream `C:\AI\Bootstrap` @ `ea24665`)
+
+Upstream: `bootstrap-capabilities.json` ledger (12 capabilities), catalog `docs/bootstrap-capabilities.md`, per-capability `CHANGELOG.md`.
+
+**Behind (2):**
+
+- `packet-status-system` — ours 1.1.0 marked "ahead-of-bootstrap"; upstream is **1.3.0**. 1.2.0 = our short-ID convention (landed upstream as their plan-18). 1.3.0 = orchestrator/owner-owned transitions, `ready→in-progress` assignment, `delivered`-before-verification, standard closeout sequence. The upstream fleet scan (2026-07-25) classifies us as **consumer-resync, not a reverse-flow** — our "ahead" claim is stale and must be corrected.
+- `agent-starting-prompts` — ours 1.3.0; upstream **1.5.0**. 1.4.0: orchestrator "Final Response Style" section + handoff-skeleton schema line + dedup'd falsification block. 1.5.0: design-review first-turn menu (focused review / grilling / report-only discovery) + authorized read-only explorer/researcher/reviewer delegation.
+
+**Current (5):** packet-status-set-verb 1.0.0, reports-archive 1.0.0, root-agent-guide 1.0.0, decision-log 1.1.0, dev-console-hub 1.1.0.
+
+**New upstream capabilities (4):**
+
+- `subagent-delegation` 2.0.0 (recommended) — delegation discipline prose + committed agent rosters (`.claude/agents/*.md`, `.codex/agents/*.toml`) and a managed-prose block for AGENTS.md.
+- `review-response-tiers` 1.0.0 (recommended) — the three-tier review-repair convention (inline edit / implementer repair prompt / durable `repair-NN.md` note) as managed prose in the orchestrator prompt + packet-creation-guidance. This is OUR repair-file pattern, formalized upstream.
+- `advisor-consultation` 1.0.2 (**upstream marks core / non-declinable**) — pre-delivery consultation with a higher-tier read-only advisor + mandatory three-way declaration (ran / not warranted / degraded), plus `advisor-capable-providers.json` (kimi-code is listed `advisorCapable: false` with an owner-mediated path).
+- `commit-discipline` 2.0.0 (core) — who commits, what may be staged, push-only-with-owner-authorization, three concurrency modes (sequential / disjoint-scope concurrent / turn-taking), and `index.lock` wait-and-retry guidance. v2 inverts the default on foreign working-tree changes to stop-and-ask.
+
+**Reverse-flow answer:** our short-ID proposal landed upstream (their plan-18, complete). Nothing new in our local conventions is a pending reverse-flow candidate. Our newer local conventions (repair files, `delivered` status, gate-first packets, dated decision log) all have upstream equivalents — adoption is low-friction.
+
+## Triage Recommendations (owner gate)
+
+| Capability | Recommendation | Why |
+|---|---|---|
+| packet-status-system 1.3.0 | **Adopt (resync)** | We pioneered the IDs; 1.3.0 codifies the review cycle the owner already enforces here. Mostly a manifest correction + verify our tool matches (id lint, duplicate-prefix rejection, transition semantics). |
+| agent-starting-prompts 1.5.0 | **Adopt** | Orchestrator final-response + design-review menu + delegation lines improve the prompts we dispatch from. Preserve our project-specific prompt content. |
+| review-response-tiers 1.0.0 | **Adopt** | Formalizes what we already do (inline tidy / repair prompt / repair-NN.md). Managed prose into orchestrator prompt + packet-creation-guidance. |
+| commit-discipline 2.0.0 | **Adopt** | Matches our owner-mediated commit practice; the concurrency modes and foreign-tree stop-and-ask rule directly address the in-flight-implementer overlap we hit during plan-109. |
+| subagent-delegation 2.0.0 | **Adopt the discipline prose; evaluate rosters** | We delegate heavily (reviewer/explorer subagents). The committed roster files target `.claude`/`.codex` environments — adopt if useful inert-or-not, but do not invent roster entries for tools we don't run. |
+| advisor-consultation 1.0.2 | **Owner decision required** | Upstream marks it core/non-declinable, but for THIS repo the owner decides. Note: kimi-code is `advisorCapable: false` upstream (owner-mediated path), so adopting means either owner-mediated consultation or honest "not warranted/degraded" declarations. |
 
 ## Authority And Contracts
 
 Required reading:
 
-- `.bootstrap-adoption.json` — the manifest (states, versions, local rationale).
-- `docs/development/README.md` — plans 87–90 summaries (the adoption history).
-- `docs/development/plan-90-bootstrap-audit-closure-and-path-hygiene-triage.md` (if present in archive) — the prior audit's method.
-- `docs/decision-log.md` — 2026-07-07 Bootstrap adoption decisions.
-- `docs/agent-starting-prompts/` — our current prompt set (upstream versions may have changed).
+- `.bootstrap-adoption.json` (current manifest).
+- Upstream: `C:\AI\Bootstrap\bootstrap-capabilities.json`, `docs/bootstrap-capabilities.md`, `CHANGELOG.md`, and each adopted capability's portable files as listed in the ledger.
+- `docs/agent-starting-prompts/` (our current prompt set — merge, don't overwrite project-specific content).
+- `docs/packet-creation-guidance.md` (receives the review-response-tiers prose if adopted).
+- `AGENTS.md` (receives managed blocks only if the owner approves).
 
 Contracts to preserve:
 
-- Local deliberate divergences stay unless the owner explicitly reverses them (canonical short packet IDs; repair-file and review-cycle conventions).
-- The manifest must remain truthful after the packet (plan-90's closure rule: the manifest is a source of truth, not marketing).
+- Local deliberate divergences stay unless the owner reverses them.
+- The manifest must be truthful after this packet (plan-90's closure rule).
 - Static Vite deployment; no server; no new dependencies without approval.
+- Our packet lifecycle (delivered/in-progress repair cycle, gates) is practiced here — adoption prose must not contradict it.
 
 ## Scope
 
 ### In Scope
 
-1. **Locate upstream Bootstrap.** Find the upstream Bootstrap source (a sibling checkout, a remote repo, or an npm package — check `package.json`, `scripts/dev/`, and prior packet notes first). If it cannot be located, STOP and ask the owner for the source location — do not guess.
-2. **Audit (scan-only):** diff upstream capabilities against the manifest: new capabilities, version changes to adopted ones, upstream changes to ones we diverged from. Check the status of the pending reverse-flow proposal (canonical short packet IDs) upstream.
-3. **Triage list:** per capability, recommend adopt / skip / defer with a one-line rationale tied to our actual usage.
-4. **Gated adoption:** implement owner-approved adoptions only, each small with its own validation.
-5. **Manifest update:** set `lastBootstrapAudit` to the audit date; update states/versions; record skips/defers with reasons so the next audit starts from truth.
+- Owner-approved capability adoptions, each as an incremental step: copy/update the portable files per the upstream ledger, merge managed-prose blocks, adjust local files minimally, validate each step.
+- Manifest update (states, versions, audit date, skip/defer reasons).
+- The packet-status-system state correction (our entry becomes adopted/current at the adopted version — no longer "ahead-of-bootstrap").
 
 ### Out of Scope
 
-- Any game, level, tracker, or UI change.
-- Adopting upstream conventions that conflict with our packet-creation guidance without owner sign-off.
-- Migrating packet frontmatter or index conventions (plan-88 settled that unless upstream forces a revisit).
+- Game code, levels, packet content, deployment.
+- Any adoption not on the owner-approved list.
+- Rewriting our packet tooling from scratch — resync means verifying/aligning, not replacing what already works.
 
 ### Files And Areas Likely Touched
 
-- `.bootstrap-adoption.json`.
-- `scripts/dev/` (only if an approved adoption updates tooling).
-- `docs/agent-starting-prompts/` (only if an approved adoption updates prompts).
-- Progress report + audit report under `reports/development/plan-115-bootstrap-capability-catch-up/`.
+- `.bootstrap-adoption.json`
+- `scripts/dev/plan-status.js` (only if resync reveals real drift — verify first)
+- `docs/agent-starting-prompts/*` (merge upstream prompt changes)
+- `docs/packet-creation-guidance.md`, `AGENTS.md` (managed-prose blocks if adopted)
+- Possibly `.claude/agents/` / `.codex/agents/` roster files (if that adoption is approved)
+- Progress report artifacts
 
 ## Work Plan
 
-1. Locate upstream Bootstrap (stop and ask if not evident).
-2. Run the audit; write the audit report.
-3. Present the triage list and WAIT for owner approval.
-4. Implement approved adoptions incrementally (one capability per commit-sized step; run targeted validation after each).
-5. Update the manifest; write the progress report.
+1. Confirm the owner-approved triage list (edit this packet's table if the owner adjusts it).
+2. For each approved capability, in separate commit-sized steps: read the upstream portable files, merge/adopt minimally, run targeted validation (`node scripts/dev/plan-status.js lint`, prompt-file sanity, `npm test`/`npm run build` if tooling changed).
+3. Update `.bootstrap-adoption.json` truthfully.
+4. Progress report: what was adopted, what was skipped/deferred and why, validation run.
 
 ## Implementation Requirements
 
-### 1. Audit honesty
+### 1. Resync honesty
 
-- Every manifest capability gets a stated current state (still adopted and current / adopted but upstream moved / diverged intentionally / superseded upstream).
-- New upstream capabilities get a one-line "what it is + do we have a need" assessment — not just a list.
-- The reverse-flow proposal (short packet IDs) gets a definitive status: landed upstream / pending / rejected / unknown.
+- The manifest entry for packet-status-system must stop claiming "ahead-of-bootstrap" unless we re-diverge deliberately. Record the resync (and the 2026-07-25 fleet-scan classification) in the progress report.
 
-### 2. Adoption discipline
+### 2. Merge, don't overwrite
 
-- Each approved adoption is minimal, tested, and validated with the repo's normal commands for the touched area.
-- If an adoption would change behavior described in `docs/subsystems/*.md` or packet guidance, the doc update rides the same patch.
+- Our agent prompts and guidance contain project-specific content (pedagogy contracts, packet rules, copy voice). Upstream managed blocks go in as managed blocks; local prose stays.
+
+### 3. Validation per step
+
+- After each adoption step, run the relevant validation. A broken plan-status tool or a malformed prompt file is a stop-and-fix, not a ride-along.
 
 ## Commands
 
 ```powershell
+node scripts/dev/plan-status.js lint
+node scripts/dev/plan-status.js render
 npm test
 npm run build
 ```
 
-(Plus targeted validation for any adopted tooling, e.g. `node scripts/dev/plan-status.js lint`.)
-
 ## Validation Checklist
 
-- [ ] Audit report exists with per-capability triage and the reverse-flow status.
-- [ ] Owner approved the triage list before any mutation.
-- [ ] Adoptions are individually small and validated.
-- [ ] Manifest updated and truthful (`lastBootstrapAudit`, states, versions, skip/defer reasons).
-- [ ] `npm test` / `npm run build` pass after any tooling adoptions; `plan-status.js lint` OK.
-- [ ] Progress report lists commands, decisions, remaining risks.
+- [ ] Only owner-approved capabilities were adopted.
+- [ ] Each adoption step validated with the area's commands.
+- [ ] Manifest truthful: states, versions, `lastBootstrapAudit: 2026-08-10`, skip/defer reasons recorded.
+- [ ] Managed-prose blocks are marked as managed; local content preserved.
+- [ ] `npm test`, `npm run build`, `plan-status.js lint` pass.
+- [ ] Progress report lists adoptions, decisions, validation, remaining risks.
 
 ## Stop Conditions
 
 Stop and ask for owner review if:
 
-- Upstream Bootstrap cannot be located.
-- An upstream change conflicts with a locally settled convention (the conflict comes to the owner, not a silent merge).
-- An adoption would require a dependency, deployment change, or repository settings change.
-- The audit reveals our downstream conventions have drifted from what our own docs describe (that is a docs-truth problem to surface, not patch around).
+- An upstream portable file conflicts with a settled local convention (the conflict goes to the owner).
+- The advisor-consultation adoption implies workflow changes beyond the owner's expectation (e.g. new mandatory steps in threads).
+- Any adoption would require a dependency, deployment, or repository-settings change.
+- Our packet tooling turns out to have drifted from upstream in ways that aren't a clean superset/subset (surface the diff, don't force a merge).
