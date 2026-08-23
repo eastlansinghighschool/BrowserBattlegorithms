@@ -1,11 +1,10 @@
 ---
 id: plan-115
 title: "Bootstrap Capability Catch-Up Adoption"
-status: ready
+status: complete
+resolution: "All six capabilities adopted (packet-status-system 1.3.0, agent-starting-prompts 1.5.0, review-response-tiers 1.0.0, commit-discipline 2.0.0, subagent-delegation 2.0.0, advisor-consultation 1.0.2); repair-01 verified 2026-08-23: validation honesty, .gitignore roster exception, Branch C advisor declaration"
 depends_on: []
 gate: "before mutation: owner approval of the triage list below (per-capability adopt/skip/defer); audit findings are already recorded in this packet"
-superseded_by: null
-resolution: null
 summary: >-
   Adopt the Bootstrap capabilities we are behind on or missing, per the completed 2026-08-10 upstream audit: resync packet-status-system to 1.3.0 (our ahead-of-bootstrap claim is stale), agent-starting-prompts to 1.5.0, and evaluate the four new upstream capabilities (subagent-delegation, review-response-tiers, advisor-consultation, commit-discipline) for adoption.
 ---

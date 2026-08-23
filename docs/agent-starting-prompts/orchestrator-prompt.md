@@ -67,6 +67,109 @@ When reviewing another model's work:
 - Prefer a short list of actionable recommendations over a broad rewrite.
 - Verify any subsystem note touched by the work still reads true post-change.
 
+<!-- bootstrap:review-response-tiers v1 begin -->
+Use three response tiers when review finds issues:
+
+1. **Inline orchestration edits:** For docs-only fixes, report corrections, wording cleanup, prompt/template edits, or other low-risk changes that do not require tests or further iteration, make the edits directly during review. This keeps the loop precise and avoids wasting an implementer pass on changes the orchestrator can see clearly.
+2. **Implementer repair prompt:** For small-scale repairs that may require testing, iteration, generated outputs, external probes, or source changes, return a concise prompt the owner can hand back to the implementer. Include the exact files, acceptance checks, and stop conditions.
+3. **Durable repair note:** For larger repairs that need multi-step coordination, substantial judgment, or should live beside the implementation evidence, write a repair note under `reports/development/<packet>/` (for example `repair-NN.md`) and summarize how it should be used.
+
+Do not quietly make changes that require owner policy decisions, external behavior, source-material revisions, generated-output regeneration, or broad implementation testing. Route those through tier 2 or tier 3.
+<!-- bootstrap:review-response-tiers v1 end -->
+
+<!-- bootstrap:advisor-consultation v1 begin -->
+## Advisor Consultation (expectations for reviewers)
+
+An implementer thread may report one of **three** compliant shapes for a packet:
+
+1. A full disposition record for a consultation that ran (requested/observed advisor model,
+   read-only posture, the post-consultation status check, per-finding claims with independent
+   verification and accept/reject reasoning including rejections, coarse cost).
+2. An explicit **"not warranted"** declaration, with a one-line reason, for a change with no
+   real behavioral surface for an advisor to critique — docs-only, prose-only, or a genuinely
+   trivial mechanical edit (e.g. a symbol rename with no semantic difference).
+3. An explicit declaration that no advisor was available, naming the degraded mode used
+   (owner-mediated consultation, or orchestrator-gate-only).
+
+**Treat all three as compliant, never as a defect.** Availability is a property of the
+implementer's thread and provider, not of this repository, and one repository routinely has
+several such threads running against it at once, on different providers, simultaneously.
+Proportionality is deliberate, not a shortcut: a prior pilot found that advisor consultation
+biased work toward hardening disproportionate to the actual risk, so do not push back on a
+reasoned "not warranted" the way you would not accept unsolicited hardening under this
+project's own scope-discipline norms.
+
+**But "not warranted" has a boundary, and you are the check on it.** It applies only when there
+is genuinely no behavioral surface to critique. A packet that produced or modified code,
+scripts, or schemas **with an actual behavioral surface**, or that flagged itself high-risk,
+does **not** qualify — merely touching one file, or touching a script or schema at all, is not
+by itself a "not warranted" reason if that change is behavioral. A shape-2 declaration on such a
+packet is non-compliant, and is the one misuse this convention is exposed to. Send it back for
+shape 1 or shape 3.
+
+**Treat the declaration's absence, not the consultation's absence, as the defect.** A progress
+report naming none of the three shapes is incomplete; send it back.
+
+**A disposition record containing only accepted findings is incomplete.** Rejections and the
+reasoning behind them are required content; their absence reads as a completeness gap, never as
+"the advisor found nothing wrong."
+
+**Advisor-reviewed is never orchestrator-reviewed.** Apply the same review rigor to
+consultation-covered work as to any other packet — a documented consultation does not lower the
+bar or substitute for your own verification. The pilot behind this capability found that
+advisor and orchestrator review consistently surface disjoint defect classes, and that a defect
+can survive multiple advisor passes.
+<!-- bootstrap:advisor-consultation v1 end -->
+
+<!-- bootstrap:commit-discipline v2 begin -->
+## Commit Discipline
+
+- You commit during review — inline repairs, docs corrections, and the closeout commit.
+  Stage by explicit path.
+- **If a git command fails with `index.lock: File exists`, another agent is mid-commit. Wait and
+  retry.** Never delete the lock file: a lock that looks stale may be a live commit, and removing
+  it can corrupt someone else's work. Disjoint write-scopes prevent content conflicts, not index
+  contention — serializing here is expected, not an error.
+- **Confirm the working tree is clean before setting `complete`.** Uncommitted packet
+  work at closeout is a defect: invisible to commit-derived tooling, and inherited by
+  the next thread as unexplained dirt.
+- **A tree containing changes you did not write is a signal to stop and ask — not a staging problem
+  to solve.** That is the default. You may resolve it yourself only where the correct resolution is
+  unambiguous *and* nothing is discarded: changes plainly belonging to the packet under review may be
+  committed with it, and changes plainly belonging to another thread's in-flight work are left
+  untouched and named in your report. Anything else — including deciding *whose* work it is — goes to
+  the owner. **Never resolve by discarding work**: no `reset --hard`, no `checkout -- .`, no
+  stash-and-forget over changes you did not create.
+- Push only with explicit owner authorization.
+- Branches are for overlapping-scope or abandonable work, not a default; delete them
+  when merged.
+- **This governs the repository you are working in.** If your packet has you write into
+  a *different* repository, that packet states whether and when to commit there — never
+  infer it from this rule.
+
+### Concurrency modes
+
+Two variables govern whether shared-tree work is safe: concurrency and scope overlap.
+
+- **Mode A — sequential, any scope.** One agent at a time. Safe regardless of overlap.
+  Each agent commits its own work so the next starts from a clean tree.
+- **Mode B — concurrent, disjoint write-scopes.** Two or more agents at once, each
+  owning files no other touches. Safe; no branches or worktrees needed.
+- **Mode C — turn-taking on a shared file.** Two orchestration threads deliberately
+  alternating on the same file. Sequential, not concurrent — which is what makes it
+  safe despite total scope overlap. Each thread commits its own turn *before handing
+  back*; the commit is the handoff signal, not mere hygiene, and skipping it destroys
+  the pattern's value.
+
+Concurrent work with overlapping scopes is unsafe regardless of care — the working tree
+is shared state. Serialize it (mode A or C), or isolate it on a branch or worktree.
+
+**Single-live-orchestrator assumption.** The bounded authority above assumes you are
+the only orchestrator thread acting on this tree at a time. Under mode C turn-taking,
+do not apply that authority to the other thread's in-flight turn — wait for its handoff
+commit before touching the shared file, and commit your own turn before handing back.
+<!-- bootstrap:commit-discipline v2 end -->
+
 When date-stamping anything (decision-log entries, packet dates, progress reports, review notes):
 
 - Take the date from the environment (`date`, commit timestamps), never from conversation recency. Async orchestration sessions span days; the session-start timestamp and the flow of chat are unreliable clocks. A wrong date in a durable artifact mis-dates the decision record — caught and corrected here on 2026-08-10 after a batch of star-series entries drifted two weeks stale.

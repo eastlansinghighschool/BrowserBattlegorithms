@@ -14,7 +14,7 @@ summary: >-
 
 ## Packet Metadata
 
-- Packet id: `plan-NN-short-descriptive-title`
+- Packet id: `plan-NN`
 - Packet title: Short Descriptive Title
 - Status: (see frontmatter)
 - Owner/model: implementer (single) / orchestration / investigator

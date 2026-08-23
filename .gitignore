@@ -20,7 +20,8 @@ coverage/
 *.err.log
 
 # Tool / agent state
-.claude/
+.claude/*
+!.claude/agents/
 scratch/
 local/
 

@@ -29,10 +29,11 @@ const {
   generateIndexTable,
   lintPackets,
   setPacketStatus,
-  canonicalPacketId,
   detectEol,
   normalizeNewlines,
   parsePacketSortKey,
+  getCanonicalId,
+  readAllPackets,
   VALID_STATUSES,
   TERMINAL_STATUSES,
   INDEX_BEGIN,
@@ -89,7 +90,8 @@ function makeFm(overrides) {
 
 function makePacket(id, fmOverrides) {
   const fm = makeFm(Object.assign({ id }, fmOverrides));
-  return { filePath: `docs/development/${id}.md`, basename: id, text: '', fm };
+  const filename = (fmOverrides && fmOverrides.filename) || id;
+  return { filePath: `docs/development/${filename}.md`, basename: filename, text: '', fm };
 }
 
 function indexById(packets) {
@@ -142,7 +144,8 @@ function makeFixtureWorkspace(packets, options = {}) {
 
   for (const packet of packets) {
     const text = makePacketText(packet);
-    fs.writeFileSync(path.join(docsDir, `${packet.filename || packet.id}.md`), text, 'utf8');
+    const filename = packet.filename || packet.id;
+    fs.writeFileSync(path.join(docsDir, `${filename}.md`), text, 'utf8');
   }
 
   const readmeText = options.readmeText || `# Packets\n\n${INDEX_BEGIN}\n${generateIndexTable(packets.map((packet) => makePacket(packet.id, packet)), indexById(packets.map((packet) => makePacket(packet.id, packet))))}\n${INDEX_END}\n`;
@@ -517,26 +520,6 @@ section('lint logic — id/filename mismatch (simulated)');
   assert(!mismatch, 'matching id/filename is clean');
 }
 
-section('lint logic — descriptive filename requires a canonical short id');
-
-{
-  const validPackets = [makePacket('plan-101-charger-archetype', { id: 'plan-101', status: 'ready' })];
-  const validIndex = generateIndexTable(validPackets, indexById(validPackets));
-  const validLint = lintPackets(validPackets, {
-    readmeText: INDEX_BEGIN + '\n' + validIndex + '\n' + INDEX_END + '\n',
-    reportsDir: path.join(os.tmpdir(), 'plan-status-no-reports'),
-  });
-  eq(validLint.errors, [], 'short id is valid for a descriptive filename');
-
-  const verbosePackets = [makePacket('plan-101-charger-archetype', { id: 'plan-101-charger-archetype', status: 'ready' })];
-  const verboseIndex = generateIndexTable(verbosePackets, indexById(verbosePackets));
-  const verboseLint = lintPackets(verbosePackets, {
-    readmeText: INDEX_BEGIN + '\n' + verboseIndex + '\n' + INDEX_END + '\n',
-    reportsDir: path.join(os.tmpdir(), 'plan-status-no-reports'),
-  });
-  assert(verboseLint.errors.some((message) => message.includes('must equal canonical filename prefix')), 'verbose id is rejected for a descriptive filename');
-}
-
 section('lint logic — duplicate ids (simulated)');
 
 {
@@ -579,33 +562,6 @@ section('setPacketStatus — valid non-terminal transition writes and re-renders
   assert(afterReadme !== beforeReadme, 'README index changed');
   eq(parseFrontmatter(afterPacket).status, 'ready', 'packet status updated to ready');
   assert(afterReadme.includes('`plan-01` | Plan One | ready'), 'README re-rendered with new status');
-}
-
-section('setPacketStatus — short id resolves a descriptive packet filename');
-
-{
-  const workspace = makeFixtureWorkspace([
-    { id: 'plan-101', filename: 'plan-101-charger-archetype', title: 'Charger Archetype', status: 'draft', summary: 'Adds a Charger.' },
-  ]);
-  const packetPath = path.join(workspace.docsDir, 'plan-101-charger-archetype.md');
-  const result = setPacketStatus('plan-101', 'ready', {
-    docsDir: workspace.docsDir,
-    readmePath: workspace.readmePath,
-    reportsDir: workspace.reportsDir,
-  });
-
-  assert(result.ok, 'short id updates a descriptive filename');
-  eq(parseFrontmatter(fs.readFileSync(packetPath, 'utf8')).id, 'plan-101', 'canonical short id remains in frontmatter');
-  eq(parseFrontmatter(fs.readFileSync(packetPath, 'utf8')).status, 'ready', 'descriptive packet status is updated');
-  assert(fs.readFileSync(workspace.readmePath, 'utf8').includes(String.fromCharCode(96) + 'plan-101' + String.fromCharCode(96) + ' | Charger Archetype | ready'), 'index displays the short id');
-}
-
-section('canonicalPacketId — descriptive filenames use a short id');
-
-{
-  eq(canonicalPacketId('plan-101-charger-archetype'), 'plan-101', 'descriptive filename resolves to short id');
-  eq(canonicalPacketId('plan-10b-follow-up'), 'plan-10b', 'letter suffix remains part of short id');
-  eq(canonicalPacketId('not-a-packet'), null, 'non-packet filename has no canonical id');
 }
 
 section('setPacketStatus — terminal without resolution is refused with no write');
@@ -744,6 +700,210 @@ section('setPacketStatus — terminal close with resolution writes fields and pa
     reportsDir: workspace.reportsDir,
   });
   eq(lint.errors.length, 0, 'lint has no errors after terminal close');
+}
+
+// ── Canonical ID checks ──────────────────────────────────────────────────────
+
+section('getCanonicalId — resolving validation');
+
+{
+  eq(getCanonicalId('plan-101-charger-archetype'), 'plan-101', 'plan-101-charger-archetype resolves to plan-101');
+  eq(getCanonicalId('plan-10b-something'), 'plan-10b', 'plan-10b-something resolves to plan-10b');
+  eq(getCanonicalId('plan-10'), 'plan-10', 'plan-10 resolves to plan-10');
+  eq(getCanonicalId('plan-10-'), null, 'plan-10- is invalid (null)');
+  eq(getCanonicalId('plan-10bc-something'), null, 'plan-10bc-something is invalid (null)');
+  eq(getCanonicalId('plan-abc'), null, 'plan-abc is invalid (null)');
+}
+
+section('lintPackets — duplicate canonical IDs cross-file validation');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-10', filename: 'plan-10-one', title: 'One', status: 'draft', summary: 'One summary.' },
+    { id: 'plan-10', filename: 'plan-10-two', title: 'Two', status: 'draft', summary: 'Two summary.' },
+  ]);
+
+  const p1 = readPacketObject(workspace.docsDir, 'plan-10-one');
+  const p2 = readPacketObject(workspace.docsDir, 'plan-10-two');
+  const lint = lintPackets([p1, p2], { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+  assert(lint.errors.some(e => e.includes('Duplicate canonical ID')), 'fails lint due to duplicate canonical ID');
+}
+
+section('lintPackets — verbose ID and mismatch validation');
+
+{
+  // Mismatched / Verbose ID fails lint
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-101-charger-archetype', filename: 'plan-101-charger-archetype', title: 'Charger', status: 'draft', summary: 'Does one thing.' },
+  ]);
+  const pVerbose = readPacketObject(workspace.docsDir, 'plan-101-charger-archetype');
+  const lintVerbose = lintPackets([pVerbose], { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+  assert(lintVerbose.errors.some(e => e.includes('does not match the canonical ID')), 'verbose ID fails lint with mismatch error');
+}
+
+{
+  // Migrated / Correct ID passes lint
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-101', filename: 'plan-101-charger-archetype', title: 'Charger', status: 'draft', summary: 'Does one thing.' },
+  ]);
+  const pMigrated = readPacketObject(workspace.docsDir, 'plan-101-charger-archetype');
+  const lintMigrated = lintPackets([pMigrated], { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+  eq(lintMigrated.errors.length, 0, 'correct short ID matches canonical ID and passes lint');
+}
+
+section('setPacketStatus — refuses write if legacy verbose ID present');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-101-charger-archetype', filename: 'plan-101-charger-archetype', title: 'Charger', status: 'draft', summary: 'Does one thing.' },
+  ]);
+  const beforePacket = fs.readFileSync(path.join(workspace.docsDir, 'plan-101-charger-archetype.md'), 'utf8');
+
+  // Attempting set on a packet that contains a legacy verbose ID (which makes it lint-invalid)
+  const result = setPacketStatus('plan-101', 'ready', {
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+
+  assert(!result.ok, 'set refuses to run when legacy verbose ID makes the corpus lint-invalid');
+  assert(result.error.includes('does not match the canonical ID'), 'error mentions ID mismatch');
+  eq(fs.readFileSync(path.join(workspace.docsDir, 'plan-101-charger-archetype.md'), 'utf8'), beforePacket, 'file remains unchanged');
+}
+
+section('setPacketStatus — succeeds on descriptive filename with migrated ID');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-101', filename: 'plan-101-charger-archetype', title: 'Charger', status: 'draft', summary: 'Does one thing.' },
+  ]);
+
+  const result = setPacketStatus('plan-101', 'ready', {
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+
+  assert(result.ok, 'set successfully updates descriptive filename when ID is migrated');
+  const afterPacket = fs.readFileSync(path.join(workspace.docsDir, 'plan-101-charger-archetype.md'), 'utf8');
+  const fm = parseFrontmatter(afterPacket);
+  eq(fm.status, 'ready', 'status updated to ready');
+}
+
+section('setPacketStatus — refuses write if duplicate canonical IDs present');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-10', filename: 'plan-10-one', title: 'One', status: 'draft', summary: 'One summary.' },
+    { id: 'plan-10', filename: 'plan-10-two', title: 'Two', status: 'draft', summary: 'Two summary.' },
+    { id: 'plan-99', filename: 'plan-99', title: 'Unique', status: 'draft', summary: 'Unique summary.' },
+  ]);
+  const beforeOne = fs.readFileSync(path.join(workspace.docsDir, 'plan-10-one.md'), 'utf8');
+  const beforeTwo = fs.readFileSync(path.join(workspace.docsDir, 'plan-10-two.md'), 'utf8');
+
+  // Attempting to set plan-10 resolves to multiple files
+  const resultMultiple = setPacketStatus('plan-10', 'ready', {
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+  assert(!resultMultiple.ok, 'set refuses when ID matches multiple files');
+  assert(resultMultiple.error.includes('resolves to multiple files'), 'error mentions resolving to multiple files');
+
+  // Attempting to set a completely separate unique packet plan-99 still refuses because the repository contains duplicate canonical IDs, failing pre-write lint check!
+  const resultLintFail = setPacketStatus('plan-99', 'ready', {
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+  assert(!resultLintFail.ok, 'set refuses to write if corpus is lint-invalid due to duplicate canonical IDs');
+  assert(resultLintFail.error.includes('Duplicate canonical ID'), 'error mentions duplicate canonical ID');
+  eq(fs.readFileSync(path.join(workspace.docsDir, 'plan-10-one.md'), 'utf8'), beforeOne, 'packet one remains unchanged');
+  eq(fs.readFileSync(path.join(workspace.docsDir, 'plan-10-two.md'), 'utf8'), beforeTwo, 'packet two remains unchanged');
+}
+
+// ── Repair checks ────────────────────────────────────────────────────────────
+
+section('lintPackets — malformed filename is discovered and rejected');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-abc', filename: 'plan-abc', title: 'Invalid Name', status: 'draft', summary: 'Does one thing.' },
+  ]);
+
+  const packets = readAllPackets(workspace.docsDir);
+  const lint = lintPackets(packets, { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+
+  assert(lint.errors.some(e => e.includes('filename does not match canonical ID grammar')), 'fails lint due to malformed filename');
+}
+
+section('lintPackets — short depends_on resolves between descriptive filenames');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-01', filename: 'plan-01-scaffold', title: 'Scaffold', status: 'complete', resolution: 'done', summary: 'Scaffold.' },
+    { id: 'plan-02', filename: 'plan-02-feature', title: 'Feature', status: 'ready', depends_on: ['plan-01'], summary: 'Feature.' },
+  ]);
+
+  const packets = readAllPackets(workspace.docsDir);
+  const lint = lintPackets(packets, { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+  eq(lint.errors.length, 0, 'short canonical depends_on resolves successfully between descriptive filenames');
+}
+
+section('setPacketStatus — superseded by short ID resolves descriptive target');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-01', filename: 'plan-01-old-feature', title: 'Old Feature', status: 'complete', resolution: 'done', summary: 'Old.' },
+    { id: 'plan-02', filename: 'plan-02-new-feature', title: 'New Feature', status: 'ready', summary: 'New.' },
+  ]);
+
+  const result = setPacketStatus('plan-01', 'superseded', {
+    supersededBy: 'plan-02',
+    resolution: 'Replaced by plan-02.',
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+
+  assert(result.ok, 'superseded transition with short ID succeeds');
+  const afterPacket = fs.readFileSync(path.join(workspace.docsDir, 'plan-01-old-feature.md'), 'utf8');
+  const fm = parseFrontmatter(afterPacket);
+  eq(fm.status, 'superseded', 'status is set to superseded');
+  eq(fm.superseded_by, 'plan-02', 'superseded_by matches the canonical short ID');
+}
+
+section('lintPackets — verbose dependency reference is rejected');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-01', filename: 'plan-01-scaffold', title: 'Scaffold', status: 'complete', resolution: 'done', summary: 'Scaffold.' },
+    { id: 'plan-02', filename: 'plan-02-feature', title: 'Feature', status: 'ready', depends_on: ['plan-01-scaffold'], summary: 'Feature.' },
+  ]);
+
+  const packets = readAllPackets(workspace.docsDir);
+  const lint = lintPackets(packets, { readmePath: workspace.readmePath, reportsDir: workspace.reportsDir });
+  assert(lint.errors.some(e => e.includes('depends_on references unknown id "plan-01-scaffold"')), 'verbose dependency reference fails lint');
+}
+
+section('setPacketStatus — verbose supersession reference is rejected');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-01', filename: 'plan-01-old-feature', title: 'Old Feature', status: 'complete', resolution: 'done', summary: 'Old.' },
+    { id: 'plan-02', filename: 'plan-02-new-feature', title: 'New Feature', status: 'ready', summary: 'New.' },
+  ]);
+
+  const result = setPacketStatus('plan-01', 'superseded', {
+    supersededBy: 'plan-02-new-feature',
+    resolution: 'Replaced by plan-02-new-feature.',
+    docsDir: workspace.docsDir,
+    readmePath: workspace.readmePath,
+    reportsDir: workspace.reportsDir,
+  });
+
+  assert(!result.ok, 'superseded transition with verbose ID is rejected');
+  assert(result.error.includes('--superseded-by packet not found: plan-02-new-feature'), 'error mentions packet not found');
 }
 
 // ── INDEX markers ────────────────────────────────────────────────────────────

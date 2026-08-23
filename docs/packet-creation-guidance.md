@@ -9,8 +9,98 @@ The goal is to make each packet a clear work order plus a guardrail contract. A 
 - Put implementation packets in `docs/development/`.
 - Use sequential names such as `plan-01-guided-level-contract-repair.md`.
 - Keep `docs/development/README.md` updated when adding, completing, or superseding a packet; the packet table is generated from packet frontmatter with `node scripts/dev/plan-status.js render`.
-- Use `docs/agent-starting-prompts/implementer-thread-starting-prompt.md` when starting a lower-cost implementation thread.
 - Progress reports should go under `reports/development/<packet-name>/progress.md` unless the packet states otherwise.
+
+<!-- bootstrap:advisor-consultation v1 begin -->
+## Every packet inherits advisor-consultation; do not re-scope it per packet
+
+The `advisor-consultation` capability (see the implementer and orchestrator starting prompts)
+applies to every packet unconditionally as a **declaration requirement** — every implementer
+thread states one of "consultation ran," "not warranted," or "degraded mode" — but whether an
+actual consultation runs is a proportionality judgment the thread makes at packet start (a real
+behavioral surface — code/script/schema changes, or anything flagged high-risk — requires it;
+docs-only, prose-only, or a genuinely trivial mechanical edit does not), not a per-packet or
+per-repository adoption choice. When writing a packet:
+
+- Do not add a packet-specific "consult an advisor" requirement, a per-packet opt-out, or a
+  `deferred` treatment for it in the packet's own gates or stop conditions — that misreads a
+  thread-level property as a repository- or packet-level one.
+- Do not pre-classify the packet as "docs-only" to pre-empt the thread's own declaration — the
+  thread still states its branch explicitly at packet start, even for a packet the author
+  expects to be mechanical.
+- If a packet is unusually high-risk and the owner wants a consultation to be non-negotiable
+  regardless of the assigned thread's provider, name the **owner-mediated consultation**
+  degraded mode explicitly as a requirement for that packet. Do not silently assume a
+  consultation will happen just because the capability exists.
+<!-- bootstrap:advisor-consultation v1 end -->
+
+<!-- bootstrap:commit-discipline v2 begin -->
+## Commit Discipline
+
+- You commit during review — inline repairs, docs corrections, and the closeout commit.
+  Stage by explicit path.
+- **If a git command fails with `index.lock: File exists`, another agent is mid-commit. Wait and
+  retry.** Never delete the lock file: a lock that looks stale may be a live commit, and removing
+  it can corrupt someone else's work. Disjoint write-scopes prevent content conflicts, not index
+  contention — serializing here is expected, not an error.
+- **Confirm the working tree is clean before setting `complete`.** Uncommitted packet
+  work at closeout is a defect: invisible to commit-derived tooling, and inherited by
+  the next thread as unexplained dirt.
+- **A tree containing changes you did not write is a signal to stop and ask — not a staging problem
+  to solve.** That is the default. You may resolve it yourself only where the correct resolution is
+  unambiguous *and* nothing is discarded: changes plainly belonging to the packet under review may be
+  committed with it, and changes plainly belonging to another thread's in-flight work are left
+  untouched and named in your report. Anything else — including deciding *whose* work it is — goes to
+  the owner. **Never resolve by discarding work**: no `reset --hard`, no `checkout -- .`, no
+  stash-and-forget over changes you did not create.
+- Push only with explicit owner authorization.
+- Branches are for overlapping-scope or abandonable work, not a default; delete them
+  when merged.
+- **This governs the repository you are working in.** If your packet has you write into
+  a *different* repository, that packet states whether and when to commit there — never
+  infer it from this rule.
+
+### Concurrency modes
+
+Two variables govern whether shared-tree work is safe: concurrency and scope overlap.
+
+- **Mode A — sequential, any scope.** One agent at a time. Safe regardless of overlap.
+  Each agent commits its own work so the next starts from a clean tree.
+- **Mode B — concurrent, disjoint write-scopes.** Two or more agents at once, each
+  owning files no other touches. Safe; no branches or worktrees needed.
+- **Mode C — turn-taking on a shared file.** Two orchestration threads deliberately
+  alternating on the same file. Sequential, not concurrent — which is what makes it
+  safe despite total scope overlap. Each thread commits its own turn *before handing
+  back*; the commit is the handoff signal, not mere hygiene, and skipping it destroys
+  the pattern's value.
+
+Concurrent work with overlapping scopes is unsafe regardless of care — the working tree
+is shared state. Serialize it (mode A or C), or isolate it on a branch or worktree.
+
+**Single-live-orchestrator assumption.** The bounded authority above assumes you are
+the only orchestrator thread acting on this tree at a time. Under mode C turn-taking,
+do not apply that authority to the other thread's in-flight turn — wait for its handoff
+commit before touching the shared file, and commit your own turn before handing back.
+<!-- bootstrap:commit-discipline v2 end -->
+
+## Orchestrator review and repair flow
+
+After implementation, the orchestrator decides between:
+
+- **Accept the work as ready for owner review** — set `status: delivered` in frontmatter. This is the no-issues path. The orchestrator should not quietly accept work that hasn't been independently verified.
+- **Handle repairs according to the three response tiers:**
+
+<!-- bootstrap:review-response-tiers v1 begin -->
+Use three response tiers when review finds issues:
+
+1. **Inline orchestration edits:** For docs-only fixes, report corrections, wording cleanup, prompt/template edits, or other low-risk changes that do not require tests or further iteration, make the edits directly during review. This keeps the loop precise and avoids wasting an implementer pass on changes the orchestrator can see clearly.
+2. **Implementer repair prompt:** For small-scale repairs that may require testing, iteration, generated outputs, external probes, or source changes, return a concise prompt the owner can hand back to the implementer. Include the exact files, acceptance checks, and stop conditions.
+3. **Durable repair note:** For larger repairs that need multi-step coordination, substantial judgment, or should live beside the implementation evidence, write a repair note under `reports/development/<packet>/` (for example `repair-NN.md`) and summarize how it should be used.
+
+Do not quietly make changes that require owner policy decisions, external behavior, source-material revisions, generated-output regeneration, or broad implementation testing. Route those through tier 2 or tier 3.
+<!-- bootstrap:review-response-tiers v1 end -->
+
+For investigation or conclusion-bearing packets, apply the **falsification check** (see *For investigation packets: design for falsification* above) before accepting any conclusion — the same discipline, enforced at review time.-name>/progress.md` unless the packet states otherwise.
 
 ## Packet Metadata
 

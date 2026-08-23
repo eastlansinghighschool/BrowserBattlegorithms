@@ -216,7 +216,7 @@ function updateFrontmatterText(fileText, fields) {
 function findPacketFiles(dir) {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
-    .filter(f => /^plan-\d/.test(f) && f.endsWith('.md'))
+    .filter(f => f.startsWith('plan-') && f.endsWith('.md'))
     .sort()
     .map(f => path.join(dir, f));
 }
@@ -232,18 +232,19 @@ function readAllPackets(dir) {
   return findPacketFiles(dir).map(readPacket);
 }
 
-/** Return the canonical short packet id encoded by a descriptive filename. */
-function canonicalPacketId(basename) {
-  const match = String(basename).match(/^(plan-\d+[a-z]?)(?:-|$)/i);
-  return match ? match[1].toLowerCase() : null;
+function getCanonicalId(basename) {
+  const m = basename.match(/^plan-(\d+[a-z]?)(?:-(.+)|$)$/);
+  if (!m) return null;
+  return `plan-${m[1]}`;
 }
 
-/** Index packets by their frontmatter id. */
+/** Index packets by their canonical ID. */
 function indexById(packets) {
   const byId = {};
   for (const p of packets) {
-    if (p.fm && p.fm.id) {
-      byId[p.fm.id] = p;
+    const canonicalId = getCanonicalId(p.basename);
+    if (canonicalId) {
+      byId[canonicalId] = p;
     }
   }
   return byId;
@@ -260,8 +261,10 @@ function parsePacketSortKey(id) {
 }
 
 function packetComparator(a, b) {
-  const [na, la] = parsePacketSortKey(a.fm ? a.fm.id : a.basename);
-  const [nb, lb] = parsePacketSortKey(b.fm ? b.fm.id : b.basename);
+  const ca = getCanonicalId(a.basename) || a.basename;
+  const cb = getCanonicalId(b.basename) || b.basename;
+  const [na, la] = parsePacketSortKey(ca);
+  const [nb, lb] = parsePacketSortKey(cb);
   if (na !== nb) return na - nb;
   return la.localeCompare(lb);
 }
@@ -318,8 +321,9 @@ function detectCycles(packets, byId) {
   }
 
   for (const p of packets) {
-    if (p.fm && p.fm.id && !color[p.fm.id]) {
-      dfs(p.fm.id, []);
+    const canonicalId = getCanonicalId(p.basename);
+    if (canonicalId && !color[canonicalId]) {
+      dfs(canonicalId, []);
     }
   }
   return cycles;
@@ -331,7 +335,7 @@ function detectCycles(packets, byId) {
 
 function generateIndexTable(packets, byId) {
   const sorted = packets
-    .filter(p => p.fm && p.fm.id)
+    .filter(p => p.fm && p.fm.id && getCanonicalId(p.basename))
     .sort(packetComparator);
 
   const rows = [
@@ -363,13 +367,17 @@ function lintPackets(packets, options = {}) {
   function error(msg) { errors.push('ERROR: ' + msg); }
   function warn(msg)  { warns.push('WARN:  ' + msg); }
 
-  const seenIds = {};
+  const seenCanonicalIds = {};
   for (const p of packets) {
-    if (!p.fm || !p.fm.id) continue;
-    if (seenIds[p.fm.id]) {
-      error(`Duplicate id "${p.fm.id}" in ${p.basename} (first seen: ${seenIds[p.fm.id]})`);
+    const canonicalId = getCanonicalId(p.basename);
+    if (!canonicalId) {
+      error(`${p.basename}: filename does not match canonical ID grammar (expected plan-<digits>[suffix] followed by optional descriptive suffix)`);
+      continue;
+    }
+    if (seenCanonicalIds[canonicalId]) {
+      error(`Duplicate canonical ID "${canonicalId}" found across multiple files: ${p.basename}.md and ${seenCanonicalIds[canonicalId]}.md`);
     } else {
-      seenIds[p.fm.id] = p.basename;
+      seenCanonicalIds[canonicalId] = p.basename;
     }
   }
 
@@ -381,10 +389,12 @@ function lintPackets(packets, options = {}) {
       continue;
     }
 
-    if (p.fm.id) {
-      const canonicalId = canonicalPacketId(p.basename);
-      if (p.fm.id !== canonicalId) {
-        error(`${loc}: frontmatter id "${p.fm.id}" must equal canonical filename prefix "${canonicalId}"`);
+    const canonicalId = getCanonicalId(p.basename);
+    if (canonicalId) {
+      if (!p.fm.id) {
+        error(`${loc}: missing id field`);
+      } else if (p.fm.id !== canonicalId) {
+        error(`${loc}: frontmatter id "${p.fm.id}" does not match the canonical ID "${canonicalId}" derived from the filename`);
       }
     }
 
@@ -482,7 +492,10 @@ function renderPacketIndex(options = {}) {
 }
 
 function findPacketMatchesById(packets, id) {
-  return packets.filter((p) => p.fm && p.fm.id === id);
+  return packets.filter((p) => {
+    const canonicalId = getCanonicalId(p.basename);
+    return canonicalId === id;
+  });
 }
 
 function setPacketStatus(id, nextStatus, options = {}) {
@@ -806,8 +819,9 @@ module.exports = {
   renderPacketIndex,
   setPacketStatus,
   updateFrontmatterText,
-  canonicalPacketId,
   parsePacketSortKey,
+  getCanonicalId,
+  readAllPackets,
   VALID_STATUSES,
   TERMINAL_STATUSES,
   INDEX_BEGIN,

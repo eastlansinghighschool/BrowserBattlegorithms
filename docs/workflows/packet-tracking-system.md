@@ -48,7 +48,7 @@ summary: >-
 
 | Field | Purpose |
 |---|---|
-| `id` | Short canonical id for `check` / `depends_on` / `set` lookups and generated-index display. It must equal the file prefix (`plan-07` for `plan-07-*.md`). |
+| `id` | Short canonical id for `check` / `depends_on` lookups. Must exactly match the canonical ID derived from the filename prefix (e.g. `plan-07` or `plan-10b`). |
 | `title` | Human-readable name shown in the generated index. |
 | `status` | Hand-set lifecycle state (see §3). This is the only place status is written by hand. |
 | `depends_on` | List of packet ids whose work must be `complete` before this packet is runnable. `[]` if none. |
@@ -71,7 +71,10 @@ summary: >-
 | `superseded` | Replaced by a later packet. Terminal; requires `superseded_by` + `resolution`. |
 | `parked` | Deliberately not being done. Terminal-until-reopened; requires `resolution` saying why. |
 
-**Why `delivered`?** Without it, the orchestrator has no way to distinguish "implementer said done but I haven't checked" from "orchestrator verified and closed." The implementer sets `delivered`; the orchestrator sets `complete`.
+**Why `delivered`?** Without it, the orchestrator has no way to distinguish "implementer said
+done but I have not checked" from "orchestrator verified and closed." The implementer reports
+when its work is complete; the orchestrator sets `delivered` when that report is received and
+sets `complete` only after verification.
 
 **Why `parked`?** "Deferred" is an owner decision — not the same as never-started (`draft`) or forgotten. `parked` requires a written reason so the intent is preserved.
 
@@ -80,12 +83,15 @@ summary: >-
 **Operating loop:**
 
 1. Orchestrator sets `ready` when a packet is reviewed and ready for assignment.
-2. Implementer runs `check <id>` before starting; proceeds only on exit 0.
-3. Implementer sets `in-progress` when work begins.
-4. Implementer sets `delivered` when work is complete; writes progress report.
-5. Orchestrator verifies; sets `complete` + writes `resolution` when confirmed.
-6. For abandoned/deferred work: orchestrator sets `parked` + writes `resolution`.
-7. For replaced work: orchestrator sets `superseded` + writes `superseded_by` + `resolution`.
+2. Orchestrator promotes `ready` to `in-progress` when assigning the packet; this status change
+   is the lightweight assignment signal.
+3. Implementer runs the read-only `check <id>` command before starting; proceeds only on exit 0.
+4. Implementer performs the work and writes the progress report; it does not change packet
+   status.
+5. When the implementer's report arrives, orchestrator sets `delivered` before verification.
+6. Orchestrator verifies; if accepted, sets `complete` and writes a one-line `resolution`.
+7. For abandoned/deferred work: orchestrator sets `parked` + writes `resolution`.
+8. For replaced work: orchestrator sets `superseded` + writes `superseded_by` + `resolution`.
 
 ---
 
@@ -132,8 +138,8 @@ Error-level violations:
 - Dependency cycle (packet A depends on B which depends on A, directly or transitively).
 - Terminal status (`complete`, `superseded`, `parked`) with `resolution: null`.
 - `status: superseded` with `superseded_by: null`.
-- Duplicate `id` values across packets.
-- `id` / filename mismatch (the id must equal the canonical short filename prefix, such as `plan-101` for `plan-101-title.md`).
+- Duplicate derived canonical ID values across packets (multiple files resolving to the same short ID prefix).
+- `id` / filename mismatch (the frontmatter `id` must exactly match the canonical ID derived from the filename prefix: `plan-<digits>` with at most one lowercase letter suffix; a hyphen separator requires a nonempty descriptive suffix).
 - Index markers stale (the content between `<!-- plan-index:begin -->` and `<!-- plan-index:end -->` in the README does not match what `render` would generate).
 
 Warn-level (reported but do not cause nonzero exit):
@@ -164,7 +170,7 @@ The write verb — the one-step replacement for "hand-edit frontmatter → `rend
 node scripts/dev/plan-status.js set <id> <status> [--resolution "…"] [--superseded-by <id>]
 ```
 
-It validates the inputs, surgically rewrites only the `status` (and, for terminal statuses, `resolution` / `superseded_by`) lines while **preserving the file's existing line endings**, then lints the **proposed** state — README index included — *before* writing. If the proposed state would fail lint (a terminal status with no resolution, an unknown status, a dangling `--superseded-by`), it **writes nothing** and exits nonzero. On success it writes the file, re-renders the index, and reports `<id>: <old> → <new>`. It makes **no git commits** — the human commits. Terminal statuses (`complete`/`superseded`/`parked`) require `--resolution`; `superseded` also requires `--superseded-by`.
+It validates the inputs, surgically rewrites only the `status` (and, for terminal statuses, `resolution` / `superseded_by`) lines while **preserving the file's existing line endings**, then lints the **proposed** state — README index included — *before* writing. If the proposed state would fail lint (a terminal status with no resolution, an unknown status, a dangling `--superseded-by`), it **writes nothing** and exits nonzero. On success it writes the file, re-renders the index, and reports `<id>: <old> → <new>`. It makes **no git commits** — `set` is a status-write only; who commits the result is governed by the project's `commit-discipline` capability, not by this tool. Terminal statuses (`complete`/`superseded`/`parked`) require `--resolution`; `superseded` also requires `--superseded-by`.
 
 **Orchestrator-only.** `set` is a status-write, and status is the orchestrator's/owner's to set — implementers never run it (see §6). If the project ships a dev console, wrap `set` behind a **Packet status** submenu with a frictionless non-terminal Set-status path and a gated Close/supersede path that demands a resolution and a confirmation.
 
