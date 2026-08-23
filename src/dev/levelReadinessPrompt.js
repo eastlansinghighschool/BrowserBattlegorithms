@@ -9,7 +9,7 @@ const REPO_ROOT_NAME = path.basename(REPO_ROOT);
 const DEFAULT_REQUIRED_READING = [
   "docs/development/00-mini-packet-agent-starting-prompt.md",
   "docs/development/00-level-editing-agent-starting-prompt.md",
-  "docs/packet-creation-guidance.md",
+  "docs/development/packet-creation-guidance.md",
   "docs/TESTING.md",
   "docs/GUIDED_LEVEL_CONCEPT_MATRIX.md",
   "docs/subsystems/blockly-workspace.md",

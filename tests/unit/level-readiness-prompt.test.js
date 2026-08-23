@@ -113,6 +113,7 @@ test("prompt renderer includes selected level metadata and validation commands",
   assert.match(prompt, /`dodge-and-deliver`/);
   assert.match(prompt, /src\/config\/levels\/phases\/movement-helpers\/level-15-dodge-and-deliver\.js/);
   assert.match(prompt, /## Required Reading/);
+  assert.match(prompt, /docs\/development\/packet-creation-guidance\.md/);
   assert.match(prompt, /## Validation/);
   assert.match(prompt, /npm run level:readiness -- --level dodge-and-deliver --prompt/);
   assert.match(prompt, /npm run level:readiness -- --level dodge-and-deliver --json/);

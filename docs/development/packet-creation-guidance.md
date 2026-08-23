@@ -100,7 +100,7 @@ Use three response tiers when review finds issues:
 Do not quietly make changes that require owner policy decisions, external behavior, source-material revisions, generated-output regeneration, or broad implementation testing. Route those through tier 2 or tier 3.
 <!-- bootstrap:review-response-tiers v1 end -->
 
-For investigation or conclusion-bearing packets, apply the **falsification check** (see *For investigation packets: design for falsification* above) before accepting any conclusion — the same discipline, enforced at review time.
+For investigation or conclusion-bearing packets, apply the **falsification check** (see *For investigation packets: design for falsification* above) before accepting any conclusion — the same discipline, enforced at review time.-name>/progress.md` unless the packet states otherwise.
 
 ## Packet Metadata
 
@@ -141,7 +141,7 @@ Common Browser Battlegorithms references:
   - `docs/TeacherGuide.md`
   - `docs/StudentGuide.md`
   - `docs/GUIDED_LEVEL_CONCEPT_MATRIX.md`
-  - `docs/development/README.md`
+   - `docs/development/README.md`
 - Architecture and testing:
   - `docs/ARCHITECTURE.md`
   - `docs/TESTING.md`
