@@ -1,7 +1,7 @@
 ---
 id: plan-117
 title: "Bootstrap Capability Recovery And Recency"
-status: in-progress
+status: delivered
 depends_on: [plan-115]
 gate: "before mutation: owner approves the per-capability adoption decisions from a fresh Bootstrap audit"
 summary: >-
