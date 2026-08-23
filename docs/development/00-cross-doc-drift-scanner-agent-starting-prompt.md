@@ -30,7 +30,7 @@ Your role in this thread:
 Before the first scan run:
 
 1. Read these orientation files to understand the doc tree shape:
-   - `docs/packet-creation-guidance.md`
+   - `docs/development/packet-creation-guidance.md`
    - `docs/development/README.md`
    - `docs/GameSpecification.md` — the foundational rules document
    - `docs/ARCHITECTURE.md`
@@ -49,7 +49,7 @@ Before the first scan run:
 - `docs/TeacherFacilitationKit.md`
 - `docs/ARCHITECTURE.md`
 - `docs/GUIDED_LEVEL_CONCEPT_MATRIX.md`
-- `docs/packet-creation-guidance.md`
+- `docs/development/packet-creation-guidance.md`
 - Every file under `docs/subsystems/` (turn-engine, blockly-workspace, ui-mode-contract, npc-and-cpu, p5-surface-map, file-pipelines, learning-moments, narration, voice, etc.)
 - `docs/development/README.md`
 - Every active starting prompt under `docs/development/00-*.md`

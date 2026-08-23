@@ -31,7 +31,7 @@ Your role in this thread:
 Before the first level-edit assignment:
 
 1. Skim these orientation files enough to know the campaign shape:
-   - `docs/packet-creation-guidance.md`
+   - `docs/development/packet-creation-guidance.md`
    - `docs/development/README.md`
    - `docs/GameSpecification.md`
    - `docs/ARCHITECTURE.md`

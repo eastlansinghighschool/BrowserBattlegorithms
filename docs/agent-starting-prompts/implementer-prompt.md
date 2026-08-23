@@ -17,7 +17,7 @@ Before the first packet assignment:
 
 1. Skim these orientation files enough to know where packet work lives:
    - `AGENTS.md`
-   - `docs/packet-creation-guidance.md`
+   - `docs/development/packet-creation-guidance.md`
    - `docs/development/README.md`
    - `docs/GameSpecification.md`
    - `docs/ARCHITECTURE.md`
@@ -186,7 +186,8 @@ Implementation loop:
 
 When you finish a packet:
 
-- Report your results and stop.
+- When date-stamping anything durable — decision-log entries, packet dates, progress reports, review notes — take the date from the environment (the system clock or commit timestamps), never from conversation recency. Async sessions span days; the session-start timestamp and the flow of chat are unreliable clocks, and a stale one produces a durable record that is wrong with no visible symptom. If you discover a wrong date, redate only the dates you authored from the bad clock using commit evidence and leave a short honesty note naming the correction; leave dates that record observed events unchanged.
+- Report your results and stop. **Never edit a packet's frontmatter `status`, `resolution`, or `superseded_by` fields — and never run `plan-status.js set` on a packet** — those are orchestrator/owner-owned. The read-only `plan-status.js check <id>` command is the implementer's preflight brake; it is not a status to set. Implementers do not set `in-progress` or `delivered` either. The lifecycle is: you finish and report; the orchestrator verifies against the artifacts and sets `delivered` → `complete` (with a `resolution`). Flipping your own packet to `complete` is treated as an unverified claim and reverted.
 - Do not edit packet frontmatter status fields or the generated packet table in `docs/development/README.md`; those remain under orchestrator/owner control.
 - If the packet is scan-only or approval-gated, produce the requested report and stop before mutation.
 

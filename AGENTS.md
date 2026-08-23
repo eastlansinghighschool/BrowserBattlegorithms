@@ -9,7 +9,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - Read the task or packet first. If a development packet exists, treat it as the work order.
 - If the user asks for analysis, review, packet planning, or curriculum/product judgment, do not jump into source edits unless explicitly asked.
 - Then read the authoritative docs for the area you are changing:
-  - `docs/packet-creation-guidance.md` when creating or revising packets
+  - `docs/development/packet-creation-guidance.md` when creating or revising packets
   - `docs/ARCHITECTURE.md`
   - `docs/TESTING.md`
   - `docs/GameSpecification.md`
@@ -75,7 +75,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - Keep progress reports under `reports/development/<packet-name>/progress.md` unless the packet says otherwise.
 - Do not write generated outputs unless the packet asks for them or they are part of the accepted evidence bundle.
 - Keep `docs/development/README.md` synchronized when adding, completing, superseding, or materially revising packets.
-- Follow `docs/packet-creation-guidance.md` for packet metadata, required reading, validation commands, stop conditions, and approval gates.
+- Follow `docs/development/packet-creation-guidance.md` for packet metadata, required reading, validation commands, stop conditions, and approval gates.
 - Stop and ask for review when the task crosses a contract boundary, changes canonical game rules, changes pedagogy, or requires a deployment, dependency, privacy, or source-of-truth decision that the packet did not authorize.
 
 ## Review Expectations

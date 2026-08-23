@@ -20,7 +20,7 @@ Your role in this thread:
 Before making recommendations, skim these files enough to understand the project shape:
 
 - `AGENTS.md`
-- `docs/packet-creation-guidance.md`
+- `docs/development/packet-creation-guidance.md`
 - `docs/development/README.md`
 - `docs/GameSpecification.md`
 - `docs/ARCHITECTURE.md`
@@ -170,21 +170,26 @@ do not apply that authority to the other thread's in-flight turn — wait for it
 commit before touching the shared file, and commit your own turn before handing back.
 <!-- bootstrap:commit-discipline v2 end -->
 
-When date-stamping anything (decision-log entries, packet dates, progress reports, review notes):
-
-- Take the date from the environment (`date`, commit timestamps), never from conversation recency. Async orchestration sessions span days; the session-start timestamp and the flow of chat are unreliable clocks. A wrong date in a durable artifact mis-dates the decision record — caught and corrected here on 2026-08-10 after a batch of star-series entries drifted two weeks stale.
+When date-stamping anything durable — decision-log entries, packet dates, progress reports, review notes — take the date from the environment (the system clock or commit timestamps), never from conversation recency. Async sessions span days; the session-start timestamp and the flow of chat are unreliable clocks, and a stale one produces a durable record that is wrong with no visible symptom. If you discover a wrong date, redate only the dates you authored from the bad clock using commit evidence and leave a short honesty note naming the correction; leave dates that record observed events unchanged.
+- Caught and corrected in this repository on 2026-08-10 after a batch of star-series entries drifted two weeks stale.
 
 ## Packet Creation Rules
 
 When creating or revising packets:
 
-- Follow `docs/packet-creation-guidance.md`.
+- Follow `docs/development/packet-creation-guidance.md`.
 - Put packet files in `docs/development/`.
 - Keep `docs/development/README.md` synchronized.
 - Give lower-cost models bounded scope, explicit required reading, exact expected artifacts, validation commands, and stop conditions.
 - Include approval gates when the task involves pedagogy, architecture, broad UI behavior, testing strategy, deployment, or source-of-truth decisions.
 - Make downstream contracts explicit so later packets do not reinvent earlier decisions.
-- When a proposed packet would change behavior described in a `docs/subsystems/*.md` note, name the relevant note in the packet's required reading and include the note-tail expectation per `docs/packet-creation-guidance.md`.
+- When a proposed packet would change behavior described in a `docs/subsystems/*.md` note, name the relevant note in the packet's required reading and include the note-tail expectation per `docs/development/packet-creation-guidance.md`.
+
+### Session Handoff File
+
+When a project is long or thickly orchestrated enough that compaction or thread transfer is likely, and its decision log does not already preserve rationale at this grain, keep one living, orchestrator-owned pointer document at `reports/orchestration/session-handoff.md`. A thin project with few packets, one agent, and no orchestrator/implementer split may reasonably omit it. This is a pointer, not a summary: name committed packets, decisions, and commits rather than restating them, and keep only what exists nowhere else. Update it in place before the boundary, not append-only; wholesale replacement is sometimes correct when an old revision predates a strategic correction and patching it would leave a misleading file. Anchor dates, never countdowns — “16 days out as of 2026-08-08” is self-diagnosing when stale, while “16 days” falsely reads as current.
+
+It earns space for the orchestrator’s own recurring failure mode, named with its instances; live judgments that exist only in conversation; what the owner actually chose versus what is merely proposed; and standing cautions a fresh thread would otherwise rediscover expensively. It is not a status report: status and next steps belong in the packet index and the active thread.
 
 ## Project-Specific Contracts
 

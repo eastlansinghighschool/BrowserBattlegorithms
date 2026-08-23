@@ -1,11 +1,11 @@
 {
-  "lastBootstrapAudit": "2026-08-10",
+  "lastBootstrapAudit": "2026-08-23",
   "bootstrapVersion": "0.1.0",
   "capabilities": [
     {
       "capability": "packet-status-system",
       "state": "adopted",
-      "capabilityVersion": "1.3.0"
+      "capabilityVersion": "1.4.0"
     },
     {
       "capability": "packet-status-set-verb",
@@ -35,7 +35,7 @@
     {
       "capability": "agent-starting-prompts",
       "state": "adopted",
-      "capabilityVersion": "1.5.0"
+      "capabilityVersion": "1.7.0"
     },
     {
       "capability": "falsification-check",
@@ -60,7 +60,7 @@
     {
       "capability": "commit-discipline",
       "state": "adopted",
-      "capabilityVersion": "2.0.0"
+      "capabilityVersion": "2.1.0"
     }
   ]
 }

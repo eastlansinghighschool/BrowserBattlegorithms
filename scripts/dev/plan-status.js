@@ -498,6 +498,59 @@ function findPacketMatchesById(packets, id) {
   });
 }
 
+function parsePacketInput(input) {
+  const raw = String(input == null ? '' : input).trim();
+  const match = raw.match(/^(?:plan-)?(\d+[a-z]?)(?:-(.+))?$/i);
+  if (!match) {
+    return { raw, primary: null, suggestionCandidates: [], expected: 'plan-<number>' };
+  }
+
+  const stem = match[1].toLowerCase();
+  const primary = `plan-${stem}`;
+  const digits = stem.match(/^(\d+)/)[1];
+  const suggestionCandidates = [primary];
+
+  // A suffix is useful only when it names an existing canonical packet. The
+  // digits-only fallback is deliberately not added for bare numeric input:
+  // "19" must not suggest or resolve to "plan-19b".
+  if (stem !== digits) suggestionCandidates.push(`plan-${digits}`);
+
+  return { raw, primary, suggestionCandidates, expected: primary };
+}
+
+function findClosestCanonicalId(packets, input) {
+  const ids = new Set(packets.map((p) => getCanonicalId(p.basename)).filter(Boolean));
+  const parsed = parsePacketInput(input);
+  const suggestion = parsed.suggestionCandidates.find((candidate) => ids.has(candidate));
+  return suggestion || null;
+}
+
+function packetNotFoundError(input, packets, context = '') {
+  const parsed = parsePacketInput(input);
+  const suggestion = findClosestCanonicalId(packets, input);
+  const expected = suggestion || parsed.expected;
+  const hint = suggestion ? ` Did you mean: ${suggestion}?` : '';
+  return `ERROR: ${context}packet not found: ${input}. Expected a canonical id like "${expected}".${hint}`;
+}
+
+function resolvePacketInput(packets, input, options = {}) {
+  const parsed = parsePacketInput(input);
+  const ids = new Set(packets.map((p) => getCanonicalId(p.basename)).filter(Boolean));
+  const canonicalId = ids.has(parsed.primary) ? parsed.primary : null;
+
+  if (!canonicalId) {
+    return { ok: false, error: packetNotFoundError(input, packets, options.context || '') };
+  }
+
+  const matches = findPacketMatchesById(packets, canonicalId);
+  if (matches.length > 1) {
+    const files = matches.map((p) => p.basename).join(', ');
+    return { ok: false, error: `ERROR: packet id "${canonicalId}" resolves to multiple files: ${files}` };
+  }
+
+  return { ok: true, canonicalId, matches };
+}
+
 function setPacketStatus(id, nextStatus, options = {}) {
   const docsDir = options.docsDir || DOCS_DIR;
   const readmePath = options.readmePath || README_PATH;
@@ -506,18 +559,13 @@ function setPacketStatus(id, nextStatus, options = {}) {
   const supersededBy = options.supersededBy;
 
   const packets = readAllPackets(docsDir);
-  const matches = findPacketMatchesById(packets, id);
-  if (matches.length === 0) {
-    return { ok: false, error: `ERROR: packet not found: ${id}` };
-  }
-  if (matches.length > 1) {
-    const files = matches.map((p) => p.basename).join(', ');
-    return { ok: false, error: `ERROR: packet id "${id}" resolves to multiple files: ${files}` };
-  }
+  const resolved = resolvePacketInput(packets, id);
+  if (!resolved.ok) return resolved;
+  const { canonicalId, matches } = resolved;
 
   const target = matches[0];
   if (!target.fm) {
-    return { ok: false, error: `ERROR: packet ${id} has no frontmatter` };
+    return { ok: false, error: `ERROR: packet ${canonicalId} has no frontmatter` };
   }
 
   if (!VALID_STATUSES.has(nextStatus)) {
@@ -525,7 +573,7 @@ function setPacketStatus(id, nextStatus, options = {}) {
   }
 
   const trimmedResolution = resolution == null ? '' : String(resolution).trim();
-  const trimmedSupersededBy = supersededBy == null ? '' : String(supersededBy).trim();
+  let trimmedSupersededBy = supersededBy == null ? '' : String(supersededBy).trim();
   const isTerminal = TERMINAL_STATUSES.has(nextStatus);
 
   if (isTerminal && !trimmedResolution) {
@@ -537,19 +585,15 @@ function setPacketStatus(id, nextStatus, options = {}) {
   }
 
   if (trimmedSupersededBy) {
-    const supersededMatches = findPacketMatchesById(packets, trimmedSupersededBy);
-    if (supersededMatches.length === 0) {
-      return { ok: false, error: `ERROR: --superseded-by packet not found: ${trimmedSupersededBy}` };
-    }
-    if (supersededMatches.length > 1) {
-      return { ok: false, error: `ERROR: --superseded-by resolves to multiple packets: ${trimmedSupersededBy}` };
-    }
+    const superseded = resolvePacketInput(packets, trimmedSupersededBy, { context: '--superseded-by ' });
+    if (!superseded.ok) return superseded;
+    trimmedSupersededBy = superseded.canonicalId;
   }
 
   const oldStatus = target.fm.status;
   const warnings = [];
   if (TERMINAL_STATUSES.has(oldStatus) && !TERMINAL_STATUSES.has(nextStatus)) {
-    warnings.push(`WARN: reopening terminal packet ${id} (${oldStatus} → ${nextStatus})`);
+    warnings.push(`WARN: reopening terminal packet ${canonicalId} (${oldStatus} → ${nextStatus})`);
   }
 
   const currentText = fs.readFileSync(target.filePath, 'utf8');
@@ -598,6 +642,7 @@ function setPacketStatus(id, nextStatus, options = {}) {
 
   return {
     ok: true,
+    canonicalId,
     oldStatus,
     newStatus: nextStatus,
     warnings,
@@ -665,21 +710,24 @@ function cmdCheck(id) {
 
   const packets = readAllPackets(DOCS_DIR);
   const byId = indexById(packets);
-  const packet = byId[id];
+  const resolved = resolvePacketInput(packets, id);
 
-  if (!packet) {
-    process.stderr.write(`ERROR: packet not found: ${id}\n`);
+  if (!resolved.ok) {
+    process.stderr.write(resolved.error + '\n');
     process.exit(1);
   }
 
+  const canonicalId = resolved.canonicalId;
+  const packet = resolved.matches[0];
+
   if (!packet.fm) {
-    process.stderr.write(`ERROR: packet ${id} has no frontmatter\n`);
+    process.stderr.write(`ERROR: packet ${canonicalId} has no frontmatter\n`);
     process.exit(1);
   }
 
   const status = packet.fm.status;
   if (status !== 'ready' && status !== 'in-progress') {
-    process.stderr.write(`BLOCKED: ${id} has status "${status}" — not ready or in-progress\n`);
+    process.stderr.write(`BLOCKED: ${canonicalId} has status "${status}" — not ready or in-progress\n`);
     process.exit(1);
   }
 
@@ -695,12 +743,12 @@ function cmdCheck(id) {
   }
 
   if (blocked.length) {
-    process.stderr.write(`BLOCKED: ${id} has incomplete dependencies:\n`);
+    process.stderr.write(`BLOCKED: ${canonicalId} has incomplete dependencies:\n`);
     for (const b of blocked) process.stderr.write(`  - ${b}\n`);
     process.exit(1);
   }
 
-  process.stdout.write(`RUNNABLE: ${id} is ready to implement\n`);
+  process.stdout.write(`RUNNABLE: ${canonicalId} is ready to implement\n`);
   process.exit(0);
 }
 
@@ -791,7 +839,7 @@ function cmdSet(args) {
   for (const warning of [...(result.warnings || []), ...(result.lintWarns || [])]) {
     process.stdout.write(warning + '\n');
   }
-  process.stdout.write(`${parsed.id}: ${result.oldStatus} → ${result.newStatus}; index re-rendered; lint clean\n`);
+  process.stdout.write(`${result.canonicalId}: ${result.oldStatus} → ${result.newStatus}; index re-rendered; lint clean\n`);
 }
 
 // ---------------------------------------------------------------------------
@@ -818,6 +866,10 @@ module.exports = {
   lintPackets,
   renderPacketIndex,
   setPacketStatus,
+  parsePacketInput,
+  findClosestCanonicalId,
+  packetNotFoundError,
+  resolvePacketInput,
   updateFrontmatterText,
   parsePacketSortKey,
   getCanonicalId,

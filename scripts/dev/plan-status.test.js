@@ -33,6 +33,9 @@ const {
   normalizeNewlines,
   parsePacketSortKey,
   getCanonicalId,
+  findClosestCanonicalId,
+  packetNotFoundError,
+  resolvePacketInput,
   readAllPackets,
   VALID_STATUSES,
   TERMINAL_STATUSES,
@@ -715,6 +718,69 @@ section('getCanonicalId — resolving validation');
   eq(getCanonicalId('plan-abc'), null, 'plan-abc is invalid (null)');
 }
 
+section('resolvePacketInput — canonical, slug, bare number, suffix, and case-insensitive forms');
+
+{
+  const cases = [
+    { input: 'plan-19', filename: 'plan-19', id: 'plan-19' },
+    { input: 'plan-19-some-description', filename: 'plan-19-some-description', id: 'plan-19' },
+    { input: '19', filename: 'plan-19', id: 'plan-19' },
+    { input: '19b', filename: 'plan-19b-some-description', id: 'plan-19b' },
+    { input: 'plan-19b-some-description', filename: 'plan-19b-some-description', id: 'plan-19b' },
+  ];
+
+  for (const testCase of cases) {
+    const workspace = makeFixtureWorkspace([
+      { id: testCase.id, filename: testCase.filename, title: 'Packet', status: 'draft', summary: 'Packet.' },
+    ]);
+    const packets = readAllPackets(workspace.docsDir);
+    const result = resolvePacketInput(packets, testCase.input);
+    eq(result.ok, true, `${testCase.input} resolves`);
+    eq(result.canonicalId, testCase.id, `${testCase.input} resolves to the canonical id`);
+  }
+
+  const caseWorkspace = makeFixtureWorkspace([
+    { id: 'plan-19', filename: 'plan-19-some-description', title: 'Packet', status: 'draft', summary: 'Packet.' },
+  ]);
+  const caseResult = resolvePacketInput(readAllPackets(caseWorkspace.docsDir), 'PLAN-19-SOME-DESCRIPTION');
+  eq(caseResult.canonicalId, 'plan-19', 'case-insensitive slug resolves canonically');
+}
+
+section('resolvePacketInput — bare number never crosses to a suffixed sibling');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-19b', filename: 'plan-19b-some-description', title: 'Packet', status: 'draft', summary: 'Packet.' },
+  ]);
+  const packets = readAllPackets(workspace.docsDir);
+  const bare = resolvePacketInput(packets, '19');
+  assert(!bare.ok, 'bare number refuses when only a suffixed sibling exists');
+  assert(bare.error.includes('Expected a canonical id like "plan-19"'), 'sibling refusal teaches the unsuffixed canonical form');
+  assert(!bare.error.includes('Did you mean'), 'sibling refusal does not suggest the suffixed sibling');
+  eq(resolvePacketInput(packets, '19b').canonicalId, 'plan-19b', 'bare letter suffix resolves its own canonical id');
+}
+
+section('packetNotFoundError — digits-only near-match fallback and no dangling hint');
+
+{
+  const workspace = makeFixtureWorkspace([
+    { id: 'plan-89', filename: 'plan-89', title: 'Packet', status: 'draft', summary: 'Packet.' },
+  ]);
+  const packets = readAllPackets(workspace.docsDir);
+  const fallback = packetNotFoundError('89z', packets);
+  eq(fallback, 'ERROR: packet not found: 89z. Expected a canonical id like "plan-89". Did you mean: plan-89?', 'unknown suffix falls back to the digits-only hint');
+  const unknownSuffix = resolvePacketInput(packets, '89z');
+  assert(!unknownSuffix.ok, 'unknown suffix does not resolve through the digits-only fallback');
+
+  const noMatch = packetNotFoundError('999', packets);
+  eq(noMatch, 'ERROR: packet not found: 999. Expected a canonical id like "plan-999".', 'no-near-match names the expected canonical form');
+  assert(!noMatch.includes('Did you mean'), 'no-near-match has no dangling suggestion');
+  const malformed = packetNotFoundError('not-a-packet', packets);
+  eq(malformed, 'ERROR: packet not found: not-a-packet. Expected a canonical id like "plan-<number>".', 'malformed input names the canonical shape');
+  assert(!malformed.includes('Did you mean'), 'malformed input has no dangling suggestion');
+  eq(findClosestCanonicalId(packets, '89z'), 'plan-89', 'closest canonical id uses digits-only fallback');
+}
+
 section('lintPackets — duplicate canonical IDs cross-file validation');
 
 {
@@ -802,7 +868,7 @@ section('setPacketStatus — refuses write if duplicate canonical IDs present');
   const beforeTwo = fs.readFileSync(path.join(workspace.docsDir, 'plan-10-two.md'), 'utf8');
 
   // Attempting to set plan-10 resolves to multiple files
-  const resultMultiple = setPacketStatus('plan-10', 'ready', {
+  const resultMultiple = setPacketStatus('10', 'ready', {
     docsDir: workspace.docsDir,
     readmePath: workspace.readmePath,
     reportsDir: workspace.reportsDir,
@@ -886,7 +952,7 @@ section('lintPackets — verbose dependency reference is rejected');
   assert(lint.errors.some(e => e.includes('depends_on references unknown id "plan-01-scaffold"')), 'verbose dependency reference fails lint');
 }
 
-section('setPacketStatus — verbose supersession reference is rejected');
+section('setPacketStatus — verbose supersession input normalizes to the canonical id');
 
 {
   const workspace = makeFixtureWorkspace([
@@ -902,8 +968,9 @@ section('setPacketStatus — verbose supersession reference is rejected');
     reportsDir: workspace.reportsDir,
   });
 
-  assert(!result.ok, 'superseded transition with verbose ID is rejected');
-  assert(result.error.includes('--superseded-by packet not found: plan-02-new-feature'), 'error mentions packet not found');
+  assert(result.ok, 'superseded transition with verbose ID succeeds');
+  const afterPacket = fs.readFileSync(path.join(workspace.docsDir, 'plan-01-old-feature.md'), 'utf8');
+  eq(parseFrontmatter(afterPacket).superseded_by, 'plan-02', 'verbose supersession input is stored canonically');
 }
 
 // ── INDEX markers ────────────────────────────────────────────────────────────
