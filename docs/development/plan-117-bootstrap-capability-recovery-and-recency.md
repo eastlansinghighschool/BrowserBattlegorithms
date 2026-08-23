@@ -1,7 +1,8 @@
 ---
 id: plan-117
 title: "Bootstrap Capability Recovery And Recency"
-status: delivered
+status: complete
+resolution: "Orchestrator verified Bootstrap alignment, canonical guidance migration, and all stated validation."
 depends_on: [plan-115]
 gate: "before mutation: owner approves the per-capability adoption decisions from a fresh Bootstrap audit"
 summary: >-
