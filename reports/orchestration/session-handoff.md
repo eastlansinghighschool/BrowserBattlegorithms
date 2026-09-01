@@ -1,8 +1,10 @@
 # Orchestration Session Handoff
 
 **Date:** 2026-09-01 (machine date)
-**Latest commit before this handoff update:** `d0fbd13` — `Update orchestration handoff for GAS review`
-(this handoff update is committed with the Stage 0 packet slate described below)
+**Latest commit before this handoff update:** `293bdfc` — `Confirm GAS source location; re-tier Gate 2 off the synthetic-account block`
+**Immediate purpose of this revision:** the owner is handing the Stage 0 packet slate to the Codex
+orchestrator for a pre-implementation review pass. Read "Stage 0 slate" below first; it says what
+is settled, what is genuinely open, and where the authoring thread most wants a second opinion.
 
 This is the one living orchestrator pointer for the next thread. It intentionally does not
 repeat packet status, implementation details, validation logs, or project contracts already
@@ -12,11 +14,18 @@ recorded in the packet index, Plan 117, its progress report, and `AGENTS.md`.
 
 - The owner explicitly deferred investigation of the prior GitHub Pages/publishing failure.
   Do not resume that work merely because it was discussed; it needs a fresh owner request and,
-  if necessary, the specific GitHub Actions failure evidence.
-- Two orchestrator threads have been in play: a kimi thread (plans through plan-115 closeout)
-  and a temporary Codex orchestrator (plan-117 author, first writer of this handoff). The owner
-  mediates both; treat this file as the bridge between threads, not a new backlog or a
-  replacement for the packet index.
+  if necessary, the specific GitHub Actions failure evidence. **One live interaction to be aware
+  of:** the owner ratified shipping a probe child page in `public/`, which only becomes useful
+  once a build reaches the live site. That is not authorization to reopen the publishing
+  investigation. `plan-120` carries a stop condition telling the implementer to surface a broken
+  pipeline rather than repair it; keep that boundary.
+- Three orchestrator threads have been in play: a kimi thread (plans through plan-115 closeout),
+  a temporary Codex orchestrator (plan-117 author, first writer of this handoff), and a claude
+  thread (Stage 0 slate author, second writer). The owner mediates all of them; treat this file
+  as the bridge between threads, not a new backlog or a replacement for the packet index. As of
+  2026-09-01 the owner is routing the Stage 0 slate back to the Codex orchestrator for a
+  pre-implementation review pass — that is mode C turn-taking on this file, so commit your turn
+  before handing back.
 - The owner said they would explain the reasoning behind plan-117 "in a bit"; that explanation
   had not yet arrived in the kimi thread at handoff time. Expect it, and reconcile the plan-115
   / plan-117 adoption baselines via `.bootstrap-adoption.json` rather than by assumption.
@@ -90,36 +99,85 @@ The owner expects that another, possibly cheaper, orchestrator may oversee later
 packet work. Future threads should therefore preserve the explicit Stage 1/Stage 2 boundary and
 should update durable files rather than depend on this thread's conversational context.
 
-### Stage 0 slate written 2026-09-01 (claude orchestrator thread, second writer of this file)
+### Stage 0 slate — written 2026-09-01 by the claude orchestrator thread (second writer of this file)
 
-A second orchestrator thread converted the gate-independent part of Stage 1 into four packets:
-`plan-118` (exception-safe storage, review F7), `plan-119` (starter-mismatch displaced-work
-recovery, review F1), `plan-120` (probe kit for Gates 1 and 2, plus the `integrations/`
-repository surface), `plan-121` (cloud evidence builder, identity policy, analyzer blank-name
-repair, review F6 and owner decision 8). All four are `ready` with owner gates inside them; none
-are dispatched. The owner ratified the Stage 0 split, the two new code surfaces, and the
-`public/` probe-child page on 2026-09-01; all three are in the accepted section of
-`docs/decision-log.md`. The `integrations/google-apps-script/` path was confirmed on the same day,
-closing `plan-120`'s last pre-mutation gate item; that packet is fully cleared for dispatch.
+Four packets convert the gate-independent part of Stage 1 into work orders. All are `ready`; none
+are dispatched. Commits `516323c`, `6dd18b4`, `8713af4`, `293bdfc`.
 
-Stage 1 proper was deliberately left unwritten. Writing the protocol, server, Drive layout, or
-retention packets now would require choosing the parent-origin authentication design, which the
-synthesis explicitly forbids ratifying before origin stability is measured. `plan-120` exists to
-make that measurement one owner action away.
+| Packet | Covers | Origin |
+| --- | --- | --- |
+| `plan-118` | Exception-safe storage adapter (`src/platform/`), guided in-memory fallback, one banner | review F7 |
+| `plan-119` | Preserve + restore work displaced by a starter-hash mismatch | review F1 |
+| `plan-120` | Nested-frame and tenant-identity probe kits; the `integrations/` surface | Gates 1 and 2 |
+| `plan-121` | Identity-stripped evidence builder, filename attribution, analyzer blank-name repair | review F6 + owner decision 8 |
 
-Two live judgments from that thread that exist nowhere else:
+Sequencing: `plan-118` before `plan-119` (both edit `getStoredWorkspaceXmlText`, and 119 writes its
+recovery slot through 118's accessors). `plan-120` and `plan-121` are write-scope-disjoint from
+those and from each other (mode B).
 
-- **Sequencing.** `plan-118` must precede `plan-119` — both edit `getStoredWorkspaceXmlText`, and
-  119's recovery slot should be written through 118's safe accessors. `plan-120` and `plan-121`
-  have write-scopes disjoint from those two and from each other (mode B).
-- **One finding got sharper on re-verification.** Review F6 said the CLI analyzer degrades to
-  `submission-N` on blank names. It is worse than that: `compareUsageSummaries` is duplicated in
-  `src/usage/usageAnalyzer.js` and `src/usage/usageAnalyzerBrowser.js`, and in both copies an
-  all-blank-name similarity group has trivially unique `submission-N` labels, so the "identical
-  attempt sequence under **different names**" flag fires on records that have no names at all —
-  a false academic-integrity signal, in exactly the condition cloud mode creates. `plan-121`
-  carries the repair. The CLI script itself already falls back to the filename for two of the
-  three flag families; the gap is narrower and nastier than F6 described.
+#### Settled — do not spend a review pass reopening these
+
+All are owner-ratified in the accepted section of `docs/decision-log.md`, dated 2026-09-01:
+
+- the Stage 0 / Stage 1 split itself;
+- `src/platform/` and `integrations/google-apps-script/` as code surfaces, with the client half at
+  `src/integration/` talking to the shell only over `postMessage`;
+- the standing rule that the protocol/evidence schema has exactly one source file and the Apps
+  Script copy is *generated* with a staleness test — no hand-maintained parallel copies;
+- `public/integration-probe/nested-frame-child.html` shipping as an unlisted `noindex` diagnostic
+  page on the live site;
+- Gate 0's four answers, and the reclassification of the third-party-storage question into a Gate 1
+  measurement;
+- Gate 2's tiering, and specifically that synthetic accounts are **not** a blocker.
+
+The eight owner decisions recorded during the Claude review are also still current direction. If
+provenance is ever in doubt, ask the owner rather than silently reopening.
+
+#### Why Stage 1 proper is unwritten
+
+Writing the protocol, server, Drive layout, or retention packets now would require choosing the
+parent-origin authentication design, which the synthesis explicitly forbids ratifying before origin
+stability is measured. `plan-120` exists to make that measurement one owner action away. A reviewer
+who believes part of S1-B is pre-writable should say so — that judgment is worth testing, not
+defending.
+
+#### Where the authoring thread most wants a second opinion
+
+Named honestly, in rough order of how much they would cost if wrong:
+
+1. **A gap the slate does not cover at all.** The Claude review observed that nobody has measured
+   how many class minutes the current download/submit workflow actually consumes — "the entire
+   project is justified against it." That measurement is cheap, gate-independent, and has no
+   packet. It is the strongest pre-implementation addition candidate.
+2. **`plan-121` deliberately ships a module with no caller.** The cloud evidence builder is dead
+   code until Stage 1 exists. The authoring thread judged the analyzer blank-name repair worth
+   doing now on its own merits and the builder cheap to write alongside it. A reviewer could
+   reasonably argue for splitting the analyzer repair out and holding the builder for Stage 1.
+3. **`plan-118` is the largest of the four** — adapter plus eight call-site migrations plus the
+   guided fallback plus a banner. It could split cleanly at the fallback/banner seam. Not split,
+   because both halves need the same gate answer and splitting would serialize two packets against
+   the same file.
+4. **`plan-119` leaves one product question to the implementer**: whether restore is available in
+   `plan-118`'s memory-only mode, "decide and document which." That is arguably a gate item the
+   authoring thread should have owned rather than delegated.
+5. **`plan-120`'s hygiene test has one vague requirement** — "no long opaque-id-looking literal."
+   That is the flakiest assertion in the slate and may want a concrete pattern or removal.
+6. **Two loose ends with no home yet, both deliberate.** `src/integration/` is named in ratified
+   decisions but created by no packet. And the review's recommended fake-parent test harness — the
+   only route to automated coverage for most of Stage 2 — is not in any packet.
+
+#### One finding got sharper on re-verification
+
+Review F6 said the CLI analyzer degrades to `submission-N` on blank names. It is worse and
+narrower than that. `compareUsageSummaries` is duplicated in `src/usage/usageAnalyzer.js` and
+`src/usage/usageAnalyzerBrowser.js`; in both copies an all-blank-name similarity group has
+trivially unique `submission-N` labels, so the "identical attempt sequence under **different
+names**" flag fires on records that have no names at all — a false academic-integrity signal
+shown to a teacher, in exactly the condition cloud mode creates. Meanwhile
+`scripts/analyze-usage-files.js` already falls back to the filename for two of the three flag
+families, so the gap F6 described is not quite the gap that exists. `plan-121` carries the repair.
+Worth noting as a general caution: the review corpus is strong but its code claims were written
+against a read, not a re-run. Re-verify before building on one.
 
 ## Thread-only caution
 
