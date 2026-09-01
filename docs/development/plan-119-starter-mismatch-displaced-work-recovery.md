@@ -1,0 +1,225 @@
+---
+id: plan-119
+title: "Starter Mismatch Displaced-Work Recovery"
+status: ready
+depends_on: [plan-118]
+gate: "before mutation: owner approves the recovery UX shape (notice + restore affordance), its student-facing copy, and the displaced-slot retention cap"
+superseded_by: null
+resolution: null
+summary: >-
+  Stop the Plan 45 stale-starter replacement from being an unrecoverable silent deletion: preserve the displaced workspace XML in a bounded local slot before the starter overwrites it, tell the student, and give them one way to get it back. Keeps the replacement behavior itself, which is correct. Local-only; the cloud-promotion suppression half of the finding is deliberately deferred to GAS Stage 2.
+---
+# Plan 119: Starter Mismatch Displaced-Work Recovery
+
+## Packet Metadata
+
+- Packet id: `plan-119`
+- Packet title: Starter Mismatch Displaced-Work Recovery
+- Status: (see frontmatter)
+- Owner/model: implementation agent
+- Date: 2026-09-01
+- Packet type: implementation
+- Mutation level: source-code, tests, docs (subsystem note)
+- Approval gate: before mutation — owner approves the recovery UX shape, copy, and retention cap (see Gate below).
+- Depends on: `plan-118` (the displaced slot must be written through the exception-safe accessors, and both packets edit `getStoredWorkspaceXmlText`; run them in sequence, not concurrently)
+- Blocks: GAS Stage 2 portable-state restore (which cannot safely transport `bba:guided-workspace-version:*` until displaced work is recoverable)
+- Expected artifacts:
+  - displaced-workspace preservation in the Plan 45 stale-replace branch of `src/ai/blockly/workspace.js`
+  - a bounded `bba:displaced-workspace:<levelId>` slot family with a documented cap and pruning rule
+  - a student-visible notice and one restore affordance
+  - unit tests proving the displaced XML survives and is restorable, plus a cap/pruning test
+  - updated `docs/subsystems/blockly-workspace.md` (the "silent by design" paragraph stops being true)
+  - progress report
+- Progress report folder: `reports/development/plan-119-starter-mismatch-displaced-work-recovery/`
+- Progress report file: `reports/development/plan-119-starter-mismatch-displaced-work-recovery/progress.md`
+
+## Packet Summary
+
+Goal: When the authored starter for a guided level changes and the student's stored program is replaced, the student's program is preserved and recoverable instead of destroyed.
+
+Non-goals:
+- **Do not remove or weaken the replacement itself.** Replacing a stale workspace with the corrected starter is intentional, documented, and right (Plan 45, `docs/subsystems/blockly-workspace.md`). This packet changes what happens to the displaced copy, not whether replacement happens.
+- Do not drop `bba:guided-workspace-version:*` from storage, and do not relax the Plan 45 grace-stamp branch. Both would reintroduce the bug Plan 45 fixed.
+- Do not add merge, diff, or three-way reconciliation UI. One preserved copy, one restore action.
+- Do not build the cloud-side half of review finding F1 (a `displacedByStarterUpdate` flag that suppresses checkpoint upload). There is no cloud checkpoint to suppress yet; that requirement belongs to GAS Stage 2 and is recorded there, not here.
+- Do not extend versioning to project shared workspaces or Free Play workspaces (still exempt per Plan 45 Decision 3).
+
+Depends on: `plan-118`.
+
+Blocks: GAS Stage 2 portable-state restore.
+
+Why this packet exists:
+`getStoredWorkspaceXmlText()` is a read accessor that performs a destructive write. On a starter-hash mismatch it executes `window.localStorage.setItem(storageKey, fallbackXml)` (`src/ai/blockly/workspace.js:983`), discarding the student's stored XML. Today the loss is bounded to one device and the student sees a genuinely corrected level, which is why Plan 45 chose it — and `docs/subsystems/blockly-workspace.md` says so explicitly under "Replace-on-mismatch (silent by design)."
+
+Two things have changed since that judgment. First, this repository has already shipped a starter-XML authoring fix mid-semester once (subsystem note, 2026-05-17, bughunt-22); on such a day every student who had work on that level lost it with no notice and no recovery. Second, the GAS integration review (`review-claude.md` finding F1, ratified in `review-synthesis.md` section 3) showed that if portable state ever transports both the workspace XML and the version key, this local, bounded, one-device loss becomes an unbounded loss that then *uploads the starter as the student's work through a valid revision lineage* — no user chose anything, and both copies are gone.
+
+Making the displaced copy recoverable fixes the classroom problem that exists today and removes the precondition for the cloud catastrophe. It is worth doing whether or not the GAS integration ever ships.
+
+## Authority And Contracts
+
+Required reading:
+
+- `docs/subsystems/blockly-workspace.md` — the whole Plan 45 section: two-key shape, replace-on-mismatch, the grace stamp (Decision 5), and the exemptions (Decision 3).
+- `src/ai/blockly/workspace.js:943-1017` — `getStoredWorkspaceXmlText` (the stale-replace branch at `:975-990`) and `saveWorkspaceToLocalStorage`.
+- `src/ai/blockly/starterVersioning.js` — the hash is computed at module-load time from the build's `initialBlocklyXml`, so it is a property of the build, not of the student.
+- `src/platform/safeStorage.js` — delivered by `plan-118`; all storage access in this packet goes through it.
+- `reports/orchestration/gas-integration-commentary/review-claude.md` finding F1 (mechanism, evidence, falsification test).
+- `docs/CopyVoiceContract.md` — any student-facing string added here is in scope for the voice contract.
+
+Contracts to preserve:
+
+- Replace-on-mismatch still replaces. The corrected starter is still what the student sees on load.
+- The grace-stamp branch (missing version key) still lets in-flight pre-Plan-45 work survive, and still stamps.
+- Free Play and project shared workspaces stay exempt from versioning.
+- Storage key naming stays in the existing `bba:` namespace.
+- One-action-per-turn semantics, game rules, and level content are untouched.
+- Static Vite build, no server dependency.
+
+## Gate (before mutation)
+
+Present to the owner, in the preflight plan, and stop. These are product decisions, not implementation details:
+
+1. **Recovery UX shape.** Options to present, with a recommendation:
+   - **(A, recommended)** A non-blocking notice on the level when a displaced copy exists for it — "This level's starting blocks were updated, so your earlier program was set aside" — plus a **Restore my earlier program** action that swaps the displaced XML back into the workspace. Restoring re-stamps the current version key, so the student is not caught in a replace loop.
+   - **(B)** Preserve silently, no notice; recovery only via a control in an existing menu. Cheaper, but leaves the classroom failure ("I opened the level and my program was gone") unaddressed, which is the point of the packet.
+   - **(C)** Prompt at load time with a choice between the new starter and the earlier program. Rejected in the recommendation: it interrupts the student at the worst moment and puts a systems question in front of a student who has no basis to answer it.
+2. **Copy.** The notice text and the action label, in the `docs/CopyVoiceContract.md` scout/coach voice. Propose two alternatives for each.
+3. **Retention cap.** How many displaced slots to keep, and the pruning rule. Recommendation: at most 8 displaced entries across all levels, pruned oldest-first by `displacedAt`, with one slot maximum per level (a second displacement on the same level replaces the first — the older copy is by then two starter generations stale). Confirm the number and the one-per-level rule.
+4. **Whether restore is reversible.** Recommendation: after a successful restore, keep the displaced entry until the student edits the workspace, so a mis-click is not itself a loss.
+
+## Scope
+
+In scope:
+- The stale-replace branch of `getStoredWorkspaceXmlText` in `src/ai/blockly/workspace.js`.
+- A `bba:displaced-workspace:<levelId>` slot family with a bounded index and pruning.
+- A restore path that writes the displaced XML back into the workspace and re-stamps the version key.
+- The notice and action surface chosen at the gate.
+- Unit tests.
+- `docs/subsystems/blockly-workspace.md` update.
+
+Out of scope:
+- Any cloud, sync, outbox, upload-suppression, or GAS surface.
+- Project shared workspaces and Free Play workspaces.
+- Changing the hash computation, the version-key format, or the grace-stamp rule.
+- A general undo/version-history feature for workspaces.
+- Migrating already-lost work (it is already gone; nothing can recover it).
+
+Files and areas likely touched: `src/ai/blockly/workspace.js`, one UI notice/action surface (the same one `plan-118` used, if suitable), `tests/unit/blockly-workspace.test.js`, `package.json` if a new test file is added, `docs/subsystems/blockly-workspace.md`.
+
+## Work Plan
+
+1. Confirm `plan-118` has landed and `src/platform/safeStorage.js` exists. If it has not, **stop** — do not hand-roll guarded storage access here.
+2. Reproduce the loss: write the falsification test first. Seed `bba:guided-workspace:<L>` with a distinctive program and `bba:guided-workspace-version:<L>` with a deliberately wrong hash, load the level, assert the stored XML is gone. Record that this test passes against pre-packet code (i.e. the loss is real).
+3. Present the gate items. **Stop for owner approval.**
+4. Implement preservation, then the index/cap, then restore, then the notice.
+5. Update the subsystem note.
+6. Run validation; write the progress report.
+
+## Implementation Requirements
+
+### R1 — Preserve before replace
+
+Required behavior: in the stale-replace branch, before `fallbackXml` is written over the stored workspace, persist the displaced content.
+
+Slot shape (JSON, one per level):
+
+```json
+{
+  "levelId": "<levelId>",
+  "xml": "<the displaced workspace XML>",
+  "displacedAt": "<ISO 8601>",
+  "storedVersion": "<hash the student's copy carried>",
+  "currentVersion": "<hash the current build computes>"
+}
+```
+
+Constraints:
+- Write the displaced slot **before** the overwrite. If the displaced write fails (storage unavailable, quota), the replacement still proceeds — the level must still load — but the notice must not claim a recoverable copy exists.
+- All storage access via `src/platform/safeStorage.js`.
+- Do not write a displaced slot when the displaced XML is empty, or when it is byte-identical to the incoming starter (nothing was lost).
+- The grace-stamp branch (`storedVersion === null`) does not displace anything and must be left alone.
+
+Edge cases: the same level displaced twice; a displaced slot for a level that no longer exists in the build (prune it, do not crash); a corrupt/unparseable slot (discard it and behave as though no displaced copy exists — never throw during level load).
+
+### R2 — Bounded retention
+
+Required behavior: the number of displaced slots is capped at the owner-approved number, pruned oldest-first by `displacedAt`, one slot per level.
+
+Constraints:
+- Pruning happens on write, not on a timer.
+- The cap is a named constant with a comment citing this packet, not a magic number at the call site.
+- Displaced XML is bounded by the same practical size as a workspace; do not add compression.
+
+### R3 — Restore
+
+Required behavior: the student can put the displaced program back into the workspace for that level.
+
+Constraints:
+- Restore loads the displaced XML into the live Blockly workspace **and** writes it to the workspace storage key **and** stamps the current version key — otherwise the very next load replaces it again, which would be a worse bug than the one being fixed. Test this loop explicitly.
+- Restore is a deliberate student action. Never automatic.
+- Per the gate item 4 decision, keep or clear the displaced entry after restore.
+- Restore must work in the `plan-118` memory-only path too, or be cleanly unavailable there with an honest reason — decide and document which, and say so in the progress report.
+
+### R4 — Notice
+
+Required behavior: per the owner-approved UX shape, a non-blocking notice when the current level has a displaced copy.
+
+Constraints:
+- Non-blocking, does not steal focus, does not gate play.
+- Reuse the existing notice surface. Do not add a modal.
+- Keyboard reachable; the restore action is a real focusable control with an accessible name.
+- The notice appears only when a displaced copy actually exists and is readable.
+
+Pedagogy check: this message is about the app changing, not about the student being wrong. It must not read as an error the student caused, and must not imply their earlier program was bad. It belongs outside the coaching/lesson voice channel students read for strategy guidance.
+
+### R5 — Tests
+
+- **Falsification/regression pair:** the seeded-mismatch test from work-plan step 2 must show the XML lost before the packet and preserved after. Record both results in the progress report.
+- Restore round-trip: displace, restore, then reload the level and assert the restored program is still there (this is the re-stamp test — it is the one most likely to be got wrong).
+- Cap and pruning: displace more levels than the cap, assert the oldest are gone and the newest survive.
+- One-per-level: displace the same level twice, assert one slot with the newer content.
+- No-op cases: empty stored XML, stored XML identical to the starter, grace-stamp branch — assert no slot is written.
+- Corrupt slot: assert level load succeeds and no displaced copy is offered.
+- Storage-unavailable: assert level load succeeds, replacement still happens, no notice claiming recoverability.
+
+## Commands
+
+```powershell
+node --test tests/unit/blockly-workspace.test.js
+```
+
+```powershell
+npm test
+```
+
+```powershell
+npm run build
+```
+
+```powershell
+npm run test:browser:smoke
+```
+
+## Validation Checklist
+
+- [ ] Pre-packet loss reproduced and post-packet preservation proven, both recorded in the progress report.
+- [ ] Restore round-trip survives a reload (version key re-stamped).
+- [ ] Cap, one-per-level, and no-op cases all covered by tests.
+- [ ] Replacement behavior itself is unchanged: a stale workspace still yields the corrected starter on load.
+- [ ] Grace-stamp branch behavior unchanged.
+- [ ] Free Play and project shared workspaces unaffected.
+- [ ] `npm test` and `npm run build` pass.
+- [ ] `npm run test:browser:smoke` passes.
+- [ ] `docs/subsystems/blockly-workspace.md` no longer says the replacement is silent, and describes the displaced slot, the cap, and the restore path.
+- [ ] Student-facing copy matches the owner-approved text and the Copy Voice Contract.
+- [ ] No unrelated files changed.
+
+## Stop Conditions
+
+Stop and ask for review if:
+
+- `plan-118` has not landed;
+- the restore path cannot re-stamp the version key without touching Plan 45's compare logic in a way that changes replacement semantics;
+- the notice cannot be placed without new UI structure;
+- the pre-packet test does **not** show the loss — that would mean F1's mechanism is wrong and the packet's premise needs owner review;
+- the work starts pulling in cloud, sync, or upload-suppression concerns (that is Stage 2 by design; note it and stop).

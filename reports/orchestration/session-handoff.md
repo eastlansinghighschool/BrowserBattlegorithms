@@ -1,8 +1,8 @@
 # Orchestration Session Handoff
 
 **Date:** 2026-09-01 (machine date)
-**Latest commit before this handoff update:** `1058eeb2e932498f13cd6de2901964c81a0dbd95` — `Synthesize GAS integration reviews`
-(this handoff update is committed immediately after that commit)
+**Latest commit before this handoff update:** `d0fbd13` — `Update orchestration handoff for GAS review`
+(this handoff update is committed with the Stage 0 packet slate described below)
 
 This is the one living orchestrator pointer for the next thread. It intentionally does not
 repeat packet status, implementation details, validation logs, or project contracts already
@@ -67,8 +67,9 @@ The most important unresolved gates are external, not packet-writing tasks:
 
 Two findings are useful even if GAS integration is later abandoned: embedded mode exposes
 unguarded browser-storage access, and current starter-version mismatch handling can
-destructively replace a stored workspace. Both are candidates for small independent
-client-hardening packets, but this analysis did not authorize those source changes.
+destructively replace a stored workspace. Both now have written packets (`plan-118`, `plan-119`;
+see the Stage 0 section below), still awaiting owner dispatch — the review analysis itself
+authorized no source changes.
 
 The main unresolved reviewer disagreement concerns how the child authenticates a GAS parent if
 the HtmlService origin changes. Do not choose a broad `googleusercontent.com` suffix check or
@@ -80,6 +81,36 @@ Stage 2 baseline, and treat popup migration as optional convenience.
 The owner expects that another, possibly cheaper, orchestrator may oversee later proposal and
 packet work. Future threads should therefore preserve the explicit Stage 1/Stage 2 boundary and
 should update durable files rather than depend on this thread's conversational context.
+
+### Stage 0 slate written 2026-09-01 (claude orchestrator thread, second writer of this file)
+
+A second orchestrator thread converted the gate-independent part of Stage 1 into four packets:
+`plan-118` (exception-safe storage, review F7), `plan-119` (starter-mismatch displaced-work
+recovery, review F1), `plan-120` (probe kit for Gates 1 and 2, plus the `integrations/`
+repository surface), `plan-121` (cloud evidence builder, identity policy, analyzer blank-name
+repair, review F6 and owner decision 8). All four are `ready` with owner gates inside them; none
+are dispatched. The framing amendment behind the split, and the two new code surfaces
+(`src/platform/`, `integrations/google-apps-script/`), are recorded under "Proposed but not yet
+accepted" in `docs/decision-log.md` and are **not owner-ratified**.
+
+Stage 1 proper was deliberately left unwritten. Writing the protocol, server, Drive layout, or
+retention packets now would require choosing the parent-origin authentication design, which the
+synthesis explicitly forbids ratifying before origin stability is measured. `plan-120` exists to
+make that measurement one owner action away.
+
+Two live judgments from that thread that exist nowhere else:
+
+- **Sequencing.** `plan-118` must precede `plan-119` — both edit `getStoredWorkspaceXmlText`, and
+  119's recovery slot should be written through 118's safe accessors. `plan-120` and `plan-121`
+  have write-scopes disjoint from those two and from each other (mode B).
+- **One finding got sharper on re-verification.** Review F6 said the CLI analyzer degrades to
+  `submission-N` on blank names. It is worse than that: `compareUsageSummaries` is duplicated in
+  `src/usage/usageAnalyzer.js` and `src/usage/usageAnalyzerBrowser.js`, and in both copies an
+  all-blank-name similarity group has trivially unique `submission-N` labels, so the "identical
+  attempt sequence under **different names**" flag fires on records that have no names at all —
+  a false academic-integrity signal, in exactly the condition cloud mode creates. `plan-121`
+  carries the repair. The CLI script itself already falls back to the filename for two of the
+  three flag families; the gap is narrower and nastier than F6 described.
 
 ## Thread-only caution
 
