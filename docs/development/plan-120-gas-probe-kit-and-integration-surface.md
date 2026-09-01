@@ -21,7 +21,12 @@ summary: >-
 - Packet type: integration (authoring only)
 - Mutation level: source-code (new non-shipping directory; one `public/` diagnostic page), docs, tests, repository config (`.gitignore`)
 - Approval gate: before mutation — **all items resolved 2026-09-01**; the implementer restates them in the preflight plan and proceeds. Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
-- Depends on: nothing in-repo. (Gate 0 is effectively closed as of 2026-09-01 — see `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Apps Script publishing, teacher-Drive storage, and unbounded retention are all permitted; the third-party-storage question was reclassified into this packet's own Gate 1 measurement. Only the synthetic accounts Gate 2 needs are still outstanding, and they do not block Gate 1.)
+- Depends on: nothing in-repo. (Gate 0 is effectively closed as of 2026-09-01 — see
+  `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Apps Script
+  publishing, teacher-Drive storage, and unbounded retention are all permitted; the
+  third-party-storage question was reclassified into this packet's own Gate 1 measurement.
+  A synthetic non-teacher account is preferred for Gate 2 repeatability, but is not outstanding
+  as a blocker: one real student may substitute for tiers A/B under R2's privacy conditions.)
 - Blocks: every GAS Stage 1 packet. Per `review-synthesis.md`, no Stage 1 implementation packet is ratified until Gates 1 and 2 pass.
 - Expected artifacts:
   - `integrations/google-apps-script/README.md` — operator deployment doc and secrets-hygiene rules
@@ -30,7 +35,8 @@ summary: >-
   - `public/integration-probe/nested-frame-child.html` — the nested-frame probe child page (gate option A, owner-ratified 2026-09-01)
   - `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — deidentified results template with an explicit falsifier line per measurement
   - `.gitignore` entries for GAS tooling state and deployment ids
-  - a repository-hygiene unit test asserting no deployment id, script id, or `.clasp.json` is committed under `integrations/`
+  - a repository-hygiene unit test catching common committed deployment URLs/config files and
+    preventing cross-imports; it is a backstop, not a complete secret scanner
   - `AGENTS.md` and `docs/ARCHITECTURE.md` updates describing the new surface
   - progress report
 - Progress report folder: `reports/development/plan-120-gas-probe-kit/`
@@ -44,7 +50,11 @@ Non-goals:
 - **This packet does not implement the integration.** No protocol module, no outbox, no cloud evidence path, no Drive schema, no Sheet, no roster, no account gate in the app.
 - No app behavior changes. The shipped game is unchanged except, at most, one standalone diagnostic page.
 - No deployment. No `clasp` install, no `npm install`, no Google account action of any kind by the implementing agent.
-- No real student accounts, no real class, no real data — not even to test.
+- No real class data and no student identity in tracked probe results. Raw identity output, if it
+  must be retained for troubleshooting, stays in ignored `local/` and is never quoted into a
+  progress report. A synthetic account
+  is preferred, but one real student may supply the non-teacher Gate 2 session under R2's
+  pass/fail-only, normal-sign-in, informed-participation conditions.
 - Do not resolve the parent-origin authentication dispute. Measuring origin stability is the *point* of the probe; choosing exact-pinning versus a server-issued proof is a decision for after the measurement (`review-synthesis.md`, "Disputed Remedies").
 
 Depends on: nothing in-repo.
@@ -136,13 +146,18 @@ Conventions this packet establishes, and that every later GAS packet inherits:
 
 - **Not in the Vite build graph.** `integrations/` is never imported by `src/`, never added as a rollup input, and never referenced from a shipped HTML entry point. A future client-side integration module lives under `src/integration/` and talks to the shell only over `postMessage` — the two trees never import each other.
 - **Schema drift is prevented mechanically, not by discipline.** When the protocol/evidence schema arrives (a Stage 1 packet), it lives in exactly one file under `integrations/google-apps-script/protocol/`. Because Apps Script cannot import ES modules from `src/`, the server-side copy must be *generated* from that source by a script under `scripts/`, with a test asserting the generated file is not stale — the lockfile pattern. Hand-maintained parallel copies are prohibited. This packet does not build that; it records the rule so no later packet invents a worse one.
-- **Nothing deployable is committed.** No script ids, deployment ids, `/macros/s/...` URLs, spreadsheet ids, folder ids, Script Property values, or `.clasp.json`. Runtime configuration is entered by the operator at deploy time or read from Script Properties, never from a tracked file.
+- **No deployment-specific identifiers or configuration are committed.** The tracked probe source
+  and manifests are intentionally deployable by the owner, but contain no script ids, deployment
+  ids, `/macros/s/...` URLs, spreadsheet ids, folder ids, Script Property values, or `.clasp.json`.
+  Runtime configuration is entered by the operator at deploy time or read from Script Properties,
+  never from a tracked file.
 - **Probes are quarantined from the real shell.** Probe code lives under `probes/` and is never promoted in place into `src/`; a later packet writes the real shell fresh. This prevents a diagnostic page with permissive settings from drifting into a production deployment.
 
 ## Work Plan
 
 1. Read the required reading. Summarize, in the preflight plan, the exact measurement list for each probe and what each one falsifies.
-2. Present the gate items. **Stop for owner approval.**
+2. Restate the three resolved gate items. Proceed unless current repository truth conflicts with
+   the decision log; if it does, stop rather than choosing a side.
 3. Create the `integrations/` tree, the README, and the hygiene rules.
 4. Build the nested-frame probe (server, shell, child page).
 5. Build the identity probe.
@@ -160,12 +175,25 @@ Required behavior: a GAS HtmlService page that frames the child page and display
 Measurements (from `review-claude.md` F13; do not drop any):
 
 - child `location.origin` and the parent origin as the child observes it;
-- the effective sandbox token set the child actually has;
+- the sandbox attributes the GAS parent can directly report for the child iframe, plus any
+  sandbox information the nested child can actually introspect. Do not claim a directly readable
+  "effective token set" if the browser exposes none; report that portion as `unknown` and treat
+  the individual capability observations below as the authoritative evidence;
 - blob download triggered **directly inside a click handler**, and separately from a `setTimeout` callback (these can differ; the app does both — `src/ui/controls.js` uses blob downloads for the usage export and the private program file);
 - `window.confirm()` — does a dialog appear, or does it return `false` with no dialog (which would make *Reset Workspace to Starter* silently do nothing);
 - `window.prompt()` — same question (the usage export name prompt depends on it);
 - `speechSynthesis.speak()` — does audio play (voice narration is an accessibility feature);
-- `localStorage` and `indexedDB`: report **partitioned** versus **blocked** as distinct outcomes, never as one pass/fail. *Partitioned* — reads and writes succeed into a bucket separate from the direct site's — is the expected, normal case and is **not** a failure; an empty-but-working bucket is this, and misreporting it as broken would be the single most likely way to draw a wrong conclusion from this probe. *Blocked* — the `window.localStorage` **property access itself** throws — is the failure case, and is exactly the condition review F7 and `plan-118` address. Measure and report both the property access and the round-trip;
+- `localStorage` and `indexedDB`: report **partitioned**, **unpartitioned**, **blocked**, or
+  **unknown** as distinct outcomes, never as one pass/fail. Emptiness alone proves nothing. The
+  child page must support a top-level control run that writes a random sentinel to both stores;
+  the operator then loads that exact child URL inside the GAS frame. Report *partitioned* only
+  when the sentinel is readable in the direct top-level context, absent in the frame, and the
+  framed context can round-trip its own different sentinel. Report *unpartitioned* when the
+  direct sentinel is visible in the frame. Report *blocked* when property/open or round-trip
+  access throws or is denied. Any incomplete or contradictory sequence is *unknown*. Provide a
+  cleanup action for both contexts. Partitioned is expected and normal; blocked is the F7 /
+  `plan-118` condition. Apply the same controlled comparison independently to localStorage and
+  IndexedDB;
 - keyboard reachability: can the operator tab into the child and back out;
 - usable inner viewport width and height, reported as numbers.
 
@@ -203,12 +231,13 @@ requirements and only tier A is architecture-deciding:
 | **A — hard fail** | Same, for the teacher/deployer account | The owner's own account | Teacher-side operation |
 | **B — pilot correctness** | Two accounts signed into one browser profile: does the probe report the **active** account, not the first-signed-in one | The owner's account **plus** any one other domain account — the teacher/student pair is a valid multi-login pair; a second synthetic account is **not** required | The shared-computer story. A wrong answer here is the F2 failure mode: one student's work attributed to another |
 | **B — pilot correctness** | Account switching mid-session | Same two accounts | Same |
-| **B — pilot correctness** | Account absent from the roster | Any domain account not added to the roster sheet | Cohort validation and the late-enrollee path |
 | **C — degradation, deferrable** | Renamed account | IT provisioning; **cannot** be done with a real student | Graceful behavior after a mid-year name change. An operational annoyance, not an architecture invalidator |
 | **C — degradation, deferrable** | Disabled account | IT provisioning; **cannot** be done with a real student | Graceful behavior after a withdrawal |
 
 - **Tier C is not a Gate 2 blocker.** Record it as a pre-pilot checklist item to run if and when
   provisioned accounts become available. Do not hold Stage 1 packet writing on it.
+- Unrostered/late-enrollee rejection belongs to the later Stage 1 roster-validation and pilot
+  checklist. This identity-only probe has no roster and must not pretend to test that behavior.
 - **A real student may stand in for a synthetic account in tiers A and B**, with three conditions
   stated in the README: record pass/fail only and never an email address in any tracked file; do
   not create any situation where a student enters credentials in front of others beyond their own
@@ -221,11 +250,25 @@ requirements and only tier A is architecture-deciding:
 
 ### R3 — Operator README and secrets hygiene
 
-`integrations/google-apps-script/README.md` must cover: what this directory is and is not; that nothing here is part of the Vite build; step-by-step deployment for each probe (including the execute-as and who-has-access settings each one requires, and why); the prohibited-artifacts list (script ids, deployment ids, `/macros/s/...` URLs, spreadsheet and folder ids, Script Property values, `.clasp.json`, any roster or student data); where raw results go (`local/`) versus deidentified summaries (`reports/orchestration/gas-integration-commentary/probe-results/`); and an explicit statement that no student accounts are used for Gate 1 and only synthetic accounts for Gate 2.
+`integrations/google-apps-script/README.md` must cover: what this directory is and is not; that
+nothing here is part of the Vite build; step-by-step deployment for each probe (including the
+execute-as and who-has-access settings each one requires, and why); the prohibited-artifacts list
+(script ids, deployment ids, `/macros/s/...` URLs, spreadsheet and folder ids, Script Property
+values, `.clasp.json`, any roster or student data); where raw results go (`local/`) versus
+deidentified summaries (`reports/orchestration/gas-integration-commentary/probe-results/`); and
+an explicit statement that Gate 1 uses no student account, while Gate 2 prefers a synthetic
+account but permits one real student for tiers A/B only under R2's safeguards.
 
 ### R4 — Results template
 
-`reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md`, one row per measurement, with columns: measurement, observed value, pass/fail/unknown, **what this observation would have falsified**, and notes. Include the four-reading origin-stability table as its own section with a blank row per reading condition. Include a header block for date, probe version, browser and OS, device class (e.g. managed Chromebook 1366x768), and deployment settings — and an explicit "no real student accounts or data are recorded in this file" line.
+`reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md`, one row per
+measurement, with columns: measurement, observed value, pass/fail/unknown, **what this observation
+would have falsified**, and notes. Include the four-reading origin-stability table as its own
+section with a blank row per reading condition. Include a header block for date, probe version,
+browser and OS, device class (e.g. managed Chromebook 1366x768), and deployment settings — and an
+explicit "no real student identity or data are recorded in this file" line. Give localStorage and
+IndexedDB separate direct-control, framed-observation, framed-round-trip, cleanup, and disposition
+rows so the report cannot infer partitioning from an empty bucket.
 
 ### R5 — Repository hygiene guardrail
 
@@ -233,13 +276,17 @@ Add `tests/unit/integration-surface-hygiene.test.js` asserting, over the tracked
 
 - no `script.google.com/macros/s/` literal;
 - no `.clasp.json` file (only `clasp.json.example`);
-- no long opaque-id-looking literal matching a Google script/deployment id shape;
 - no `import` or `require` of anything under `src/`;
 - the probe child page contains the `noindex` meta tag.
 
 Add `.gitignore` entries for `integrations/**/.clasp.json` and `integrations/**/*.local.*`. Register the new test in the `test:unit` list in `package.json`.
 
-This test is the mechanism that makes the "nothing deployable is committed" convention real rather than aspirational; state that in its file header so a future agent does not delete it as noise.
+Use positive and negative fixtures for every prohibited pattern. Do not invent a generic
+"opaque-id-looking" regex: Google ids are not reliably distinguishable from benign hashes or
+tokens, so such a test would be brittle and would overstate its protection. The test is a
+backstop for common accidental artifacts, not proof that a tracked tree contains no secret;
+state that limitation in its file header so a future agent neither deletes it as noise nor trusts
+it as a complete secret scanner.
 
 ## Commands
 
@@ -265,7 +312,9 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 - [ ] The hygiene test fails when a fake deployment URL is temporarily added (prove the guardrail works, then revert — record this in the progress report).
 - [ ] No file under `integrations/` imports from `src/`, and no `src/` file imports from `integrations/`.
 - [ ] Every F13 measurement appears in the probe and in the results template, with a falsifier stated for each.
-- [ ] The storage measurement reports partitioned and blocked as distinct outcomes, and the results template captures device class and OU for every storage result.
+- [ ] Each storage API has a successful top-level sentinel control before any partitioned /
+  unpartitioned conclusion; incomplete comparisons report unknown. Partitioned, unpartitioned,
+  blocked, and unknown remain distinct, and the template captures device class and OU.
 - [ ] The origin-stability section requires all four reading conditions.
 - [ ] The identity probe writes nothing and stores nothing.
 - [ ] The identity run matrix is presented in tiers, tier C is marked non-blocking, and the real-student substitution conditions are stated in the README.

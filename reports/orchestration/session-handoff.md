@@ -1,10 +1,9 @@
 # Orchestration Session Handoff
 
 **Date:** 2026-09-01 (machine date)
-**Latest commit before this handoff update:** `293bdfc` — `Confirm GAS source location; re-tier Gate 2 off the synthetic-account block`
-**Immediate purpose of this revision:** the owner is handing the Stage 0 packet slate to the Codex
-orchestrator for a pre-implementation review pass. Read "Stage 0 slate" below first; it says what
-is settled, what is genuinely open, and where the authoring thread most wants a second opinion.
+**Latest commit before this handoff update:** `0b16c7e` — `Update handoff for the Codex pre-implementation review pass`
+**Immediate purpose of this revision:** record the Codex pre-implementation review disposition
+before the owner returns the Stage 0 slate to the Claude orchestrator for implementation oversight.
 
 This is the one living orchestrator pointer for the next thread. It intentionally does not
 repeat packet status, implementation details, validation logs, or project contracts already
@@ -35,7 +34,8 @@ recorded in the packet index, Plan 117, its progress report, and `AGENTS.md`.
 The owner opened a design investigation into wrapping Browser Battlegorithms in a
 domain-restricted Google Apps Script web app. The intended value is account-attributed,
 cloud-hosted classroom evidence and eventually portable progress without adding Firestore,
-GCP, or Google Classroom integration. No implementation packet is authorized yet.
+GCP, or Google Classroom integration. The Stage 0 packet slate is ratified; Stage 1 proper cloud
+behavior remains unwritten and unauthorized pending the probe gates.
 
 The durable architecture record is
 `reports/orchestration/google-apps-script-cloud-integration-proposal.md`. Four adversarial
@@ -69,18 +69,21 @@ The most important unresolved gates are external, not packet-writing tasks:
   unbounded-permitted. The third-party-storage question was reclassified into a Gate 1
   measurement rather than an IT ask. Record and reasoning:
   `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Only outstanding
-  item is synthetic domain accounts for Gate 2, which do not block Gate 1. Do not re-ask these
+  item originally recorded was synthetic domain accounts for Gate 2, but that was subsequently
+  re-tiered and is not a blocker. Do not re-ask these
   of the owner; if a future thread needs them reopened, the original four-question draft is in
   that file's git history at `6dd18b4`. The synthetic-account request was re-tiered on the same
   day and is **not** a blocker: Gate 2's only architecture-deciding condition needs one
   non-teacher domain account, which a real student satisfies under the conditions recorded in
   `plan-120` R2. Do not let a future thread reintroduce it as a gate.
-- Run the minimal real-GAS nested-frame capability probe before roster or implementation work.
+- Run the minimal real-GAS nested-frame capability probe before Stage 1 proper protocol/server work.
   It must cover actual origins, sandbox behavior, download/modals/speech, embedded storage,
   keyboard accessibility, and Chromebook viewport.
-- Run the tenant identity probe with synthetic domain accounts, including multi-login and
-  account switching. Blank or ambiguous server-derived identity is a hard stop for cloud mode.
-- Only after those gates should the proposal be revised and a Stage 1 packet slate considered.
+- Run the tenant identity probe with a synthetic non-teacher account when available, or one real
+  student under `plan-120`'s privacy conditions, including multi-login and account switching.
+  Blank or ambiguous server-derived identity is a hard stop for cloud mode.
+- Only after those gates should the proposal be revised and a Stage 1 proper packet slate
+  considered. Gate-independent Stage 0 implementation may proceed before them.
 
 Two findings are useful even if GAS integration is later abandoned: embedded mode exposes
 unguarded browser-storage access, and current starter-version mismatch handling can
@@ -101,15 +104,16 @@ should update durable files rather than depend on this thread's conversational c
 
 ### Stage 0 slate — written 2026-09-01 by the claude orchestrator thread (second writer of this file)
 
-Four packets convert the gate-independent part of Stage 1 into work orders. All are `ready`; none
-are dispatched. Commits `516323c`, `6dd18b4`, `8713af4`, `293bdfc`.
+Four packets convert the gate-independent part of Stage 1 into work orders. Their authored status
+is `ready`, but `plan-119` is correctly dependency-blocked until `plan-118` completes; none are
+dispatched. Commits `516323c`, `6dd18b4`, `8713af4`, `293bdfc`.
 
 | Packet | Covers | Origin |
 | --- | --- | --- |
 | `plan-118` | Exception-safe storage adapter (`src/platform/`), guided in-memory fallback, one banner | review F7 |
 | `plan-119` | Preserve + restore work displaced by a starter-hash mismatch | review F1 |
 | `plan-120` | Nested-frame and tenant-identity probe kits; the `integrations/` surface | Gates 1 and 2 |
-| `plan-121` | Identity-stripped evidence builder, filename attribution, analyzer blank-name repair | review F6 + owner decision 8 |
+| `plan-121` | Identity-stripped evidence builder, filename-attribution policy, analyzer blank-name repair; exact grammar deferred | review F6 + owner decision 8 |
 
 Sequencing: `plan-118` before `plan-119` (both edit `getStoredWorkspaceXmlText`, and 119 writes its
 recovery slot through 118's accessors). `plan-120` and `plan-121` are write-scope-disjoint from
@@ -135,33 +139,35 @@ provenance is ever in doubt, ask the owner rather than silently reopening.
 
 #### Why Stage 1 proper is unwritten
 
-Writing the protocol, server, Drive layout, or retention packets now would require choosing the
-parent-origin authentication design, which the synthesis explicitly forbids ratifying before origin
-stability is measured. `plan-120` exists to make that measurement one owner action away. A reviewer
-who believes part of S1-B is pre-writable should say so — that judgment is worth testing, not
-defending.
+Writing dispatch-ready protocol/client-bridge packets now would require choosing the parent-origin
+authentication design, which the synthesis explicitly forbids ratifying before origin stability is
+measured. Some transport-neutral server/storage or idempotency work could be outlined without that
+choice, but the probes are cheap and identity failure could invalidate the path; little is gained by
+ratifying those packets first. `plan-120` exists to make the decisive measurements one owner action
+away.
 
-#### Where the authoring thread most wants a second opinion
+#### Second-opinion questions and dispositions
 
 Named honestly, in rough order of how much they would cost if wrong:
 
-1. **A gap the slate does not cover at all.** The Claude review observed that nobody has measured
-   how many class minutes the current download/submit workflow actually consumes — "the entire
-   project is justified against it." That measurement is cheap, gate-independent, and has no
-   packet. It is the strongest pre-implementation addition candidate.
-2. **`plan-121` deliberately ships a module with no caller.** The cloud evidence builder is dead
-   code until Stage 1 exists. The authoring thread judged the analyzer blank-name repair worth
-   doing now on its own merits and the builder cheap to write alongside it. A reviewer could
-   reasonably argue for splitting the analyzer repair out and holding the builder for Stage 1.
-3. **`plan-118` is the largest of the four** — adapter plus eight call-site migrations plus the
-   guided fallback plus a banner. It could split cleanly at the fallback/banner seam. Not split,
-   because both halves need the same gate answer and splitting would serialize two packets against
-   the same file.
-4. **`plan-119` leaves one product question to the implementer**: whether restore is available in
-   `plan-118`'s memory-only mode, "decide and document which." That is arguably a gate item the
-   authoring thread should have owned rather than delegated.
-5. **`plan-120`'s hygiene test has one vague requirement** — "no long opaque-id-looking literal."
-   That is the flakiest assertion in the slate and may want a concrete pattern or removal.
+1. **A cheap Stage 1 baseline, not a project gate.** The current download/submit burden is partly
+   elapsed time and partly teacher help and student confusion: locating unfamiliar files,
+   distinguishing the right JSON file, understanding what a JSON file is, and submitting the
+   correct artifact. A lightweight before/after observation should count minutes, help
+   interventions, missing/wrong-file submissions, and teacher extraction time. It needs no
+   implementation packet and must not become a go/no-go gate. It evaluates Stage 1's friction
+   benefit only; it does not measure Stage 2's cross-device portability value or the owner's third
+   goal of learning a reusable GAS-wrapper pattern for other classroom games and interactives.
+2. **`plan-121` deliberately ships a module with no caller.** Approved: the identity-stripped
+   builder is stable, cheap, and paired with an independently valuable analyzer repair. The Codex
+   pass removed the teacher-only filename helper from student code and deferred its exact grammar.
+3. **`plan-118` is the largest of the four.** Approved intact: splitting would serialize the same
+   workspace/UI seam and create an intermediate state without the honest fallback/banner behavior.
+4. **`plan-119` memory-only recovery.** Resolved before dispatch: it is unavailable because the
+   memory-only path has no durable displaced slot; the packet must not offer a false recovery action.
+5. **`plan-120` hygiene-test ambiguity.** Resolved before dispatch: remove the unreliable generic
+   opaque-id regex, retain targeted URL/config/cross-import checks with fixtures, and document that
+   the test is a backstop rather than a complete secret scanner.
 6. **Two loose ends with no home yet, both deliberate.** `src/integration/` is named in ratified
    decisions but created by no packet. And the review's recommended fake-parent test harness — the
    only route to automated coverage for most of Stage 2 — is not in any packet.
@@ -178,6 +184,21 @@ shown to a teacher, in exactly the condition cloud mode creates. Meanwhile
 families, so the gap F6 described is not quite the gap that exists. `plan-121` carries the repair.
 Worth noting as a general caution: the review corpus is strong but its code claims were written
 against a read, not a re-run. Re-verify before building on one.
+
+#### Codex pre-implementation review disposition (2026-09-01)
+
+The overall sequence is approved: keep `plan-118` together; run it before `plan-119`; allow
+`plan-120` and `plan-121` to proceed independently; and do not write dispatch-ready Stage 1
+proper packets until the cheap iframe and identity probes return. A transport-neutral Stage 1
+map could be drafted, but there is little value in ratifying it before the measurements.
+
+Before dispatch, the Codex pass corrected three substantive packet contracts: `plan-119` may
+never overwrite the only durable student workspace when its recovery write fails; `plan-120`
+must preserve the ratified real-student substitute for Gate 2 and must not pretend sandbox flags
+or opaque secret ids are perfectly introspectable; and `plan-121` keeps the identity-stripped
+builder plus analyzer repair but defers the exact teacher-download filename grammar to the later
+canonical Stage 1 protocol/teacher-extraction surface. It also resolves `plan-119` recovery as
+unavailable in memory-only mode and clarifies `plan-118`'s quota-error classification.
 
 ## Thread-only caution
 

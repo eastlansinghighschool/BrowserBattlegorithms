@@ -3,7 +3,7 @@ id: plan-119
 title: "Starter Mismatch Displaced-Work Recovery"
 status: ready
 depends_on: [plan-118]
-gate: "before mutation: owner approves the recovery UX shape (notice + restore affordance), its student-facing copy, and the displaced-slot retention cap"
+gate: "before mutation: owner approves the recovery UX shape (notice + restore affordance), its ordinary/preservation-failure/restore-failure copy, and the displaced-slot retention cap"
 superseded_by: null
 resolution: null
 summary: >-
@@ -20,7 +20,8 @@ summary: >-
 - Date: 2026-09-01
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note)
-- Approval gate: before mutation — owner approves the recovery UX shape, copy, and retention cap (see Gate below).
+- Approval gate: before mutation — owner approves the recovery UX shape, ordinary and
+  preservation-failure/restore-failure copy, and retention cap (see Gate below).
 - Depends on: `plan-118` (the displaced slot must be written through the exception-safe accessors, and both packets edit `getStoredWorkspaceXmlText`; run them in sequence, not concurrently)
 - Blocks: GAS Stage 2 portable-state restore (which cannot safely transport `bba:guided-workspace-version:*` until displaced work is recoverable)
 - Expected artifacts:
@@ -38,7 +39,12 @@ summary: >-
 Goal: When the authored starter for a guided level changes and the student's stored program is replaced, the student's program is preserved and recoverable instead of destroyed.
 
 Non-goals:
-- **Do not remove or weaken the replacement itself.** Replacing a stale workspace with the corrected starter is intentional, documented, and right (Plan 45, `docs/subsystems/blockly-workspace.md`). This packet changes what happens to the displaced copy, not whether replacement happens.
+- **Do not remove or weaken the replacement in the normal path.** Replacing a stale workspace
+  with the corrected starter is intentional, documented, and right (Plan 45,
+  `docs/subsystems/blockly-workspace.md`). The one exception is preservation failure: the app
+  must not destroy the sole durable student copy merely to apply the replacement. In that
+  exceptional path it keeps and loads the earlier program, leaves its version stamp unchanged,
+  and explains that the starter update could not be applied safely.
 - Do not drop `bba:guided-workspace-version:*` from storage, and do not relax the Plan 45 grace-stamp branch. Both would reintroduce the bug Plan 45 fixed.
 - Do not add merge, diff, or three-way reconciliation UI. One preserved copy, one restore action.
 - Do not build the cloud-side half of review finding F1 (a `displacedByStarterUpdate` flag that suppresses checkpoint upload). There is no cloud checkpoint to suppress yet; that requirement belongs to GAS Stage 2 and is recorded there, not here.
@@ -68,7 +74,9 @@ Required reading:
 
 Contracts to preserve:
 
-- Replace-on-mismatch still replaces. The corrected starter is still what the student sees on load.
+- After a recoverable displaced copy is written and verified, replace-on-mismatch still replaces
+  and the corrected starter is what the student sees. Preservation failure is the explicit safety
+  exception: retain/load the earlier program rather than destroy the only durable copy.
 - The grace-stamp branch (missing version key) still lets in-flight pre-Plan-45 work survive, and still stamps.
 - Free Play and project shared workspaces stay exempt from versioning.
 - Storage key naming stays in the existing `bba:` namespace.
@@ -86,6 +94,11 @@ Present to the owner, in the preflight plan, and stop. These are product decisio
 2. **Copy.** The notice text and the action label, in the `docs/CopyVoiceContract.md` scout/coach voice. Propose two alternatives for each.
 3. **Retention cap.** How many displaced slots to keep, and the pruning rule. Recommendation: at most 8 displaced entries across all levels, pruned oldest-first by `displacedAt`, with one slot maximum per level (a second displacement on the same level replaces the first — the older copy is by then two starter generations stale). Confirm the number and the one-per-level rule.
 4. **Whether restore is reversible.** Recommendation: after a successful restore, keep the displaced entry until the student edits the workspace, so a mis-click is not itself a loss.
+5. **Failure copy.** Approve one non-blocking sentence explaining that the app kept
+   the earlier program because it could not safely save a recovery copy, so the updated starter
+   was not applied. Also approve one restore-failed sentence that says the recovery copy is still
+   safe and the current workspace was not changed. Neither message may blame the student or claim
+   a write succeeded when it did not.
 
 ## Scope
 
@@ -134,7 +147,23 @@ Slot shape (JSON, one per level):
 ```
 
 Constraints:
-- Write the displaced slot **before** the overwrite. If the displaced write fails (storage unavailable, quota), the replacement still proceeds — the level must still load — but the notice must not claim a recoverable copy exists.
+- Write and read back the displaced slot **and** its index entry before overwriting the original.
+  A successful method return without a readable indexed copy is not enough.
+- If either preservation write or read-back verification fails, do **not** overwrite the original
+  workspace or its version key. Load the earlier stored XML for this page and show the
+  gate-approved preservation-failure notice. This preserves the only durable copy and retries the
+  starter comparison on a later load. Best-effort removal of any partial orphan is allowed, but
+  failure to clean it up must not risk the original.
+- Mark that level in memory as preservation-blocked for the page lifetime. If the student edits
+  and the ordinary save path writes their updated XML, it must **not** stamp the current starter
+  version while that flag is set; doing so would silently bless the stale workspace and prevent a
+  later recovery attempt. The next page load must still see the mismatch and retry preservation.
+- After preservation succeeds, replace in fail-safe order: write and read back the corrected
+  starter XML **before** stamping the current version key, then read the version back. Never stamp
+  the current version if the starter write was not verified. If the starter succeeds but the
+  version stamp fails, retain the displaced entry; on the next load the stored XML is identical to
+  the starter, so the no-op rule below must prevent that starter from replacing the real displaced
+  copy before the version stamp is retried.
 - All storage access via `src/platform/safeStorage.js`.
 - Do not write a displaced slot when the displaced XML is empty, or when it is byte-identical to the incoming starter (nothing was lost).
 - The grace-stamp branch (`storedVersion === null`) does not displace anything and must be left alone.
@@ -156,19 +185,33 @@ Required behavior: the student can put the displaced program back into the works
 
 Constraints:
 - Restore loads the displaced XML into the live Blockly workspace **and** writes it to the workspace storage key **and** stamps the current version key — otherwise the very next load replaces it again, which would be a worse bug than the one being fixed. Test this loop explicitly.
+- Persist the workspace first, then the current version key, and read both back before reporting
+  restore success or replacing the live Blockly contents. If either write/read-back fails, retain
+  the displaced entry, leave the current live starter in place, and show an honest restore-failed
+  message. Never clear the recovery entry or claim success on a partial write.
 - Restore is a deliberate student action. Never automatic.
 - Per the gate item 4 decision, keep or clear the displaced entry after restore.
-- Restore must work in the `plan-118` memory-only path too, or be cleanly unavailable there with an honest reason — decide and document which, and say so in the progress report.
+- Restore is unavailable in `plan-118`'s memory-only path. That path skips the persisted starter
+  comparison and cannot establish a durable displaced slot, so offering recovery would be false.
+  Do not show a displaced-copy action there; `plan-118`'s storage-unavailable notice is the honest
+  explanation.
 
 ### R4 — Notice
 
-Required behavior: per the owner-approved UX shape, a non-blocking notice when the current level has a displaced copy.
+Required behavior: two non-blocking variants using the owner-approved copy:
+
+1. **Recoverable copy:** shown only when a displaced copy exists and is readable; includes the
+   restore action.
+2. **Preservation failure:** shown when no verified recovery copy could be made; explains that the
+   earlier program was kept and the starter update was not applied; has no restore action and must
+   not imply a recovery copy exists.
 
 Constraints:
 - Non-blocking, does not steal focus, does not gate play.
 - Reuse the existing notice surface. Do not add a modal.
 - Keyboard reachable; the restore action is a real focusable control with an accessible name.
-- The notice appears only when a displaced copy actually exists and is readable.
+- The recoverable-copy notice appears only when a displaced copy actually exists and is readable.
+  The preservation-failure variant is the sole exception and never exposes a restore control.
 
 Pedagogy check: this message is about the app changing, not about the student being wrong. It must not read as an error the student caused, and must not imply their earlier program was bad. It belongs outside the coaching/lesson voice channel students read for strategy guidance.
 
@@ -176,11 +219,25 @@ Pedagogy check: this message is about the app changing, not about the student be
 
 - **Falsification/regression pair:** the seeded-mismatch test from work-plan step 2 must show the XML lost before the packet and preserved after. Record both results in the progress report.
 - Restore round-trip: displace, restore, then reload the level and assert the restored program is still there (this is the re-stamp test — it is the one most likely to be got wrong).
+- Restore partial failures: fail the workspace write, the version write, and each read-back in
+  separate cases; assert no success is reported, the displaced entry remains, and the live starter
+  is not replaced by an unconfirmed restore.
 - Cap and pruning: displace more levels than the cap, assert the oldest are gone and the newest survive.
 - One-per-level: displace the same level twice, assert one slot with the newer content.
 - No-op cases: empty stored XML, stored XML identical to the starter, grace-stamp branch — assert no slot is written.
 - Corrupt slot: assert level load succeeds and no displaced copy is offered.
-- Storage-unavailable: assert level load succeeds, replacement still happens, no notice claiming recoverability.
+- Storage-unavailable from page start: assert level load succeeds through the memory-only path,
+  the current fallback is shown without a persistent overwrite, and no notice claims a
+  recoverable displaced copy.
+- Preservation failure: make the displaced-slot write or index write fail, then assert the
+  original workspace and version key remain unchanged, the earlier program loads, and the
+  preservation-failure notice does not claim a recovery copy exists.
+- Preservation failure followed by a student edit/save: assert the current-version key is still
+  not stamped and a reload retries the mismatch path rather than blessing the stale workspace.
+- Replacement partial failures: fail the starter write/read-back and then the version
+  write/read-back in separate cases. Assert the current version is never stamped ahead of a
+  verified starter, the original displaced copy survives, and a retry cannot replace that copy
+  with starter XML.
 
 ## Commands
 
@@ -205,7 +262,10 @@ npm run test:browser:smoke
 - [ ] Pre-packet loss reproduced and post-packet preservation proven, both recorded in the progress report.
 - [ ] Restore round-trip survives a reload (version key re-stamped).
 - [ ] Cap, one-per-level, and no-op cases all covered by tests.
-- [ ] Replacement behavior itself is unchanged: a stale workspace still yields the corrected starter on load.
+- [ ] Normal replacement behavior is unchanged: after a verified recovery copy exists, a stale
+  workspace yields the corrected starter on load.
+- [ ] Preservation-write/index/read-back failure leaves the original workspace and version key
+  intact, loads the earlier program, and shows only the approved failure notice.
 - [ ] Grace-stamp branch behavior unchanged.
 - [ ] Free Play and project shared workspaces unaffected.
 - [ ] `npm test` and `npm run build` pass.
@@ -220,6 +280,8 @@ Stop and ask for review if:
 
 - `plan-118` has not landed;
 - the restore path cannot re-stamp the version key without touching Plan 45's compare logic in a way that changes replacement semantics;
+- keeping the original workspace intact after preservation failure cannot be done without a
+  broader workspace-lifecycle change;
 - the notice cannot be placed without new UI structure;
 - the pre-packet test does **not** show the loss — that would mean F1's mechanism is wrong and the packet's premise needs owner review;
 - the work starts pulling in cloud, sync, or upload-suppression concerns (that is Stage 2 by design; note it and stop).

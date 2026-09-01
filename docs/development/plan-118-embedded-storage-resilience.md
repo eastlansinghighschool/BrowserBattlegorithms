@@ -126,7 +126,10 @@ Rationale for a new directory rather than a home in an existing one: this code i
 
 Required behavior. Export at minimum:
 
-- `isLocalStorageAvailable()` — memoized boolean. Determined by a real round-trip (write a probe key, read it, delete it) inside try/catch, not by a presence check. Memoize per page load; do not re-probe on every call.
+- `isLocalStorageAvailable()` — memoized boolean for the distinction this packet owns: accessible
+  browser storage versus denied/absent storage. Acquire the property inside try/catch, then use a
+  write/read/delete probe to catch silent no-op storage. Memoize per page load; do not re-probe on
+  every call.
 - `readLocalStorage(key)` returning `string | null`. Never throws.
 - `writeLocalStorage(key, value)` returning `boolean` (did it persist). Never throws.
 - `removeLocalStorage(key)` returning `boolean`. Never throws.
@@ -137,7 +140,13 @@ Constraints:
 - Every access to the `window.localStorage` **property** happens inside try/catch, not only the method calls.
 - Failure is silent to the caller by return value; log at most once per page load via `console.warn`, not once per write (the Blockly change path would flood the console).
 
-Edge cases: `window` undefined (node tests); property access throws; `getItem` throws; `setItem` throws `QuotaExceededError` (treat as a failed write, not as "storage unavailable" — do not flip the capability flag); storage present but a silent no-op sink — the round-trip probe catches this.
+Edge cases: `window` undefined (node tests); property access throws; `getItem` throws; storage
+present but a silent no-op sink — the round-trip probe catches this. Classify
+`QuotaExceededError` separately: if the storage property was acquired but the capability probe
+cannot write because quota is full, return `true` for *accessible/not blocked*, while the
+individual write returns `false`. Do not activate the memory-only path or the "browser is
+blocking saving" banner for a quota error. Storage-pressure UX is existing debt and explicitly
+out of scope; document this distinction so a later packet can address it honestly.
 
 ### R2 — Call-site migration
 

@@ -3,11 +3,11 @@ id: plan-121
 title: "Cloud Evidence Builder And Analyzer Identity Parity"
 status: ready
 depends_on: []
-gate: "before mutation: owner confirms the cloud-evidence filename contract shape (the only place account attribution lives) and confirms that direct-mode download behavior, including the typed-name prompt and the name inside export events, is unchanged"
+gate: "before mutation: owner confirms that direct-mode download behavior, including the typed-name prompt and the name inside export events, is unchanged, and approves the blank-name analyzer wording"
 superseded_by: null
 resolution: null
 summary: >-
-  Extract a pure, UI-free schema-v2 evidence builder with an identity-stripped cloud variant, pin the account-attributed filename contract that carries attribution instead of the payload, and fix the blank-name identity handling that currently degrades and false-positives in both analyzers. Local-only and testable with no GAS; it is the client half of GAS Stage 1 that does not depend on any probe outcome.
+  Extract a pure, UI-free schema-v2 evidence builder with an identity-stripped cloud variant and fix the blank-name identity handling that currently degrades and false-positives in both analyzers. Preserve the policy that account attribution belongs in the later teacher-download filename, while deferring that server-side filename grammar to the canonical Stage 1 protocol/extraction surface. Local-only and testable with no GAS.
 ---
 # Plan 121: Cloud Evidence Builder And Analyzer Identity Parity
 
@@ -20,12 +20,16 @@ summary: >-
 - Date: 2026-09-01
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note + data dictionary)
-- Approval gate: before mutation — owner confirms the filename contract and the no-change-to-direct-mode boundary (see Gate below).
+- Approval gate: before mutation — owner confirms the no-change-to-direct-mode boundary and the
+  blank-name analyzer wording (see Gate below).
 - Depends on: nothing. (Disjoint write-scope from `plan-118`/`plan-119`, which touch `src/ai/blockly/` and `src/platform/`; this packet touches `src/usage/`, `src/admin/`, `scripts/`. Safe to run concurrently with those under commit-discipline mode B.)
-- Blocks: the GAS Stage 1 client integration packet (which calls this builder) and the GAS Stage 1 teacher-extraction packet (which mirrors this filename contract server-side)
+- Blocks: the GAS Stage 1 client integration packet (which calls this builder). The later Stage 1
+  canonical protocol/teacher-extraction packet owns the exact account-attributed download
+  filename grammar; it must not be implemented in student client code.
 - Expected artifacts:
-  - `src/usage/cloudEvidence.js` — pure builder plus the filename contract, no DOM and no networking
-  - identity stripped from **all three** places `studentName` currently appears in a v2 payload
+  - `src/usage/cloudEvidence.js` — pure identity-stripped builder, no DOM and no networking
+  - identity stripped from the top-level field and every retained event-data occurrence of
+    `studentName`
   - one shared payload-plus-integrity construction used by both the download path and the cloud path
   - blank-name handling repaired in both `src/usage/usageAnalyzer.js` and `src/usage/usageAnalyzerBrowser.js`
   - unit tests including a whole-payload identity-absence assertion
@@ -50,7 +54,7 @@ Depends on: nothing.
 Blocks: GAS Stage 1 client integration; GAS Stage 1 teacher extraction.
 
 Why this packet exists:
-Owner decision 8 of 2026-09-01 (`review-synthesis.md`, "Ratified Direction") settled the identity policy: account attribution goes in the teacher's downloaded filename, never inside the hashed v2 payload. That decision is only safe if the payload is actually clean, and today it is not — review finding F6 established that `studentName` is embedded in **three** places, not one: the top-level field (`src/usage/usageFormat.js:557`) and inside `events[].data.studentName` for both `export_requested` and `export_completed` (`src/usage/usageTracker.js:493-529`). `sanitizeEventsForV2Export` (`usageFormat.js:452-473`) strips `xmlText`, not names. A cloud builder that clears only the top-level field would upload self-reported student names to Drive while the project claimed it did not.
+Owner decision 8 of 2026-09-01 (`review-synthesis.md`, "Ratified Direction") settled the identity policy: account attribution goes in the teacher's downloaded filename, never inside the hashed v2 payload. That decision is only safe if the payload is actually clean, and today it is not — review finding F6 established that `studentName` is embedded at the top level (`src/usage/usageFormat.js:557`) and inside `events[].data.studentName` for the `export_requested` and `export_completed` event families (`src/usage/usageTracker.js:493-529`). A first returned export contains the current request but appends its completion event afterward; a later export can contain that prior completion as well. `sanitizeEventsForV2Export` (`usageFormat.js:452-473`) strips `xmlText`, not names. A cloud builder that clears only the top-level field would upload self-reported student names to Drive while the project claimed it did not.
 
 The second half is a defect that exists today, independent of GAS. `compareUsageSummaries` labels similarity groups as `studentName || submission-N` — and this logic is **duplicated** in `src/usage/usageAnalyzer.js:210-216` and `src/usage/usageAnalyzerBrowser.js:196-202`, which the usage-and-admin subsystem note says must not diverge. When names are blank, every label becomes a distinct `submission-N`, so `uniqueNames.size > 1` is trivially true and the "identical attempt sequence under **different names**" flag fires on records that have no names at all. That is a false positive pointed at a teacher making an academic-integrity judgment, and blank names are exactly what cloud mode produces. The CLI's top-level summary line and the browser table separately degrade to `(blank)` for every row.
 
@@ -85,10 +89,18 @@ Contracts to preserve:
 
 Present to the owner and stop:
 
-1. **Filename contract.** Account attribution lives only here, so its shape is a product decision. Recommendation: a pure function `createCloudEvidenceFilename({ accountAttribution, sessionId, exportedAt })` producing a name that (a) begins with a filesystem-safe rendering of the account, so an alphabetically sorted download folder groups by student, (b) includes a short session discriminator so two files from one student do not collide, and (c) is stable and reproducible for the same inputs. Propose the exact template and two alternatives, and state the sanitization rule for characters that are illegal in filenames.
-2. **Attribution source, stated explicitly.** Confirm: the value passed in is the server-derived authenticated account, supplied by the teacher-side extraction workflow, and this function never derives it from payload content. The client-side builder never sees it.
-3. **Direct-mode boundary.** Confirm that the typed-name prompt, the existing filename, and the name inside export events are all unchanged in direct mode.
-4. **Blank-name similarity labels.** Confirm the fix direction: when a record has no self-reported name, its label falls back to the file identity (filename), and a similarity group whose members are *all* unnamed must not be reported as "different names." Recommendation: report it as an unnamed-similarity group with wording that does not imply a name comparison happened.
+1. **Direct-mode boundary.** Confirm that the typed-name prompt, the existing filename, and the
+   name inside export events are all unchanged in direct mode.
+2. **Blank-name similarity labels.** Confirm the fix direction: when a record has no self-reported
+   name, its label falls back to the file identity (filename), and a similarity group whose
+   members are *all* unnamed must not be reported as "different names." Recommendation: report it
+   as an unnamed-similarity group with wording that does not imply a name comparison happened.
+
+The owner decision that authenticated attribution belongs in the teacher's downloaded filename
+remains binding. This packet does not choose or implement that filename's exact grammar: the
+student client never receives authenticated account attribution, and the grammar belongs in the
+later canonical Stage 1 protocol/teacher-extraction surface where it can have one mechanically
+checked source of truth.
 
 ## Scope
 
@@ -111,10 +123,15 @@ Files and areas likely touched: `src/usage/cloudEvidence.js` (new), `src/usage/u
 
 ## Work Plan
 
-1. Inspect current state. Confirm by test, before changing anything, that a synthetic name seeded through a real export appears in all three locations. Record the observed count — if it is not three, the packet's premise needs review.
+1. Inspect current state. Confirm by test, before changing anything, that a synthetic name appears
+   at the top level and in retained request/completion event data when those event families are
+   present. Record the observed JSON paths rather than assuming an exact count: the current export
+   appends its completion event after constructing the returned payload, so first and later exports
+   legitimately differ. If no event-level occurrence can be reproduced, the packet's premise needs
+   review.
 2. Present the gate items. **Stop for owner approval.**
 3. Extract the shared payload-plus-integrity construction; prove direct-mode output is unchanged.
-4. Add `src/usage/cloudEvidence.js` with the identity-stripped builder and the filename contract.
+4. Add `src/usage/cloudEvidence.js` with the identity-stripped builder.
 5. Repair blank-name labeling in both analyzers and both consumers.
 6. Update docs.
 7. Run validation; write the progress report.
@@ -141,15 +158,13 @@ Constraints:
 - Verifies under the **unmodified** existing `verifyUsageExport`.
 - Does not record an `export_requested` / `export_completed` event as a side effect the way `exportUsageFile` does, unless the owner decides cloud submissions should be logged in the ledger — if that question comes up, it is a stop condition, not an implementer call.
 
-Also export `createCloudEvidenceFilename(...)` per the gate-approved contract, with its sanitization rule.
-
 Edge cases: a session with no events; an event whose `data` is absent or not an object; a `studentName` value that is whitespace only; a deeply nested occurrence of the key (handle it, and test it).
 
 ### R3 — Identity-absence test
 
 Required behavior: seed a distinctive synthetic name (for example `ZZQX-SENTINEL-NAME`) through a realistic session that includes an export event, build a cloud payload, `JSON.stringify` the whole thing, and assert the sentinel string does not appear anywhere.
 
-Constraints: this whole-payload search is the assertion that matters — a field-by-field check would have missed the event-level occurrences that finding F6 found. Say so in a comment so a later agent does not "simplify" it into field checks. Add the mirrored negative test: the direct-mode download payload **does** still contain the name in all three places.
+Constraints: this whole-payload search is the assertion that matters — a field-by-field check would have missed the event-level occurrences that finding F6 found. Say so in a comment so a later agent does not "simplify" it into field checks. Add the mirrored negative test: the direct-mode download payload still contains the top-level name and any request/completion event occurrences present in the seeded session.
 
 ### R4 — Blank-name analyzer repair
 
@@ -166,9 +181,12 @@ Constraints:
 
 ### R5 — Docs
 
-- `docs/subsystems/usage-and-admin.md`: the cloud evidence variant, its identity guarantee, the fact that the integrity contract is untouched, the filename attribution contract, and the blank-name analyzer behavior.
+- `docs/subsystems/usage-and-admin.md`: the cloud evidence variant, its identity guarantee, the
+  fact that the integrity contract is untouched, the binding policy that authenticated attribution
+  will live in the teacher-download filename, and the blank-name analyzer behavior. State that
+  the exact filename grammar is deferred to the canonical Stage 1 protocol/teacher-extraction
+  packet and must not be re-created in student client code.
 - `docs/CohortUsageDataDictionary.md`: one line noting that for identity-stripped exports, `identityMap.details[].studentName` is empty and longitudinal linking relies on the filename.
-- Note in the subsystem note that `createCloudEvidenceFilename` is the contract a future GAS teacher-extraction packet must mirror, and that the mirror must be mechanically checked, not hand-copied.
 
 ## Commands
 
@@ -190,7 +208,8 @@ npm run test:browser:tooling
 
 ## Validation Checklist
 
-- [ ] Pre-packet three-location finding reproduced and recorded before any change.
+- [ ] Pre-packet top-level and retained event-data identity paths reproduced and recorded before
+  any change, without assuming one exact occurrence count.
 - [ ] Direct-mode payload proven byte-identical before and after.
 - [ ] Cloud payload contains no sentinel identity string anywhere under whole-payload search.
 - [ ] Cloud payload verifies under the unmodified `verifyUsageExport`.
@@ -209,7 +228,8 @@ npm run test:browser:tooling
 
 Stop and ask for review if:
 
-- the pre-packet check does not find the name in three locations (premise review);
+- the pre-packet check cannot reproduce the top-level and retained event-data identity paths
+  described above (premise review);
 - making direct-mode output byte-identical requires changing the existing payload shape;
 - the cloud payload cannot verify under the existing verifier without altering the integrity contract;
 - threading file identity into the comparison functions turns into a broader analyzer refactor;
