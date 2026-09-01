@@ -62,7 +62,10 @@ The most important unresolved gates are external, not packet-writing tasks:
   `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Only outstanding
   item is synthetic domain accounts for Gate 2, which do not block Gate 1. Do not re-ask these
   of the owner; if a future thread needs them reopened, the original four-question draft is in
-  that file's git history at `6dd18b4`.
+  that file's git history at `6dd18b4`. The synthetic-account request was re-tiered on the same
+  day and is **not** a blocker: Gate 2's only architecture-deciding condition needs one
+  non-teacher domain account, which a real student satisfies under the conditions recorded in
+  `plan-120` R2. Do not let a future thread reintroduce it as a gate.
 - Run the minimal real-GAS nested-frame capability probe before roster or implementation work.
   It must cover actual origins, sandbox behavior, download/modals/speech, embedded storage,
   keyboard accessibility, and Chromebook viewport.
@@ -96,8 +99,8 @@ repository surface), `plan-121` (cloud evidence builder, identity policy, analyz
 repair, review F6 and owner decision 8). All four are `ready` with owner gates inside them; none
 are dispatched. The owner ratified the Stage 0 split, the two new code surfaces, and the
 `public/` probe-child page on 2026-09-01; all three are in the accepted section of
-`docs/decision-log.md`. One sub-decision is still open: the specific `integrations/google-apps-script/`
-directory path, which `plan-120` gate item 1 still asks.
+`docs/decision-log.md`. The `integrations/google-apps-script/` path was confirmed on the same day,
+closing `plan-120`'s last pre-mutation gate item; that packet is fully cleared for dispatch.
 
 Stage 1 proper was deliberately left unwritten. Writing the protocol, server, Drive layout, or
 retention packets now would require choosing the parent-origin authentication design, which the

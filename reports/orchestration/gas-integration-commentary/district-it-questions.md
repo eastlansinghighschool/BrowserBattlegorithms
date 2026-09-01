@@ -1,9 +1,9 @@
 # Gate 0 — District IT Questions
 
 **Date written:** 2026-09-01
-**Status:** largely closed 2026-09-01. Q1, Q3, Q4 answered by the owner from existing district
-knowledge. Q2 was reclassified from a policy question into a measurement taken by the Gate 1
-probe. One open request remains: synthetic domain accounts for Gate 2.
+**Status:** closed 2026-09-01. Q1, Q3, Q4 answered by the owner from existing district knowledge.
+Q2 was reclassified from a policy question into a measurement taken by the Gate 1 probe. The
+synthetic-account request was re-tiered and is no longer a blocker for Gate 2.
 **Why this exists:** `review-synthesis.md` "Gate 0: district permission and policy." Two of these
 four answers could have invalidated the Google Apps Script iframe architecture before any code was
 written, and two could have invalidated it after the code worked. The questions and their framing
@@ -73,22 +73,18 @@ absence of this answer, and no production retention number should be ratified un
 
 ---
 
-## The one remaining ask
+## Nothing is outstanding
 
-Everything else is settled. The only outstanding request is the synthetic accounts Gate 2 needs:
+All four questions are resolved, and the synthetic-account request turned out not to gate
+anything (see the Answers section). Two items are held in reserve rather than asked:
 
-> Hi — for a classroom programming tool I'm extending with an optional Google Workspace front end,
-> I need two or three synthetic accounts in our domain for testing sign-in behavior — accounts that
-> belong to no real student. Can those be created, and by whom? No real student account or student
-> data will be used in any of this testing.
->
-> Thanks —
+- **Domain allowlisting for students** — send only if the Gate 1 probe measures storage as
+  *blocked* on a student-OU device.
+- **Provisioned renamed / disabled test accounts** — a pre-pilot convenience for Gate 2 tier C,
+  not a gate.
 
-A reserve question is held in the Q2 section above, to be sent only if the Gate 1 probe measures
-storage as *blocked* on student devices.
-
-The original four-question draft is preserved in this file's git history (commit `6dd18b4`) should
-a future cohort, district, or records officer require the conversation to be reopened.
+The original four-question draft is preserved in this file's git history (commit `6dd18b4`)
+should a future cohort, district, or records officer require the conversation to be reopened.
 
 ---
 
@@ -142,4 +138,11 @@ gate is to avoid discovering the real policy during a class period.*
   - If this answer is informal rather than documented, get it in writing before a pilot spans a
     school year. A retention posture is exactly the kind of thing that changes when a new person
     holds the records role.
-- **Synthetic accounts:** _pending — still needed for Gate 2, and now the only outstanding ask._
+- **Synthetic accounts: not a blocker** (re-tiered 2026-09-01). IT may provision one; the owner
+  should take it if offered but must not wait for it. Gate 2's only architecture-deciding
+  condition needs exactly one non-teacher domain account, which a real student satisfies. The
+  multi-login conditions are satisfied by the teacher account plus any one other account. Only
+  the renamed-account and disabled-account conditions genuinely require provisioning, and those
+  test mid-year graceful degradation rather than whether the architecture works — pre-pilot
+  checklist, not a gate. Full tiering, and the conditions under which a real student may stand
+  in, are in `plan-120` requirement R2.

@@ -3,7 +3,7 @@ id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
 status: ready
 depends_on: []
-gate: "RESOLVED 2026-09-01 for gate items 2 and 3 (probe child ships in public/; results split deidentified-tracked / raw-local). Gate item 1, the integrations/google-apps-script/ repository location, is still open — confirm before mutation. Before deploy: only the owner deploys or runs anything against Google Workspace."
+gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
 superseded_by: null
 resolution: null
 summary: >-
@@ -20,7 +20,7 @@ summary: >-
 - Date: 2026-09-01
 - Packet type: integration (authoring only)
 - Mutation level: source-code (new non-shipping directory; one `public/` diagnostic page), docs, tests, repository config (`.gitignore`)
-- Approval gate: before mutation — owner ratifies the repository location (the `public/` probe-child decision is settled: option A). Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
+- Approval gate: before mutation — **all items resolved 2026-09-01**; the implementer restates them in the preflight plan and proceeds. Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
 - Depends on: nothing in-repo. (Gate 0 is effectively closed as of 2026-09-01 — see `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Apps Script publishing, teacher-Drive storage, and unbounded retention are all permitted; the third-party-storage question was reclassified into this packet's own Gate 1 measurement. Only the synthetic accounts Gate 2 needs are still outstanding, and they do not block Gate 1.)
 - Blocks: every GAS Stage 1 packet. Per `review-synthesis.md`, no Stage 1 implementation packet is ratified until Gates 1 and 2 pass.
 - Expected artifacts:
@@ -76,11 +76,12 @@ Contracts to preserve:
 
 ## Gate (before mutation)
 
-**Owner resolutions recorded 2026-09-01:** item 2 = **option A** (the probe child ships at
-`public/integration-probe/nested-frame-child.html`); item 3 = as recommended. Item 1 remains
-open: confirm it in the preflight plan and stop if it is still unanswered.
+**All three items resolved by the owner on 2026-09-01.** Item 1 = confirmed as recommended;
+item 2 = **option A** (the probe child ships at `public/integration-probe/nested-frame-child.html`);
+item 3 = as recommended. Restate them in the preflight plan; there is nothing left to stop for.
+The rationale is retained below because later GAS packets inherit these conventions.
 
-1. **Repository location — STILL OPEN.** Recommendation (matching `review-synthesis.md` remaining-decision 7): keep GAS source in this repository under `integrations/google-apps-script/`, excluded from the Vite build, with no committed deployment ids. Rationale: one repository keeps the protocol/schema source and its client consumer in the same commit, which is the only mechanism that reliably prevents client/server schema drift. The alternative — a companion repository — decouples versioning at exactly the seam where drift is most expensive. Owner ratifies or overrides.
+1. **Repository location — RESOLVED: confirmed.** Recommendation (matching `review-synthesis.md` remaining-decision 7): keep GAS source in this repository under `integrations/google-apps-script/`, excluded from the Vite build, with no committed deployment ids. Rationale: one repository keeps the protocol/schema source and its client consumer in the same commit, which is the only mechanism that reliably prevents client/server schema drift. The alternative — a companion repository — decouples versioning at exactly the seam where drift is most expensive. Owner ratifies or overrides.
 2. **The probe child page location — RESOLVED: option A.** The nested-frame probe must measure the *real* pairing: a GAS shell framing a page served from the app's own public origin. That requires a page reachable at that origin. Options:
    - **(A, recommended)** Ship a standalone diagnostic page at `public/integration-probe/nested-frame-child.html`. It is copied to `dist/` by the existing build, is not linked from anywhere in the app, collects and transmits nothing, and carries a `noindex` meta tag. Cost: one unlisted public page on the live site.
    - **(B)** Serve the child from a temporary second static host. Cheaper politically, but it measures a different origin than production, which weakens exactly the origin-stability answer the probe exists to produce.
@@ -188,10 +189,35 @@ Required behavior: a separate minimal GAS web app that reports, for whoever open
 Displays: whether `Session.getActiveUser().getEmail()` is nonblank; whether it matches the expected domain; the value of `Session.getEffectiveUser().getEmail()`; and an echo of the deployment's execute-as and access settings as configured. It writes nothing and stores nothing.
 
 Constraints:
-- Separate deployment from R1. Do not merge them: R1 needs no accounts and should run immediately; R2 needs synthetic domain accounts and scheduling.
+- Separate deployment from R1. Do not merge them: R1 needs no non-teacher account at all and should run immediately; R2 needs at least one and some scheduling.
 - **Displays identity only to the person viewing it.** No Drive file, no Sheet row, no Script Property, no execution-log write of any email.
-- The README states the required run matrix explicitly: teacher/deployer account; at least two synthetic domain student accounts; two Google accounts signed into one browser profile; account switching; and — where the tenant allows creating them — a renamed account, a disabled account, and an account absent from any roster.
 - The README states the hard fail plainly: blank or ambiguous identity is a stop for account-attributed cloud mode, not a thing to work around by trusting a client-supplied email.
+
+**Run matrix, tiered by what each condition can actually falsify.** The README must present it this
+way rather than as one undifferentiated list, because the tiers have very different account
+requirements and only tier A is architecture-deciding:
+
+| Tier | Condition | Needs | Falsifies |
+| --- | --- | --- | --- |
+| **A — hard fail** | Server-derived identity is nonblank, correct, and expected-domain for a **non-teacher** domain account under execute-as-deployer | One non-teacher domain account: a synthetic account **or** one real student | Account-attributed cloud mode entirely. If this fails, nothing downstream is worth building |
+| **A — hard fail** | Same, for the teacher/deployer account | The owner's own account | Teacher-side operation |
+| **B — pilot correctness** | Two accounts signed into one browser profile: does the probe report the **active** account, not the first-signed-in one | The owner's account **plus** any one other domain account — the teacher/student pair is a valid multi-login pair; a second synthetic account is **not** required | The shared-computer story. A wrong answer here is the F2 failure mode: one student's work attributed to another |
+| **B — pilot correctness** | Account switching mid-session | Same two accounts | Same |
+| **B — pilot correctness** | Account absent from the roster | Any domain account not added to the roster sheet | Cohort validation and the late-enrollee path |
+| **C — degradation, deferrable** | Renamed account | IT provisioning; **cannot** be done with a real student | Graceful behavior after a mid-year name change. An operational annoyance, not an architecture invalidator |
+| **C — degradation, deferrable** | Disabled account | IT provisioning; **cannot** be done with a real student | Graceful behavior after a withdrawal |
+
+- **Tier C is not a Gate 2 blocker.** Record it as a pre-pilot checklist item to run if and when
+  provisioned accounts become available. Do not hold Stage 1 packet writing on it.
+- **A real student may stand in for a synthetic account in tiers A and B**, with three conditions
+  stated in the README: record pass/fail only and never an email address in any tracked file; do
+  not create any situation where a student enters credentials in front of others beyond their own
+  normal sign-in; and tell the student plainly what is being tested. Note that a real student also
+  surfaces the true student-side authorization experience, including any consent screen, which is
+  itself worth observing.
+- **Prefer a synthetic account where one exists**, for a reason unrelated to privacy: repeatability.
+  The probe should be re-runnable after a redeploy or a settings change without scheduling a
+  student. One synthetic account has ongoing value past this single test; two are not needed.
 
 ### R3 — Operator README and secrets hygiene
 
@@ -242,6 +268,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 - [ ] The storage measurement reports partitioned and blocked as distinct outcomes, and the results template captures device class and OU for every storage result.
 - [ ] The origin-stability section requires all four reading conditions.
 - [ ] The identity probe writes nothing and stores nothing.
+- [ ] The identity run matrix is presented in tiers, tier C is marked non-blocking, and the real-student substitution conditions are stated in the README.
 - [ ] `AGENTS.md` and `docs/ARCHITECTURE.md` describe `integrations/` and state it is outside the build graph.
 - [ ] The progress report contains copy-paste operator instructions the owner can follow without reading the packet.
 - [ ] No game, level, Blockly, UI, or `src/` behavior changed.
@@ -250,7 +277,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 
 Stop and ask for review if:
 
-- the owner has not ratified the repository location (gate item 1; items 2 and 3 are settled);
+- any pre-mutation gate item appears unsettled after all three were resolved on 2026-09-01 (that would mean the packet and the decision log disagree — surface it rather than picking one);
 - the probe cannot measure something on the F13 list without also collecting or transmitting data;
 - building a faithful probe appears to require changing app source;
 - the work starts drifting from "measure the platform" into "design the protocol" — the protocol is a later packet and depends on these measurements;
