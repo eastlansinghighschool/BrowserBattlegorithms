@@ -21,7 +21,7 @@ summary: >-
 - Packet type: integration (authoring only)
 - Mutation level: source-code (new non-shipping directory; one `public/` diagnostic page), docs, tests, repository config (`.gitignore`)
 - Approval gate: before mutation — owner ratifies the repository location (the `public/` probe-child decision is settled: option A). Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
-- Depends on: nothing in-repo. (Gate 0, the four district-IT questions, is an owner action that should precede *running* the probes but does not block *authoring* them.)
+- Depends on: nothing in-repo. (Gate 0 is effectively closed as of 2026-09-01 — see `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Apps Script publishing, teacher-Drive storage, and unbounded retention are all permitted; the third-party-storage question was reclassified into this packet's own Gate 1 measurement. Only the synthetic accounts Gate 2 needs are still outstanding, and they do not block Gate 1.)
 - Blocks: every GAS Stage 1 packet. Per `review-synthesis.md`, no Stage 1 implementation packet is ratified until Gates 1 and 2 pass.
 - Expected artifacts:
   - `integrations/google-apps-script/README.md` — operator deployment doc and secrets-hygiene rules
@@ -164,9 +164,11 @@ Measurements (from `review-claude.md` F13; do not drop any):
 - `window.confirm()` — does a dialog appear, or does it return `false` with no dialog (which would make *Reset Workspace to Starter* silently do nothing);
 - `window.prompt()` — same question (the usage export name prompt depends on it);
 - `speechSynthesis.speak()` — does audio play (voice narration is an accessibility feature);
-- `localStorage` and `indexedDB` read + write, and whether the *property access itself* throws;
+- `localStorage` and `indexedDB`: report **partitioned** versus **blocked** as distinct outcomes, never as one pass/fail. *Partitioned* — reads and writes succeed into a bucket separate from the direct site's — is the expected, normal case and is **not** a failure; an empty-but-working bucket is this, and misreporting it as broken would be the single most likely way to draw a wrong conclusion from this probe. *Blocked* — the `window.localStorage` **property access itself** throws — is the failure case, and is exactly the condition review F7 and `plan-118` address. Measure and report both the property access and the round-trip;
 - keyboard reachability: can the operator tab into the child and back out;
 - usable inner viewport width and height, reported as numbers.
+
+**Device and organizational-unit protocol, recorded in the probe README:** the storage measurement must be taken on a **representative student-OU device**, not a teacher device. Chrome enterprise policy is applied per organizational unit and teacher and student OUs commonly differ, so a clean result on a staff machine says nothing about a student Chromebook. A spare managed device in a student session is sufficient — no students need to be present, and the probe collects and transmits nothing. Record the device class and OU (or "unknown OU") alongside every storage result; a storage result with no device provenance is not evidence.
 
 Repeat-measurement protocol, recorded in the probe README: the operator must record `location.origin` across **at least** a reload, a second signed-in user, a new *version* of the same deployment, and a *new* deployment. Origin stability across those four is the evidence that decides the parent-authentication dispute; a single reading proves nothing.
 
@@ -237,6 +239,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 - [ ] The hygiene test fails when a fake deployment URL is temporarily added (prove the guardrail works, then revert — record this in the progress report).
 - [ ] No file under `integrations/` imports from `src/`, and no `src/` file imports from `integrations/`.
 - [ ] Every F13 measurement appears in the probe and in the results template, with a falsifier stated for each.
+- [ ] The storage measurement reports partitioned and blocked as distinct outcomes, and the results template captures device class and OU for every storage result.
 - [ ] The origin-stability section requires all four reading conditions.
 - [ ] The identity probe writes nothing and stores nothing.
 - [ ] `AGENTS.md` and `docs/ARCHITECTURE.md` describe `integrations/` and state it is outside the build graph.

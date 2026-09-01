@@ -55,12 +55,14 @@ reopening or reversing the decisions.
 
 The most important unresolved gates are external, not packet-writing tasks:
 
-- Ask district IT whether teacher-deployed domain-restricted GAS apps are permitted, whether
-  third-party site data is blocked on managed Chromebooks, whether teacher-Drive storage is
-  covered by district privacy agreements, and what records/appeal schedule controls retention.
-  These are written out, with a sendable draft and an answers block, at
-  `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Record answers
-  there rather than in a thread; as of 2026-09-01 all five are pending.
+- **Gate 0 is closed as of 2026-09-01** (owner answered from existing district knowledge):
+  Apps Script publishing permitted, teacher-Drive student records permitted, retention
+  unbounded-permitted. The third-party-storage question was reclassified into a Gate 1
+  measurement rather than an IT ask. Record and reasoning:
+  `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Only outstanding
+  item is synthetic domain accounts for Gate 2, which do not block Gate 1. Do not re-ask these
+  of the owner; if a future thread needs them reopened, the original four-question draft is in
+  that file's git history at `6dd18b4`.
 - Run the minimal real-GAS nested-frame capability probe before roster or implementation work.
   It must cover actual origins, sandbox behavior, download/modals/speech, embedded storage,
   keyboard accessibility, and Chromebook viewport.
