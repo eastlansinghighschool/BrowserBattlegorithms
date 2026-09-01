@@ -3,7 +3,7 @@ id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
 status: ready
 depends_on: []
-gate: "before mutation: owner ratifies the integrations/google-apps-script/ repository location and decides whether the nested-frame probe child page may ship in public/ on the live static site; before deploy: only the owner deploys or runs anything against Google Workspace"
+gate: "RESOLVED 2026-09-01 for gate items 2 and 3 (probe child ships in public/; results split deidentified-tracked / raw-local). Gate item 1, the integrations/google-apps-script/ repository location, is still open — confirm before mutation. Before deploy: only the owner deploys or runs anything against Google Workspace."
 superseded_by: null
 resolution: null
 summary: >-
@@ -19,15 +19,15 @@ summary: >-
 - Owner/model: implementation agent
 - Date: 2026-09-01
 - Packet type: integration (authoring only)
-- Mutation level: source-code (new non-shipping directory; one optional `public/` page), docs, tests, repository config (`.gitignore`)
-- Approval gate: before mutation — owner ratifies the repository location and the `public/` probe-child decision. Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
+- Mutation level: source-code (new non-shipping directory; one `public/` diagnostic page), docs, tests, repository config (`.gitignore`)
+- Approval gate: before mutation — owner ratifies the repository location (the `public/` probe-child decision is settled: option A). Before deploy — this packet **never** deploys, publishes, or runs anything against Google Workspace; the owner does that.
 - Depends on: nothing in-repo. (Gate 0, the four district-IT questions, is an owner action that should precede *running* the probes but does not block *authoring* them.)
 - Blocks: every GAS Stage 1 packet. Per `review-synthesis.md`, no Stage 1 implementation packet is ratified until Gates 1 and 2 pass.
 - Expected artifacts:
   - `integrations/google-apps-script/README.md` — operator deployment doc and secrets-hygiene rules
   - `integrations/google-apps-script/probes/nested-frame/` — GAS shell probe (server + parent page)
   - `integrations/google-apps-script/probes/identity/` — tenant identity probe (server + page)
-  - the nested-frame probe child page, at the location chosen at the gate
+  - `public/integration-probe/nested-frame-child.html` — the nested-frame probe child page (gate option A, owner-ratified 2026-09-01)
   - `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — deidentified results template with an explicit falsifier line per measurement
   - `.gitignore` entries for GAS tooling state and deployment ids
   - a repository-hygiene unit test asserting no deployment id, script id, or `.clasp.json` is committed under `integrations/`
@@ -76,15 +76,17 @@ Contracts to preserve:
 
 ## Gate (before mutation)
 
-Present to the owner and stop:
+**Owner resolutions recorded 2026-09-01:** item 2 = **option A** (the probe child ships at
+`public/integration-probe/nested-frame-child.html`); item 3 = as recommended. Item 1 remains
+open: confirm it in the preflight plan and stop if it is still unanswered.
 
-1. **Repository location.** Recommendation (matching `review-synthesis.md` remaining-decision 7): keep GAS source in this repository under `integrations/google-apps-script/`, excluded from the Vite build, with no committed deployment ids. Rationale: one repository keeps the protocol/schema source and its client consumer in the same commit, which is the only mechanism that reliably prevents client/server schema drift. The alternative — a companion repository — decouples versioning at exactly the seam where drift is most expensive. Owner ratifies or overrides.
-2. **The probe child page location.** The nested-frame probe must measure the *real* pairing: a GAS shell framing a page served from the app's own public origin. That requires a page reachable at that origin. Options:
+1. **Repository location — STILL OPEN.** Recommendation (matching `review-synthesis.md` remaining-decision 7): keep GAS source in this repository under `integrations/google-apps-script/`, excluded from the Vite build, with no committed deployment ids. Rationale: one repository keeps the protocol/schema source and its client consumer in the same commit, which is the only mechanism that reliably prevents client/server schema drift. The alternative — a companion repository — decouples versioning at exactly the seam where drift is most expensive. Owner ratifies or overrides.
+2. **The probe child page location — RESOLVED: option A.** The nested-frame probe must measure the *real* pairing: a GAS shell framing a page served from the app's own public origin. That requires a page reachable at that origin. Options:
    - **(A, recommended)** Ship a standalone diagnostic page at `public/integration-probe/nested-frame-child.html`. It is copied to `dist/` by the existing build, is not linked from anywhere in the app, collects and transmits nothing, and carries a `noindex` meta tag. Cost: one unlisted public page on the live site.
    - **(B)** Serve the child from a temporary second static host. Cheaper politically, but it measures a different origin than production, which weakens exactly the origin-stability answer the probe exists to produce.
    - **(C)** Defer the probe until the deferred GitHub Pages publishing question is reopened. Slowest; the handoff records that the owner explicitly deferred that investigation.
    Note the interaction with the handoff: option A does not require reopening the publishing investigation, but it does require that a deploy of the current `dist/` reach the live site at some point. If that pipeline is not currently working, say so at the gate rather than discovering it during the probe.
-3. **Probe results location.** Recommendation: deidentified summary at `reports/orchestration/gas-integration-commentary/probe-results/`, raw console/JSON output in `local/` only.
+3. **Probe results location — RESOLVED as recommended.** deidentified summary at `reports/orchestration/gas-integration-commentary/probe-results/`, raw console/JSON output in `local/` only.
 
 ## Scope
 
@@ -230,7 +232,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 ## Validation Checklist
 
 - [ ] `npm run build` passes and `dist/` contains no `integrations/` output.
-- [ ] If gate option A was chosen, `dist/integration-probe/nested-frame-child.html` exists and nothing in the app links to it.
+- [ ] `dist/integration-probe/nested-frame-child.html` exists (gate option A, owner-ratified) and nothing in the app links to it.
 - [ ] `npm test` passes; the hygiene test is registered in `package.json`.
 - [ ] The hygiene test fails when a fake deployment URL is temporarily added (prove the guardrail works, then revert — record this in the progress report).
 - [ ] No file under `integrations/` imports from `src/`, and no `src/` file imports from `integrations/`.
@@ -245,7 +247,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 
 Stop and ask for review if:
 
-- the owner has not ratified the repository location or the probe-child page location;
+- the owner has not ratified the repository location (gate item 1; items 2 and 3 are settled);
 - the probe cannot measure something on the F13 list without also collecting or transmitting data;
 - building a faithful probe appears to require changing app source;
 - the work starts drifting from "measure the platform" into "design the protocol" — the protocol is a later packet and depends on these measurements;

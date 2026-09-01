@@ -58,6 +58,9 @@ The most important unresolved gates are external, not packet-writing tasks:
 - Ask district IT whether teacher-deployed domain-restricted GAS apps are permitted, whether
   third-party site data is blocked on managed Chromebooks, whether teacher-Drive storage is
   covered by district privacy agreements, and what records/appeal schedule controls retention.
+  These are written out, with a sendable draft and an answers block, at
+  `reports/orchestration/gas-integration-commentary/district-it-questions.md`. Record answers
+  there rather than in a thread; as of 2026-09-01 all five are pending.
 - Run the minimal real-GAS nested-frame capability probe before roster or implementation work.
   It must cover actual origins, sandbox behavior, download/modals/speech, embedded storage,
   keyboard accessibility, and Chromebook viewport.
@@ -89,9 +92,10 @@ A second orchestrator thread converted the gate-independent part of Stage 1 into
 recovery, review F1), `plan-120` (probe kit for Gates 1 and 2, plus the `integrations/`
 repository surface), `plan-121` (cloud evidence builder, identity policy, analyzer blank-name
 repair, review F6 and owner decision 8). All four are `ready` with owner gates inside them; none
-are dispatched. The framing amendment behind the split, and the two new code surfaces
-(`src/platform/`, `integrations/google-apps-script/`), are recorded under "Proposed but not yet
-accepted" in `docs/decision-log.md` and are **not owner-ratified**.
+are dispatched. The owner ratified the Stage 0 split, the two new code surfaces, and the
+`public/` probe-child page on 2026-09-01; all three are in the accepted section of
+`docs/decision-log.md`. One sub-decision is still open: the specific `integrations/google-apps-script/`
+directory path, which `plan-120` gate item 1 still asks.
 
 Stage 1 proper was deliberately left unwritten. Writing the protocol, server, Drive layout, or
 retention packets now would require choosing the parent-origin authentication design, which the
