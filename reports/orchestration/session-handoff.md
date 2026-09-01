@@ -1,7 +1,7 @@
 # Orchestration Session Handoff
 
-**Date:** 2026-08-23 (machine-verified via `date`)
-**Latest commit at handoff:** `538d03b8933e909d5e0567af19ea8a1e9052ee1f` — `Normalize session handoff formatting`
+**Date:** 2026-09-01 (machine date)
+**Latest commit before this handoff update:** `1058eeb2e932498f13cd6de2901964c81a0dbd95` — `Synthesize GAS integration reviews`
 (this handoff update is committed immediately after that commit)
 
 This is the one living orchestrator pointer for the next thread. It intentionally does not
@@ -20,6 +20,66 @@ recorded in the packet index, Plan 117, its progress report, and `AGENTS.md`.
 - The owner said they would explain the reasoning behind plan-117 "in a bit"; that explanation
   had not yet arrived in the kimi thread at handoff time. Expect it, and reconcile the plan-115
   / plan-117 adoption baselines via `.bootstrap-adoption.json` rather than by assumption.
+
+## Current orchestration focus: GAS classroom integration (2026-09-01)
+
+The owner opened a design investigation into wrapping Browser Battlegorithms in a
+domain-restricted Google Apps Script web app. The intended value is account-attributed,
+cloud-hosted classroom evidence and eventually portable progress without adding Firestore,
+GCP, or Google Classroom integration. No implementation packet is authorized yet.
+
+The durable architecture record is
+`reports/orchestration/google-apps-script-cloud-integration-proposal.md`. Four adversarial
+reviews are under `reports/orchestration/gas-integration-commentary/`, and their adjudicated
+summary is `reports/orchestration/gas-integration-commentary/review-synthesis.md`. Start with
+the synthesis rather than reconstructing consensus from the four long reviews, but consult the
+individual reviews when revisiting a disputed remedy or its evidence.
+
+All four reviewers kept the basic architecture alive but judged the original proposal not
+ready for packets. The current recommended shape is staged:
+
+1. Stage 1 is an account-attributed evidence relay and teacher extraction workflow. It removes
+   manual submission friction while leaving gameplay local-first. It does not restore gameplay
+   state.
+2. Stage 2 adds cross-device continuity only after separate account-isolation, atomic-restore,
+   startup-ordering, recovery, migration, and conflict contracts are proven.
+
+The Claude review records eight owner decisions made during reviewer dialogue: stage the pilot;
+use separate evidence and portable-state Drive artifacts; require a signed-in-account gate on
+every page load; archive evidence on a schedule plus explicit Submit; never block play on a
+cloud conflict; sync PvCPU Free Play but not the two PvP team workspaces; retain an unlabeled
+star column in the class view; and carry authenticated attribution in the teacher-download
+filename rather than changing the hashed v2 payload. The synthesis treats those as current
+owner direction. If that provenance is ever in doubt, ask the owner rather than silently
+reopening or reversing the decisions.
+
+The most important unresolved gates are external, not packet-writing tasks:
+
+- Ask district IT whether teacher-deployed domain-restricted GAS apps are permitted, whether
+  third-party site data is blocked on managed Chromebooks, whether teacher-Drive storage is
+  covered by district privacy agreements, and what records/appeal schedule controls retention.
+- Run the minimal real-GAS nested-frame capability probe before roster or implementation work.
+  It must cover actual origins, sandbox behavior, download/modals/speech, embedded storage,
+  keyboard accessibility, and Chromebook viewport.
+- Run the tenant identity probe with synthetic domain accounts, including multi-login and
+  account switching. Blank or ambiguous server-derived identity is a hard stop for cloud mode.
+- Only after those gates should the proposal be revised and a Stage 1 packet slate considered.
+
+Two findings are useful even if GAS integration is later abandoned: embedded mode exposes
+unguarded browser-storage access, and current starter-version mismatch handling can
+destructively replace a stored workspace. Both are candidates for small independent
+client-hardening packets, but this analysis did not authorize those source changes.
+
+The main unresolved reviewer disagreement concerns how the child authenticates a GAS parent if
+the HtmlService origin changes. Do not choose a broad `googleusercontent.com` suffix check or
+hard-code an exact origin by assumption. Measure stability first; prefer exact pinning when
+stable, and otherwise design a server-issued deployment/account-bound proof. Other settled
+dispositions: keep server-side Drive filenames opaque, make file/package migration the reliable
+Stage 2 baseline, and treat popup migration as optional convenience.
+
+The owner expects that another, possibly cheaper, orchestrator may oversee later proposal and
+packet work. Future threads should therefore preserve the explicit Stage 1/Stage 2 boundary and
+should update durable files rather than depend on this thread's conversational context.
 
 ## Thread-only caution
 
