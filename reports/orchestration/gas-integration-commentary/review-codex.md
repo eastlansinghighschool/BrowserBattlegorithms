@@ -1,9 +1,9 @@
 # Adversarial Review: Google Apps Script Cloud Integration Proposal
 
-**Reviewer:** Codex  
-**Review date:** 2026-09-01  
-**Proposal reviewed:** `reports/orchestration/google-apps-script-cloud-integration-proposal.md` (2026-09-01 discussion draft)  
-**Proposal baseline:** `a321be9d4ed7aab50ab292d6611a02d087ef65ac`  
+**Reviewer:** Codex
+**Review date:** 2026-09-01
+**Proposal reviewed:** `reports/orchestration/google-apps-script-cloud-integration-proposal.md` (2026-09-01 discussion draft)
+**Proposal baseline:** `a321be9d4ed7aab50ab292d6611a02d087ef65ac`
 **Repository inspected:** `9f03f85a2cd546546281e70dd815df7756655f76`
 
 The runtime source is unchanged between the proposal baseline and the inspected commit; that range adds the proposal and another review only. No student, roster, Drive, Sheet, deployment, or tenant data was accessed. No owner questions were asked during this review; the open policy choices below should be decided before packet ratification.
