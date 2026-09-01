@@ -1,9 +1,13 @@
 # Google Apps Script Cloud Integration Proposal
 
-**Document status:** Discussion draft for owner and orchestrator review  
-**Date:** 2026-09-01  
-**Repository baseline:** `a321be9d4ed7aab50ab292d6611a02d087ef65ac`  
-**Scope:** Architecture and sequencing proposal only; not an implementation packet or authorization to deploy  
+**Document status:** Discussion draft for owner and orchestrator review
+
+**Date:** 2026-09-01
+
+**Repository baseline:** `a321be9d4ed7aab50ab292d6611a02d087ef65ac`
+
+**Scope:** Architecture and sequencing proposal only; not an implementation packet or authorization to deploy
+
 **Intended reviewers:** Browser Battlegorithms integration owner and orchestrator-class models
 
 ## Executive Recommendation
