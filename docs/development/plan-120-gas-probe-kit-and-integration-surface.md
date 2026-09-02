@@ -1,7 +1,7 @@
 ---
 id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
-status: delivered
+status: in-progress
 depends_on: []
 gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
 summary: >-

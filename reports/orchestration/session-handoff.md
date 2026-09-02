@@ -107,11 +107,18 @@ should update durable files rather than depend on this thread's conversational c
 Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
-**Board as of 2026-09-01:** `plan-120` is `delivered` — implemented, orchestrator-reviewed, and
-accepted; it moves to `complete` once the owner has run the probes and the results land under
-`probe-results/`. `plan-118` is `in-progress` with its gate cleared. `plan-119` stays
+**Board as of 2026-09-01:** `plan-120` went `delivered` → `in-progress` after a second review
+round. Its revised probe workflow (`739bf9e`, `ac5ea8f`) is accepted on the merits; the send-back
+is `reports/development/plan-120-gas-probe-kit/repair-01.md`, a report-completeness repair only —
+the advisor disposition record carries eleven acceptances and zero rejections. No code changes are
+in scope for that repair. `plan-118` is `in-progress` with its gate cleared. `plan-119` stays
 dependency-blocked behind it. `plan-121` is `ready` but still stops at its own gate (blank-name
 analyzer wording), which is the cheapest remaining unblock.
+
+**Pattern worth reusing, from the plan-120 revision:** when a measurement must leave the device but
+the raw reading is sensitive, export a *comparison* rather than a *value*. The probe reports origin
+stability as `baseline`/`same-as-baseline`/`changed`/`unknown`, which preserves exactly the evidence
+Gate 1 needs while keeping origins local. Stage 1 should reuse this rather than reinvent it.
 
 | Packet | Covers | Origin |
 | --- | --- | --- |
