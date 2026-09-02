@@ -35,8 +35,8 @@ summary: >-
   - unit tests including a whole-payload identity-absence assertion
   - updated `docs/subsystems/usage-and-admin.md` and `docs/CohortUsageDataDictionary.md`
   - progress report
-- Progress report folder: `reports/development/plan-121-cloud-evidence-builder/`
-- Progress report file: `reports/development/plan-121-cloud-evidence-builder/progress.md`
+- Progress report folder: `reports/development/plan-121-cloud-evidence-builder-and-analyzer-identity/`
+- Progress report file: `reports/development/plan-121-cloud-evidence-builder-and-analyzer-identity/progress.md`
 
 ## Packet Summary
 

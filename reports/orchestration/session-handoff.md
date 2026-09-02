@@ -107,13 +107,23 @@ should update durable files rather than depend on this thread's conversational c
 Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
-**Board as of 2026-09-01:** `plan-120` went `delivered` → `in-progress` after a second review
-round. Its revised probe workflow (`739bf9e`, `ac5ea8f`) is accepted on the merits; the send-back
-is `reports/development/plan-120-gas-probe-kit/repair-01.md`, a report-completeness repair only —
-the advisor disposition record carries eleven acceptances and zero rejections. No code changes are
-in scope for that repair. `plan-118` is `in-progress` with its gate cleared. `plan-119` stays
-dependency-blocked behind it. `plan-121` is `ready` but still stops at its own gate (blank-name
-analyzer wording), which is the cheapest remaining unblock.
+**Board as of 2026-09-01:** `plan-120` is **complete** after three review rounds (accept →
+send-back on `repair-01` → accept). `plan-118` is `in-progress` with its gate cleared. `plan-119`
+stays dependency-blocked behind it. `plan-121` is `ready` but still stops at its own gate
+(blank-name analyzer wording) — the cheapest remaining unblock, and the only thing standing
+between the board and a safe second concurrent packet.
+
+**No second packet is dispatchable right now, and this is a scope-overlap fact rather than a
+choice:** `plan-116` lands counters in `src/core/levels.js`'s end-of-level path, and `plan-118` is
+concurrently migrating storage calls in that same file. Different functions, same file, so under
+commit discipline they must serialize. `plan-119` is blocked on `plan-118`; `plan-121` needs one
+owner decision. Do not start `plan-116` while `plan-118` is live.
+
+**Completion semantics, corrected.** An earlier revision of this file said `plan-120` would reach
+`complete` only once the owner had run the probes. That was wrong and would have misused the
+lifecycle: running the probes is explicitly outside the packet's scope, and Gate 1 / Gate 2 are
+tracked separately in `docs/open-questions.md`. A packet completes when its declared artifacts are
+delivered and verified, not when an out-of-scope owner action happens.
 
 **Pattern worth reusing, from the plan-120 revision:** when a measurement must leave the device but
 the raw reading is sensitive, export a *comparison* rather than a *value*. The probe reports origin

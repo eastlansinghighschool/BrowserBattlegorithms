@@ -74,7 +74,7 @@ gate.
   result instructions.
 - `public/integration-probe/nested-frame-child.html` — email-safe report, direct-storage receipt,
   separate storage attestations, safer capability controls, and cleanup/focus refinements.
-- `reports/development/plan-120-gas-probe-kit/directions.md` — durable owner/operator directions
+- `reports/development/plan-120-gas-probe-kit-and-integration-surface/directions.md` — durable owner/operator directions
   for GitHub Pages preparation, both gates, distributed student runs, and result return.
 - `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — removed exact
   origin fields from the tracked deidentified template and added email/chat intake rules.

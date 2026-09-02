@@ -31,7 +31,7 @@ claim. That is the honest posture and it is not a defect. Do not change it.
 
 ## The defect
 
-`reports/development/plan-120-gas-probe-kit/progress.md`, section **Advisor consultation disposition**.
+`reports/development/plan-120-gas-probe-kit-and-integration-surface/progress.md`, section **Advisor consultation disposition**.
 
 The table records **eleven recommendations and eleven acceptances, with no rejections and no
 independent-verification reasoning.** Under this repository's advisor-consultation convention, a

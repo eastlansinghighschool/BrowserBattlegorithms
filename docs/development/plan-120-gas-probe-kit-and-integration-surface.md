@@ -1,7 +1,8 @@
 ---
 id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
-status: in-progress
+status: complete
+resolution: "Probe kit delivered and orchestrator-verified over two review rounds: nested-frame and tenant-identity Apps Script probes, the public-origin child at plan-120-v1, the integrations/google-apps-script/ surface and its hygiene guardrail test, deidentified PLAN120_RESULT email/chat handoff, the probe-results template, and a durable owner run sheet (directions.md). Storage classification is provenance-gated: an uncertain or different-device pairing reports unknown rather than partitioned. Origin readings export as comparison status rather than value, ratified as a reusable Stage 1 pattern. repair-01 closed a report-completeness gap in the advisor disposition record. Running the probes is an owner action outside this packet; Gate 1 and Gate 2 remain open in docs/open-questions.md."
 depends_on: []
 gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
 summary: >-
@@ -32,14 +33,14 @@ summary: >-
   - `integrations/google-apps-script/probes/identity/` — tenant identity probe (server + page)
   - `public/integration-probe/nested-frame-child.html` — the nested-frame probe child page (gate option A, owner-ratified 2026-09-01)
   - `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — deidentified results template with an explicit falsifier line per measurement
-  - `reports/development/plan-120-gas-probe-kit/directions.md` — durable owner/operator run sheet and email/chat handoff workflow
+  - `reports/development/plan-120-gas-probe-kit-and-integration-surface/directions.md` — durable owner/operator run sheet and email/chat handoff workflow
   - `.gitignore` entries for GAS tooling state and deployment ids
   - a repository-hygiene unit test catching common committed deployment URLs/config files and
     preventing cross-imports; it is a backstop, not a complete secret scanner
   - `AGENTS.md` and `docs/ARCHITECTURE.md` updates describing the new surface
   - progress report
-- Progress report folder: `reports/development/plan-120-gas-probe-kit/`
-- Progress report file: `reports/development/plan-120-gas-probe-kit/progress.md`
+- Progress report folder: `reports/development/plan-120-gas-probe-kit-and-integration-surface/`
+- Progress report file: `reports/development/plan-120-gas-probe-kit-and-integration-surface/progress.md`
 
 ## Packet Summary
 
