@@ -4,135 +4,121 @@ Date: 2026-09-01
 
 ## Overall summary
 
-Implemented the authoring-only GAS probe kit and repository surface. Gate 1 now has a separate
-nested-frame Apps Script shell plus the public-origin child diagnostic page. Gate 2 has a separate
-tenant identity Apps Script page. The repository documents the owner-only deployment boundary,
-secrets hygiene, student-OU storage provenance, tiered identity run matrix, and deidentified-result
-workflow. No app runtime, game, level, Blockly, UI, or `src/` behavior changed, and no Google
-Workspace action was performed.
+Implemented the requested revision of the Plan 120 owner-run GAS probe workflow. The public child
+page remains a standalone diagnostic shipped by the repository's existing GitHub Pages build at
+`/integration-probe/nested-frame-child.html`; no separate hosting provider or p5.js surface is
+required. The GAS shell and identity probe remain quarantined under `integrations/` and outside the
+Vite build graph.
 
-The three packet pre-mutation gates were confirmed resolved before editing: GAS source is under
-`integrations/google-apps-script/`; the child is the owner-ratified
-`public/integration-probe/nested-frame-child.html`; and tracked results are deidentified while
-raw troubleshooting output belongs under ignored `local/`.
+The handoff is now designed for distributed runs. The pages emit an allowlisted `PLAN120_RESULT`
+block that an operator or student can paste into an email or chat message. It contains controlled
+labels, statuses, viewport dimensions where relevant, and a random run id; it excludes exact
+origins, URLs, sentinels, names, email addresses, expected domains, raw settings, and account ids.
+The exact origin and identity values remain visible only on the local page for the operator's
+comparison.
 
-## Files changed
+The Gate 1 storage workflow now requires separate localStorage and IndexedDB direct controls and a
+short versioned receipt before framed classification. The directions require the direct and framed
+steps to use the same device, browser, profile, and child URL with no cleanup between them; direct
+and framed cleanup happen separately after the run. Gate 2 now uses fixed metadata/settings choices
+and an explicit intended-viewer match control, including a wrong-account/same-domain check.
 
-- `integrations/google-apps-script/README.md`
-- `integrations/google-apps-script/clasp.json.example`
-- `integrations/google-apps-script/probes/nested-frame/` — manifest, `Code.gs`, `Shell.html`,
-  and probe README
-- `integrations/google-apps-script/probes/identity/` — manifest, `Code.gs`, `Page.html`, and
-  probe README
-- `public/integration-probe/nested-frame-child.html`
-- `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md`
-- `tests/unit/integration-surface-hygiene.test.js`
-- `.gitignore`, `package.json`, `AGENTS.md`, and `docs/ARCHITECTURE.md`
+No app runtime, game, level, Blockly, production integration, Google Workspace deployment, or
+classroom data changed. The implementation change is committed as `739bf9e`.
 
-## Artifacts and behavior
+## Advisor consultation disposition
 
-The nested-frame child reports its own origin, the parent origin observed through referrer and
-`postMessage`, the directly readable child iframe sandbox attribute, and an honest unknown for
-the inherited GAS effective token set when it cannot be introspected. It provides independent
-direct-click and delayed blob-download attempts, operator-confirmed dialog and speech results,
-keyboard boundary instructions, viewport dimensions, copy-to-clipboard with selectable-textarea
-fallback, and cleanup actions.
+A requested read-only Sol consultation was dispatched as a projectless task with requested model
+`gpt-5.6-sol` and high reasoning effort. It completed in approximately five minutes and made no
+repository writes. The advisor's final message identified its model as `GPT-5 (Codex)`, so the
+literal Sol model identity was not independently confirmed; this is recorded as advisory input,
+not as a provider-capability claim. The repository state was checked after the consultation before
+the edits below.
 
-Storage is independently measured for localStorage and IndexedDB. A direct top-level sentinel
-control is required before the framed page can classify the result. The child keeps partitioned,
-unpartitioned, blocked, and unknown distinct; it requires the framed different-sentinel round-trip
-for partitioned, treats property/open or round-trip errors as blocked, and leaves incomplete or
-contradictory comparisons unknown. The page does not fetch, beacon, log, or send probe results.
+| Advisor recommendation | Disposition | Result |
+| --- | --- | --- |
+| Replace raw JSON copying with an allowlisted email-safe report | Accepted | Both probes emit a `PLAN120_RESULT` block and provide a selectable textarea fallback. |
+| Replace the blind direct-storage confirmation with separate controls and a receipt | Accepted | localStorage and IndexedDB are independently attested; the framed page verifies probe version, random run id, and both statuses. |
+| Require same device/browser/profile and no cleanup between direct and framed storage | Accepted | Fixed context choice, receipt workflow, and durable directions make this an explicit condition; uncertain context reports storage as `unknown`. |
+| Keep exact origins local and report only comparison statuses | Accepted | The page shows local context details, while the copied result contains only controlled origin status. |
+| Add a deidentified Gate 2 report | Accepted | Email-safe identity output excludes email, domain, URL, raw settings, and account identifiers. |
+| Add an intended-viewer match control | Accepted | Gate 2 records pass/fail/unknown without asking the operator to type an email. |
+| Replace free-text deployment settings with fixed choices | Accepted | Execute-as and access are controlled selects; the expected domain remains a private on-page input. |
+| Validate HTTPS, expected pathname, event source/origin, and probe version in the shell | Accepted | The shell rejects invalid path/protocol, null or mismatched origins, and version mismatches. The child also rejects shell/version mismatches. |
+| Add durable operator directions and student/email handoff rules | Accepted | `directions.md` is now the owner/operator run sheet in this report folder. |
+| Improve labels, focus retention, captions, overflow, fixed prompt text, and cleanup wording | Accepted | Action-specific observation buttons, focus restoration, table caption/overflow, fixed `TEST` prompt wording, and context-specific cleanup are implemented. |
+| Preserve isolation, no server result writes, random sentinels, and separate Gate 2 deployment | Accepted | Existing boundaries remain intact. |
 
-The identity probe evaluates `Session.getActiveUser().getEmail()` and
-`Session.getEffectiveUser().getEmail()` server-side and renders them only to the viewer. Expected
-domain and deployment settings are entered for the current run and are not saved. Blank,
-wrong-domain, or ambiguous active identity is stated as a hard stop for account-attributed cloud
-mode. Tier C rename/disabled-account checks are explicitly deferrable and non-blocking.
+Consultation cost/disposition: one projectless read-only consultation, no advisor mutation authority,
+and no recommendation was allowed to override the packet, privacy boundary, or owner deployment
+gate.
 
-## Owner operator instructions
+## Files changed in this revision
 
-These are the shortest run instructions; the owner does not need to infer deployment settings from
-the source packet.
+- `docs/development/plan-120-gas-probe-kit-and-integration-surface.md` — aligned the copy contract
+  with the deidentified email/chat result block and added the durable directions artifact.
+- `integrations/google-apps-script/README.md` — documented GitHub Pages child hosting, safe result
+  copying, the same-device storage receipt, and the post-sign-off owner push handoff.
+- `integrations/google-apps-script/probes/nested-frame/Shell.html` — strict HTTPS/path/origin/
+  source/version handshake validation.
+- `integrations/google-apps-script/probes/nested-frame/README.md` — revised receipt, no-cleanup,
+  origin-status, and email-safe workflows.
+- `integrations/google-apps-script/probes/identity/Page.html` — fixed metadata controls, intended
+  viewer check, and allowlisted identity report.
+- `integrations/google-apps-script/probes/identity/README.md` — revised distributed-run and safe
+  result instructions.
+- `public/integration-probe/nested-frame-child.html` — email-safe report, direct-storage receipt,
+  separate storage attestations, safer capability controls, and cleanup/focus refinements.
+- `reports/development/plan-120-gas-probe-kit/directions.md` — durable owner/operator directions
+  for GitHub Pages preparation, both gates, distributed student runs, and result return.
+- `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — removed exact
+  origin fields from the tracked deidentified template and added email/chat intake rules.
+- `tests/unit/integration-surface-hygiene.test.js` — guards the report, receipt, origin validation,
+  and identity-viewer controls.
 
-1. Build and publish the current `dist/` through the existing owner-controlled static-site
-   process so the child is reachable at the public-origin path
-   `/integration-probe/nested-frame-child.html`. Do not add the child to an app navigation link.
-2. Create/deploy the **nested-frame** probe as its own Apps Script web app. Set **Execute as** to
-   the deploying user and **Who has access** to anyone in the Workspace domain. Open its shell,
-   paste the exact public child URL, and choose **Load child in frame**. Gate 1 needs no student
-   account.
-3. Open that same exact child URL top-level on the measurement device. Choose **Direct top-level
-   storage control**, then return to the GAS shell and load that exact URL. If the child asks for
-   confirmation that direct control completed, confirm only after the top-level localStorage and
-   IndexedDB controls succeeded.
-4. On a representative student-OU managed device (record device class and OU, or `unknown OU`),
-   run the framed storage controls. Complete the direct/delayed download, confirm, prompt,
-   speech, keyboard tab-in/tab-out, and viewport observations. Repeat the origin reading after a
-   reload, with a second signed-in user, with a new version of the same deployment, and with a new
-   deployment.
-5. Copy the child JSON, or select the textarea if clipboard access is blocked. Put only aggregate
-   pass/fail/unknown values into
-   `reports/orchestration/gas-integration-commentary/probe-results/`; keep any raw output under
-   ignored `local/`. Use both direct and framed cleanup controls.
-6. Create/deploy the **identity** probe as a separate Apps Script web app with the same intended
-   execute-as and domain-access settings. Open it as the teacher/deployer, then run Tier A with
-   one non-teacher synthetic domain account if available. A real student may substitute only under
-   the safeguards in the README: pass/fail only in tracked records, normal private sign-in, and
-   informed participation.
-7. Run Tier B with the teacher plus one other domain account in one Chrome profile, including
-   account switching mid-session. Leave Tier C (renamed and disabled accounts) as a non-blocking
-   pre-pilot checklist item unless IT provisions test accounts. Never record or report an email.
-8. Fill out `TEMPLATE.md`. A blank or ambiguous server-derived active identity stops
-   account-attributed cloud mode; do not substitute a client-provided email.
+## Validation
 
-## Commands run and results
-
-- `node scripts/dev/plan-status.js check 120` — passed: `RUNNABLE: plan-120 is ready to implement`.
-- `node --test tests/unit/integration-surface-hygiene.test.js` — passed, 5/5 tests.
-- `npm test` — passed, 559/559 tests.
+- `node --test tests/unit/integration-surface-hygiene.test.js` — passed, 6/6.
+- `npm test` — passed, 560/560.
 - `npm run build` — passed. `dist/integration-probe/nested-frame-child.html` exists and
   `dist/integrations/` does not. The build retains the pre-existing Blockly dynamic/static import
   and large-chunk warnings.
-- Inline browser-script compile check with `new Function(...)` — passed for the public child and
-  GAS shell; both Apps Script manifests parsed as JSON.
-- `git diff --check` — passed (only Git's normal LF-to-CRLF warnings were reported for Windows
-  working-tree files).
+- Inline browser-script compilation — passed for the public child, GAS shell, and identity page
+  after replacing the Apps Script template expression with a test object.
+- Headless browser smoke check against the local Vite page — passed: child loaded, no page errors,
+  email-safe report rendered, direct storage receipt generated with separate statuses, and cleanup
+  completed.
+- Both Apps Script manifests parsed as JSON.
+- `git diff --check` — passed; only normal Windows LF-to-CRLF warnings were reported.
+- `node scripts/dev/plan-status.js check 120` — returned `BLOCKED: plan-120 has status "delivered"`.
+  This is the expected status-tool guard for a delivered packet, not a validation failure or a
+  request to change packet status.
 
-## Guardrail proof
+The earlier Plan 120 hygiene proof remains valid: the guard catches a temporary fake deployment
+URL, and the fixture was removed before the clean run. No deployment URL, real `.clasp.json`,
+identity value, roster data, or class data was added.
 
-The hygiene test was run clean and passed. A temporary fake
-`script.google.com/macros/s/FAKE_DEPLOYMENT_ID/exec` literal was inserted into a probe README;
-the same test then failed on that file as intended. The temporary fixture was removed, and the
-clean test passed again. Positive and negative fixtures cover deployment URLs, real `.clasp.json`
-versus `clasp.json.example`, `src/` imports/requires in both directions, and the child `noindex`
-meta tag.
+## Owner next step and boundaries
 
-## Consultation posture
-
-**Orchestrator-gate-only (Branch C):** no advisor consultation ran. This hosted thread could not
-confidently match itself to an advisor-capable provider entry, so it failed closed rather than
-claiming a higher-tier review. The implementation was validated by the packet checks, unit suite,
-build, source-boundary scan, and owner review gate.
-
-## Problems encountered
-
-The first sandboxed Git staging/commit attempt could not create `.git/index.lock` and returned
-`Permission denied`; inspection confirmed that no lock file existed. The narrow approved Git
-metadata path was then used to stage and commit the implementation. No lock file was deleted or
-modified.
+After orchestrator sign-off, the owner may push the approved commit(s) to `main`. The existing
+`.github/workflows/deploy-pages.yml` is configured to run on pushes to `main`; it installs
+dependencies, runs tests and browser checks, builds the site, and deploys `dist/` to GitHub Pages.
+The owner should wait for that workflow to succeed and verify the live child page and displayed
+`plan-120-v1` version before deploying/running the GAS probes. This agent did not push or deploy.
 
 ## Remaining risks and follow-ups
 
-- The probes have not been deployed or run against Google Workspace by this agent. Origin
-  stability, inherited sandbox behavior, student-OU storage policy, and tenant identity remain
-  external measurements for the owner.
-- Download, modal, speech, and keyboard outcomes require human observation because browser script
-  cannot prove the visible/audible result. The JSON intentionally leaves them unknown until the
-  operator records the observation.
-- Apps Script editor/deployment UI wording can vary; the README specifies the required semantic
-  settings, and the identity page provides an operator-entered settings echo rather than pretending
-  to read deployment metadata.
+- Neither probe has been deployed or run against Google Workspace by this agent. Real origin
+  stability, inherited GAS sandbox behavior, student-OU storage policy, and tenant identity remain
+  owner-run measurements.
+- The browser check validated the standalone child locally, not the cross-origin GAS iframe
+  handshake. The shell/child handshake still needs a real Apps Script deployment and HTTPS Pages
+  URL.
+- Download, modal, speech, and keyboard outcomes still require human observation; JavaScript cannot
+  prove that a download shelf, dialog, audio output, or focus transition was perceived.
+- Gate 2 Tier C renamed/disabled-account checks remain deferrable and require IT-provisioned test
+  accounts. A blank, wrong, outside-domain, or ambiguous active identity remains a hard stop for
+  account-attributed cloud mode.
 - Build output retains unrelated existing warnings about Blockly chunking and chunk size.
 
 Ready for orchestrator review: yes
