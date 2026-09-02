@@ -70,3 +70,20 @@ test("nested-frame child is noindex", () => {
   assert.equal(hasNoindex('<meta name="robots" content="index">'), false);
   assert.equal(hasNoindex('<meta name="robots" content="noindex">'), true);
 });
+
+test("probe reports are explicitly deidentified and storage pairing is receipt-gated", () => {
+  const child = readFileSync(resolve(root, "public/integration-probe/nested-frame-child.html"), "utf8");
+  const shell = readFileSync(resolve(root, "integrations/google-apps-script/probes/nested-frame/Shell.html"), "utf8");
+  const identity = readFileSync(resolve(root, "integrations/google-apps-script/probes/identity/Page.html"), "utf8");
+  assert.match(child, /Copy email-safe report/);
+  assert.match(child, /BBA_PLAN120_DIRECT_STORAGE_RECEIPT/);
+  assert.match(child, /verify-direct-receipt/);
+  assert.match(child, /raw_origins_sentinels_and_identifiers=excluded/);
+  assert.doesNotMatch(child, /id="copy-json"|id="json-output"/);
+  assert.match(shell, /EXPECTED_CHILD_PATH/);
+  assert.match(shell, /event\.origin === 'null'/);
+  assert.match(shell, /event\.origin !== expectedChildOrigin/);
+  assert.match(identity, /intended-viewer-match/);
+  assert.match(identity, /raw_identity_domain_settings_and_identifiers=excluded/);
+  assert.match(identity, /Copy email-safe report/);
+});

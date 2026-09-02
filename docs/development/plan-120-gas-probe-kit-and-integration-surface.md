@@ -32,6 +32,7 @@ summary: >-
   - `integrations/google-apps-script/probes/identity/` — tenant identity probe (server + page)
   - `public/integration-probe/nested-frame-child.html` — the nested-frame probe child page (gate option A, owner-ratified 2026-09-01)
   - `reports/orchestration/gas-integration-commentary/probe-results/TEMPLATE.md` — deidentified results template with an explicit falsifier line per measurement
+  - `reports/development/plan-120-gas-probe-kit/directions.md` — durable owner/operator run sheet and email/chat handoff workflow
   - `.gitignore` entries for GAS tooling state and deployment ids
   - a repository-hygiene unit test catching common committed deployment URLs/config files and
     preventing cross-imports; it is a backstop, not a complete secret scanner
@@ -168,7 +169,7 @@ Conventions this packet establishes, and that every later GAS packet inherits:
 
 ### R1 — Nested-frame capability probe (Gate 1)
 
-Required behavior: a GAS HtmlService page that frames the child page and displays, from *inside the nested child*, every measurement below — on screen, in a copyable JSON block, with each result labeled pass / fail / unknown.
+Required behavior: a GAS HtmlService page that frames the child page and displays, from *inside the nested child*, every measurement below — on screen and in a copyable, allowlisted `PLAN120_RESULT` block suitable for email or chat, with each result labeled pass / fail / unknown where applicable. Exact origins, sentinels, URLs, names, emails, and account identifiers must remain local to the page and must not be part of the copied handoff.
 
 Measurements (from `review-claude.md` F13; do not drop any):
 
@@ -204,6 +205,7 @@ Constraints:
 - The child transmits nothing anywhere. It renders results locally and offers copy-to-clipboard. No fetch, no beacon, no logging to the server.
 - The shell takes the child URL at runtime (a form field or Script Property), never hard-coded into a tracked file.
 - The child page carries `<meta name="robots" content="noindex">` and a visible one-line statement that it is a diagnostic page that stores and sends nothing.
+- The child provides a selectable email-safe report fallback; raw diagnostic JSON is not an email or chat handoff artifact.
 - Failures must be reported as failures, not thrown. Every measurement is individually wrapped; one blocked API must not blank the page.
 
 Edge cases: the child fails to load at all (the shell must say so rather than showing an empty frame); a measurement is inconclusive (report `unknown`, never guess); the sandbox blocks the copy-to-clipboard path itself (provide a selectable `<textarea>` fallback).
@@ -309,7 +311,7 @@ Deployment commands are deliberately **not** listed. The implementing agent does
 - [ ] `npm test` passes; the hygiene test is registered in `package.json`.
 - [ ] The hygiene test fails when a fake deployment URL is temporarily added (prove the guardrail works, then revert — record this in the progress report).
 - [ ] No file under `integrations/` imports from `src/`, and no `src/` file imports from `integrations/`.
-- [ ] Every F13 measurement appears in the probe and in the results template, with a falsifier stated for each.
+- [ ] Every F13 measurement appears in the probe and in the results template, with a falsifier stated for each; the probe's copied handoff is the deidentified `PLAN120_RESULT` block.
 - [ ] Each storage API has a successful top-level sentinel control before any partitioned /
   unpartitioned conclusion; incomplete comparisons report unknown. Partitioned, unpartitioned,
   blocked, and unknown remain distinct, and the template captures device class and OU.

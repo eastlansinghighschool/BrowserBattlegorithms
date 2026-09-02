@@ -11,7 +11,10 @@ protocol, an outbox, Drive storage, Sheets, roster checks, or an app account gat
 The implementing agent does not deploy, publish, install `clasp`, sign into Google, or run either
 probe against Google Workspace. Only the owner performs those actions. The public child page is
 plain static HTML/JS and is copied by Vite to `dist/integration-probe/`; it is not linked by the
-game. The child stores only temporary random browser sentinels and sends nothing over the network.
+game. The child stores only temporary random browser sentinels and sends no results to a server.
+It is intended to be served by the repository's existing GitHub Pages deployment at
+`/integration-probe/nested-frame-child.html`, not by a separate arbitrary-hosting provider or a
+p5.js project.
 
 ## Secrets and privacy hygiene
 
@@ -31,17 +34,22 @@ secret scanner.
 ## Gate 1 — nested-frame capability probe
 
 Source: `probes/nested-frame/`. Deploy this as its own web app with **execute as the deploying
-user** and **who has access: anyone in the Workspace domain**. Gate 1 uses no student account.
+user** and **who has access: anyone in the Workspace domain**. Gate 1 reads no identity and uses no
+student account, although its storage-policy run may be performed on a student-OU device.
 Open the deployed shell, paste the exact public URL of
 `/integration-probe/nested-frame-child.html`, and load it. The shell supplies that URL at runtime;
-it is never hard-coded in tracked source. Use the child’s copyable JSON or its selectable textarea
-fallback, then deidentify the results before tracking them.
+it is never hard-coded in tracked source. Use the child’s **Copy email-safe report** control; it
+emits an allowlisted block suitable for an email or chat message and excludes exact origins,
+sentinels, URLs, names, emails, and account identifiers. Exact origin readings remain visible on
+the page for local comparison only.
 
 The child must first be opened top-level at the exact URL and run **Direct top-level storage
-control**. Then load that exact URL in the GAS shell. Run on a representative student-OU managed
-device, recording the device class and OU (or `unknown OU`) alongside each storage result. A
-teacher-device result does not establish student-device policy behavior. Use both cleanup controls
-when finished.
+control**. Copy the short direct-control receipt, then load that exact URL in the GAS shell on the
+same device, browser, and profile. Paste and verify the receipt before interpreting framed storage;
+do not clean up between the direct and framed steps. Run on a representative student-OU managed
+device, recording only the fixed device class and OU class (or `unknown OU`) alongside each
+storage result. A teacher-device result does not establish student-device policy behavior. Clean
+the direct and framed contexts separately after the complete run.
 
 Record the child origin across all four conditions: reload; a second signed-in user; a new version
 of the same deployment; and a new deployment. One origin reading proves nothing. The probe reports
@@ -52,7 +60,8 @@ individual capability observations are the evidence.
 Use the operator confirmation buttons for direct and delayed blob downloads, `confirm()`,
 `prompt()`, and speech. A JavaScript call that returns without throwing cannot prove a browser
 download shelf, dialog, or audible speech was actually present. Also complete the keyboard
-tab-in/tab-out check and record the numeric inner viewport.
+tab-in/tab-out check and record the numeric inner viewport. Copy only the email-safe report; do
+not email screenshots, raw JSON, exact origins, deployment URLs, sentinels, or displayed identity.
 
 Storage outcomes are independent:
 
@@ -110,4 +119,7 @@ app, choose the deploying user for **Execute as**, and choose **Anyone in the do
 has access**. R1 needs only the owner; R2 then needs the owner plus the selected Tier A/B account.
 
 Deployment URLs are entered into the browser or deployment UI only. They are never recorded in
-tracked source or the deidentified results template.
+tracked source or the deidentified results template. After orchestrator sign-off, the owner may
+push the approved repository commits to `main`; the existing GitHub Pages workflow then runs its
+tests/build and publishes the child path. Wait for that workflow to finish and verify the displayed
+probe version before starting owner-run GAS measurements. This agent does not push.

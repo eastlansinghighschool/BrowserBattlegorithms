@@ -10,11 +10,16 @@
     section { background: white; border: 1px solid #ccd4e0; border-radius: .6rem; padding: 1rem; margin-bottom: 1rem; }
     label { display: block; font-weight: 650; margin: .7rem 0 .3rem; }
     input { box-sizing: border-box; width: 100%; max-width: 32rem; padding: .55rem; font: inherit; }
+    select { box-sizing: border-box; width: 100%; max-width: 32rem; padding: .55rem; font: inherit; }
     button { padding: .55rem .8rem; font: inherit; }
     dt { font-weight: 700; margin-top: .7rem; }
     dd { margin-left: 0; overflow-wrap: anywhere; }
     .warning { border-left: 4px solid #b42318; padding-left: .75rem; }
     .note { color: #43516a; }
+    .metadata-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: .8rem; }
+    .metadata-grid label { margin: 0; }
+    textarea { box-sizing: border-box; width: 100%; min-height: 15rem; font: 12px/1.35 ui-monospace, monospace; }
+    .report-status { min-height: 1.5em; }
   </style>
 </head>
 <body>
@@ -25,42 +30,127 @@
     <dl>
       <dt>Active user nonblank?</dt><dd id="active-nonblank"></dd>
       <dt>Active user email (do not copy into a tracked report)</dt><dd id="active-email"></dd>
-      <dt>Effective user email</dt><dd id="effective-email"></dd>
+      <dt>Effective user email (do not copy into a tracked report)</dt><dd id="effective-email"></dd>
       <dt>Read status</dt><dd id="read-status"></dd>
     </dl>
   </section>
   <section>
-    <h2>Operator-entered deployment settings</h2>
-    <p class="note">These fields are not read from Google and are not saved. Enter the settings shown in the deployment UI for this run.</p>
-    <label for="expected-domain">Expected Workspace domain</label>
+    <h2>Run metadata and operator checks</h2>
+    <p class="note">These controls are not read from Google and are not saved. Use fixed choices for the report. The expected domain remains a private on-page comparison value and is never copied into the report.</p>
+    <div class="metadata-grid">
+      <label for="account-role">Account role
+        <select id="account-role">
+          <option value="teacher-deployer">Teacher / deploying account</option>
+          <option value="synthetic-non-teacher">Synthetic non-teacher account</option>
+          <option value="real-student">Real student account</option>
+          <option value="second-domain-account">Second account in the domain</option>
+          <option value="unknown-role">Unknown role</option>
+        </select>
+      </label>
+      <label for="test-condition">Test condition
+        <select id="test-condition">
+          <option value="tier-a-teacher">Tier A — teacher/deployer</option>
+          <option value="tier-a-non-teacher">Tier A — non-teacher</option>
+          <option value="tier-b-two-account">Tier B — two-account comparison</option>
+          <option value="tier-b-account-switch">Tier B — account switch</option>
+          <option value="tier-c-renamed">Tier C — renamed or changed account</option>
+          <option value="tier-c-disabled">Tier C — disabled or unavailable account</option>
+          <option value="unknown-condition">Unknown condition</option>
+        </select>
+      </label>
+      <label for="intended-viewer-match">Does displayed active identity match the intended viewer?
+        <select id="intended-viewer-match">
+          <option value="unknown">Unknown / not checked</option>
+          <option value="pass">Yes — matches</option>
+          <option value="fail">No — does not match</option>
+        </select>
+      </label>
+    </div>
+    <label for="expected-domain">Expected Workspace domain (private on-page check)</label>
     <input id="expected-domain" type="text" autocomplete="off" placeholder="school.example">
-    <label for="execute-as">Execute as</label>
-    <input id="execute-as" type="text" autocomplete="off" placeholder="Me (deploying user)">
-    <label for="access">Who has access</label>
-    <input id="access" type="text" autocomplete="off" placeholder="Anyone in school.example">
-    <p><button id="evaluate" type="button">Evaluate domain match</button></p>
+    <label for="execute-as">Execute as (fixed choice)</label>
+    <select id="execute-as">
+      <option value="deploying-user">Deploying user</option>
+      <option value="accessing-user">Accessing user</option>
+      <option value="unknown">Unknown</option>
+    </select>
+    <label for="access">Who has access (fixed choice)</label>
+    <select id="access">
+      <option value="workspace-domain">Anyone in the Workspace domain</option>
+      <option value="anyone">Anyone</option>
+      <option value="restricted">Restricted</option>
+      <option value="unknown">Unknown</option>
+    </select>
+    <p><button id="evaluate" type="button">Evaluate private domain check</button></p>
     <dl>
       <dt>Expected-domain match</dt><dd id="domain-match">unknown — enter the expected domain and evaluate</dd>
-      <dt>Settings echo</dt><dd id="settings-echo">not entered</dd>
+      <dt>Settings echo</dt><dd id="settings-echo">not evaluated</dd>
+      <dt>Active/effective relationship</dt><dd id="identity-relationship"></dd>
     </dl>
+  </section>
+  <section>
+    <h2>Email-safe result</h2>
+    <p class="note">This report is allowlisted for email or chat. It excludes email addresses, the expected domain, raw settings, URLs, and account identifiers.</p>
+    <button id="copy-report" type="button">Copy email-safe report</button>
+    <p id="report-status" class="report-status" role="status" aria-live="polite"></p>
+    <textarea id="report-output" readonly aria-label="Email-safe identity report"></textarea>
   </section>
   <p><strong>Hard fail:</strong> blank or ambiguous active identity stops account-attributed cloud mode. Never replace server-derived identity with an email supplied by the browser.</p>
   <script>
     const serverIdentity = <?!= JSON.stringify(identity) ?>;
+    const VERSION = 'plan-120-v1';
+    const runId = (() => { try { return `run-${crypto.getRandomValues(new Uint32Array(2)).join('-')}`; } catch (_) { return `run-fallback-${Date.now()}`; } })();
+    let domainStatus = 'unknown';
     const text = (id, value) => { document.getElementById(id).textContent = value; };
-    text('active-nonblank', serverIdentity.activeNonblank ? 'pass' : 'fail');
+    const activeReadStatus = serverIdentity.activeReadError ? 'unknown' : 'pass';
+    const effectiveReadStatus = serverIdentity.effectiveReadError ? 'unknown' : 'pass';
+    const activeNonblankStatus = activeReadStatus === 'unknown' ? 'unknown' : serverIdentity.activeNonblank ? 'pass' : 'fail';
+    const effectiveNonblankStatus = effectiveReadStatus === 'unknown' ? 'unknown' : serverIdentity.effectiveEmail ? 'pass' : 'fail';
+    const relationship = (() => {
+      if (activeReadStatus === 'unknown' || effectiveReadStatus === 'unknown') return 'unavailable';
+      if (!serverIdentity.activeEmail || !serverIdentity.effectiveEmail) return 'blank';
+      return serverIdentity.activeEmail === serverIdentity.effectiveEmail ? 'same' : 'different';
+    })();
+    const emailSafeReport = () => [
+      'PLAN120_RESULT',
+      'gate=2',
+      `probe_version=${VERSION}`,
+      `run_id=${runId}`,
+      `account_role=${document.getElementById('account-role').value}`,
+      `condition=${document.getElementById('test-condition').value}`,
+      `active_identity_nonblank=${activeNonblankStatus}`,
+      `active_identity_read=${activeReadStatus}`,
+      `intended_viewer_match=${document.getElementById('intended-viewer-match').value}`,
+      `expected_domain_match=${domainStatus}`,
+      `effective_identity_nonblank=${effectiveNonblankStatus}`,
+      `effective_identity_read=${effectiveReadStatus}`,
+      `active_effective_relationship=${relationship}`,
+      `execute_as=${document.getElementById('execute-as').value}`,
+      `access=${document.getElementById('access').value}`,
+      'raw_identity_domain_settings_and_identifiers=excluded'
+    ].join('\n');
+    const refreshReport = () => { document.getElementById('report-output').value = emailSafeReport(); };
+    text('active-nonblank', activeNonblankStatus);
     text('active-email', serverIdentity.activeEmail || '(blank)');
     text('effective-email', serverIdentity.effectiveEmail || '(blank)');
     text('read-status', serverIdentity.activeReadError || serverIdentity.effectiveReadError ? 'one or more values unavailable' : 'read completed');
+    text('identity-relationship', relationship);
     document.getElementById('evaluate').addEventListener('click', () => {
       const domain = document.getElementById('expected-domain').value.trim().toLowerCase().replace(/^@/, '');
-      const email = serverIdentity.activeEmail.toLowerCase();
+      const email = (serverIdentity.activeEmail || '').toLowerCase();
       const match = Boolean(domain && email && email.endsWith(`@${domain}`));
-      text('domain-match', domain ? (match ? 'pass' : 'fail') : 'unknown — enter the expected domain');
-      const executeAs = document.getElementById('execute-as').value.trim() || '(blank)';
-      const access = document.getElementById('access').value.trim() || '(blank)';
-      text('settings-echo', `execute as: ${executeAs}; who has access: ${access}`);
+      domainStatus = !domain || activeReadStatus === 'unknown' ? 'unknown' : match ? 'pass' : 'fail';
+      text('domain-match', domainStatus === 'unknown' ? 'unknown — domain or active identity unavailable' : domainStatus);
+      text('settings-echo', `execute as: ${document.getElementById('execute-as').value}; who has access: ${document.getElementById('access').value}`);
+      refreshReport();
     });
+    ['account-role', 'test-condition', 'intended-viewer-match', 'execute-as', 'access'].forEach((id) => document.getElementById(id).addEventListener('change', refreshReport));
+    document.getElementById('copy-report').addEventListener('click', async () => {
+      const output = document.getElementById('report-output');
+      try { await navigator.clipboard.writeText(output.value); text('report-status', 'Email-safe report copied.'); }
+      catch (_) { output.focus(); output.select(); text('report-status', 'Clipboard unavailable; the report is selected for manual copy.'); }
+    });
+    refreshReport();
   </script>
 </body>
 </html>

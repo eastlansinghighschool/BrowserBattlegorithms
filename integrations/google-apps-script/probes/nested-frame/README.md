@@ -3,7 +3,9 @@
 
 This probe is a disposable Apps Script shell around the exact public-origin child page at
 `/integration-probe/nested-frame-child.html`. It is a measurement tool, not the production GAS
-shell. It has no Drive, Sheets, Script Properties, fetch, beacon, or server-side result path.
+shell. It has no Drive, Sheets, Script Properties, fetch, beacon, or server-side result path. The
+child is prepared by the repository's existing GitHub Pages workflow; it is not a separately hosted
+HTML file and does not need a p5.js surface.
 
 ## Run
 
@@ -17,26 +19,35 @@ shell. It has no Drive, Sheets, Script Properties, fetch, beacon, or server-side
    child-load result as **fail** and investigate the URL/deployment separately; do not infer that
    browser APIs passed from an empty frame.
 5. Run **Direct top-level storage control** on the child URL itself before loading that exact URL
-   in the shell. It writes random sentinels to localStorage and IndexedDB. Then load the same URL
-   in the shell and use the framed controls. A missing bucket without a successful direct control
-   is **unknown**, not partitioned.
-6. Use the individual operator confirmation controls for dialogs, speech, and downloads. A call
+   in the shell. It writes random sentinels to localStorage and IndexedDB, then displays a short
+   direct-control receipt. Copy that receipt, load the same URL in the shell, paste it into the
+   framed page, and choose **Verify direct-control receipt**. The direct and framed steps must use
+   the same device, browser, and profile, with no cleanup between them. A missing bucket without a
+   verified receipt is **unknown**, not partitioned. A receipt is an operator attestation, not a
+   cryptographic proof, so do not use it to combine different devices or profiles.
+6. Use the individual action-specific observation controls for dialogs, speech, and downloads. A call
    that returned without throwing is not proof that the user-visible action happened.
 7. Record the device class and organizational unit with each storage result. Run storage on a
    representative student-OU managed device, such as a spare Chromebook in a student session,
    not only on a teacher device. No student needs to be present and the probe sends nothing.
-8. Use **Copy JSON**. If clipboard access is blocked, select and copy the visible textarea. Put
-   only deidentified aggregates in `reports/orchestration/gas-integration-commentary/probe-results/`;
-   raw console/JSON output, if retained for troubleshooting, belongs under ignored `local/`.
-9. Use the cleanup buttons in both the direct and framed contexts after the run.
+8. Choose the fixed run condition, device class, OU class, and origin-comparison status. Use
+   **Copy email-safe report**. If clipboard access is blocked, select and copy that visible
+   textarea. It is suitable for a student to paste into an email or this chat: it contains only
+   statuses, controlled labels, a random run id, and viewport dimensions. Never email screenshots,
+   raw JSON, exact origins, URLs, sentinels, names, emails, or account identifiers.
+9. After the framed measurements and report copy are complete, clean the current framed context.
+   Return to the exact top-level child URL and clean that context separately. Cleanup before the
+   framed comparison invalidates the storage classification.
 
 ## What to record and what it falsifies
 
-The child reports the child origin and the parent origin observed through both `document.referrer`
+The child displays the child origin and the parent origin observed through both `document.referrer`
 and the parent `postMessage` origin. Repeat the origin reading across all four conditions: reload,
 a second signed-in user, a new version of the same deployment, and a new deployment. One reading
-proves nothing. An unstable or unverifiable origin falsifies the current exact-origin parent/
-child-authentication assumption and requires an owner decision before protocol work.
+proves nothing. Use the fixed origin-comparison choice in the email-safe report; do not copy exact
+origins into email, chat, or tracked files. An unstable or unverifiable origin falsifies the current
+exact-origin parent/child-authentication assumption and requires an owner decision before protocol
+work.
 
 The shell reports its directly readable child-iframe `sandbox` attribute. The child reports only
 what it can introspect; the inherited GAS HtmlService effective token set is explicitly unknown
@@ -55,13 +66,16 @@ absent in the frame; and a different framed sentinel that round-trips. Unpartiti
 direct sentinel to be visible in the frame. Property/open errors or failed round trips are blocked.
 Contradictory or incomplete runs are unknown. Partitioned is expected and is not a failure; blocked
 is the F7 / Plan 118 condition and may require a student-domain policy question. A storage result
-without device class and OU provenance is not evidence.
+without device class, OU class, verified same-device receipt, and no-cleanup sequence is not
+evidence.
 
 ## Owner deployment notes
 
 The child URL is entered at runtime in `Shell.html`; no deployment URL is tracked here. Keep the
 real `.clasp.json` local and never commit it. This probe is intentionally separate from the
-identity probe so the owner can run Gate 1 without scheduling a non-teacher account.
+identity probe so the owner can run Gate 1 without reading an identity or requiring a student
+account, while still using a student-OU device when that policy behavior is the condition under
+test.
 
 ## One deliberate exception, recorded so it is not copied forward
 

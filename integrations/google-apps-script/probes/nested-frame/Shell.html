@@ -42,6 +42,8 @@
       const urlInput = document.getElementById('child-url');
       const frame = document.getElementById('probe-frame');
       const frameStatus = document.getElementById('frame-status');
+      const SHELL_VERSION = 'plan-120-v1';
+      const EXPECTED_CHILD_PATH = '/integration-probe/nested-frame-child.html';
       let handshakeTimer;
       let loadedUrl = '';
 
@@ -53,7 +55,8 @@
         let url;
         try {
           url = new URL(urlInput.value.trim());
-          if (!['http:', 'https:'].includes(url.protocol)) throw new Error('URL must use http or https.');
+          if (url.protocol !== 'https:') throw new Error('The deployed child must use HTTPS.');
+          if (!url.pathname.endsWith(EXPECTED_CHILD_PATH)) throw new Error(`URL must end with ${EXPECTED_CHILD_PATH}`);
         } catch (error) {
           frame.hidden = true;
           setStatus(`Child was not loaded: ${error.message}`);
@@ -80,21 +83,31 @@
 
       window.addEventListener('message', (event) => {
         if (event.source !== frame.contentWindow || !event.data || event.data.type !== 'BBA_PROBE_READY') return;
+        let expectedChildOrigin = '';
+        try { expectedChildOrigin = new URL(loadedUrl).origin; } catch (_) { /* load validation already handles this */ }
+        if (!expectedChildOrigin || event.origin === 'null' || event.origin !== expectedChildOrigin) {
+          clearTimeout(handshakeTimer);
+          setStatus('Child handshake rejected: event.origin did not match the loaded HTTPS child origin.');
+          return;
+        }
+        if (event.data.probeVersion !== SHELL_VERSION) {
+          clearTimeout(handshakeTimer);
+          setStatus(`Child handshake rejected: expected probe version ${SHELL_VERSION}.`);
+          return;
+        }
         clearTimeout(handshakeTimer);
-        let childOrigin = '';
-        try { childOrigin = new URL(loadedUrl).origin; } catch (_) { /* status is still rendered in the child */ }
         const sandboxTokens = frame.sandbox ? Array.from(frame.sandbox.tokenList) : [];
         const context = {
           type: 'BBA_PROBE_CONTEXT',
+          shellVersion: SHELL_VERSION,
+          probeVersion: SHELL_VERSION,
           parentOrigin: window.location.origin,
-          childOrigin,
+          childOrigin: expectedChildOrigin,
           explicitSandboxAttribute: frame.getAttribute('sandbox'),
           explicitSandboxTokens: sandboxTokens,
           effectiveInheritedSandboxTokens: 'unknown: inherited GAS HtmlService sandbox is not exposed here'
         };
-        if (event.origin && event.origin !== 'null') {
-          event.source.postMessage(context, event.origin);
-        }
+        event.source.postMessage(context, expectedChildOrigin);
         setStatus('Child handshake received. Results below come from inside the nested child.');
       });
     })();

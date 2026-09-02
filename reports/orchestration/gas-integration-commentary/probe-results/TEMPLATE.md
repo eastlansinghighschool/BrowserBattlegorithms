@@ -14,17 +14,18 @@ unknown observations. Keep raw console or JSON output, if needed, under ignored 
 | Device class | e.g. managed Chromebook 1366x768 |
 | Organizational unit |  or `unknown OU` |
 | Gate | 1 nested-frame / 2 tenant identity |
-| Execute as |  |
-| Who has access |  |
+| Execute as | controlled label only: deploying user / accessing user / unknown |
+| Who has access | controlled label only: Workspace domain / anyone / restricted / unknown |
 | Deployment version/revision label | deidentified label only |
 | Raw output location | ignored `local/` path, if retained |
 
 ## Origin stability (Gate 1)
 
-Record the origin values without deployment URLs, account names, or other identifiers. All four
-readings are required; a single reading proves nothing.
+Do not record or paste origin values. All four readings are required; a single reading proves
+nothing. Use only the fixed status labels from the probe: `baseline`, `same-as-baseline`, `changed`,
+or `unknown`. Exact origins may remain in the operator's local browser view for comparison only.
 
-| Reading condition | Child origin | Parent origin observed by child | Pass/fail/unknown | What this observation would have falsified | Notes |
+| Reading condition | Origin comparison status | Child-origin observation status | Parent-origin observation status | What this observation would have falsified | Notes |
 | --- | --- | --- | --- | --- | --- |
 | Reload of same deployment |  |  |  | Unstable/unverifiable origin assumption |  |
 | Second signed-in user |  |  |  | User-dependent origin assumption |  |
@@ -35,10 +36,10 @@ readings are required; a single reading proves nothing.
 
 | Measurement | Observed value | Pass/fail/unknown | What this observation would have falsified | Notes |
 | --- | --- | --- | --- | --- |
-| Child `location.origin` |  |  | Origin stability/authentication assumption |  |
-| Parent origin from child `document.referrer` |  |  | Parent-origin observability assumption |  |
-| Parent origin from `postMessage` `event.origin` |  |  | Parent-origin observability/strict message assumption |  |
-| Direct child-iframe sandbox attribute/tokens |  |  | Explicit sandbox assumption |  |
+| Child `location.origin` observation |  |  | Origin stability/authentication assumption |  |
+| Parent origin from child `document.referrer` observation |  |  | Parent-origin observability assumption |  |
+| Parent origin from `postMessage` `event.origin` observation |  |  | Parent-origin observability/strict message assumption |  |
+| Direct child-iframe sandbox attribute/tokens observation |  |  | Explicit sandbox assumption |  |
 | Effective inherited sandbox token set | unknown unless browser exposes it | unknown | Ability to inspect effective token set |  |
 | Blob download from direct click handler |  |  | User-activated download capability |  |
 | Blob download from `setTimeout` callback |  |  | Delayed download capability |  |
@@ -78,4 +79,12 @@ an empty bucket. Each API must have a successful direct top-level control before
 | B: account switch mid-session |  |  | Shared-computer attribution story | Do not record email |
 | C: renamed account |  |  | Graceful rename degradation only; non-blocking | Provisioned test account only |
 | C: disabled account |  |  | Graceful disabled-account degradation only; non-blocking | Provisioned test account only |
-| Deployment settings echo |  |  | Intended execute-as/access configuration | Deidentified labels only |
+| Deployment settings echo |  |  | Intended execute-as/access configuration | Controlled labels only; no raw settings |
+
+## Email/chat intake
+
+The operator or student should send only the text block produced by **Copy email-safe report**.
+It is acceptable to paste into an email or this chat session. Do not send screenshots, raw JSON,
+exact origins, deployment URLs, sentinels, names, email addresses, expected domains, account ids, or
+free-text deployment settings. A block with the wrong probe version, missing fields, or an
+unverified storage receipt is incomplete and should be rerun rather than repaired by hand.
