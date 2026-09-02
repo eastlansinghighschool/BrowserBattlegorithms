@@ -35,19 +35,24 @@ literal Sol model identity was not independently confirmed; this is recorded as 
 not as a provider-capability claim. The repository state was checked after the consultation before
 the edits below.
 
-| Advisor recommendation | Disposition | Result |
+| Advisor recommendation | Disposition | Independent verification and result |
 | --- | --- | --- |
-| Replace raw JSON copying with an allowlisted email-safe report | Accepted | Both probes emit a `PLAN120_RESULT` block and provide a selectable textarea fallback. |
-| Replace the blind direct-storage confirmation with separate controls and a receipt | Accepted | localStorage and IndexedDB are independently attested; the framed page verifies probe version, random run id, and both statuses. |
-| Require same device/browser/profile and no cleanup between direct and framed storage | Accepted | Fixed context choice, receipt workflow, and durable directions make this an explicit condition; uncertain context reports storage as `unknown`. |
-| Keep exact origins local and report only comparison statuses | Accepted | The page shows local context details, while the copied result contains only controlled origin status. |
-| Add a deidentified Gate 2 report | Accepted | Email-safe identity output excludes email, domain, URL, raw settings, and account identifiers. |
-| Add an intended-viewer match control | Accepted | Gate 2 records pass/fail/unknown without asking the operator to type an email. |
-| Replace free-text deployment settings with fixed choices | Accepted | Execute-as and access are controlled selects; the expected domain remains a private on-page input. |
-| Validate HTTPS, expected pathname, event source/origin, and probe version in the shell | Accepted | The shell rejects invalid path/protocol, null or mismatched origins, and version mismatches. The child also rejects shell/version mismatches. |
-| Add durable operator directions and student/email handoff rules | Accepted | `directions.md` is now the owner/operator run sheet in this report folder. |
-| Improve labels, focus retention, captions, overflow, fixed prompt text, and cleanup wording | Accepted | Action-specific observation buttons, focus restoration, table caption/overflow, fixed `TEST` prompt wording, and context-specific cleanup are implemented. |
-| Preserve isolation, no server result writes, random sentinels, and separate Gate 2 deployment | Accepted | Existing boundaries remain intact. |
+| Replace raw JSON copying with an allowlisted email-safe report | Accepted change | Before implementation, the child and identity page were inspected for their copy controls and output construction; both probes now emit a `PLAN120_RESULT` block and provide a selectable textarea fallback. |
+| Replace the blind direct-storage confirmation with separate controls and a receipt | Accepted change | Before implementation, the child’s storage state showed one operator confirmation could mark both APIs passed; the revised source has independent localStorage/IndexedDB statuses, and the framed path verifies probe version, random run id, and both statuses. |
+| Require same device/browser/profile and no cleanup between direct and framed storage | Accepted change | Before implementation, the storage classifier was checked for provenance gating; the revised source gates classifications on the declared same-context value, receipt, and no-cleanup workflow, while uncertain context reports `unknown`. |
+| Keep exact origins local and report only comparison statuses | Accepted change | Before implementation, the proposed copied payload was checked for exact origin values; the revised source retains them only in the local context table and exports controlled origin status. |
+| Add a deidentified Gate 2 report | Accepted change | Before implementation, the identity page’s server-rendered values and free-text controls were inspected; the revised output contains only allowlisted statuses/labels and excludes email, domain, URL, raw settings, and account identifiers. |
+| Add an intended-viewer match control | Accepted change | The identity workflow was checked for a wrong-account/same-domain blind spot; the revised page records pass/fail/unknown without asking the operator to type an email. |
+| Replace free-text deployment settings with fixed choices | Accepted change | The page’s operator-entered execute-as/access fields were identified as unconstrained report inputs; the revised source uses controlled selects and keeps the expected domain as a private on-page input. |
+| Validate HTTPS, expected pathname, event source/origin, and probe version in the shell | Accepted change | Before implementation, the shell’s URL and message handlers were inspected and accepted messages without all of these checks; the revised shell rejects invalid path/protocol, null or mismatched origins, and version mismatches, and the child rejects shell/version mismatches. |
+| Add durable operator directions and student/email handoff rules | Accepted change | The report folder was checked and had no durable directions file; `directions.md` is now the owner/operator run sheet with the distributed handoff rules. |
+| Improve labels, focus retention, captions, overflow, fixed prompt text, and cleanup wording | Accepted change | The child’s rendered capability table, prompt text, and cleanup controls were inspected; the revised source contains action-specific labels, focus restoration, table caption/overflow, fixed `TEST` wording, and context-specific cleanup. |
+| Preserve isolation, no server result writes, random sentinels, and separate Gate 2 deployment | Endorsement of existing behavior; no change | Repository boundaries, server-write absence, random sentinel use, and separate deployment were verified as already present, so this was not an accepted implementation change. |
+
+There were no genuinely rejected, narrowed, or deferred advisor recommendations. Ten recommendations
+were accepted because they directly corrected the requested distributed probe workflow, while the
+eleventh item was an endorsement of behavior already required by the packet; the independent checks
+above document why this was evidence-based acceptance rather than automatic deference.
 
 Consultation cost/disposition: one projectless read-only consultation, no advisor mutation authority,
 and no recommendation was allowed to override the packet, privacy boundary, or owner deployment
