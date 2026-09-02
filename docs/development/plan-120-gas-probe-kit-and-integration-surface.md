@@ -1,11 +1,9 @@
 ---
 id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
-status: ready
+status: in-progress
 depends_on: []
 gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
-superseded_by: null
-resolution: null
 summary: >-
   Build the artifacts the two cheapest GAS gates need — a nested-frame capability probe (Gate 1 / review Probe 0) and a tenant identity probe (Gate 2) — plus the repository conventions for GAS source, secrets hygiene, and deidentified probe results. Authoring only; the owner deploys and runs. No app behavior changes and no cloud integration is authorized by this packet.
 ---
