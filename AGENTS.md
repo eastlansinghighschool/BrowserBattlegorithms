@@ -31,6 +31,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - NPC / CPU logic: `src/ai/npc/`
 - Usage tracking and admin analysis: `src/usage/` and `src/admin/`
 - Local-only workbench tools: `src/workbench/`
+- Owner-run Google Apps Script probes and future integration source: `integrations/google-apps-script/` (outside the Vite build graph; never imported by `src/`)
 - Packet docs and sequencing: `docs/development/`
 - Generated packet evidence: `reports/development/`
 - Local private or cohort usage data: `local/` only, and it must remain untracked
@@ -44,6 +45,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - Do not amend commits, create deployment artifacts, install dependencies, or change repository settings unless the task explicitly authorizes that scope.
 - If a change would make a subsystem note untrue, update the note in the same patch or stop and surface the conflict.
 - Keep the app static and browser-only; do not introduce server dependencies or deployment steps unless the task explicitly authorizes them.
+- `integrations/google-apps-script/` is an owner-run, quarantined GAS surface outside the Vite build graph. Keep deployment configuration, ids, secrets, raw identity output, and class data local and ignored; never import between `integrations/` and `src/`.
 - Preserve student learning goals: one-action-per-turn execution, clear guided sequencing, boolean reasoning, local sensing, runner roles, and decentralized ally strategy.
 - Keep core game rules in `src/core/`, rendering in `src/render/`, UI state in `src/ui/`, Blockly behavior in `src/ai/blockly/`, and NPC logic in `src/ai/npc/`.
 - Never commit raw student exports, identity maps, local cohort databases, or other private classroom data. Use ignored `local/` locations for private analysis inputs and outputs.
@@ -143,4 +145,3 @@ each handoff. See the implementer and orchestrator starting prompts for the full
 including the three concurrency modes and bounded orchestrator authority over unexpected
 working-tree state.
 <!-- bootstrap:commit-discipline v2 end -->
-

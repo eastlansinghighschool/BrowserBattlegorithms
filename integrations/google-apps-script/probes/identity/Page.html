@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tenant identity probe</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.45 system-ui, sans-serif; }
+    body { max-width: 900px; margin: 0 auto; padding: 1rem; color: #172033; background: #f5f7fb; }
+    section { background: white; border: 1px solid #ccd4e0; border-radius: .6rem; padding: 1rem; margin-bottom: 1rem; }
+    label { display: block; font-weight: 650; margin: .7rem 0 .3rem; }
+    input { box-sizing: border-box; width: 100%; max-width: 32rem; padding: .55rem; font: inherit; }
+    button { padding: .55rem .8rem; font: inherit; }
+    dt { font-weight: 700; margin-top: .7rem; }
+    dd { margin-left: 0; overflow-wrap: anywhere; }
+    .warning { border-left: 4px solid #b42318; padding-left: .75rem; }
+    .note { color: #43516a; }
+  </style>
+</head>
+<body>
+  <h1>Tenant identity probe</h1>
+  <p class="warning"><strong>Viewer-only diagnostic:</strong> the server-derived values below are rendered only to this viewer. This probe writes and stores nothing.</p>
+  <section>
+    <h2>Server-derived identity</h2>
+    <dl>
+      <dt>Active user nonblank?</dt><dd id="active-nonblank"></dd>
+      <dt>Active user email (do not copy into a tracked report)</dt><dd id="active-email"></dd>
+      <dt>Effective user email</dt><dd id="effective-email"></dd>
+      <dt>Read status</dt><dd id="read-status"></dd>
+    </dl>
+  </section>
+  <section>
+    <h2>Operator-entered deployment settings</h2>
+    <p class="note">These fields are not read from Google and are not saved. Enter the settings shown in the deployment UI for this run.</p>
+    <label for="expected-domain">Expected Workspace domain</label>
+    <input id="expected-domain" type="text" autocomplete="off" placeholder="school.example">
+    <label for="execute-as">Execute as</label>
+    <input id="execute-as" type="text" autocomplete="off" placeholder="Me (deploying user)">
+    <label for="access">Who has access</label>
+    <input id="access" type="text" autocomplete="off" placeholder="Anyone in school.example">
+    <p><button id="evaluate" type="button">Evaluate domain match</button></p>
+    <dl>
+      <dt>Expected-domain match</dt><dd id="domain-match">unknown — enter the expected domain and evaluate</dd>
+      <dt>Settings echo</dt><dd id="settings-echo">not entered</dd>
+    </dl>
+  </section>
+  <p><strong>Hard fail:</strong> blank or ambiguous active identity stops account-attributed cloud mode. Never replace server-derived identity with an email supplied by the browser.</p>
+  <script>
+    const serverIdentity = <?!= JSON.stringify(identity) ?>;
+    const text = (id, value) => { document.getElementById(id).textContent = value; };
+    text('active-nonblank', serverIdentity.activeNonblank ? 'pass' : 'fail');
+    text('active-email', serverIdentity.activeEmail || '(blank)');
+    text('effective-email', serverIdentity.effectiveEmail || '(blank)');
+    text('read-status', serverIdentity.activeReadError || serverIdentity.effectiveReadError ? 'one or more values unavailable' : 'read completed');
+    document.getElementById('evaluate').addEventListener('click', () => {
+      const domain = document.getElementById('expected-domain').value.trim().toLowerCase().replace(/^@/, '');
+      const email = serverIdentity.activeEmail.toLowerCase();
+      const match = Boolean(domain && email && email.endsWith(`@${domain}`));
+      text('domain-match', domain ? (match ? 'pass' : 'fail') : 'unknown — enter the expected domain');
+      const executeAs = document.getElementById('execute-as').value.trim() || '(blank)';
+      const access = document.getElementById('access').value.trim() || '(blank)';
+      text('settings-echo', `execute as: ${executeAs}; who has access: ${access}`);
+    });
+  </script>
+</body>
+</html>

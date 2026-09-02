@@ -17,6 +17,7 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 - `src/workbench/`: local-only level workbench shell for readiness inspection and prompt generation (excluded from GitHub Pages build)
 - `src/crypto/`: Web Crypto helpers for private Free Play program file encryption
 - `src/startup/`: async loading coordination for the Blockly editor and board renderer
+- `integrations/google-apps-script/`: owner-run Apps Script probes and future server-side integration source; outside the Vite build graph and never imported by `src/`
 - `tests/unit/helpers/`: small builders and fixtures for Node/browser tests
 - `tests/`: command-line and Playwright tests
 
@@ -69,3 +70,4 @@ Each subsystem note is the single authoritative doc for its runtime contract. AR
 - DOM/button state belongs in `src/ui/`.
 - Blockly block definitions and workspace management belong in `src/ai/blockly/`.
 - Future level systems, save/load, and expanded Blockly blocks should layer on top of this structure rather than being added back into a monolithic runtime file.
+- Google Apps Script source is quarantined under `integrations/google-apps-script/`. It is not a Vite input or app dependency. A future browser-side integration surface under `src/integration/` communicates with the GAS shell only through `postMessage`; the two trees must not import each other. Probe deployment ids, secrets, and raw identity/results remain owner-local.

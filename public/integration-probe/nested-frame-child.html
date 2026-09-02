@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Nested-frame diagnostic child</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.45 system-ui, sans-serif; }
+    body { margin: 0; padding: 1rem; color: #172033; background: #fff; }
+    h1 { margin-top: 0; }
+    section { border: 1px solid #ccd4e0; border-radius: .6rem; padding: .85rem; margin: .8rem 0; }
+    button { margin: .2rem .25rem .2rem 0; padding: .5rem .7rem; font: inherit; cursor: pointer; }
+    button:focus-visible, textarea:focus-visible { outline: 3px solid #1d70d6; outline-offset: 2px; }
+    table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+    th, td { border: 1px solid #c7d0dd; padding: .4rem; text-align: left; vertical-align: top; }
+    th { background: #eef3fb; }
+    .pass { color: #126b2e; font-weight: 700; }
+    .fail { color: #a4261a; font-weight: 700; }
+    .unknown { color: #7a4b00; font-weight: 700; }
+    .hint { color: #43516a; }
+    textarea { box-sizing: border-box; width: 100%; min-height: 15rem; font: 12px/1.35 ui-monospace, monospace; }
+    .storage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: .7rem; }
+    .storage-card { border: 1px solid #c7d0dd; padding: .6rem; border-radius: .35rem; }
+    @media (max-width: 650px) { table { font-size: .8rem; } th, td { padding: .25rem; } }
+  </style>
+</head>
+<body>
+  <h1>Nested-frame diagnostic child</h1>
+  <p><strong>This is a diagnostic page. It stores probe sentinels locally and sends nothing anywhere.</strong></p>
+  <p class="hint">Run the direct storage control while this exact URL is top-level before loading it in the GAS shell. Use operator confirmations where requested; browser script cannot prove that a dialog, download shelf, or sound was actually perceived.</p>
+
+  <section>
+    <h2>Context</h2>
+    <table><tbody id="context-results"></tbody></table>
+  </section>
+  <section>
+    <h2>Storage controls</h2>
+    <p><button id="direct-storage" type="button">Direct top-level storage control</button>
+      <button id="confirm-direct" type="button" hidden>I completed the direct top-level control</button>
+      <button id="direct-cleanup" type="button">Clean direct storage</button>
+      <button id="framed-cleanup" type="button">Clean framed storage</button></p>
+    <div class="storage-grid" id="storage-results"></div>
+    <p class="hint">Partitioned requires a successful direct sentinel, its absence in this frame, and a successful different framed round-trip. Empty storage alone is unknown.</p>
+  </section>
+  <section>
+    <h2>Capability observations</h2>
+    <table><thead><tr><th>Measurement</th><th>Result</th><th>Operator action</th></tr></thead><tbody id="measurements"></tbody></table>
+  </section>
+  <section>
+    <h2>Copyable JSON</h2>
+    <button id="copy-json" type="button">Copy JSON</button>
+    <textarea id="json-output" readonly aria-label="Copyable diagnostic JSON"></textarea>
+  </section>
+
+  <script>
+    (() => {
+      const VERSION = 'plan-120-v1';
+      const LS_DIRECT = 'bba:gas-probe:direct-localstorage';
+      const LS_FRAMED = 'bba:gas-probe:framed-localstorage';
+      const DB_NAME = 'bba-gas-probe';
+      const DB_STORE = 'sentinels';
+      const records = {
+        childOrigin: { value: location.origin, status: 'pass' },
+        parentOriginReferrer: { value: 'unknown', status: 'unknown' },
+        parentOriginMessage: { value: 'unknown', status: 'unknown' },
+        sandbox: { value: 'unknown', status: 'unknown' },
+        blobDownloadDirect: { status: 'unknown', detail: 'not attempted' },
+        blobDownloadTimeout: { status: 'unknown', detail: 'not attempted' },
+        confirmDialog: { status: 'unknown', detail: 'not attempted' },
+        promptDialog: { status: 'unknown', detail: 'not attempted' },
+        speechSynthesis: { status: 'unknown', detail: 'not attempted' },
+        keyboardReachability: { status: 'unknown', detail: 'tab into and back out of child' },
+        viewport: { width: window.innerWidth, height: window.innerHeight, status: window.innerWidth > 0 && window.innerHeight > 0 ? 'pass' : 'fail' },
+        localStorage: { classification: 'unknown', directControl: { status: 'unknown' }, framedObservation: { status: 'unknown' }, framedRoundTrip: { status: 'unknown' }, cleanup: { status: 'unknown' } },
+        indexedDB: { classification: 'unknown', directControl: { status: 'unknown' }, framedObservation: { status: 'unknown' }, framedRoundTrip: { status: 'unknown' }, cleanup: { status: 'unknown' } }
+      };
+      let contextMessageReceived = false;
+      let isFramed = false;
+
+      const randomSentinel = (prefix) => {
+        try { return `${prefix}-${crypto.getRandomValues(new Uint32Array(2)).join('-')}`; }
+        catch (_) { return `${prefix}-fallback-${Date.now()}-${Math.random()}`; }
+      };
+      const statusClass = (status) => status === 'pass' ? 'pass' : status === 'fail' ? 'fail' : 'unknown';
+      const setRecord = (name, value) => { records[name] = { ...records[name], ...value }; render(); };
+      const setNested = (name, field, value) => { records[name] = { ...records[name], [field]: { ...records[name][field], ...value } }; render(); };
+      const safe = async (fn) => { try { return await fn(); } catch (error) { return { error: error && error.name ? error.name : 'error' }; } };
+
+      function render() {
+        const contextRows = [
+          ['Child location.origin', records.childOrigin.value, records.childOrigin.status],
+          ['Parent origin from document.referrer', records.parentOriginReferrer.value, records.parentOriginReferrer.status],
+          ['Parent origin from message event.origin', records.parentOriginMessage.value, records.parentOriginMessage.status],
+          ['Sandbox information', records.sandbox.value, records.sandbox.status],
+          ['Inner viewport', `${records.viewport.width} × ${records.viewport.height}`, records.viewport.status]
+        ];
+        document.getElementById('context-results').innerHTML = contextRows.map(([label, value, status]) => `<tr><th>${escapeHtml(label)}</th><td>${escapeHtml(String(value))}</td><td class="${statusClass(status)}">${escapeHtml(status)}</td></tr>`).join('');
+        const measurementRows = [
+          ['Blob download — direct click handler', records.blobDownloadDirect, 'Try it, observe the browser download UI, then choose an observation.'],
+          ['Blob download — setTimeout callback', records.blobDownloadTimeout, 'Try it, observe the browser download UI, then choose an observation.'],
+          ['window.confirm()', records.confirmDialog, 'The button opens a test dialog; choose whether a dialog appeared.'],
+          ['window.prompt()', records.promptDialog, 'The button opens a test prompt; choose whether a dialog appeared.'],
+          ['speechSynthesis.speak()', records.speechSynthesis, 'Try it, listen for the fixed diagnostic phrase, then choose an observation.'],
+          ['Keyboard reachability', records.keyboardReachability, 'Tab into this child and back out to the shell boundary.'],
+        ];
+        document.getElementById('measurements').innerHTML = measurementRows.map(([label, result, action]) => `<tr><th>${escapeHtml(label)}</th><td class="${statusClass(result.status)}">${escapeHtml(result.status)}<br><span class="hint">${escapeHtml(result.detail || '')}</span></td><td>${escapeHtml(action)}<br>${operatorButtons(label)}</td></tr>`).join('');
+        document.getElementById('storage-results').innerHTML = ['localStorage', 'indexedDB'].map((name) => {
+          const result = records[name];
+          return `<div class="storage-card"><strong>${name}</strong><br>classification: <span class="${statusClass(result.classification === 'partitioned' || result.classification === 'unpartitioned' ? 'pass' : result.classification === 'blocked' ? 'fail' : 'unknown')} ">${escapeHtml(result.classification)}</span><br>direct control: ${escapeHtml(result.directControl.status)}<br>framed observation: ${escapeHtml(result.framedObservation.status)} (${escapeHtml(result.framedObservation.detail || '')})<br>framed round-trip: ${escapeHtml(result.framedRoundTrip.status)}<br>cleanup: ${escapeHtml(result.cleanup.status)}</div>`;
+        }).join('');
+        const output = { probeVersion: VERSION, context: isFramed ? 'nested-frame' : 'top-level', measurements: records };
+        document.getElementById('json-output').value = JSON.stringify(output, null, 2);
+      }
+
+      function escapeHtml(value) { return value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
+      function operatorButtons(label) {
+        const key = label === 'Blob download — direct click handler' ? 'blobDownloadDirect' : label === 'Blob download — setTimeout callback' ? 'blobDownloadTimeout' : label === 'window.confirm()' ? 'confirmDialog' : label === 'window.prompt()' ? 'promptDialog' : label === 'speechSynthesis.speak()' ? 'speechSynthesis' : 'keyboardReachability';
+        return `<button type="button" data-op="${key}" data-status="pass">Observed pass</button><button type="button" data-op="${key}" data-status="fail">Observed fail</button><button type="button" data-op="${key}" data-status="unknown">Unknown</button>`;
+      }
+
+      function tryDownload(kind) {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([`Browser Battlegorithms ${kind} probe`], { type: 'text/plain' }));
+        link.download = `bba-${kind}-probe.txt`;
+        document.body.appendChild(link);
+        try { link.click(); return { status: 'unknown', detail: 'attempt dispatched; confirm the browser download UI' }; }
+        catch (error) { return { status: 'fail', detail: error.name || 'download dispatch threw' }; }
+        finally { link.remove(); URL.revokeObjectURL(link.href); }
+      }
+
+      async function idbOpen() {
+        return await new Promise((resolve, reject) => {
+          const request = indexedDB.open(DB_NAME, 1);
+          request.onupgradeneeded = () => request.result.createObjectStore(DB_STORE);
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+          request.onblocked = () => reject(new Error('IndexedDB open blocked'));
+        });
+      }
+      async function idbPut(key, value) { const db = await idbOpen(); return await new Promise((resolve, reject) => { const tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).put(value, key); tx.oncomplete = () => { db.close(); resolve(true); }; tx.onerror = () => { db.close(); reject(tx.error || new Error('IndexedDB write failed')); }; }); }
+      async function idbGet(key) { const db = await idbOpen(); return await new Promise((resolve, reject) => { const tx = db.transaction(DB_STORE, 'readonly'); const request = tx.objectStore(DB_STORE).get(key); request.onsuccess = () => { db.close(); resolve(request.result); }; request.onerror = () => { db.close(); reject(request.error || new Error('IndexedDB read failed')); }; }); }
+      async function idbDeleteAll() { const db = await idbOpen(); return await new Promise((resolve, reject) => { const tx = db.transaction(DB_STORE, 'readwrite'); tx.objectStore(DB_STORE).clear(); tx.oncomplete = () => { db.close(); resolve(true); }; tx.onerror = () => { db.close(); reject(tx.error || new Error('IndexedDB cleanup failed')); }; }); }
+
+      async function directStorageControl() {
+        if (isFramed) return;
+        const lsSentinel = randomSentinel('direct-local');
+        const lsResult = await safe(async () => { localStorage.setItem(LS_DIRECT, lsSentinel); return localStorage.getItem(LS_DIRECT) === lsSentinel; });
+        setNested('localStorage', 'directControl', lsResult.error ? { status: 'fail', detail: lsResult.error } : { status: lsResult ? 'pass' : 'fail', detail: 'top-level sentinel round-trip' });
+        const idbSentinel = randomSentinel('direct-idb');
+        const idbResult = await safe(async () => { await idbPut('direct', idbSentinel); return (await idbGet('direct')) === idbSentinel; });
+        setNested('indexedDB', 'directControl', idbResult.error ? { status: 'fail', detail: idbResult.error } : { status: idbResult ? 'pass' : 'fail', detail: 'top-level sentinel round-trip' });
+        render();
+      }
+
+      async function framedStorageControl() {
+        const lsDirect = await safe(async () => localStorage.getItem(LS_DIRECT));
+        if (lsDirect.error) {
+          setNested('localStorage', 'framedObservation', { status: 'fail', detail: `blocked: ${lsDirect.error}` });
+          setRecord('localStorage', { classification: 'blocked' });
+        } else if (!lsDirect) {
+          setNested('localStorage', 'framedObservation', { status: 'pass', detail: 'direct sentinel absent' });
+          const framed = randomSentinel('framed-local');
+          const roundTrip = await safe(async () => { localStorage.setItem(LS_FRAMED, framed); return localStorage.getItem(LS_FRAMED) === framed; });
+          setNested('localStorage', 'framedRoundTrip', roundTrip.error ? { status: 'fail', detail: roundTrip.error } : { status: roundTrip ? 'pass' : 'fail', detail: 'framed sentinel round-trip' });
+          const directOk = records.localStorage.directControl.status === 'pass';
+          setRecord('localStorage', { classification: directOk && roundTrip === true ? 'partitioned' : roundTrip.error ? 'blocked' : 'unknown' });
+        } else {
+          setNested('localStorage', 'framedObservation', { status: 'pass', detail: 'direct sentinel visible' });
+          setRecord('localStorage', { classification: records.localStorage.directControl.status === 'pass' ? 'unpartitioned' : 'unknown' });
+        }
+        const idbDirect = await safe(async () => idbGet('direct'));
+        if (idbDirect.error) {
+          setNested('indexedDB', 'framedObservation', { status: 'fail', detail: `blocked: ${idbDirect.error}` });
+          setRecord('indexedDB', { classification: 'blocked' });
+        } else if (idbDirect === undefined) {
+          setNested('indexedDB', 'framedObservation', { status: 'pass', detail: 'direct sentinel absent' });
+          const framed = randomSentinel('framed-idb');
+          const roundTrip = await safe(async () => { await idbPut('framed', framed); return (await idbGet('framed')) === framed; });
+          setNested('indexedDB', 'framedRoundTrip', roundTrip.error ? { status: 'fail', detail: roundTrip.error } : { status: roundTrip ? 'pass' : 'fail', detail: 'framed sentinel round-trip' });
+          const directOk = records.indexedDB.directControl.status === 'pass';
+          setRecord('indexedDB', { classification: directOk && roundTrip === true ? 'partitioned' : roundTrip.error ? 'blocked' : 'unknown' });
+        } else {
+          setNested('indexedDB', 'framedObservation', { status: 'pass', detail: 'direct sentinel visible' });
+          setRecord('indexedDB', { classification: records.indexedDB.directControl.status === 'pass' ? 'unpartitioned' : 'unknown' });
+        }
+      }
+
+      async function cleanupStorage() {
+        const ls = await safe(async () => { localStorage.removeItem(LS_DIRECT); localStorage.removeItem(LS_FRAMED); return true; });
+        setRecord('localStorage', { cleanup: ls.error ? { status: 'fail', detail: ls.error } : { status: 'pass', detail: 'both sentinel keys removed in this context' } });
+        const idb = await safe(async () => { await idbDeleteAll(); return true; });
+        setRecord('indexedDB', { cleanup: idb.error ? { status: 'fail', detail: idb.error } : { status: 'pass', detail: 'sentinel store cleared in this context' } });
+      }
+
+      document.getElementById('direct-storage').addEventListener('click', directStorageControl);
+      document.getElementById('confirm-direct').addEventListener('click', () => {
+        setNested('localStorage', 'directControl', { status: 'pass', detail: 'operator confirmed successful top-level sentinel control' });
+        setNested('indexedDB', 'directControl', { status: 'pass', detail: 'operator confirmed successful top-level sentinel control' });
+        framedStorageControl();
+      });
+      document.getElementById('direct-cleanup').addEventListener('click', cleanupStorage);
+      document.getElementById('framed-cleanup').addEventListener('click', cleanupStorage);
+      document.getElementById('copy-json').addEventListener('click', async () => {
+        const output = document.getElementById('json-output');
+        try { await navigator.clipboard.writeText(output.value); } catch (_) { output.focus(); output.select(); }
+      });
+      document.getElementById('measurements').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-op]');
+        if (!button) return;
+        setRecord(button.dataset.op, { status: button.dataset.status, detail: 'operator observation' });
+      });
+      document.body.addEventListener('click', (event) => {
+        if (event.target.id === 'blob-direct') setRecord('blobDownloadDirect', tryDownload('direct'));
+      });
+
+      // These controls are created as stable buttons so each attempt begins with a user gesture.
+      document.getElementById('measurements').innerHTML = '';
+      const capabilityButtons = [
+        ['blobDownloadDirect', 'Try direct-click blob download', () => setRecord('blobDownloadDirect', tryDownload('direct'))],
+        ['blobDownloadTimeout', 'Try setTimeout blob download', () => setTimeout(() => setRecord('blobDownloadTimeout', tryDownload('timeout')), 0)],
+        ['confirmDialog', 'Try window.confirm()', () => { let returned; try { returned = window.confirm('Diagnostic confirm: did this dialog appear?'); setRecord('confirmDialog', { status: 'unknown', detail: `returned ${returned}; operator must classify visibility` }); } catch (error) { setRecord('confirmDialog', { status: 'fail', detail: error.name || 'threw' }); } }],
+        ['promptDialog', 'Try window.prompt()', () => { let returned; try { returned = window.prompt('Diagnostic prompt: enter any test text or cancel.'); setRecord('promptDialog', { status: 'unknown', detail: `returned ${returned === null ? 'null' : 'a value'}; operator must classify visibility` }); } catch (error) { setRecord('promptDialog', { status: 'fail', detail: error.name || 'threw' }); } }],
+        ['speechSynthesis', 'Try speech synthesis', () => { try { const utterance = new SpeechSynthesisUtterance('Browser Battlegorithms diagnostic voice test.'); speechSynthesis.speak(utterance); setRecord('speechSynthesis', { status: 'unknown', detail: 'speak dispatched; operator must classify audibility' }); } catch (error) { setRecord('speechSynthesis', { status: 'fail', detail: error.name || 'unavailable' }); } }]
+      ];
+      const actions = document.createElement('div');
+      actions.innerHTML = capabilityButtons.map(([key, label]) => `<button id="try-${key}" type="button">${label}</button>`).join('');
+      document.querySelector('section:nth-of-type(3)').insertBefore(actions, document.getElementById('measurements'));
+      capabilityButtons.forEach(([key, _label, handler]) => document.getElementById(`try-${key}`).addEventListener('click', handler));
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== window.parent || !event.data || event.data.type !== 'BBA_PROBE_CONTEXT') return;
+        contextMessageReceived = true;
+        isFramed = true;
+        document.getElementById('direct-storage').disabled = true;
+        document.getElementById('confirm-direct').hidden = false;
+        const referrerOrigin = (() => { try { return document.referrer ? new URL(document.referrer).origin : 'unknown'; } catch (_) { return 'unknown'; } })();
+        setRecord('parentOriginReferrer', { value: referrerOrigin, status: referrerOrigin === event.data.parentOrigin ? 'pass' : 'unknown' });
+        setRecord('parentOriginMessage', { value: event.origin, status: event.origin === event.data.parentOrigin ? 'pass' : 'fail' });
+        setRecord('sandbox', { value: JSON.stringify({ explicitAttribute: event.data.explicitSandboxAttribute, explicitTokens: event.data.explicitSandboxTokens, effectiveInherited: event.data.effectiveInheritedSandboxTokens }), status: 'unknown' });
+        framedStorageControl();
+      });
+      window.parent.postMessage({ type: 'BBA_PROBE_READY', probeVersion: VERSION }, '*');
+      if (window.top === window.self) document.getElementById('framed-cleanup').disabled = true;
+      render();
+    })();
+  </script>
+</body>
+</html>

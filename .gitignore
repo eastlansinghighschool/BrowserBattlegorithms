@@ -25,6 +25,10 @@ coverage/
 scratch/
 local/
 
+# Google Apps Script owner-side state and deployment configuration
+integrations/**/.clasp.json
+integrations/**/*.local.*
+
 # Local classroom cohort usage analysis data (Plan 80)
 local/usage-cohorts/
 

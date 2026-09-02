@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nested-frame capability probe</title>
+  <style>
+    :root { color-scheme: light; font: 16px/1.45 system-ui, sans-serif; }
+    body { margin: 0; padding: 1rem; color: #172033; background: #f5f7fb; }
+    main { max-width: 1100px; margin: 0 auto; }
+    .card { background: white; border: 1px solid #ccd4e0; border-radius: .6rem; padding: 1rem; margin: 0 0 1rem; }
+    label { display: block; font-weight: 650; margin-bottom: .35rem; }
+    input { box-sizing: border-box; width: 100%; padding: .55rem; border: 1px solid #8a96a8; border-radius: .35rem; font: inherit; }
+    button { padding: .55rem .8rem; border: 1px solid #51627b; border-radius: .35rem; background: #eef3fb; font: inherit; cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #1d70d6; outline-offset: 2px; }
+    .status { padding: .7rem; background: #edf4ff; border-left: 4px solid #286dcc; }
+    .boundary { display: inline-block; padding: .45rem; border: 2px dashed #8b5cf6; background: #faf7ff; }
+    iframe { display: block; width: 100%; min-height: 620px; border: 2px solid #52647e; border-radius: .4rem; background: white; }
+    code { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Nested-frame capability probe</h1>
+    <p>This GAS page only frames the child URL you enter. It does not collect or store probe results.</p>
+    <section class="card">
+      <label for="child-url">Child URL (enter the exact deployed public-origin URL)</label>
+      <input id="child-url" type="url" inputmode="url" autocomplete="off" placeholder="https://your-public-origin.example/integration-probe/nested-frame-child.html">
+      <p><button id="load-child" type="button">Load child in frame</button></p>
+      <p id="frame-status" class="status" role="status">No child loaded.</p>
+    </section>
+
+    <div class="boundary" tabindex="0">Keyboard boundary: before child</div>
+    <section class="card">
+      <iframe id="probe-frame" title="Nested-frame diagnostic child" hidden></iframe>
+    </section>
+    <div class="boundary" tabindex="0">Keyboard boundary: after child</div>
+    <p>Keyboard check: focus the “before child” boundary, press Tab into the child, tab through it, then confirm focus reaches the “after child” boundary.</p>
+  </main>
+  <script>
+    (() => {
+      const urlInput = document.getElementById('child-url');
+      const frame = document.getElementById('probe-frame');
+      const frameStatus = document.getElementById('frame-status');
+      let handshakeTimer;
+      let loadedUrl = '';
+
+      function setStatus(message) {
+        frameStatus.textContent = message;
+      }
+
+      document.getElementById('load-child').addEventListener('click', () => {
+        let url;
+        try {
+          url = new URL(urlInput.value.trim());
+          if (!['http:', 'https:'].includes(url.protocol)) throw new Error('URL must use http or https.');
+        } catch (error) {
+          frame.hidden = true;
+          setStatus(`Child was not loaded: ${error.message}`);
+          return;
+        }
+
+        clearTimeout(handshakeTimer);
+        loadedUrl = url.href;
+        frame.hidden = false;
+        frame.src = loadedUrl;
+        setStatus('Loading child; waiting for its local handshake…');
+        handshakeTimer = setTimeout(() => {
+          setStatus('Child did not complete its handshake. Treat the child as failed to load or unable to run.');
+        }, 15000);
+      });
+
+      frame.addEventListener('load', () => {
+        if (loadedUrl) setStatus('Frame load event received; waiting for the child diagnostic handshake…');
+      });
+      frame.addEventListener('error', () => {
+        clearTimeout(handshakeTimer);
+        setStatus('The child frame reported a load error.');
+      });
+
+      window.addEventListener('message', (event) => {
+        if (event.source !== frame.contentWindow || !event.data || event.data.type !== 'BBA_PROBE_READY') return;
+        clearTimeout(handshakeTimer);
+        let childOrigin = '';
+        try { childOrigin = new URL(loadedUrl).origin; } catch (_) { /* status is still rendered in the child */ }
+        const sandboxTokens = frame.sandbox ? Array.from(frame.sandbox.tokenList) : [];
+        const context = {
+          type: 'BBA_PROBE_CONTEXT',
+          parentOrigin: window.location.origin,
+          childOrigin,
+          explicitSandboxAttribute: frame.getAttribute('sandbox'),
+          explicitSandboxTokens: sandboxTokens,
+          effectiveInheritedSandboxTokens: 'unknown: inherited GAS HtmlService sandbox is not exposed here'
+        };
+        if (event.origin && event.origin !== 'null') {
+          event.source.postMessage(context, event.origin);
+        }
+        setStatus('Child handshake received. Results below come from inside the nested child.');
+      });
+    })();
+  </script>
+</body>
+</html>
