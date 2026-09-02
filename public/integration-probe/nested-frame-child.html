@@ -240,6 +240,11 @@
         setRecord('sandbox', { value: JSON.stringify({ explicitAttribute: event.data.explicitSandboxAttribute, explicitTokens: event.data.explicitSandboxTokens, effectiveInherited: event.data.effectiveInheritedSandboxTokens }), status: 'unknown' });
         framedStorageControl();
       });
+      // Wildcard targetOrigin is correct HERE and ONLY here: discovering the parent origin is this
+      // probe's purpose, so the child cannot know it in advance. The announcement carries no data
+      // beyond a type and version, and the inbound handler above still verifies event.source and
+      // records event.origin as the measurement. The real Stage 1 protocol MUST use an exact
+      // targetOrigin (proposal, "Protocol invariants"). Do not promote this line into src/.
       window.parent.postMessage({ type: 'BBA_PROBE_READY', probeVersion: VERSION }, '*');
       if (window.top === window.self) document.getElementById('framed-cleanup').disabled = true;
       render();

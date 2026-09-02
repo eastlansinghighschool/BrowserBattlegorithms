@@ -104,9 +104,14 @@ should update durable files rather than depend on this thread's conversational c
 
 ### Stage 0 slate — written 2026-09-01 by the claude orchestrator thread (second writer of this file)
 
-Four packets convert the gate-independent part of Stage 1 into work orders. Their authored status
-is `ready`, but `plan-119` is correctly dependency-blocked until `plan-118` completes; none are
-dispatched. Commits `516323c`, `6dd18b4`, `8713af4`, `293bdfc`.
+Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
+`6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
+
+**Board as of 2026-09-01:** `plan-120` is `delivered` — implemented, orchestrator-reviewed, and
+accepted; it moves to `complete` once the owner has run the probes and the results land under
+`probe-results/`. `plan-118` is `in-progress` with its gate cleared. `plan-119` stays
+dependency-blocked behind it. `plan-121` is `ready` but still stops at its own gate (blank-name
+analyzer wording), which is the cheapest remaining unblock.
 
 | Packet | Covers | Origin |
 | --- | --- | --- |

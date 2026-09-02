@@ -1,11 +1,9 @@
 ---
 id: plan-118
 title: "Embedded And Blocked Storage Resilience"
-status: ready
+status: in-progress
 depends_on: []
-gate: "before mutation: owner approves the single student-facing storage-unavailable banner copy (Copy Voice Contract applies) and confirms the guided in-memory fallback is a fallback only, never a second source of truth"
-superseded_by: null
-resolution: null
+gate: "CLEARED 2026-09-01. Banner copy, fallback posture, and banner placement all resolved in the Gate section; restate them in the preflight plan and proceed. Nothing remains to stop for before mutation."
 summary: >-
   Make every browser-storage access exception-safe behind one shared platform adapter, extend the existing in-memory workspace fallback to guided levels when persistent storage is unavailable, and show one honest banner. Latent defect today, reachable the moment the app is embedded or a student uses strict privacy settings. No GAS dependency.
 ---
@@ -20,7 +18,7 @@ summary: >-
 - Date: 2026-09-01
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem notes)
-- Approval gate: before mutation — owner approves the banner copy and the fallback posture (see Gate below).
+- Approval gate: **cleared 2026-09-01** — banner copy, fallback posture, and placement are all resolved (see Gate below). The implementer restates them in the preflight plan and proceeds.
 - Depends on: nothing
 - Blocks: `plan-119` (shares `getStoredWorkspaceXmlText` / `saveWorkspaceToLocalStorage`; 119 must write its recovery slot through this packet's safe accessors), and any future embedded/GAS integration work
 - Expected artifacts:
@@ -75,13 +73,33 @@ Contracts to preserve:
 - One-action-per-turn semantics, game rules, level content, and Blockly behavior are untouched.
 - The app stays a static Vite build with no server dependency.
 
-## Gate (before mutation)
+## Gate (before mutation) — CLEARED 2026-09-01
 
-Present to the owner, in the preflight plan, and stop:
+All three items are resolved. Restate them in the preflight plan; there is nothing to stop for.
 
-1. **Banner copy.** One sentence, shown once per page load when persistent storage is unavailable. Recommendation: *"This browser is blocking saving. You can keep playing, but your program will be lost when you close the tab."* Voice: the `docs/CopyVoiceContract.md` scout/coach speaker, not a curriculum designer. Propose two alternatives.
-2. **Fallback posture.** Confirm: when storage works, guided levels keep using storage exactly as today and the in-memory guided map stays inert. The in-memory guided map activates **only** when the capability probe says storage is unavailable, and it never becomes a second source of truth read alongside a working storage. State this in the plan and get an explicit yes.
-3. **Banner placement and dismissal.** Recommendation: the existing non-blocking status/notice surface used by other app messages (find it; do not invent a new modal), dismissible, re-shown once per page load — not once per level.
+1. **Banner copy — RESOLVED.** Exactly this sentence:
+
+   > This browser is blocking saving. You can keep playing, but your program will be lost if you reload or close this tab.
+
+   This is a small correction to the packet's original recommendation, which said only "when you
+   close the tab." A reload also loses the work, and students reload constantly — the original
+   wording would have been a promise the app could not keep. Do not reword it without owner
+   approval; if implementation finds it does not fit the chosen surface, stop and ask rather than
+   trimming it.
+
+2. **Fallback posture — RESOLVED as specified.** When storage works, guided levels use storage
+   exactly as they do today and the in-memory guided map stays inert. The map activates **only**
+   when the capability probe reports storage unavailable, and it is never read alongside a working
+   storage. There is no merge, no fallback-on-read-miss, and no second source of truth.
+
+3. **Banner placement and dismissal — RESOLVED as recommended.** Use the existing non-blocking
+   status/notice surface other app messages already use; find it rather than inventing a modal.
+   Dismissible, shown once per page load, not once per level.
+
+**Voice note.** This string is a systems message, not coaching. It does not belong in the
+lesson/coaching channel students read for strategy guidance, and it must not read as though the
+student did something wrong. `docs/CopyVoiceContract.md`'s scout/coach speaker governs student
+guidance, not honest failure reporting; plain second person is correct here.
 
 ## Scope
 
@@ -219,7 +237,7 @@ npm run test:browser:smoke
 - [ ] `npm run build` passes.
 - [ ] `npm run test:browser:smoke` passes (storage behavior is load-bearing for smoke).
 - [ ] Guided, Free Play PvCPU, Free Play PvP, and project-arc workspaces all still persist normally when storage works.
-- [ ] The banner does not appear in ordinary conditions.
+- [ ] The banner does not appear in ordinary conditions, and its text matches the gate wording exactly.
 - [ ] `docs/subsystems/blockly-workspace.md` and `docs/subsystems/ui-mode-contract.md` read true post-change.
 - [ ] `AGENTS.md` "Where Things Live" and `docs/ARCHITECTURE.md` document `src/platform/`.
 - [ ] No unrelated files changed.
@@ -228,6 +246,7 @@ npm run test:browser:smoke
 
 Stop and ask for review if:
 
+- the approved banner sentence does not fit the chosen notice surface (stop and ask; do not trim it);
 - a call site's current behavior is ambiguous enough that migrating it requires a product decision (especially `src/core/levels.js` unlock semantics under memory-only storage);
 - the guided in-memory fallback turns out to require changes to level loading, the picker, or progress hydration beyond the workspace accessors;
 - the banner cannot be placed in an existing notice surface without new UI structure;

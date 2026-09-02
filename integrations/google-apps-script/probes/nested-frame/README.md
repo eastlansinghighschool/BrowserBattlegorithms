@@ -62,3 +62,14 @@ without device class and OU provenance is not evidence.
 The child URL is entered at runtime in `Shell.html`; no deployment URL is tracked here. Keep the
 real `.clasp.json` local and never commit it. This probe is intentionally separate from the
 identity probe so the owner can run Gate 1 without scheduling a non-teacher account.
+
+## One deliberate exception, recorded so it is not copied forward
+
+The child announces readiness with `postMessage(..., '*')`. That is correct in a probe and wrong in
+the product. The child cannot know the GAS parent origin in advance — discovering it is the whole
+point of this probe — and the announcement carries only a message type and a version. The inbound
+handler still verifies `event.source` and records `event.origin` as the measurement.
+
+The Stage 1 protocol must use an exact `targetOrigin` in both directions, per the proposal's
+"Protocol invariants". This is one concrete instance of the packet's rule that probe code is never
+promoted in place into the real shell or into `src/`: a later packet writes that surface fresh.
