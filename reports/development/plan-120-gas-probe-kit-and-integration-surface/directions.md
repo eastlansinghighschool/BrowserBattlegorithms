@@ -63,6 +63,11 @@ each additional device, account tier, browser profile, or OU condition.
 ### Capability and origin observations
 
 Choose the fixed **run condition**, **device class**, **OU class**, and **origin comparison** values.
+For a non-district machine, use a `personal-*` device choice; for this Windows computer, choose
+**Personal Windows device**. Keep the OU class as `unknown-ou` unless the device is actually
+managed in a known organizational unit. The report automatically includes coarse browser family,
+browser major version, and OS class so results from different computers can be compared; it never
+includes the raw user-agent string.
 Complete the action-specific observations for:
 
 - direct-click blob download and delayed `setTimeout` blob download;
@@ -79,7 +84,7 @@ the report. Never copy exact origins into email, chat, or a tracked file.
 Select **Copy email-safe report** only after the run is complete. If the clipboard is unavailable,
 the page selects the report textarea for manual copying. This block is deliberately suitable for a
 student to paste into an email or this chat. It contains controlled labels, statuses, viewport
-dimensions, and a random run id. It does not contain screenshots, raw JSON, URLs, origins,
+   dimensions, and a random run id. It does not contain screenshots, raw JSON, raw user-agent strings, URLs, origins,
 sentinels, names, emails, or account ids. Do not send the direct-control receipt as the result; it
 is an intermediate same-device control.
 
@@ -88,16 +93,20 @@ is an intermediate same-device control.
 1. Deploy `integrations/google-apps-script/probes/identity/` as a separate Apps Script web app,
    again using **Execute as: deploying user** and **Who has access: anyone in the Workspace
    domain**.
-2. Open the page as the assigned account. Select the fixed account role, test condition, and
-   deployment-setting labels. Enter the expected Workspace domain only for the private on-page
+2. Open the page as the assigned account. Select the fixed account role, test condition, device
+   class, OU class, and deployment-setting labels. For a non-district machine, use the matching
+   `personal-*` device choice; for this Windows computer, choose **Personal Windows device** and
+   normally use `unknown-ou`. Enter the expected Workspace domain only for the private on-page
    comparison, then choose **Evaluate private domain check**.
 3. Without typing or sharing an email address, choose whether the displayed active identity
    matches the intended viewer. The server-derived active/effective values remain visible only to
    the current viewer.
 4. Select **Copy email-safe report**. Send only that text block by email or chat. It contains the
-   probe version, random run id, controlled condition/settings labels, nonblank/read statuses,
-   intended-viewer result, domain-match status, and active/effective relationship. It excludes
-   email addresses, expected domain, raw settings, URLs, and account ids.
+   probe version, random run id, controlled condition/settings labels, fixed device/OU labels,
+   nonblank/read statuses, intended-viewer result, domain-match status, active/effective
+   relationship, and coarse browser/OS information. It excludes email addresses, expected domain,
+   raw settings, raw user-agent
+   strings, URLs, and account ids.
 
 Run the assigned matrix as separate complete runs:
 

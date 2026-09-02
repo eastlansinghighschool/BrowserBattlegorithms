@@ -14,7 +14,7 @@ not make the displayed identity values safe to copy.
    exact settings matter because the gate is about server-derived identity under the intended
    teacher-owned deployment model.
 2. Open it as the teacher/deployer account. Choose the fixed account-role, condition, intended-viewer
-   match, execute-as, and access values. Enter the expected domain only for the private on-page
+   match, device class, OU class, execute-as, and access values. Enter the expected domain only for the private on-page
    comparison, then choose **Evaluate private domain check**. Do not copy the displayed email or
    expected domain into a report.
 3. Run Tier A with one non-teacher domain account. Prefer a synthetic account for repeatability;
@@ -41,11 +41,12 @@ not make the displayed identity values safe to copy.
 ### Email-safe result and real-student safeguards
 
 The **Copy email-safe report** control emits only the probe version, random run id, fixed account and
-condition labels, identity nonblank/read statuses, intended-viewer match, expected-domain match,
-active/effective relationship (`same`, `different`, `blank`, or `unavailable`), and fixed deployment
-settings labels. It excludes email addresses, expected domains, raw settings, URLs, and account
-identifiers. A student can paste this block into an email or chat, but should not send a screenshot
-or raw page/JSON output.
+condition labels, device/OU labels, identity nonblank/read statuses, intended-viewer match, expected-domain match,
+active/effective relationship (`same`, `different`, `blank`, or `unavailable`), coarse browser
+family/major version and OS class, and fixed deployment settings labels. It excludes email
+addresses, expected domains, raw settings, raw user-agent strings, URLs, and account identifiers. A
+student can paste this block into an email or chat, but should not send a screenshot or raw
+page/JSON output.
 
 Prefer one synthetic account because the run can be repeated after redeploy or settings changes.
 If a real student supplies Tier A or B, record pass/fail only and never an email address in any

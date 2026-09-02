@@ -9,8 +9,8 @@ unknown observations. Keep raw console or JSON output, if needed, under ignored 
 | --- | --- |
 | Date |  |
 | Probe version |  |
-| Browser and version |  |
-| Operating system |  |
+| Browser and version | coarse family/major only; do not record raw user-agent string |
+| Operating system | coarse OS class only |
 | Device class | e.g. managed Chromebook 1366x768 |
 | Organizational unit |  or `unknown OU` |
 | Gate | 1 nested-frame / 2 tenant identity |

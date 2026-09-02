@@ -33,7 +33,8 @@ HTML file and does not need a p5.js surface.
 8. Choose the fixed run condition, device class, OU class, and origin-comparison status. Use
    **Copy email-safe report**. If clipboard access is blocked, select and copy that visible
    textarea. It is suitable for a student to paste into an email or this chat: it contains only
-   statuses, controlled labels, a random run id, and viewport dimensions. Never email screenshots,
+   statuses, controlled labels, a random run id, coarse browser family/major version, OS class, and
+   viewport dimensions. Never email screenshots,
    raw JSON, exact origins, URLs, sentinels, names, emails, or account identifiers.
 9. After the framed measurements and report copy are complete, clean the current framed context.
    Return to the exact top-level child URL and clean that context separately. Cleanup before the

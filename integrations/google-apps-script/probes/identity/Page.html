@@ -65,6 +65,25 @@
           <option value="fail">No — does not match</option>
         </select>
       </label>
+      <label for="device-class">Device class
+        <select id="device-class">
+          <option value="managed-chromebook-1366x768">Managed Chromebook, 1366×768</option>
+          <option value="managed-chromebook-other">Managed Chromebook, other size</option>
+          <option value="managed-windows-device">Managed Windows device</option>
+          <option value="personal-windows-device">Personal Windows device</option>
+          <option value="personal-macos-device">Personal macOS device</option>
+          <option value="personal-other-device">Personal other device</option>
+          <option value="other-managed-device">Other managed device</option>
+          <option value="unknown-device">Unknown device class</option>
+        </select>
+      </label>
+      <label for="ou-class">OU class
+        <select id="ou-class">
+          <option value="student-ou">Student OU</option>
+          <option value="staff-ou">Staff OU</option>
+          <option value="unknown-ou">Unknown OU</option>
+        </select>
+      </label>
     </div>
     <label for="expected-domain">Expected Workspace domain (private on-page check)</label>
     <input id="expected-domain" type="text" autocomplete="off" placeholder="school.example">
@@ -106,6 +125,20 @@
     const effectiveReadStatus = serverIdentity.effectiveReadError ? 'unknown' : 'pass';
     const activeNonblankStatus = activeReadStatus === 'unknown' ? 'unknown' : serverIdentity.activeNonblank ? 'pass' : 'fail';
     const effectiveNonblankStatus = effectiveReadStatus === 'unknown' ? 'unknown' : serverIdentity.effectiveEmail ? 'pass' : 'fail';
+    const browserInfo = (() => {
+      const userAgent = navigator.userAgent || '';
+      const candidates = [
+        ['Edge', /(?:Edg|Edge)\/([\d]+)/i],
+        ['Opera', /OPR\/([\d]+)/i],
+        ['Firefox', /Firefox\/([\d]+)/i],
+        ['Chrome', /Chrome\/([\d]+)/i],
+        ['Safari', /Version\/([\d]+).*Safari\//i]
+      ];
+      const match = candidates.find(([, pattern]) => pattern.test(userAgent));
+      const browser = match ? { family: match[0], major: userAgent.match(match[1])?.[1] || 'unknown' } : { family: 'unknown', major: 'unknown' };
+      const os = /Windows NT/i.test(userAgent) ? 'Windows' : /CrOS/i.test(userAgent) ? 'ChromeOS' : /Android/i.test(userAgent) ? 'Android' : /iPhone|iPad|iPod/i.test(userAgent) ? 'iOS' : /Mac OS X/i.test(userAgent) ? 'macOS' : /Linux/i.test(userAgent) ? 'Linux' : 'unknown';
+      return { ...browser, os };
+    })();
     const relationship = (() => {
       if (activeReadStatus === 'unknown' || effectiveReadStatus === 'unknown') return 'unavailable';
       if (!serverIdentity.activeEmail || !serverIdentity.effectiveEmail) return 'blank';
@@ -118,6 +151,8 @@
       `run_id=${runId}`,
       `account_role=${document.getElementById('account-role').value}`,
       `condition=${document.getElementById('test-condition').value}`,
+      `device_class=${document.getElementById('device-class').value}`,
+      `ou_class=${document.getElementById('ou-class').value}`,
       `active_identity_nonblank=${activeNonblankStatus}`,
       `active_identity_read=${activeReadStatus}`,
       `intended_viewer_match=${document.getElementById('intended-viewer-match').value}`,
@@ -125,6 +160,9 @@
       `effective_identity_nonblank=${effectiveNonblankStatus}`,
       `effective_identity_read=${effectiveReadStatus}`,
       `active_effective_relationship=${relationship}`,
+      `browser_family=${browserInfo.family}`,
+      `browser_major=${browserInfo.major}`,
+      `os_class=${browserInfo.os}`,
       `execute_as=${document.getElementById('execute-as').value}`,
       `access=${document.getElementById('access').value}`,
       'raw_identity_domain_settings_and_identifiers=excluded'
@@ -144,7 +182,7 @@
       text('settings-echo', `execute as: ${document.getElementById('execute-as').value}; who has access: ${document.getElementById('access').value}`);
       refreshReport();
     });
-    ['account-role', 'test-condition', 'intended-viewer-match', 'execute-as', 'access'].forEach((id) => document.getElementById(id).addEventListener('change', refreshReport));
+    ['account-role', 'test-condition', 'intended-viewer-match', 'device-class', 'ou-class', 'execute-as', 'access'].forEach((id) => document.getElementById(id).addEventListener('change', refreshReport));
     document.getElementById('copy-report').addEventListener('click', async () => {
       const output = document.getElementById('report-output');
       try { await navigator.clipboard.writeText(output.value); text('report-status', 'Email-safe report copied.'); }

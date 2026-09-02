@@ -96,7 +96,7 @@
           return;
         }
         clearTimeout(handshakeTimer);
-        const sandboxTokens = frame.sandbox ? Array.from(frame.sandbox.tokenList) : [];
+        const sandboxTokens = frame.sandbox && typeof frame.sandbox[Symbol.iterator] === 'function' ? Array.from(frame.sandbox) : [];
         const context = {
           type: 'BBA_PROBE_CONTEXT',
           shellVersion: SHELL_VERSION,

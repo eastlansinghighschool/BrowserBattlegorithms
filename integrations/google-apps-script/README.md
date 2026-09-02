@@ -40,7 +40,8 @@ Open the deployed shell, paste the exact public URL of
 `/integration-probe/nested-frame-child.html`, and load it. The shell supplies that URL at runtime;
 it is never hard-coded in tracked source. Use the child’s **Copy email-safe report** control; it
 emits an allowlisted block suitable for an email or chat message and excludes exact origins,
-sentinels, URLs, names, emails, and account identifiers. Exact origin readings remain visible on
+sentinels, URLs, names, emails, and account identifiers. It includes coarse browser family/major
+version and OS class, but never the raw user-agent string. Exact origin readings remain visible on
 the page for local comparison only.
 
 The child must first be opened top-level at the exact URL and run **Direct top-level storage

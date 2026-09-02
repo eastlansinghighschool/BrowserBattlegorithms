@@ -78,12 +78,16 @@ test("probe reports are explicitly deidentified and storage pairing is receipt-g
   assert.match(child, /Copy email-safe report/);
   assert.match(child, /BBA_PLAN120_DIRECT_STORAGE_RECEIPT/);
   assert.match(child, /verify-direct-receipt/);
+  assert.match(child, /personal-windows-device/);
+  assert.match(child, /browser_family/);
   assert.match(child, /raw_origins_sentinels_and_identifiers=excluded/);
   assert.doesNotMatch(child, /id="copy-json"|id="json-output"/);
   assert.match(shell, /EXPECTED_CHILD_PATH/);
   assert.match(shell, /event\.origin === 'null'/);
   assert.match(shell, /event\.origin !== expectedChildOrigin/);
   assert.match(identity, /intended-viewer-match/);
+  assert.match(identity, /personal-windows-device/);
+  assert.match(identity, /browser_family/);
   assert.match(identity, /raw_identity_domain_settings_and_identifiers=excluded/);
   assert.match(identity, /Copy email-safe report/);
 });
