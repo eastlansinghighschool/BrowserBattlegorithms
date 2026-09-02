@@ -108,16 +108,19 @@ Four packets convert the gate-independent part of Stage 1 into work orders. Comm
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
 **Board as of 2026-09-01:** `plan-120` is **complete** after three review rounds (accept →
-send-back on `repair-01` → accept). `plan-118` is `in-progress` with its gate cleared. `plan-119`
-stays dependency-blocked behind it. `plan-121` is `ready` but still stops at its own gate
-(blank-name analyzer wording) — the cheapest remaining unblock, and the only thing standing
-between the board and a safe second concurrent packet.
+send-back on `repair-01` → accept). `plan-118` and `plan-121` are both `in-progress`
+with their gates cleared. `plan-119` stays dependency-blocked behind `plan-118`.
 
-**No second packet is dispatchable right now, and this is a scope-overlap fact rather than a
-choice:** `plan-116` lands counters in `src/core/levels.js`'s end-of-level path, and `plan-118` is
-concurrently migrating storage calls in that same file. Different functions, same file, so under
-commit discipline they must serialize. `plan-119` is blocked on `plan-118`; `plan-121` needs one
-owner decision. Do not start `plan-116` while `plan-118` is live.
+**`plan-116` must not start while `plan-118` is live.** It lands counters in `src/core/levels.js`'s
+end-of-level path, and `plan-118` is migrating storage calls in that same file. Different
+functions, same file, so under commit discipline they serialize.
+
+**`package.json` is serialized between the two live packets.** They are otherwise disjoint, but
+both would add test files to the single `test:unit` line. Rule applied: first-started owns the
+shared file. `plan-118` keeps it; `plan-121` names its new test files in its progress report and
+the orchestrator registers them and runs the full suite at review. `plan-121`'s own `npm test`
+will not include its new file, by design — that is not a validation failure. Reuse this pattern
+whenever two packets are disjoint except for a registration line.
 
 **Completion semantics, corrected.** An earlier revision of this file said `plan-120` would reach
 `complete` only once the owner had run the probes. That was wrong and would have misused the

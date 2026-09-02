@@ -1,11 +1,9 @@
 ---
 id: plan-121
 title: "Cloud Evidence Builder And Analyzer Identity Parity"
-status: ready
+status: in-progress
 depends_on: []
-gate: "before mutation: owner confirms that direct-mode download behavior, including the typed-name prompt and the name inside export events, is unchanged, and approves the blank-name analyzer wording"
-superseded_by: null
-resolution: null
+gate: "CLEARED 2026-09-01. Direct-mode boundary confirmed unchanged; blank-name handling resolved as Option 1 — the similarity discriminator becomes submitter identity (file identity, which later carries account attribution), not the typed name, and a group whose submitters cannot be distinguished says so explicitly. See the Gate section; nothing remains to stop for."
 summary: >-
   Extract a pure, UI-free schema-v2 evidence builder with an identity-stripped cloud variant and fix the blank-name identity handling that currently degrades and false-positives in both analyzers. Preserve the policy that account attribution belongs in the later teacher-download filename, while deferring that server-side filename grammar to the canonical Stage 1 protocol/extraction surface. Local-only and testable with no GAS.
 ---
@@ -20,9 +18,10 @@ summary: >-
 - Date: 2026-09-01
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note + data dictionary)
-- Approval gate: before mutation — owner confirms the no-change-to-direct-mode boundary and the
-  blank-name analyzer wording (see Gate below).
-- Depends on: nothing. (Disjoint write-scope from `plan-118`/`plan-119`, which touch `src/ai/blockly/` and `src/platform/`; this packet touches `src/usage/`, `src/admin/`, `scripts/`. Safe to run concurrently with those under commit-discipline mode B.)
+- Approval gate: **cleared 2026-09-01** — direct-mode boundary confirmed and the blank-name
+  discriminator resolved as Option 1 (see Gate below). The implementer restates both in the
+  preflight plan and proceeds.
+- Depends on: nothing. (Write-scope is disjoint from `plan-118`/`plan-119` — those touch `src/platform/`, `src/ai/blockly/`, `src/core/levels.js`, `src/ui/*`, and `docs/subsystems/blockly-workspace.md` + `ui-mode-contract.md`; this packet touches `src/usage/`, `src/admin/`, `scripts/`, and `docs/subsystems/usage-and-admin.md` + `docs/CohortUsageDataDictionary.md`. **One exception, handled below: `package.json`.**)
 - Blocks: the GAS Stage 1 client integration packet (which calls this builder). The later Stage 1
   canonical protocol/teacher-extraction packet owns the exact account-attributed download
   filename grammar; it must not be implemented in student client code.
@@ -85,16 +84,43 @@ Contracts to preserve:
 - Raw student data never enters a tracked path; test fixtures use synthetic names.
 - Static Vite build, no server dependency, no new runtime dependency.
 
-## Gate (before mutation)
+## Gate (before mutation) — CLEARED 2026-09-01
 
-Present to the owner and stop:
+Both items resolved. Restate them in the preflight plan; there is nothing to stop for.
 
-1. **Direct-mode boundary.** Confirm that the typed-name prompt, the existing filename, and the
-   name inside export events are all unchanged in direct mode.
-2. **Blank-name similarity labels.** Confirm the fix direction: when a record has no self-reported
-   name, its label falls back to the file identity (filename), and a similarity group whose
-   members are *all* unnamed must not be reported as "different names." Recommendation: report it
-   as an unnamed-similarity group with wording that does not imply a name comparison happened.
+1. **Direct-mode boundary — CONFIRMED unchanged.** The typed-name prompt, the existing filename,
+   the payload shape (including `studentName` at top level and inside the two export events), and
+   the hash all stay exactly as they are in direct mode.
+
+2. **Blank-name handling — RESOLVED as Option 1: the discriminator changes, not just the wording.**
+
+   Background the implementer needs, because the current code is easy to misread. A *similarity
+   group* is a set of two or more submitted files whose entire canonical event sequence matches
+   (`getUsageEventFingerprint`, `src/usage/usageFormat.js:195`). The typed name is deliberately
+   **excluded** from the fingerprint, so it never affects which files group together. It is used
+   only in the second step, which decides whether a group is worth showing: a group is reported
+   only when its labels are not all identical, on the theory that same-sequence-different-people
+   is the interesting case and one person resubmitting is not.
+
+   That second step is what breaks. With blank names the labels become `submission-1`,
+   `submission-2`, which are trivially distinct, so every group passes the filter and is announced
+   as "identical attempt sequence under **different names**" — a claim about a name comparison
+   that never happened, shown to a teacher weighing academic integrity.
+
+   The resolution is to make **submitter identity** the discriminator rather than the typed name:
+
+   - Labels and the filter both use the best available submitter identity: the typed name when
+     present, otherwise the caller-supplied file identity. Under owner decision 8 that file
+     identity is where authenticated account attribution will live, so this is the version that
+     keeps working when cloud evidence arrives instead of needing a second pass.
+   - `submission-N` is a positional index, never a submitter identity. It may appear in display
+     output but must **never** satisfy the "distinct submitters" test.
+   - When a group's submitters cannot be distinguished from the files at hand, the group is still
+     reported — the underlying signal is rare and real — but it says so plainly rather than
+     implying a comparison. Wording: **"identical attempt sequence, submitters not distinguishable
+     from these files."**
+   - Suppressing such groups was considered and rejected: it would discard evidence a teacher may
+     want.
 
 The owner decision that authenticated attribution belongs in the teacher's downloaded filename
 remains binding. This packet does not choose or implement that filename's exact grammar: the
@@ -112,8 +138,19 @@ In scope:
 - Unit tests.
 - Subsystem note and data dictionary updates.
 
+**Concurrency exception — do not edit `package.json`.** `plan-118` is running concurrently and also
+adds new test files, so the single `test:unit` line is shared state between two live packets. That
+is the one thing commit discipline says cannot be handled concurrently no matter how careful either
+agent is. Resolution: `plan-118` started first and owns `package.json`. **This packet must not touch
+it.** Name your new test file(s) explicitly in the progress report; the orchestrator registers them
+in `test:unit` at review and runs the full suite then. Validate your own work by running the test
+files directly (`node --test tests/unit/<file>`), which the Commands section already specifies. A
+`npm test` run from this packet will not include the new file, and that is expected — say so in the
+report rather than treating it as a failure.
+
 Out of scope:
 - Anything with a network, an origin, or a Google surface.
+- **`package.json`** — see the concurrency exception above.
 - UI changes of any kind.
 - Changing what events or snapshots are captured.
 - Reworking similarity detection, thresholds, or code-aware similarity (a separate design packet per the 2026-07-22 decision).
@@ -170,14 +207,21 @@ Constraints: this whole-payload search is the assertion that matters — a field
 
 Required behavior, applied identically in `src/usage/usageAnalyzer.js` and `src/usage/usageAnalyzerBrowser.js`:
 
-- Similarity-group labels fall back to a caller-supplied file identity before falling back to `submission-N`. This requires threading a file identity into the comparison input; both consumers (`scripts/analyze-usage-files.js` and `src/admin/adminApp.js`) already have one available (`filePath` / `fileName`) — pass it rather than inventing a new field.
-- A group whose members are all unnamed is **not** reported as "different names." Report it under the gate-approved wording that does not claim a name comparison occurred.
+- **Submitter identity replaces the typed name as the discriminator.** Resolve each record's submitter identity as: typed `studentName` when non-blank, else the caller-supplied file identity. Thread that file identity into the comparison input; both consumers already have one (`filePath` in `scripts/analyze-usage-files.js`, `fileName` in `src/admin/adminApp.js`) — pass it rather than inventing a new field.
+- **`submission-N` is positional, never an identity.** It may still appear in display output, but a group must never qualify as "distinct submitters" on the strength of positional indices. This is the actual defect; a fix that only changes wording while leaving `submission-N` in the distinctness test has not fixed it.
+- **Groups with indistinguishable submitters are still reported**, using the gate-approved wording: *"identical attempt sequence, submitters not distinguishable from these files."* Do not suppress them.
 - The CLI top-level summary line and the browser class table use the file identity when the name is blank, matching the fallback `adminApp.js` already applies to its duplicate flags.
 
 Constraints:
 - Similarity *semantics* are unchanged: the fingerprint grouping rule and the 2026-07-22 import-forensic labeling caveat stay exactly as they are.
 - Do not diverge the two copies. Add a test that runs the same input through both and asserts the same comparison result, so the duplication cannot rot silently.
 - Do not break `getStableKey` in `src/usage/cohortAnalysis.js` (it keys on fileName + payloadHash + sessionId and is unaffected — verify, do not assume).
+
+Required tests for this requirement, beyond the same-input parity test:
+- All-blank names, identical fingerprints, **distinct** filenames: assert the group is reported and is **not** described as a name comparison.
+- All-blank names, identical fingerprints, **identical** filenames: assert the group is reported with the indistinguishable-submitters wording.
+- Mixed: one named record and one blank, identical fingerprints: assert the named record's name is used and the group reports distinct submitters.
+- Regression proof: construct the all-blank case and confirm it reports "different names" against pre-packet code and does not after. Record both results in the progress report.
 
 ### R5 — Docs
 
@@ -217,7 +261,8 @@ npm run test:browser:tooling
 - [ ] Both analyzer copies produce identical comparison output on the same input (pinned by test).
 - [ ] All-blank-name similarity groups no longer report as "different names."
 - [ ] CLI and browser both show the file identity where the name is blank.
-- [ ] `npm test` passes; new test files registered in `package.json`.
+- [ ] `npm test` passes (new test files are NOT registered by this packet — the orchestrator does that at review; see the concurrency exception).
+- [ ] New test file names are stated explicitly in the progress report so the orchestrator can register them.
 - [ ] `npm run build` passes.
 - [ ] `npm run test:browser:tooling` passes (covers `admin.html`).
 - [ ] `docs/subsystems/usage-and-admin.md` and `docs/CohortUsageDataDictionary.md` read true post-change.
@@ -234,4 +279,5 @@ Stop and ask for review if:
 - the cloud payload cannot verify under the existing verifier without altering the integrity contract;
 - threading file identity into the comparison functions turns into a broader analyzer refactor;
 - the question of whether a cloud submission should append an export event to the ledger comes up (owner decision, not an implementer call);
-- the work starts pulling in transport, origin, or GAS concerns.
+- the work starts pulling in transport, origin, or GAS concerns;
+- a change appears to require editing `package.json` or any file listed in `plan-118`'s scope (stop and report; do not coordinate around it in-flight).
