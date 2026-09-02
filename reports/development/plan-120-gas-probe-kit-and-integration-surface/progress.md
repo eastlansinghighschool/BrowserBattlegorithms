@@ -126,4 +126,27 @@ The owner should wait for that workflow to succeed and verify the live child pag
   account-attributed cloud mode.
 - Build output retains unrelated existing warnings about Blockly chunking and chunk size.
 
+## Follow-up repair and preliminary owner run
+
+On 2026-09-02, the owner supplied a preliminary result from a personal Windows computer using the
+then-available `managed-windows-device` / `staff-ou` selections. Those selections do not describe
+the actual device context, so this is not district-device evidence and should not be entered as a
+final tracked result. The page-level observations were all reported as human-observed pass:
+direct-click blob download, delayed blob download, `confirm()`, `prompt()`, speech, and keyboard
+reachability. The observed viewport was 1066 × 620; both storage APIs were reported unpartitioned;
+cleanup remained unknown.
+
+The run was still incomplete because the GAS shell crashed while handling the child handshake at
+`Array.from(frame.sandbox.tokenList)`. Consequently, parent-origin, referrer, and sandbox context
+fields remained unknown. The corrected shell now uses a defensive iterable check. The child and
+identity pages also now offer `personal-windows-device` and other personal-device choices, capture
+`unknown-ou` when appropriate, and include coarse browser family/major version and OS class in the
+email-safe block without exporting the raw user-agent string.
+
+The follow-up implementation is committed as `2cc0c5f`. Targeted hygiene (6/6), the full unit suite
+(560/560), inline script compilation, production build, manifest parsing, `git diff --check`, and a
+headless child-page check passed. The child page check is local only; the corrected cross-origin GAS
+handshake still requires the owner to push, wait for GitHub Pages deployment, and rerun the real GAS
+test. No new Google Workspace action was performed by this agent.
+
 Ready for orchestrator review: yes
