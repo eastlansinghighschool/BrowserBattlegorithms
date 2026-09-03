@@ -1,7 +1,8 @@
 ---
 id: plan-119
 title: "Starter Mismatch Displaced-Work Recovery"
-status: in-progress
+status: complete
+resolution: "Displaced-work recovery delivered and orchestrator-verified. The Plan 45 stale-replace branch now preserves the student's XML to a bounded bba:displaced-workspace:<levelId> slot with an index, verified by read-back, before any overwrite. Preservation failure returns the stored XML and writes nothing, honoring the rule that the only durable copy is never overwritten when the recovery write fails; the level is marked preservation-blocked in memory so saveWorkspaceToLocalStorage suppresses the version stamp. Fail-safe ordering verified: starter write and read-back precede the version stamp. Restore writes XML, verifies, stamps the current version key, verifies, and only then touches the live workspace, so a reload keeps the restored program instead of re-replacing it. Cap 8, oldest-first by displacedAt, one slot per level, unknown level ids pruned without throwing, orphan slot removed on index-write failure. Gate 4 honored via a restoredAt marker rather than deletion, which keeps the copy while stopping the notice recurring. All four approved strings appear verbatim; notice and storage-blocked banner are mutually exclusive by construction. 584/584 unit tests, clean build, 6/6 browser tests including keyboard restore and post-reload persistence. Subsystem note rewritten; the 'silent by design' paragraph is gone. GAS Stage 2 still owns checkpoint upload suppression per review F1."
 depends_on: [plan-118]
 gate: "CLEARED 2026-09-01. All five items resolved: non-blocking notice plus restore button; copy uses the app existing term 'starter program'; cap 8, oldest-first, one slot per level; the recovery copy is never explicitly deleted (only superseded or pruned); plain-language failure copy. See the Gate section for exact strings; nothing remains to stop for."
 summary: >-

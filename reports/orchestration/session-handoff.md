@@ -119,10 +119,14 @@ failures in another packet's full-suite run. `plan-120` reported "3 unrelated ex
 `preferences` failures" that were actually `plan-118` mid-edit on `src/ui/preferences.js`;
 the suite returned to green once `plan-118` landed. Targeted tests are a packet's authoritative
 validation; attribute any full-suite failure by file with `git status` before calling it
-"existing." `plan-118` is **complete**; `plan-119` and `plan-121`
-are `in-progress`. `plan-119` now owns `package.json` (`plan-118` released it; `plan-121` is
-barred from it). `src/platform/safeStorage.js` exists and is the only module in `src/` that
-touches `window.localStorage` — keep it that way.
+"existing." `plan-118` and `plan-119` are **complete**; `plan-121`
+is the sole live packet. `src/platform/safeStorage.js` is the only module in `src/` that touches
+`window.localStorage` — keep it that way.
+
+**`plan-116` still cannot start, now for a different reason.** It was blocked by `plan-118` on
+`src/core/levels.js`; that cleared, but it overlaps `plan-121` on **`src/usage/usageTracker.js`**
+and **`docs/subsystems/usage-and-admin.md`**. Wait for `plan-121` to complete. After that,
+`plan-116` is the next dispatch and needs only its counter-definition gate answered.
 
 **`plan-116` is now unblocked** — `plan-118` completed and released `src/core/levels.js`. It remains `ready` and held pending its counter-definition gate. The earlier caution read: It lands counters in `src/core/levels.js`'s
 end-of-level path, and `plan-118` is migrating storage calls in that same file. Different
