@@ -119,10 +119,12 @@ failures in another packet's full-suite run. `plan-120` reported "3 unrelated ex
 `preferences` failures" that were actually `plan-118` mid-edit on `src/ui/preferences.js`;
 the suite returned to green once `plan-118` landed. Targeted tests are a packet's authoritative
 validation; attribute any full-suite failure by file with `git status` before calling it
-"existing." `plan-118` and `plan-121` are both `in-progress`
-with their gates cleared. `plan-119` stays dependency-blocked behind `plan-118`.
+"existing." `plan-118` is **complete**; `plan-119` and `plan-121`
+are `in-progress`. `plan-119` now owns `package.json` (`plan-118` released it; `plan-121` is
+barred from it). `src/platform/safeStorage.js` exists and is the only module in `src/` that
+touches `window.localStorage` — keep it that way.
 
-**`plan-116` must not start while `plan-118` is live.** It lands counters in `src/core/levels.js`'s
+**`plan-116` is now unblocked** — `plan-118` completed and released `src/core/levels.js`. It remains `ready` and held pending its counter-definition gate. The earlier caution read: It lands counters in `src/core/levels.js`'s
 end-of-level path, and `plan-118` is migrating storage calls in that same file. Different
 functions, same file, so under commit discipline they serialize.
 

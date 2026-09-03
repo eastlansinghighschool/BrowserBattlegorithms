@@ -1,11 +1,9 @@
 ---
 id: plan-119
 title: "Starter Mismatch Displaced-Work Recovery"
-status: ready
+status: in-progress
 depends_on: [plan-118]
 gate: "before mutation: owner approves the recovery UX shape (notice + restore affordance), its ordinary/preservation-failure/restore-failure copy, and the displaced-slot retention cap"
-superseded_by: null
-resolution: null
 summary: >-
   Stop the Plan 45 stale-starter replacement from being an unrecoverable silent deletion: preserve the displaced workspace XML in a bounded local slot before the starter overwrites it, tell the student, and give them one way to get it back. Keeps the replacement behavior itself, which is correct. Local-only; the cloud-promotion suppression half of the finding is deliberately deferred to GAS Stage 2.
 ---
@@ -118,6 +116,22 @@ Out of scope:
 - Migrating already-lost work (it is already gone; nothing can recover it).
 
 Files and areas likely touched: `src/ai/blockly/workspace.js`, one UI notice/action surface (the same one `plan-118` used, if suitable), `tests/unit/blockly-workspace.test.js`, `package.json` if a new test file is added, `docs/subsystems/blockly-workspace.md`.
+
+## Concurrency note (added 2026-09-01 at dispatch)
+
+`plan-121` is running concurrently. Write-scopes are disjoint: it owns `src/usage/`, `src/admin/`,
+`scripts/`, `docs/subsystems/usage-and-admin.md`, and `docs/CohortUsageDataDictionary.md`; this
+packet owns `src/ai/blockly/`, `src/platform/` consumers, the notice surface, and
+`docs/subsystems/blockly-workspace.md`.
+
+**You own `package.json`.** `plan-118` released it on completion and `plan-121` is explicitly
+barred from touching it, so register any new test file yourself.
+
+**Your targeted tests are your authoritative validation.** `npm test` reads the whole worktree, so
+a concurrent packet's in-flight edits can surface as failures in your full-suite run. If the full
+suite fails, attribute each failure by file with `git status` before describing it — never call a
+failure "pre-existing" without checking whether another live packet is mid-edit on that file. That
+mistake was made once already on 2026-09-01 and is recorded in the decision log.
 
 ## Work Plan
 

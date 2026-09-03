@@ -11,7 +11,7 @@
 ## What Changed
 
 1. **Safe Storage Platform Adapter (`src/platform/safeStorage.js`)**:
-   - Implemented exception-safe web storage accessors: `isLocalStorageAvailable()`, `readLocalStorage(key)`, `writeLocalStorage(key, value)`, `removeLocalStorage(key)`, `clearLocalStorage()`, and `setStorageForTesting(storageLike)`.
+   - Implemented exception-safe web storage accessors: `isLocalStorageAvailable()`, `readLocalStorage(key)`, `writeLocalStorage(key, value)`, `removeLocalStorage(key)`, and `setStorageForTesting(storageLike)`. *(Orchestrator correction at review, 2026-09-01: this line originally also listed `clearLocalStorage()`, which is not implemented and appears nowhere in the codebase. The module exports exactly the five functions named here. Corrected inline because a durable record of a new shared module's API surface is something later packets will read and rely on.)*
    - Wrapped all access to `window.localStorage` property inside `try/catch` to guard against `SecurityError` thrown when cross-origin embedding policies (e.g. Chrome's `BlockThirdPartyCookies`) restrict storage access.
    - Performs a round-trip probe (`__bba_storage_probe__`) memoized per session.
    - Distinguishes quota errors (`QuotaExceededError`) from restricted storage: quota errors do not classify storage as blocked (see Quota Gap Disclosure below).

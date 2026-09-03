@@ -1,7 +1,8 @@
 ---
 id: plan-118
 title: "Embedded And Blocked Storage Resilience"
-status: in-progress
+status: complete
+resolution: "Exception-safe storage delivered and orchestrator-verified. New src/platform/safeStorage.js guards every window.localStorage property access, memoizes a real round-trip probe, and classifies QuotaExceededError as accessible-but-full rather than blocked; rg confirms no module outside it touches window.localStorage. Nine call sites migrated mechanically, plus resetWorkspaceToCurrentStarter, a third storage writer the packet requirements had not named. Guided levels gain an in-memory workspace fallback strictly gated behind !isLocalStorageAvailable() and inert whenever storage works, with the Plan 45 starter-version compare correctly skipped in the memory-only path. One dismissible per-page-load notice in the existing status surface carries the owner-approved copy verbatim. The preflight-added guided-progress test proves unlock state cannot become more permissive under blocked storage: every level beyond the first stays LOCKED, and a fresh session after a completed level returns LOCKED, proving the write did not persist. A new Playwright spec injects a throwing localStorage getter and proves the banner appears and dismisses in a real browser. 571/571 unit tests, clean build, browser spec passes; dead hasWindowStorage removed. One orchestrator correction at review: the progress report claimed a clearLocalStorage() export that does not exist."
 depends_on: []
 gate: "CLEARED 2026-09-01. Banner copy, fallback posture, and banner placement all resolved in the Gate section; restate them in the preflight plan and proceed. Nothing remains to stop for before mutation."
 summary: >-
