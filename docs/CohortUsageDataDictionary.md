@@ -6,6 +6,8 @@ Generated tables live in the git-ignored local path:
 `local/usage-cohorts/<cohort-id>/anonymized/json/`
 `local/usage-cohorts/<cohort-id>/anonymized/csv/`
 
+Note: For identity-stripped cloud exports, `identityMap.details[].studentName` is empty and longitudinal linking relies on the filename.
+
 ---
 
 ## Table 1: `exports`

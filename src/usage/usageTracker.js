@@ -5,10 +5,10 @@ import {
   USAGE_RETENTION_DAYS,
   addUsageSnapshot,
   appendUsageEvent,
-  canonicalJsonStringify,
+  buildExportPayloadWithIntegrity,
   cloneJson,
+  computeBrowserSha256Hex,
   createExportFilename,
-  createExportPayload,
   createUsageSession,
   evictLowestValueEvents,
   normalizePersistedSession
@@ -195,14 +195,6 @@ function buildWorkspaceSnapshotPayload(app, reason) {
   };
 }
 
-async function computeBrowserSha256Hex(text) {
-  const subtle = globalThis.crypto?.subtle;
-  if (!subtle) {
-    throw new Error("Browser crypto is unavailable.");
-  }
-  const digest = await subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
 
 export function initializeUsageTracking(app) {
   if (app.usageTracker) {
@@ -503,15 +495,13 @@ export function initializeUsageTracking(app) {
       });
       await tracker.flush();
       const exportedAt = new Date().toISOString();
-      const payload = createExportPayload(session, cleanName, exportedAt);
-      const canonicalPayload = canonicalJsonStringify(payload);
-      const payloadWithIntegrity = {
-        ...payload,
-        integrity: {
-          algorithm: "SHA-256",
-          sha256: await computeBrowserSha256Hex(canonicalPayload)
-        }
-      };
+      const payloadWithIntegrity = await buildExportPayloadWithIntegrity({
+        session,
+        studentName: cleanName,
+        exportedAt,
+        computeSha256: computeBrowserSha256Hex
+      });
+      const { integrity: _unused, ...canonicalPayload } = payloadWithIntegrity;
       const filename = createExportFilename(cleanName, session.sessionId);
       appendUsageEvent(session, "export_completed", {
         studentName: cleanName,
@@ -524,7 +514,7 @@ export function initializeUsageTracking(app) {
         ok: true,
         filename,
         payload: payloadWithIntegrity,
-        canonicalPayload: payload
+        canonicalPayload
       };
     }
   };

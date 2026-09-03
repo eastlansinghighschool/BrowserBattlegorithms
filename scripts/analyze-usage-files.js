@@ -30,7 +30,7 @@ function formatSummaryLine(record) {
   const reviewLabel = record.needsReview ? "review" : "clear";
   return [
     basename(record.filePath),
-    `student=${record.studentName || "(blank)"}`,
+    `student=${record.studentName || basename(record.filePath) || "(blank)"}`,
     `session=${record.sessionId || "(missing)"}`,
     `exported=${record.exportedAt || "(missing)"}`,
     `integrity=${hashLabel}`,
@@ -108,7 +108,13 @@ async function main() {
   }
   if (comparisons.similarSequencesDifferentNames.length) {
     for (const entry of comparisons.similarSequencesDifferentNames) {
-      console.log(formatFlagLine("similar event sequence (identical attempts + program states; strong but rare — 'not flagged' does not mean independent work)", entry.labels || []));
+      let label = "similar event sequence (identical attempts + program states; strong but rare — 'not flagged' does not mean independent work)";
+      if (!entry.submittersDistinguishable) {
+        label = "similar event sequence (identical attempt sequence, submitters not distinguishable from these files; strong but rare — 'not flagged' does not mean independent work)";
+      } else if (!entry.hasDifferentNames) {
+        label = "similar event sequence (identical attempt sequence and identical captured program states in separate submissions; strong but rare — 'not flagged' does not mean independent work)";
+      }
+      console.log(formatFlagLine(label, entry.labels || []));
     }
   }
 }

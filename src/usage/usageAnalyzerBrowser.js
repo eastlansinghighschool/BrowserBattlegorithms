@@ -157,6 +157,17 @@ function toLowerTrim(value) {
   return `${value || ""}`.trim().toLowerCase();
 }
 
+export function resolveFileIdentity(summary) {
+  if (summary?.fileName && typeof summary.fileName === "string") {
+    return summary.fileName.trim();
+  }
+  if (summary?.filePath && typeof summary.filePath === "string") {
+    const trimmed = summary.filePath.trim();
+    return trimmed.split(/[\\/]/).pop() || trimmed;
+  }
+  return "";
+}
+
 export function compareUsageSummaries(summaries) {
   const bySessionId = new Map();
   const byHash = new Map();
@@ -195,9 +206,53 @@ export function compareUsageSummaries(summaries) {
 
   const similarSequencesDifferentNames = duplicateFingerprints
     .map((entry) => {
-      const labels = entry.indices.map((index) => summaries[index].studentName || `submission-${index + 1}`);
-      const uniqueNames = new Set(labels.map(toLowerTrim));
-      return uniqueNames.size > 1 ? { ...entry, labels } : null;
+      const records = entry.indices.map((index) => {
+        const s = summaries[index] || {};
+        const cleanName = `${s.studentName || ""}`.trim();
+        const fileId = resolveFileIdentity(s);
+        const submitterId = cleanName ? cleanName.toLowerCase() : (fileId ? fileId.toLowerCase() : "");
+        const label = cleanName || fileId || `submission-${index + 1}`;
+        return {
+          index,
+          cleanName,
+          fileId,
+          submitterId,
+          label
+        };
+      });
+
+      const labels = records.map((r) => r.label);
+      const namedRecords = records.filter((r) => Boolean(r.cleanName));
+      const uniqueNames = new Set(namedRecords.map((r) => r.cleanName.toLowerCase()));
+      const hasDifferentNames = uniqueNames.size > 1;
+
+      const allSameTypedName = records.length > 0 && namedRecords.length === records.length && uniqueNames.size === 1;
+      if (allSameTypedName) {
+        return null;
+      }
+
+      const validSubmitterIds = records.map((r) => r.submitterId).filter(Boolean);
+      const uniqueSubmitterIds = new Set(validSubmitterIds);
+      const submittersDistinguishable = uniqueSubmitterIds.size > 1;
+
+      let wording;
+      if (!submittersDistinguishable) {
+        wording = "identical attempt sequence, submitters not distinguishable from these files.";
+      } else if (hasDifferentNames) {
+        wording = "identical attempt sequence AND identical captured program states under different names.";
+      } else {
+        wording = "identical attempt sequence and identical captured program states in separate submissions.";
+      }
+
+      return {
+        fingerprint: entry.fingerprint,
+        indices: entry.indices,
+        labels,
+        submittersDistinguishable,
+        distinctSubmitters: submittersDistinguishable,
+        hasDifferentNames,
+        wording
+      };
     })
     .filter(Boolean);
 

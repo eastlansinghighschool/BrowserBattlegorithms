@@ -104,7 +104,7 @@ function renderFlags() {
     flagsSection.hidden = true;
     return;
   }
-  const summaries = records.map((r) => r.summary);
+  const summaries = records.map((r) => ({ ...r.summary, fileName: r.fileName }));
   const { duplicateSessionIds, duplicateHashes, similarSequencesDifferentNames } = compareUsageSummaries(summaries);
   const items = [];
 
@@ -116,8 +116,10 @@ function renderFlags() {
     const names = indices.map((i) => records[i].summary.studentName || records[i].fileName).join(", ");
     items.push(`<strong>Identical integrity hash:</strong> ${names} — files may be exact copies.`);
   }
-  for (const { labels } of similarSequencesDifferentNames) {
-    items.push(`<strong>Similarity flag:</strong> ${labels.join(", ")} — identical attempt sequence AND identical captured program states under different names. Strong evidence when it fires, but rare by design: "not flagged" does not mean independent work. Review recommended.`);
+  for (const entry of similarSequencesDifferentNames) {
+    const names = (entry.labels || []).join(", ");
+    const wording = entry.wording || "identical attempt sequence AND identical captured program states under different names.";
+    items.push(`<strong>Similarity flag:</strong> ${names} — ${wording} Strong evidence when it fires, but rare by design: "not flagged" does not mean independent work. Review recommended.`);
   }
 
   if (items.length === 0) {
@@ -292,16 +294,17 @@ function renderTable() {
   }
   tableSection.hidden = false;
 
-  records.forEach(({ summary }, index) => {
+  records.forEach(({ fileName, summary }, index) => {
     const guidedProgress = summary.guidedProgress || {};
+    const displayName = summary.studentName || fileName || "(blank)";
     const tr = document.createElement("tr");
     if (index === selectedIndex) {
       tr.className = "adm-row-selected";
     }
     tr.setAttribute("tabindex", "0");
-    tr.setAttribute("aria-label", `Student ${summary.studentName || "(blank)"}`);
+    tr.setAttribute("aria-label", `Student ${displayName}`);
     tr.innerHTML = `
-      <td>${escHtml(summary.studentName || "(blank)")}</td>
+      <td>${escHtml(displayName)}</td>
       <td class="adm-mono" title="${escHtml(summary.sessionId)}">${escHtml(shortSession(summary.sessionId))}</td>
       <td>${escHtml(formatDate(summary.exportedAt))}</td>
       <td>${integrityBadge(summary.hashStatus)}</td>

@@ -449,15 +449,36 @@ export function addUsageSnapshot(session, type, data = {}, at = new Date().toISO
   return snapshot;
 }
 
-export function sanitizeEventsForV2Export(events = []) {
+export function stripStudentNameDeep(value) {
+  if (Array.isArray(value)) {
+    return value.map(stripStudentNameDeep);
+  }
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+  const result = {};
+  for (const [key, val] of Object.entries(value)) {
+    if (key === "studentName") {
+      continue;
+    }
+    result[key] = stripStudentNameDeep(val);
+  }
+  return result;
+}
+
+export function sanitizeEventsForV2Export(events = [], options = {}) {
   if (!Array.isArray(events)) {
     return [];
   }
+  const stripStudentName = Boolean(options.stripStudentName);
   return events.map((event) => {
     if (!event || typeof event !== "object") {
       return event;
     }
     const cloned = cloneJson(event);
+    if (stripStudentName && "studentName" in cloned) {
+      delete cloned.studentName;
+    }
     if (cloned.data && typeof cloned.data === "object") {
       if (cloned.data.xmlText) {
         // In V2 export (D3), full XML travels ONLY inside boundaryXmls.
@@ -466,6 +487,9 @@ export function sanitizeEventsForV2Export(events = []) {
           cloned.data.xmlHash = hashXml(cloned.data.xmlText);
         }
         delete cloned.data.xmlText;
+      }
+      if (stripStudentName) {
+        cloned.data = stripStudentNameDeep(cloned.data);
       }
     }
     return cloned;
@@ -518,7 +542,8 @@ export function transformToPre106Baseline(v1Export) {
 }
 
 export function createExportPayload(session, studentName, exportedAt = new Date().toISOString(), options = {}) {
-  const cleanStudentName = `${studentName || ""}`.trim();
+  const stripStudentName = Boolean(options.stripStudentName);
+  const cleanStudentName = stripStudentName ? "" : `${studentName || ""}`.trim();
   const targetSchema = options.schemaVersion || 2;
 
   if (targetSchema === 1) {
@@ -567,7 +592,7 @@ export function createExportPayload(session, studentName, exportedAt = new Date(
     boundaryXmls,
     runVersionHashes: getRunVersionHashesForExport(session),
     flags,
-    events: sanitizeEventsForV2Export(session.events || []),
+    events: sanitizeEventsForV2Export(session.events || [], { stripStudentName }),
     snapshots: sanitizeSnapshotsForV2Export(session.snapshots || [])
   };
 
@@ -582,6 +607,37 @@ export function createExportFilename(studentName, sessionId) {
   const namePart = `${studentName || "usage"}`.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "usage";
   const sessionPart = `${sessionId || "session"}`.slice(0, 8);
   return `bba-usage-${namePart}-${sessionPart}.json`;
+}
+
+export async function computeBrowserSha256Hex(text) {
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) {
+    throw new Error("Browser crypto is unavailable.");
+  }
+  const digest = await subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function buildExportPayloadWithIntegrity({
+  session,
+  studentName = "",
+  exportedAt = new Date().toISOString(),
+  computeSha256 = computeBrowserSha256Hex,
+  options = {}
+} = {}) {
+  if (!session || typeof session !== "object") {
+    throw new Error("A valid session object is required.");
+  }
+  const payload = createExportPayload(session, studentName, exportedAt, options);
+  const canonicalPayload = canonicalJsonStringify(payload);
+  const sha256 = await computeSha256(canonicalPayload);
+  return {
+    ...payload,
+    integrity: {
+      algorithm: "SHA-256",
+      sha256
+    }
+  };
 }
 
 export function normalizePersistedSession(session) {

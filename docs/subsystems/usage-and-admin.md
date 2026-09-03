@@ -21,6 +21,7 @@ This note does NOT own:
 |---|---|
 | `src/usage/learningLedger.js` | Usage Tracker V2 durable per-level learning ledger (Plan 84 Tier 1), schema V2 hydration, backfill, and pass ledger mirroring. |
 | `src/usage/runVersionStore.js` | Usage Tracker V2 diff-deduped run-version store (Plan 84 Tier 2), D1/D2 retention windows, per-level K cap, byte budget. |
+| `src/usage/cloudEvidence.js` | Pure schema V2 cloud evidence builder with deep identity stripping, no DOM, and no networking (Plan 121). |
 | `src/usage/usageTracker.js` | Session management, event recording, IndexedDB persistence, export payload assembly, SHA-256 hash via Web Crypto. |
 | `src/usage/usageFormat.js` | Canonical event structure, schema V2 session normalization, snapshot limits, value-based event pruning, fingerprint logic. |
 | `src/usage/usageAnalyzer.js` | Node-side CLI analyzer: hash verification, guided progress derivation, free-play summary, duplicate and similarity detection. |
@@ -70,6 +71,12 @@ In Usage Tracker V2 (Plan 84 / Plan 106), sessions maintain an incremental per-l
      - **2-Star Max & Concept-Mandatory Levels**: Levels where the core concept is mandatory to pass (such as movement-helpers pilot levels 12–14) do not author a `masteryCriterionId` (documented as "no honest criterion — 2-star max" per decision log 2026-08-05), capping stars at 2 without code-golf block-budget enforcement. S12 fully protected levels (e.g. `move-toward-flag`) carry no star metadata and remain pass-star-only (max 1 star).
      - **Cumulative Tiers**: Stars are cumulative — `starsEarned` is 3 only when both `parBeaten` and `masteryAchieved` hold, and 2 only when `parBeaten` holds. A mastery-meeting but slower-than-par run earns 1 star with `masteryAchieved: true` recorded (decision log 2026-08-05).
      - **Plan 112 Production UI Read Accessor**: The UI layer reads star outcomes cleanly via `app.usageTracker.getGuidedStarState(levelId)`, which returns `{ reached, passed, starsEarned, parBeaten, turnPar, masteryAchieved, masteryCriterionId }` strictly read-only from the durable ledger. `usageTrackerSessionInternal` remains test scaffolding only.
+   - **Cloud Evidence Builder & Identity Contract (Plan 121)**:
+     - **Pure Builder (`src/usage/cloudEvidence.js`)**: `buildCloudEvidencePayload({ session, exportedAt, computeSha256 })` returns a sanitized schema-v2 payload plus integrity block, pure and free of DOM, window, or network dependencies.
+     - **Identity Guarantee**: Self-reported identity is stripped at top level (`studentName: ""`) and removed recursively wherever `"studentName"` appears in `events[].data` across all event types.
+     - **Integrity Parity**: Uses the shared `buildExportPayloadWithIntegrity` construction. The SHA-256 integrity hash is computed over the canonical payload minus `integrity` and verifies cleanly under the unmodified `verifyUsageExport`.
+     - **Side-Effect Free**: Does not record `export_requested` or `export_completed` events into the session ledger.
+     - **Attribution Policy**: Authenticated account attribution belongs strictly in the teacher-download filename, never inside hashed v2 evidence payloads. The exact filename grammar is deferred to the canonical Stage 1 protocol/teacher-extraction surface and must not be re-created in student client code.
 
 ## Run-Version Store (Tier 2)
 
@@ -186,6 +193,17 @@ Both analyzers (`usageAnalyzerBrowser.js` and `usageAnalyzer.js`) produce the sa
 5. **Similarity Framing**: Similarity flag output includes plain-language context clarifying that matching compares attempt event sequences, not final boundary code text.
 
 The two paths are designed to agree on hash verification, schema detection, guided progress derivation, and anomaly detection. If they diverge, that is a bug.
+
+### Submitter Identity & Similarity Parity (Plan 121)
+
+1. **Submitter Identity Discriminator**: In `compareUsageSummaries`, submitter identity replaces the typed name as the similarity discriminator. Submitter identity is resolved as: typed `studentName` when non-blank, else the caller-supplied file identity (`fileName` in Admin UI, `filePath` in CLI).
+2. **Positional Indices Never Qualify**: `submission-N` is a positional index for display only and never satisfies the "distinct submitters" test.
+3. **Three Similarity Outcomes**:
+   - **Distinct typed names**: `"identical attempt sequence AND identical captured program states under different names."` (Unchanged)
+   - **All names blank, file identities indistinguishable**: `"identical attempt sequence, submitters not distinguishable from these files."`
+   - **All names blank, file identities differ (or mixed)**: `"identical attempt sequence and identical captured program states in separate submissions."`
+4. **Resubmission Suppression**: When all records in a similarity group share the exact same non-blank typed name (e.g. all "Alice"), the group represents one student resubmitting and is suppressed.
+5. **Blank Name Display Fallback**: The CLI summary line (`analyze-usage-files.js`) and the browser class table (`adminApp.js`) fall back to the file identity when `studentName` is blank.
 
 ## Regression harness
 
