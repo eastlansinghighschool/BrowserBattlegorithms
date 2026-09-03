@@ -128,6 +128,59 @@ student client never receives authenticated account attribution, and the grammar
 later canonical Stage 1 protocol/teacher-extraction surface where it can have one mechanically
 checked source of truth.
 
+## Additional review requirements (added 2026-09-01 at preflight review)
+
+### The third similarity wording — RESOLVED by the owner
+
+Option 1 makes three outcomes possible for a similarity group, not two. The first two were already
+approved; the third was not, and the preflight plan invented it. Owner decision 2026-09-01:
+
+| Case | Message |
+| --- | --- |
+| Distinct typed names | Existing wording — "identical attempt sequence AND identical captured program states under different names." Unchanged. |
+| All names blank, file identities indistinguishable | Approved wording — "identical attempt sequence, submitters not distinguishable from these files." |
+| All names blank, file identities differ | **"identical attempt sequence and identical captured program states in separate submissions."** |
+
+The third message deliberately does **not** say "across distinct submitters," which the preflight
+plan proposed. Two differing filenames prove two separate files were submitted; they do not prove
+two different people submitted them. A teacher may have renamed files, or one student may have
+submitted twice under different names — and in both cases an "across distinct submitters" sentence
+is false while reading as authoritative. Overclaiming in an academic-integrity signal is the exact
+defect class this packet exists to remove; do not reintroduce it in the fix.
+
+### Do not implement a second SHA-256 helper
+
+The preflight plan proposes implementing and exporting `computeBrowserSha256Hex` in
+`usageFormat.js`. It already exists as a private function at `src/usage/usageTracker.js:198`.
+Adding a second implementation would give the integrity contract two definitions of its own hash —
+the one kind of duplication this packet must not create. Instead, let
+`buildExportPayloadWithIntegrity` take `computeSha256` as an injected parameter (which the plan
+already does) and have the tracker pass its existing function. If a single shared definition is
+genuinely wanted, **move** it and leave no copy behind; do not duplicate it.
+
+### Prove byte-identity with a captured fixture, not an assertion
+
+"Direct-mode payload is byte-identical before and after" cannot be demonstrated by a post-packet
+test comparing post-packet code to itself. **Before making any source change**, run the existing
+`exportUsageFile` path with a fixed session id, fixed `exportedAt`, and fixed student name; capture
+the exact payload; and commit it as a test fixture. The post-packet test asserts deep equality
+against that captured fixture. Record in the progress report that the fixture was captured from
+pre-packet code, and at which commit. Without this the byte-identity claim is unfalsifiable.
+
+### Trim the returned-entry API
+
+The plan adds `distinctSubmitters`, `submittersDistinguishable`, `hasDifferentNames`, `wording`,
+and `description` to each returned entry. `wording` and `description` are two string fields for
+one message and will drift. Keep one. Both analyzer copies must expose exactly the same field set,
+and the parity test must compare the whole returned structure, not a subset.
+
+### `package.json` is now yours
+
+The concurrency exception in this packet's Depends-on line is **lifted**: `plan-118` and
+`plan-119` both completed on 2026-09-01, and this is now the only live packet. Register
+`tests/unit/cloud-evidence.test.js` in the `test:unit` list yourself; the orchestrator no longer
+needs to do it at review. Run the full `npm test` after registering it.
+
 ## Scope
 
 In scope:
