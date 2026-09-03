@@ -2,6 +2,7 @@
 id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
 status: in-progress
+resolution: "Current probe build is plan-120-v2 across the public child, nested-frame shell, and tenant-identity page. It includes the repaired DOMTokenList handshake handling and coarse browser-family/major-version/OS metadata; plan-120-v1 result blocks are invalid and must be discarded. The owner must re-paste and redeploy both Apps Script projects before rerunning; Gate 1 and Gate 2 remain owner-run measurements outside this packet."
 depends_on: []
 gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
 summary: >-

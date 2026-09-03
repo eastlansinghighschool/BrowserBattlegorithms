@@ -75,6 +75,12 @@ test("probe reports are explicitly deidentified and storage pairing is receipt-g
   const child = readFileSync(resolve(root, "public/integration-probe/nested-frame-child.html"), "utf8");
   const shell = readFileSync(resolve(root, "integrations/google-apps-script/probes/nested-frame/Shell.html"), "utf8");
   const identity = readFileSync(resolve(root, "integrations/google-apps-script/probes/identity/Page.html"), "utf8");
+  const childVersion = child.match(/const VERSION = '(plan-120-v\d+)'/i)?.[1];
+  const shellVersion = shell.match(/const SHELL_VERSION = '(plan-120-v\d+)'/i)?.[1];
+  const identityVersion = identity.match(/const VERSION = '(plan-120-v\d+)'/i)?.[1];
+  assert.ok(childVersion && shellVersion && identityVersion);
+  assert.equal(childVersion, shellVersion);
+  assert.equal(shellVersion, identityVersion);
   assert.match(child, /Copy email-safe report/);
   assert.match(child, /BBA_PLAN120_DIRECT_STORAGE_RECEIPT/);
   assert.match(child, /verify-direct-receipt/);

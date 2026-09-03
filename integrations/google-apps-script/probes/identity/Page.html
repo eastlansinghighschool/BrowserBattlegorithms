@@ -117,7 +117,7 @@
   <p><strong>Hard fail:</strong> blank or ambiguous active identity stops account-attributed cloud mode. Never replace server-derived identity with an email supplied by the browser.</p>
   <script>
     const serverIdentity = <?!= JSON.stringify(identity) ?>;
-    const VERSION = 'plan-120-v1';
+    const VERSION = 'plan-120-v2';
     const runId = (() => { try { return `run-${crypto.getRandomValues(new Uint32Array(2)).join('-')}`; } catch (_) { return `run-fallback-${Date.now()}`; } })();
     let domainStatus = 'unknown';
     const text = (id, value) => { document.getElementById(id).textContent = value; };

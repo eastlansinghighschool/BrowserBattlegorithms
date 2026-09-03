@@ -11,10 +11,13 @@ store classroom data.
    repository tests and build, then publishes `dist/`. It prepares the child page at:
    `/integration-probe/nested-frame-child.html`.
 3. Wait for the GitHub Actions Pages workflow to finish successfully. Open the child URL over
-   HTTPS and verify that the page displays probe version `plan-120-v1`. If the page is missing,
+   HTTPS and verify that the page displays probe version `plan-120-v2`. If the page is missing,
    served over HTTP, or shows another version, stop and report that condition; do not run a GAS
    probe against it.
-4. Do not use a commercial host, a p5.js sketch, or a manually uploaded alternate copy as the
+4. Before the next run, re-paste and re-deploy both Apps Script projects from the current
+   repository source: the nested-frame shell and the identity probe. A shell copied before this
+   version bump can fail silently while still appearing version-compatible with an old child.
+5. Do not use a commercial host, a p5.js sketch, or a manually uploaded alternate copy as the
    official child. The child is part of the GitHub Pages build. The GAS shell is the separate
    Apps Script project that frames it.
 
@@ -126,7 +129,8 @@ client-supplied email.
 ## Returning results
 
 The sender should paste the complete `PLAN120_RESULT` block into an email or chat message, with no
-manual edits. A missing block, wrong `probe_version`, missing statuses, unverified storage receipt,
+manual edits. Any block reporting `probe_version=plan-120-v1` is discarded; rerun its condition
+under v2. A missing block, wrong `probe_version`, missing statuses, unverified storage receipt,
 or a version mismatch is incomplete; rerun the assigned condition instead of guessing or editing
 the block. Screenshots, raw JSON, browser-console output, exact origins, deployment URLs, sentinels,
 names, email addresses, expected domains, and account ids must not be returned.

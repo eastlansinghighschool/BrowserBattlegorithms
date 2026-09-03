@@ -8,7 +8,7 @@ unknown observations. Keep raw console or JSON output, if needed, under ignored 
 | Field | Value |
 | --- | --- |
 | Date |  |
-| Probe version |  |
+| Probe version | `plan-120-v2` required; discard any `plan-120-v1` block |
 | Browser and version | coarse family/major only; do not record raw user-agent string |
 | Operating system | coarse OS class only |
 | Device class | e.g. managed Chromebook 1366x768 |
