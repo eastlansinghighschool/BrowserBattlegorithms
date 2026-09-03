@@ -127,6 +127,19 @@ in isolation. The implementer's stop condition caught it. Both the reasoning err
 noise-dominated measurement are recorded in the decision log; the standing rule is to size each arm
 against the flake rate before attributing a failure to a condition.
 
+**Gate 1 is under way.** The first live run confirmed the shell/child handshake works and produced
+the first observed HtmlService parent origin, a per-something opaque
+`n-<token>-1lu-script.googleusercontent.com` subdomain corroborated by both `document.referrer` and
+`event.origin`. **Its stability, not its value, is the finding**, and one reading settles nothing —
+the four conditions (reload, second signed-in user, new version of the same deployment, new
+deployment) are what decide whether Stage 1 can use exact origin pinning or needs a server-issued
+account/deployment-bound bootstrap proof. That choice is the difference between a modest first
+protocol packet and a substantially larger one. Two other early signals are in the decision log: an
+inner viewport of 1066x620 on a full-size display, which may make usable viewport the binding
+constraint on a 1366x768 Chromebook rather than any API question; and a reminder not to convert the
+plausible-but-unmeasured GAS sandbox explanation into a recorded finding — the behavioral tests are
+the substitute for introspection.
+
 **Gate 1 and Gate 2 remain the only things blocking Stage 1 proper.** They are owner-run
 measurements, not packets. `plan-120` delivered the kit at probe build `plan-120-v2`; the run sheet
 is `reports/development/plan-120-gas-probe-kit-and-integration-surface/directions.md`. Re-paste both

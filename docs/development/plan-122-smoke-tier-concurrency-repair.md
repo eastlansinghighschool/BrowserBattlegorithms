@@ -8,18 +8,18 @@ gate: "none. Amendment 01 (2026-09-01) retracted the original diagnosis and resc
 summary: >-
   Repair the intrinsic animation-frame race in the key-capture D-key test that blocks the Pages deploy and Gate 1. Amendment 01 retracted the original concurrency diagnosis: the test flakes about 10 percent of the time even alone at workers 1. p5 noLoop does not cancel an already-queued requestAnimationFrame, so a late frame can execute and clear the queued action before the test's waitForFunction begins polling. Fix by draining the pending frame before dispatching the key. The worker-count question is deferred, not answered.
 ---
-# Plan 122: Smoke Tier Concurrency Repair
+# Plan 122: Key-Capture Test Animation-Frame Race Repair
 
 ## Packet Metadata
 
 - Packet id: `plan-122`
-- Packet title: Smoke Tier Concurrency Repair
+- Packet title: Key-Capture Test Animation-Frame Race Repair
 - Status: (see frontmatter)
 - Owner/model: implementation agent
 - Date: 2026-09-01
 - Packet type: testing
 - Mutation level: repository config (`playwright.smoke.config.js`), docs
-- Approval gate: none. The diagnosis below was completed at orchestration with reproductions; the tier decision is recorded and is a one-line revert if the owner disagrees.
+- Approval gate: none. **Amendment 01 (below) retracted the original diagnosis and rescoped this packet.** The sections between here and Amendment 01 are preserved for the record and are superseded by it.
 - Depends on: nothing. (Write-scope is disjoint from `plan-116`, which is concurrently live in `src/core/`, `src/usage/`, and `docs/subsystems/`. This packet touches only `playwright.smoke.config.js` and `docs/TESTING.md`.)
 - Blocks: the GitHub Pages deploy, and therefore Gate 1 — the nested-frame probe cannot run until `public/integration-probe/nested-frame-child.html` reaches the live site.
 - Expected artifacts:
