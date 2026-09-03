@@ -337,6 +337,7 @@ test("guided keyboard-practice level accepts the Team 1 D key through the real b
   await page.evaluate(() => {
     window.__BBA_TEST_HOOKS__.app.p5Instance?.noLoop?.();
   });
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => resolve())));
   await page.locator("#playResetButton").focus();
   await page.keyboard.press("d");
   const queuedActionHandle = await page.waitForFunction(() => {

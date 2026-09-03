@@ -1,7 +1,9 @@
 import { defineConfig } from "@playwright/test";
 
 // Smoke browser suite — fast, representative coverage for frequent validation.
-// Runs at workers: 2 because this file set has no timing-sensitive animation tests.
+// Runs at workers: 2 for fast CI validation. Real browser event dispatch tests in this tier
+// (such as key-capture-passthrough.spec.js) drain pending animation frames after noLoop()
+// to prevent render-loop races (see plan-122).
 //
 // Release suite: `npm run test:browser` / `npm run test:browser:extended` (126 tests, workers: 1, stable, excludes deferred workbench).
 // Focus/accessibility suite: `npm run test:browser:focus`
