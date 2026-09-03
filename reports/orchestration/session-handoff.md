@@ -117,6 +117,16 @@ The two latent defects the GAS review found in existing code are both fixed and 
 storage access (`plan-118`) and the destructive starter replacement (`plan-119`). Both stand on
 their own merits if GAS is never built.
 
+**The Pages deploy was blocked and is now clear.** `plan-122` repaired an intrinsic
+animation-frame race in the key-capture D-key smoke test (`p5.noLoop()` does not cancel an
+in-flight `requestAnimationFrame`, so a late frame consumed the queued action before the assertion
+polled). Smoke gates the deploy, which gates the probe child page, which gates Gate 1. **Caution
+for the next thread: the orchestrator's first diagnosis of that failure was wrong** — it blamed
+`workers: 2` contention on the strength of one run per arm, when the test flaked ~10% of the time
+in isolation. The implementer's stop condition caught it. Both the reasoning error and a second
+noise-dominated measurement are recorded in the decision log; the standing rule is to size each arm
+against the flake rate before attributing a failure to a condition.
+
 **Gate 1 and Gate 2 remain the only things blocking Stage 1 proper.** They are owner-run
 measurements, not packets. `plan-120` delivered the kit at probe build `plan-120-v2`; the run sheet
 is `reports/development/plan-120-gas-probe-kit-and-integration-surface/directions.md`. Re-paste both

@@ -1,7 +1,8 @@
 ---
 id: plan-122
 title: "Key-Capture Test Animation-Frame Race Repair"
-status: in-progress
+status: complete
+resolution: "Animation-frame race repaired deterministically. The test now drains the in-flight requestAnimationFrame after p5.noLoop() and before dispatching the key, so p5's last pending _draw runs before anything is queued and, with _loop false, no further frame is scheduled — nothing can consume queuedActionForCurrentRunner before waitForFunction polls. Sound in principle, not just empirically: the drain's own rAF callback queues behind p5's pending one. Verified by the implementer (20/20 at workers 1, 20/20 at workers 2, 61/61 twice) and independently by the orchestrator (20/20 at default workers, 61/61 full smoke, 595/595 unit, clean build). N2 resolved: workers 2 is kept, since it is stable post-fix and its proposed change rested on the retracted concurrency diagnosis; the stale config comment was corrected regardless. docs/TESTING.md records the mechanism and the general rule for any browser test that dispatches input then waits on intermediate engine state. The Pages deploy and Gate 1 are unblocked. Amendment 01 retracted the orchestrator's original diagnosis after the implementer's stop condition refuted it."
 depends_on: []
 gate: "none. Amendment 01 (2026-09-01) retracted the original diagnosis and rescoped the packet; no owner decision is pending."
 summary: >-
