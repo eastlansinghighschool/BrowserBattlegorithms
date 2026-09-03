@@ -109,7 +109,7 @@ After orchestrator sign-off, the owner may push the approved commit(s) to `main`
 `.github/workflows/deploy-pages.yml` is configured to run on pushes to `main`; it installs
 dependencies, runs tests and browser checks, builds the site, and deploys `dist/` to GitHub Pages.
 The owner should wait for that workflow to succeed and verify the live child page and displayed
-`plan-120-v1` version before deploying/running the GAS probes. This agent did not push or deploy.
+`plan-120-v2` version before deploying/running the GAS probes. This agent did not push or deploy.
 
 ## Remaining risks and follow-ups
 
@@ -148,5 +148,18 @@ The follow-up implementation is committed as `2cc0c5f`. Targeted hygiene (6/6), 
 headless child-page check passed. The child page check is local only; the corrected cross-origin GAS
 handshake still requires the owner to push, wait for GitHub Pages deployment, and rerun the real GAS
 test. No new Google Workspace action was performed by this agent.
+
+## Repair 02 — provenance version bump
+
+The orchestrator re-verification found that the material handshake and metadata changes still used
+`plan-120-v1`, allowing a stale hand-pasted shell and a fixed shell to appear equivalent. The current
+build is now `plan-120-v2` in all three executable surfaces. The directions and results template
+require v2, explicitly require re-pasting and redeploying both Apps Script projects from current
+source, and discard any v1 result block because its handshake/build provenance cannot be established
+after the fact. The earlier owner-supplied v1 block is therefore provisional and discarded under
+this rule; its six human-observed capability passes are useful context only and must be rerun.
+
+Repair 02 is committed as `b3a98ae`. The implementation still has unrelated working
+tree changes from other work outside this packet; they were not modified or staged by this repair.
 
 Ready for orchestrator review: yes
