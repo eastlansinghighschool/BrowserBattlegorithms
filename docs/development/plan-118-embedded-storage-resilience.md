@@ -208,6 +208,7 @@ Add `tests/unit/safe-storage.test.js` and extend `tests/unit/blockly-workspace.t
 - A quota-error stub: assert the capability flag stays true.
 - **Regression proof for the real bug:** simulate the Blockly change-event save path (`saveWorkspaceToLocalStorage`) against a throwing storage and assert it completes without throwing. Verify this test *fails* against the pre-packet code and record that in the progress report — a test that passes both before and after has proved nothing.
 - Guided fallback: with storage unavailable, save a guided workspace, read it back, assert the XML survives; assert the same sequence with storage available takes the storage path and leaves the memory map empty.
+- **Guided-progress unlock behavior under blocked storage (added 2026-09-01 at preflight review).** `src/core/levels.js` is the one migration this packet's stop conditions single out as ambiguity-prone, and "returns defaults, fabricates no unlocks" is an assertion that needs a test rather than a claim. Extend `tests/unit/guided-progress.test.js`: with a throwing storage, assert reading progress returns the default locked state without throwing, and assert that writing progress neither throws nor reports success. Unlock state must never become *more* permissive because storage was denied — that would hand students the whole campaign on a locked-down Chromebook.
 
 Append every new test file to the `test:unit` list in `package.json` (it is an explicit file list, not a glob).
 
