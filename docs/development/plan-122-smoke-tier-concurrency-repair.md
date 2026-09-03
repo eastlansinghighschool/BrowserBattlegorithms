@@ -1,11 +1,11 @@
 ---
 id: plan-122
-title: "Smoke Tier Concurrency Repair"
+title: "Key-Capture Test Animation-Frame Race Repair"
 status: in-progress
 depends_on: []
-gate: "none — the diagnosis is complete and recorded below; the tier decision is made and reversible"
+gate: "none. Amendment 01 (2026-09-01) retracted the original diagnosis and rescoped the packet; no owner decision is pending."
 summary: >-
-  Repair the deploy-blocking smoke-suite failure by dropping the smoke tier to workers 1. Diagnosed at orchestration: the key-capture D-key test passes alone and at workers 1, and fails only under workers-2 CPU contention. Measurement shows the parallelism saves about six seconds across the whole suite, so it is buying almost nothing and costing a blocked GitHub Pages deploy.
+  Repair the intrinsic animation-frame race in the key-capture D-key test that blocks the Pages deploy and Gate 1. Amendment 01 retracted the original concurrency diagnosis: the test flakes about 10 percent of the time even alone at workers 1. p5 noLoop does not cancel an already-queued requestAnimationFrame, so a late frame can execute and clear the queued action before the test's waitForFunction begins polling. Fix by draining the pending frame before dispatching the key. The worker-count question is deferred, not answered.
 ---
 # Plan 122: Smoke Tier Concurrency Repair
 
@@ -83,7 +83,101 @@ The measurement makes this one-sided: the suite takes **1.0m at `workers: 2`** a
 - **Investigate guided-mode keybindings (the explainer's alternative).** Rejected by evidence. The test passes in isolation and at `workers: 1`, so the binding, the guided-mode path, and the Blockly focus interaction all work correctly.
 - **Move the spec out of smoke, matching the `blockly-trace-playback.spec.js` precedent.** Rejected, and this is the important one: `ci.yml` runs only `npm test`, `npm run build`, `test:browser:smoke`, and `test:browser:focus`. The release tier is **not** run in CI. Moving this spec to extended/release would silently stop it running in CI at all — trading a visible failure for invisible loss of coverage on the real-browser key pipeline.
 
-## Work Plan
+## Amendment 01 — 2026-09-01: the original diagnosis was wrong
+
+**Retracted.** The "Diagnosis" and "The decision and its evidence" sections above concluded the
+failure was CPU contention at `workers: 2` and prescribed `workers: 1`. That is incorrect. The
+implementer's stop condition fired correctly and refuted it:
+
+| Run | Result |
+| --- | --- |
+| Full smoke suite, `--workers=1`, run 1 | 60 passed, **1 failed** (1.6m) — same test, same 30s timeout |
+| Full smoke suite, `--workers=1`, run 2 | 60 passed, **1 failed** (1.6m) — same failure |
+| The single test alone, `--repeat-each 10 --workers=1` | **9 passed, 1 failed** — ~10% flake in complete isolation, passing runs ~1s each |
+
+**How the orchestrator got it wrong, recorded so it is not repeated.** The original diagnosis ran
+*one* suite execution per worker count, saw `workers: 2` fail and `workers: 1` pass, and treated
+the pair as a contrast. With a ~10% intrinsic per-run flake, a single passing run is exactly what
+noise looks like. That is a textbook failure of this repository's own falsification check: rival
+hypotheses were never given a chance to be falsified, because the experiment had a sample size of
+one on each arm and the two candidate causes happened to agree. The implementer's `--repeat-each 10`
+was better methodology than this packet originally asked for.
+
+## Confirmed root cause: an animation-frame race, verified independently
+
+The implementer's mechanism is correct and the orchestrator verified each link in the chain:
+
+1. `p5.noLoop()` prevents *scheduling further* frames. It does **not** cancel a
+   `requestAnimationFrame` callback already queued in the browser event loop.
+2. `page.keyboard.press("d")` is handled synchronously: it sets
+   `state.queuedActionForCurrentRunner` and moves the turn to `PROCESSING_ACTION`.
+3. If the already-pending frame fires before Playwright's `waitForFunction` begins polling,
+   `draw()` runs `processTurnActions`, which at `src/core/turnEngine.js:771-773` calls
+   `executeQueuedAction` (defined at `:468`), which **clears the field** at `:651`.
+4. `waitForFunction` then polls for a value that no longer exists and can never reappear, so it
+   runs to the 30s timeout.
+
+This explains every observation: the flake is intrinsic, independent of worker count, independent
+of CI, and independent of Stage 0. Stage 0's small startup additions may have shifted the odds, but
+they are not the cause and the race predates them.
+
+**The test asserts a transient.** `queuedActionForCurrentRunner` exists only between the key press
+and the next processed frame. Any test that waits on it is racing the render loop by construction.
+
+## Revised scope (supersedes the Work Plan and R1-R4 below)
+
+### N1 — Close the race deterministically
+
+After `p5Instance.noLoop()` and **before** `page.keyboard.press("d")`, drain the already-queued
+animation frame so the loop is genuinely stopped:
+
+```js
+await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => resolve())));
+```
+
+With `noLoop()` already called, no further frame is scheduled after that one drains, so nothing can
+consume the queued action and the assertion becomes deterministic rather than merely likely. This is
+the minimum change that removes the race instead of widening a tolerance, and it preserves what the
+test proves: that a real browser key event reaches `handleKeyInput` and queues the correct action.
+
+**Sanctioned fallback** if draining proves insufficient: assert the *applied outcome* instead of the
+transient — the test already captures a `before` position, so it can assert the human runner moved
+as expected. If you take this route, say so explicitly in the progress report and note that it
+changes what the test proves (it would then exercise the turn engine's execution path, not only the
+queueing path). Do not take it silently.
+
+### N2 — The worker count is deferred, not decided
+
+**Do not change `workers` in `playwright.smoke.config.js` in this packet.** The justification for
+that change was the retracted diagnosis. After N1 lands, measure the fixed test at both worker
+counts (N3). If it is stable at `workers: 2`, the tier is left alone and the six seconds are kept.
+Report the numbers and let the orchestrator decide; do not decide it inside this packet.
+
+The config's stale comment — "this file set has no timing-sensitive animation tests" — **is** still
+false and should still be corrected, because the D-key test is timing-sensitive regardless of what
+causes the flake. Correct the comment; leave the setting.
+
+### N3 — Stability evidence proportionate to a 10% flake
+
+Three passing suite runs was inadequate: against a ~10% per-run flake it would leave roughly a
+quarter chance of a false all-clear. Required instead:
+
+- the single test at `--repeat-each 20 --workers=1`: 20/20;
+- the single test at `--repeat-each 20` with the smoke config's default workers: 20/20;
+- two full smoke suite runs: 61/61 each.
+
+If any run fails, stop and report rather than re-running until it passes.
+
+### N4 — Docs
+
+`docs/TESTING.md`: record the mechanism, not just the fix. The durable lesson is that `noLoop()`
+does not cancel an in-flight frame, and that asserting on a transient turn-engine field races the
+render loop. Any future browser test that presses a key and then waits on intermediate engine state
+needs the same drain.
+
+## Original Work Plan (superseded by Amendment 01)
+
+
 
 1. Read this diagnosis and confirm the two reproductions yourself: the full smoke suite at the default config, and at `--workers=1`. Record both in the progress report.
 2. Set `workers: 1` in `playwright.smoke.config.js`.
