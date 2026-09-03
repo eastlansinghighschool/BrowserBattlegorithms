@@ -107,9 +107,19 @@ should update durable files rather than depend on this thread's conversational c
 Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
-**Board as of 2026-09-01:** `plan-120` was reopened `complete` → `in-progress` for
-`repair-02` (version provenance; see that repair note) after post-completion commits changed probe
-behavior. Its handshake was silently broken on every run until `2cc0c5f`. `plan-118` and `plan-121` are both `in-progress`
+**Board as of 2026-09-01:** `plan-120` is **complete** after four review rounds, at probe build
+`plan-120-v2`. Its handshake was silently broken on every run until `2cc0c5f`; `repair-02`
+then restored version-as-provenance. Any `plan-120-v1` result block is invalid. The owner must
+re-paste and redeploy **both** Apps Script projects before rerunning — a shell copied before
+the fix fails with no visible error.
+
+**Concurrency caution learned here:** disjoint *write* scopes do not give disjoint
+*validation*. `npm test` reads the whole worktree, so one packet's in-flight edits surface as
+failures in another packet's full-suite run. `plan-120` reported "3 unrelated existing
+`preferences` failures" that were actually `plan-118` mid-edit on `src/ui/preferences.js`;
+the suite returned to green once `plan-118` landed. Targeted tests are a packet's authoritative
+validation; attribute any full-suite failure by file with `git status` before calling it
+"existing." `plan-118` and `plan-121` are both `in-progress`
 with their gates cleared. `plan-119` stays dependency-blocked behind `plan-118`.
 
 **`plan-116` must not start while `plan-118` is live.** It lands counters in `src/core/levels.js`'s

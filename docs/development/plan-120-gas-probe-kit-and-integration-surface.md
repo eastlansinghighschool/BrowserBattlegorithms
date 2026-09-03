@@ -1,8 +1,8 @@
 ---
 id: plan-120
 title: "GAS Probe Kit And Integration Repository Surface"
-status: in-progress
-resolution: "Current probe build is plan-120-v2 across the public child, nested-frame shell, and tenant-identity page. It includes the repaired DOMTokenList handshake handling and coarse browser-family/major-version/OS metadata; plan-120-v1 result blocks are invalid and must be discarded. The owner must re-paste and redeploy both Apps Script projects before rerunning; Gate 1 and Gate 2 remain owner-run measurements outside this packet."
+status: complete
+resolution: "Probe kit delivered and orchestrator-verified over four review rounds. Current build is plan-120-v2 across the public child, nested-frame shell, and tenant-identity page: repaired DOMTokenList handshake handling (the prior build threw inside the message handler after clearing the timeout, so the handshake failed silently on every run), context-gated storage classification that reports unknown rather than partitioned on an uncertain pairing, deidentified PLAN120_RESULT email/chat handoff carrying only controlled labels plus coarse browser-family/major/OS metadata, origin readings exported as comparison status rather than value (ratified as a reusable Stage 1 pattern), the integrations/google-apps-script/ surface, and a hygiene guardrail test that asserts the three version literals agree. repair-01 closed a report-completeness gap in the advisor disposition record; repair-02 restored version-as-provenance after a post-completion behavior change. plan-120-v1 result blocks are invalid and discarded. The owner must re-paste and redeploy both Apps Script projects before rerunning. Running the probes is an owner action outside this packet; Gate 1 and Gate 2 remain open in docs/open-questions.md."
 depends_on: []
 gate: "All three pre-mutation gate items RESOLVED 2026-09-01: repository location integrations/google-apps-script/ confirmed; probe child ships in public/; results split deidentified-tracked / raw-local. Before deploy: only the owner deploys or runs anything against Google Workspace."
 summary: >-
