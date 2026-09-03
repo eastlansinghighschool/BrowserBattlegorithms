@@ -3,7 +3,7 @@ id: plan-119
 title: "Starter Mismatch Displaced-Work Recovery"
 status: in-progress
 depends_on: [plan-118]
-gate: "before mutation: owner approves the recovery UX shape (notice + restore affordance), its ordinary/preservation-failure/restore-failure copy, and the displaced-slot retention cap"
+gate: "CLEARED 2026-09-01. All five items resolved: non-blocking notice plus restore button; copy uses the app existing term 'starter program'; cap 8, oldest-first, one slot per level; the recovery copy is never explicitly deleted (only superseded or pruned); plain-language failure copy. See the Gate section for exact strings; nothing remains to stop for."
 summary: >-
   Stop the Plan 45 stale-starter replacement from being an unrecoverable silent deletion: preserve the displaced workspace XML in a bounded local slot before the starter overwrites it, tell the student, and give them one way to get it back. Keeps the replacement behavior itself, which is correct. Local-only; the cloud-promotion suppression half of the finding is deliberately deferred to GAS Stage 2.
 ---
@@ -81,22 +81,93 @@ Contracts to preserve:
 - One-action-per-turn semantics, game rules, and level content are untouched.
 - Static Vite build, no server dependency.
 
-## Gate (before mutation)
+## Gate (before mutation) — CLEARED 2026-09-01
 
-Present to the owner, in the preflight plan, and stop. These are product decisions, not implementation details:
+All five items resolved by the owner. Use these strings and rules verbatim; do not reword them. If
+an approved string will not fit its surface, **stop and ask** rather than trimming it.
 
-1. **Recovery UX shape.** Options to present, with a recommendation:
-   - **(A, recommended)** A non-blocking notice on the level when a displaced copy exists for it — "This level's starting blocks were updated, so your earlier program was set aside" — plus a **Restore my earlier program** action that swaps the displaced XML back into the workspace. Restoring re-stamps the current version key, so the student is not caught in a replace loop.
-   - **(B)** Preserve silently, no notice; recovery only via a control in an existing menu. Cheaper, but leaves the classroom failure ("I opened the level and my program was gone") unaddressed, which is the point of the packet.
-   - **(C)** Prompt at load time with a choice between the new starter and the earlier program. Rejected in the recommendation: it interrupts the student at the worst moment and puts a systems question in front of a student who has no basis to answer it.
-2. **Copy.** The notice text and the action label, in the `docs/CopyVoiceContract.md` scout/coach voice. Propose two alternatives for each.
-3. **Retention cap.** How many displaced slots to keep, and the pruning rule. Recommendation: at most 8 displaced entries across all levels, pruned oldest-first by `displacedAt`, with one slot maximum per level (a second displacement on the same level replaces the first — the older copy is by then two starter generations stale). Confirm the number and the one-per-level rule.
-4. **Whether restore is reversible.** Recommendation: after a successful restore, keep the displaced entry until the student edits the workspace, so a mis-click is not itself a loss.
-5. **Failure copy.** Approve one non-blocking sentence explaining that the app kept
-   the earlier program because it could not safely save a recovery copy, so the updated starter
-   was not applied. Also approve one restore-failed sentence that says the recovery copy is still
-   safe and the current workspace was not changed. Neither message may blame the student or claim
-   a write succeeded when it did not.
+### 1. Recovery UX shape — RESOLVED: non-blocking notice plus restore button
+
+A dismissible notice appears in the Blockly panel **only** when a displaced copy exists for the
+current level, with the restore action beside it. It never gates play, never steals focus, and
+never appears as a modal. Load-time modal choice and silent-preservation-without-notice were both
+considered and rejected — the former interrupts at the worst moment and asks a beginner a systems
+question, the latter leaves the actual classroom failure ("I opened the level and my program was
+gone") unaddressed.
+
+### 2. Notice and button copy — RESOLVED
+
+- Notice: **"This level's starter program was updated, so your earlier program was set aside."**
+- Restore button: **"Restore earlier program"**
+
+**Terminology is the point here.** The implementer proposed "starting blocks." The app already
+calls this a *starter program* — see the reset control's `aria-label`, "Reset workspace to the
+starter program" (`index.html:133`). Using one term keeps the two features reading as the same
+concept instead of teaching a student two names for one thing.
+
+### 3. Retention cap and pruning — RESOLVED as recommended
+
+Cap of **8** displaced entries across all levels, pruned oldest-first by `displacedAt`, **one slot
+maximum per level** (a second displacement on a level replaces the first — by then the older copy
+is two starter generations stale). Entries for level ids no longer present in the build are pruned
+without throwing. This matched both the packet's original recommendation and the implementer's
+proposal, so it was accepted without being put to the owner as a contested choice.
+
+### 4. Reversibility of restore — RESOLVED: never explicitly deleted
+
+After a successful restore, the displaced copy is kept until it is **superseded** by a newer
+displacement on that level or **pruned** by the cap. It is *not* cleared when the student edits.
+
+This overrides the implementer's proposal to clear on first edit. Two reasons: it is strictly
+safer, and "edit" is a noisier signal than it sounds — the Blockly change event fires on cosmetic
+drags (GAS review finding F14), so a student who restored and then nudged a block would silently
+lose the recovery copy. Do **not** wire a change-event hook for this.
+
+### 5. Failure copy — RESOLVED
+
+- Preservation failure (a recovery copy could not be written and verified):
+  **"Could not save a recovery copy, so your earlier program was kept and this level's starter
+  program was not updated."**
+- Restore failure (the restore write could not be verified):
+  **"Could not restore your program right now. Your saved copy is still safe and your current
+  blocks were not changed."**
+
+Both state what happened and what survived, and neither blames the student. These replace the
+implementer's Alt 1 with the jargon removed ("the starter update was not applied").
+
+### Voice note
+
+All four strings are systems messages, not coaching. `docs/CopyVoiceContract.md`'s in-world
+scout/coach speaker governs student *guidance*; honest failure and state reporting is plain second
+person, consistent with the precedent set by `plan-118`'s storage banner. None of these strings may
+appear in the lesson or coaching channel students read for strategy help.
+
+## Additional review requirements (added 2026-09-01 at preflight review)
+
+These are not owner decisions; they close gaps in the preflight plan.
+
+### A browser spec is required, not optional
+
+The preflight plan lists browser verification as manual only. This packet's behavior is
+student-visible and there is direct precedent both ways: `plan-118` shipped
+`tests/browser/storage-resilience.spec.js`, and `tests/browser/workspace-starter-versioning.spec.js`
+**already pre-seeds a stale version key** via `addInitScript` with a deliberately unmatched hash
+(`"deadbeef"`, lines 50-52) — which is exactly the fixture this packet needs. Extend that spec or
+add a sibling proving, in a real browser: the notice appears with the approved copy, the restore
+button is keyboard reachable and restores the program, and a reload afterwards still shows the
+restored program rather than the starter. The reload assertion is the one most likely to be got
+wrong, because it is what proves the version key was re-stamped.
+
+### Confirm the notice surfaces cannot stack badly
+
+`#blockly-region` already holds `#storage-status`, `#workspace-import-status`, and
+`#usage-export-status` between the program summary and the toolbar. This packet adds a fourth.
+All are `hidden` by default, so the normal case costs no vertical space — but confirm and state in
+the progress report that (a) the displaced notice and the storage-blocked notice are mutually
+exclusive (they should be: displaced notices are never offered in memory-only mode, which is the
+only condition that shows the storage banner), and (b) with the displaced notice visible, the
+Blockly toolbar and workspace remain usable at 1366x768, the managed-Chromebook class the GAS
+probe targets.
 
 ## Scope
 
