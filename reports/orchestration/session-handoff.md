@@ -107,8 +107,9 @@ should update durable files rather than depend on this thread's conversational c
 Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
-**Board as of 2026-09-01:** `plan-120` is **complete** after three review rounds (accept →
-send-back on `repair-01` → accept). `plan-118` and `plan-121` are both `in-progress`
+**Board as of 2026-09-01:** `plan-120` was reopened `complete` → `in-progress` for
+`repair-02` (version provenance; see that repair note) after post-completion commits changed probe
+behavior. Its handshake was silently broken on every run until `2cc0c5f`. `plan-118` and `plan-121` are both `in-progress`
 with their gates cleared. `plan-119` stays dependency-blocked behind `plan-118`.
 
 **`plan-116` must not start while `plan-118` is live.** It lands counters in `src/core/levels.js`'s
