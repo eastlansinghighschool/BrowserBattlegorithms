@@ -138,6 +138,8 @@ export function bindControls(app) {
   const redoWorkspaceButton = document.getElementById("redoWorkspaceButton");
   const resetWorkspaceToStarterButton = document.getElementById("resetWorkspaceToStarterButton");
   const storageStatusDismiss = document.getElementById("storageStatusDismiss");
+  const restoreDisplacedWorkspaceButton = document.getElementById("restoreDisplacedWorkspaceButton");
+  const displacedWorkspaceStatusDismiss = document.getElementById("displacedWorkspaceStatusDismiss");
   const programExportModal = document.getElementById("programExportModal");
   const privateExportCheckbox = document.getElementById("privateExportCheckbox");
   const privateExportFields = document.getElementById("privateExportFields");
@@ -493,6 +495,27 @@ export function bindControls(app) {
       const storageStatus = document.getElementById("storage-status");
       if (storageStatus) {
         storageStatus.hidden = true;
+      }
+    });
+  }
+
+  if (restoreDisplacedWorkspaceButton) {
+    restoreDisplacedWorkspaceButton.addEventListener("click", () => {
+      app.hooks.restoreDisplacedWorkspace?.();
+    });
+  }
+
+  if (displacedWorkspaceStatusDismiss) {
+    displacedWorkspaceStatusDismiss.addEventListener("click", () => {
+      if (!app.state.displacedNoticeDismissedLevels) {
+        app.state.displacedNoticeDismissedLevels = new Set();
+      }
+      if (app.state.currentLevelId) {
+        app.state.displacedNoticeDismissedLevels.add(app.state.currentLevelId);
+      }
+      const displacedStatus = document.getElementById("displaced-workspace-status");
+      if (displacedStatus) {
+        displacedStatus.hidden = true;
       }
     });
   }

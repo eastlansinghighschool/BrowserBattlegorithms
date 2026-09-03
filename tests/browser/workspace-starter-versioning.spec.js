@@ -82,6 +82,54 @@ test("stale-replace stamps the current version key in localStorage", async ({ pa
   expect(stampedVersion).not.toBe("deadbeef");
 });
 
+test("stale-replace shows recovery notice, allows keyboard-accessible restore, and re-stamps version on reload", async ({ page }) => {
+  await page.addInitScript(({ workspaceKey, versionKey, staleXml }) => {
+    if (!window.sessionStorage.getItem("__init_seeded__")) {
+      window.sessionStorage.setItem("__init_seeded__", "true");
+      window.localStorage.setItem(workspaceKey, staleXml);
+      window.localStorage.setItem(versionKey, "deadbeef");
+    }
+  }, { workspaceKey: WORKSPACE_KEY, versionKey: VERSION_KEY, staleXml: STALE_XML });
+
+  await page.goto(`/?devGuidedLevel=${LEVEL_ID}`);
+  await waitForHeavyReady(page);
+  await dismissTutorial(page);
+  await waitForWorkspaceBlocks(page);
+
+  // 1. Notice appears with verbatim approved copy
+  const noticeLocator = page.locator("#displaced-workspace-status");
+  await expect(noticeLocator).toBeVisible();
+  await expect(noticeLocator).toContainText(
+    "This level's starter program was updated, so your earlier program was set aside."
+  );
+
+  const restoreButton = page.locator("#restoreDisplacedWorkspaceButton");
+  await expect(restoreButton).toBeVisible();
+  await expect(restoreButton).toHaveText("Restore earlier program");
+
+  // 2. Keyboard reachable restore button
+  await restoreButton.focus();
+  await expect(restoreButton).toBeFocused();
+  await page.keyboard.press("Enter");
+
+  // 3. Workspace is restored to the earlier program (stay_still)
+  await expect(noticeLocator).toBeHidden();
+  const blockTypesAfterRestore = await getWorkspaceBlockTypes(page);
+  expect(blockTypesAfterRestore).toContain("battlegorithms_stay_still");
+  expect(blockTypesAfterRestore).not.toContain("battlegorithms_move_forward");
+
+  // 4. Reload page: restored program remains and starter is NOT re-applied (version key was re-stamped!)
+  await page.reload();
+  await waitForHeavyReady(page);
+  await dismissTutorial(page);
+  await waitForWorkspaceBlocks(page);
+
+  const blockTypesAfterReload = await getWorkspaceBlockTypes(page);
+  expect(blockTypesAfterReload).toContain("battlegorithms_stay_still");
+  expect(blockTypesAfterReload).not.toContain("battlegorithms_move_forward");
+  await expect(noticeLocator).toBeHidden();
+});
+
 // ─── Case 2: Absent version key (Decision 5 grace stamp) ─────────────────────
 
 test("absent version key preserves stored workspace (Decision 5 grace stamp)", async ({ page }) => {

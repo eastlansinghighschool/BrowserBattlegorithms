@@ -43,6 +43,39 @@ body {
   gap: 8px;
 }
 
+.workspace-import-status-info {
+  background: #e7f1ff;
+  color: #084298;
+  border: 1px solid #b6d4fe;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.displaced-workspace-status-text {
+  flex: 1 1 auto;
+}
+
+.displaced-workspace-restore-button {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #084298;
+  background: #084298;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.displaced-workspace-restore-button:hover,
+.displaced-workspace-restore-button:focus-visible {
+  background: #06357a;
+  border-color: #06357a;
+}
+
 .storage-status-dismiss {
   flex: 0 0 auto;
   padding: 3px 8px;

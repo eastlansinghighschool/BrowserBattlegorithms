@@ -31,7 +31,7 @@ import { setAllowedMoveTowardTargets, setAllowedSensorOptions } from "./blocks.j
 import { applyBlocklyPanelSize } from "../../ui/blocklyLayout.js";
 import { getActiveProgramLabel } from "../../ui/programContext.js";
 import { clearAllTraceClasses } from "./traceRenderer.js";
-import { readLocalStorage, writeLocalStorage, isLocalStorageAvailable } from "../../platform/safeStorage.js";
+import { readLocalStorage, writeLocalStorage, removeLocalStorage, isLocalStorageAvailable } from "../../platform/safeStorage.js";
 
 const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
@@ -40,11 +40,255 @@ const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
 const GUIDED_WORKSPACE_VERSION_KEY_PREFIX = "bba:guided-workspace-version:";
 const FREE_PLAY_WORKSPACE_STORAGE_KEY = "bba:free-play-workspace";
 
+// Plan 119: Displaced-workspace recovery constants and copy
+export const DISPLACED_WORKSPACE_STORAGE_PREFIX = "bba:displaced-workspace:";
+export const DISPLACED_WORKSPACE_INDEX_KEY = "bba:displaced-workspace-index";
+export const MAX_DISPLACED_WORKSPACES = 8; // Plan 119: Bounded retention cap for displaced workspaces
+
+export const DISPLACED_WORKSPACE_NOTICE_TEXT =
+  "This level's starter program was updated, so your earlier program was set aside.";
+export const DISPLACED_WORKSPACE_RESTORE_BUTTON_LABEL =
+  "Restore earlier program";
+export const DISPLACED_WORKSPACE_PRESERVATION_FAILURE_TEXT =
+  "Could not save a recovery copy, so your earlier program was kept and this level's starter program was not updated.";
+export const DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT =
+  "Could not restore your program right now. Your saved copy is still safe and your current blocks were not changed.";
+
+// Plan 119: in-memory tracking of levels where preservation failed during page load
+const preservationBlockedLevels = new Set();
+
+export function _clearPreservationBlockedLevelsForTesting() {
+  preservationBlockedLevels.clear();
+}
+
 // Plan 118: in-memory workspace fallback for guided levels when storage is blocked/unavailable.
 const guidedInMemoryWorkspaces = new Map();
 
 export function _clearGuidedInMemoryWorkspacesForTesting() {
   guidedInMemoryWorkspaces.clear();
+}
+
+/**
+ * Reads and parses the bounded displaced-workspace index.
+ *
+ * @returns {Array<{ levelId: string, displacedAt: string }>}
+ */
+export function getDisplacedWorkspaceIndex() {
+  if (!isLocalStorageAvailable()) {
+    return [];
+  }
+  const raw = readLocalStorage(DISPLACED_WORKSPACE_INDEX_KEY);
+  if (!raw) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter(
+        (entry) => entry && typeof entry.levelId === "string" && typeof entry.displacedAt === "string"
+      );
+    }
+  } catch (_e) {
+    // Corrupt index — discard
+  }
+  return [];
+}
+
+/**
+ * Retrieves a displaced workspace slot for a given guided level.
+ * Discards and removes corrupt or unparseable slots without throwing.
+ *
+ * @param {string} levelId
+ * @returns {{ levelId: string, xml: string, displacedAt: string, storedVersion: string|null, currentVersion: string|null, restoredAt?: string|null } | null}
+ */
+export function getDisplacedWorkspace(levelId) {
+  if (!isLocalStorageAvailable() || !levelId) {
+    return null;
+  }
+  const key = `${DISPLACED_WORKSPACE_STORAGE_PREFIX}${levelId}`;
+  const raw = readLocalStorage(key);
+  if (!raw) {
+    return null;
+  }
+  try {
+    const data = JSON.parse(raw);
+    if (
+      data &&
+      data.levelId === levelId &&
+      typeof data.xml === "string" &&
+      typeof data.displacedAt === "string"
+    ) {
+      return data;
+    }
+  } catch (_e) {
+    // Corrupt slot
+  }
+  removeLocalStorage(key);
+  return null;
+}
+
+/**
+ * Preserves a displaced workspace before starter overwrite.
+ * Bounded by MAX_DISPLACED_WORKSPACES, pruned oldest-first by displacedAt,
+ * max one slot per level. Validates write and read-back before returning true.
+ *
+ * @param {object} app
+ * @param {string} levelId
+ * @param {string} displacedXml
+ * @param {string|null} storedVersion
+ * @param {string|null} currentVersion
+ * @returns {boolean} True if slot and index were written and read-back verified.
+ */
+export function saveDisplacedWorkspace(app, levelId, displacedXml, storedVersion, currentVersion) {
+  if (!isLocalStorageAvailable() || !levelId || !displacedXml || displacedXml.trim() === "") {
+    return false;
+  }
+
+  const slotKey = `${DISPLACED_WORKSPACE_STORAGE_PREFIX}${levelId}`;
+  let index = getDisplacedWorkspaceIndex();
+
+  // Prune entries for levels that no longer exist in the build without throwing
+  if (Array.isArray(app?.state?.levels) && app.state.levels.length > 0) {
+    const validLevels = new Set(app.state.levels.map((l) => l.id));
+    const prunedIndex = [];
+    for (const entry of index) {
+      if (validLevels.has(entry.levelId)) {
+        prunedIndex.push(entry);
+      } else {
+        removeLocalStorage(`${DISPLACED_WORKSPACE_STORAGE_PREFIX}${entry.levelId}`);
+      }
+    }
+    index = prunedIndex;
+  }
+
+  // Remove existing entry for this levelId (one slot per level: newer replaces older)
+  index = index.filter((entry) => entry.levelId !== levelId);
+
+  // Prune oldest if at or above cap
+  index.sort((a, b) => (a.displacedAt < b.displacedAt ? -1 : a.displacedAt > b.displacedAt ? 1 : 0));
+  while (index.length >= MAX_DISPLACED_WORKSPACES) {
+    const oldest = index.shift();
+    if (oldest) {
+      removeLocalStorage(`${DISPLACED_WORKSPACE_STORAGE_PREFIX}${oldest.levelId}`);
+    }
+  }
+
+  const now = new Date().toISOString();
+  const slotData = {
+    levelId,
+    xml: displacedXml,
+    displacedAt: now,
+    storedVersion: storedVersion ?? null,
+    currentVersion: currentVersion ?? null
+  };
+  const slotJson = JSON.stringify(slotData);
+
+  index.push({ levelId, displacedAt: now });
+  const indexJson = JSON.stringify(index);
+
+  // Fail-safe write and read-back verification: slot
+  const wroteSlot = writeLocalStorage(slotKey, slotJson);
+  const readSlot = readLocalStorage(slotKey);
+  if (!wroteSlot || readSlot !== slotJson) {
+    removeLocalStorage(slotKey);
+    return false;
+  }
+
+  // Fail-safe write and read-back verification: index
+  const wroteIndex = writeLocalStorage(DISPLACED_WORKSPACE_INDEX_KEY, indexJson);
+  const readIndex = readLocalStorage(DISPLACED_WORKSPACE_INDEX_KEY);
+  if (!wroteIndex || readIndex !== indexJson) {
+    removeLocalStorage(slotKey);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Restores a displaced workspace for the given guided level into storage and the live workspace.
+ * Re-stamps the current starter version key so subsequent loads do not re-replace it.
+ * Verifies writes and read-backs before mutating live workspace.
+ *
+ * @param {object} app
+ * @param {string} levelId
+ * @returns {{ ok: boolean, message?: string }}
+ */
+export function restoreDisplacedWorkspace(app, levelId) {
+  if (!isLocalStorageAvailable() || !levelId) {
+    return { ok: false, message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT };
+  }
+
+  const displaced = getDisplacedWorkspace(levelId);
+  if (!displaced || !displaced.xml) {
+    if (app.state) {
+      app.state.displacedNotice = {
+        type: "restore-failure",
+        levelId,
+        message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT
+      };
+    }
+    app.syncUi?.();
+    return { ok: false, message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT };
+  }
+
+  const storageKey = `${GUIDED_WORKSPACE_STORAGE_PREFIX}${levelId}`;
+  const versionKey = `${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`;
+  const currentLevel = getCurrentLevel(app);
+  const currentVersion = currentLevel?.starterXmlVersion ?? null;
+
+  // 1. Write workspace first and read back
+  const wroteXml = writeLocalStorage(storageKey, displaced.xml);
+  const readXml = readLocalStorage(storageKey);
+  if (!wroteXml || readXml !== displaced.xml) {
+    if (app.state) {
+      app.state.displacedNotice = {
+        type: "restore-failure",
+        levelId,
+        message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT
+      };
+    }
+    app.syncUi?.();
+    return { ok: false, message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT };
+  }
+
+  // 2. Write current version key and read back
+  if (currentVersion) {
+    const wroteVersion = writeLocalStorage(versionKey, currentVersion);
+    const readVersion = readLocalStorage(versionKey);
+    if (!wroteVersion || readVersion !== currentVersion) {
+      if (app.state) {
+        app.state.displacedNotice = {
+          type: "restore-failure",
+          levelId,
+          message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT
+        };
+      }
+      app.syncUi?.();
+      return { ok: false, message: DISPLACED_WORKSPACE_RESTORE_FAILURE_TEXT };
+    }
+  }
+
+  // 3. Update slot with restoredAt so reload/subsequent visits know it has been restored
+  displaced.restoredAt = new Date().toISOString();
+  writeLocalStorage(`${DISPLACED_WORKSPACE_STORAGE_PREFIX}${levelId}`, JSON.stringify(displaced));
+
+  // 4. Load XML into live Blockly workspace (only after verification)
+  if (app.blocklyWorkspace) {
+    loadWorkspaceXml(app, displaced.xml);
+    cacheWorkspaceXml(app, displaced.xml);
+  }
+
+  // 5. Dismiss notice and sync UI
+  if (app.state) {
+    delete app.state.displacedNotice;
+    if (!app.state.displacedNoticeDismissedLevels) {
+      app.state.displacedNoticeDismissedLevels = new Set();
+    }
+    app.state.displacedNoticeDismissedLevels.add(levelId);
+  }
+  app.syncUi?.();
+  return { ok: true };
 }
 const FREE_PLAY_PVP_WORKSPACE_STORAGE_PREFIX = "bba:free-play-pvp-team:";
 const { KeyboardNavigation } = keyboardNavigationPkg;
@@ -963,7 +1207,7 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
 
   const storedXml = readLocalStorage(storageKey);
 
-  // ── Plan 45: starter versioning for guided non-project levels ───────────────
+  // ── Plan 45 & Plan 119: starter versioning and displaced-workspace recovery ─
   // Only run the version check for the guided non-project workspace class.
   // Free play and project shared workspaces are explicitly exempt (Decision 3).
   if (isGuidedNonProjectLevel(app) && storedXml) {
@@ -985,23 +1229,78 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
 
     if (storedVersion === currentVersion) {
       // Normal case: authored starter has not changed since last save.
+      // Check if an un-restored displaced copy exists that should surface a notice
+      const displaced = getDisplacedWorkspace(levelId);
+      if (
+        displaced &&
+        !displaced.restoredAt &&
+        displaced.xml &&
+        displaced.xml !== storedXml &&
+        !app.state?.displacedNoticeDismissedLevels?.has(levelId)
+      ) {
+        if (app.state) {
+          app.state.displacedNotice = {
+            type: "recoverable-copy",
+            levelId,
+            message: DISPLACED_WORKSPACE_NOTICE_TEXT
+          };
+        }
+      }
       return storedXml;
     }
 
-    // Stale-replace: the author has updated the starter since the student last
-    // loaded this level. Discard stored content, stamp the new version, and
-    // overwrite the workspace key so a follow-up save doesn't restore stale
-    // content (Requirement 4 constraint).
-    if (currentVersion) {
-      writeLocalStorage(versionKey, currentVersion);
+    // Stale-replace (Plan 119): the author has updated the starter since the student last
+    // loaded this level. Preserve the displaced content before overwriting.
+    const isDisplaceable = storedXml.trim() !== "" && storedXml !== fallbackXml;
+    if (isDisplaceable) {
+      const preserved = saveDisplacedWorkspace(app, levelId, storedXml, storedVersion, currentVersion);
+      if (!preserved) {
+        // Preservation failure: could not safely write or verify recovery copy.
+        // Keep the earlier program, leave version key untouched, and mark preservation-blocked.
+        preservationBlockedLevels.add(levelId);
+        if (app.state) {
+          app.state.displacedNotice = {
+            type: "preservation-failure",
+            levelId,
+            message: DISPLACED_WORKSPACE_PRESERVATION_FAILURE_TEXT
+          };
+        }
+        return storedXml;
+      }
     }
-    writeLocalStorage(storageKey, fallbackXml);
+
+    // Fail-safe replacement ordering (R1):
+    // Write and read back starter XML before stamping current version key.
+    const starterWritten = writeLocalStorage(storageKey, fallbackXml);
+    const starterVerified = starterWritten && readLocalStorage(storageKey) === fallbackXml;
+    if (!starterVerified) {
+      // Starter write or read-back failed. Do not stamp version key.
+      return fallbackXml;
+    }
+
+    if (currentVersion) {
+      const versionWritten = writeLocalStorage(versionKey, currentVersion);
+      const versionVerified = versionWritten && readLocalStorage(versionKey) === currentVersion;
+      if (!versionVerified) {
+        // Version write or read-back failed. Displaced slot is already safe in storage.
+        return fallbackXml;
+      }
+    }
+
+    if (isDisplaceable && app.state) {
+      app.state.displacedNotice = {
+        type: "recoverable-copy",
+        levelId,
+        message: DISPLACED_WORKSPACE_NOTICE_TEXT
+      };
+    }
+
     if (import.meta.env?.DEV) {
       console.debug(`[BBA] Stale workspace replaced for level "${levelId}": stored=${storedVersion} current=${currentVersion}`);
     }
     return fallbackXml;
   }
-  // ── End Plan 45 ─────────────────────────────────────────────────────────────
+  // ── End Plan 45 & Plan 119 ──────────────────────────────────────────────────
 
   return (
     storedXml ||
@@ -1030,11 +1329,12 @@ export function saveWorkspaceToLocalStorage(app, overrideTeamId = null) {
   // Plan 45: stamp the sibling version key for guided non-project levels so
   // future loads can detect whether the authored starter has changed.
   // Free play and project shared workspace saves intentionally skip this write.
+  // Plan 119: suppress version stamp if preservation was blocked for this level.
   if (isGuidedNonProjectLevel(app)) {
     const levelId = app.state.currentLevelId;
     const currentLevel = getCurrentLevel(app);
     const currentVersion = currentLevel?.starterXmlVersion ?? null;
-    if (levelId && currentVersion) {
+    if (levelId && currentVersion && !preservationBlockedLevels.has(levelId)) {
       writeLocalStorage(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
     }
   }

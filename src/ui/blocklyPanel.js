@@ -69,6 +69,33 @@ export function renderBlocklyPanel(app) {
     storageStatus.hidden = !shouldShow;
   }
 
+  const displacedStatus = document.getElementById("displaced-workspace-status");
+  const displacedText = document.getElementById("displacedWorkspaceStatusText");
+  const restoreButton = document.getElementById("restoreDisplacedWorkspaceButton");
+  if (displacedStatus) {
+    const notice = app.state.displacedNotice;
+    const isDismissed = Boolean(
+      app.state.displacedNoticeDismissedLevels?.has(app.state.currentLevelId)
+    );
+    const isGuided = app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS;
+    const shouldShow =
+      isLocalStorageAvailable() &&
+      !isDismissed &&
+      isGuided &&
+      Boolean(notice && notice.levelId === app.state.currentLevelId);
+
+    displacedStatus.hidden = !shouldShow;
+    if (shouldShow && notice) {
+      if (displacedText) {
+        displacedText.textContent = notice.message || "";
+      }
+      if (restoreButton) {
+        restoreButton.hidden = notice.type !== "recoverable-copy";
+        restoreButton.textContent = "Restore earlier program";
+      }
+    }
+  }
+
   if (importStatus) {
     importStatus.textContent = app.state.workspaceImportStatus?.message || "";
     importStatus.className = app.state.workspaceImportStatus

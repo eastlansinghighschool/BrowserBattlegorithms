@@ -32,6 +32,8 @@ All Blockly-related `localStorage` keys use the `bba:` prefix. The full set:
 |---|---|
 | `bba:guided-workspace:<levelId>` | Serialized XML for one ordinary guided level. |
 | `bba:guided-workspace-version:<levelId>` | Hash of the guided level's `initialBlocklyXml` at the time the workspace was last written. Used by the starter versioning system (see "Starter XML versioning" below). |
+| `bba:displaced-workspace:<levelId>` | Preserved recovery slot JSON containing displaced student XML and metadata prior to starter mismatch replacement (Plan 119). |
+| `bba:displaced-workspace-index` | Bounded index JSON tracking displaced recovery slots across levels, capped at 8 entries oldest-first (Plan 119). |
 | `bba:guided-project-workspace:<projectId>` | Shared latest XML for all levels in a guided project arc. |
 | `bba:free-play-workspace` | Player-team XML for PvCPU free play. |
 | `bba:free-play-pvp-team:1` | Team 1 XML for PvP free play. |
@@ -74,7 +76,14 @@ The hash function itself is the contract. Do not swap FNV-1a for a different alg
 
 **Two-key storage shape.** For every ordinary guided level (keys with the `bba:guided-workspace:` prefix), a sibling key `bba:guided-workspace-version:<levelId>` stores the hash at the time of the last write. Both keys are always written together. If the main workspace key is absent, the version key is ignored.
 
-**Replace-on-mismatch (silent by design).** On load, if the stored version hash does not match the current level's computed hash, the stored workspace is discarded and `initialBlocklyXml` is loaded as if the student were visiting fresh. No toast or modal is shown. The student simply sees the corrected starter. Rationale: in pilot, the orchestrator is the source of truth for authored content; students benefit from seeing the correct level, not from knowing it changed.
+**Replace-on-mismatch and displaced-work recovery (Plan 45, updated by Plan 119).** On load, if the stored version hash does not match the current level's computed hash, the student's stored workspace is no longer silently deleted. Instead:
+- **Preservation before replacement**: The displaced workspace XML is saved to a bounded recovery slot `bba:displaced-workspace:<levelId>` with metadata (`displacedAt`, `storedVersion`, `currentVersion`) and indexed in `bba:displaced-workspace-index`. Write and read-back verification ensures the recovery copy is readable before any starter overwrite occurs.
+- **Fail-safe replacement ordering**: The corrected starter XML is written and verified before the current version key is stamped.
+- **Preservation failure safety**: If writing or verifying the recovery slot fails, the app does not overwrite the student's workspace or version key; it keeps and loads the earlier program, marks the level preservation-blocked in memory (suppressing subsequent version stamps on save), and shows a plain failure message: *"Could not save a recovery copy, so your earlier program was kept and this level's starter program was not updated."*
+- **Bounded retention**: Capped at at most 8 displaced entries across all levels (`MAX_DISPLACED_WORKSPACES = 8`), pruned oldest-first by `displacedAt`, with one slot maximum per level (a second displacement on the same level replaces the first). Defunct or unknown level IDs are pruned safely without throwing.
+- **Student notice and restore affordance**: When an un-restored displaced copy exists for the current level, a non-blocking notice (`#displaced-workspace-status`) appears with the approved copy: *"This level's starter program was updated, so your earlier program was set aside."* Beside it is an accessible button: *"Restore earlier program"*.
+- **Restore behavior and reversibility**: Activating restore writes the displaced XML back to the workspace key, stamps the current version key (preventing replace loops on reload), updates the live Blockly workspace, and dismisses the notice. Under Plan 119 Gate 4, the displaced recovery slot in storage is **never explicitly deleted** upon restore; it survives until superseded by a newer displacement on that level or pruned by the retention cap. It is never cleared on student edit or cosmetic drags.
+- **Mutual exclusivity**: The displaced notice is mutually exclusive with the storage-blocked warning (`#storage-status`); displaced workspace recovery is never offered in memory-only mode.
 
 **Grace stamp for pre-packet stored workspaces (Decision 5).** Stored workspaces written before Plan 45 shipped have no version key. On first load after deploy, the loader detects the missing key and stamps the current hash, letting the student keep their in-flight work. From the second load onward, the hash is present and normal compare logic applies — any subsequent author edit reaches the student reliably.
 
