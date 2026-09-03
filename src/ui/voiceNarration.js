@@ -19,9 +19,6 @@ function hasSpeechSynthesis() {
   return typeof window !== "undefined" && "speechSynthesis" in window;
 }
 
-function hasWindowStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
-}
 
 function pickVoice() {
   if (!availableVoices.length) return null;

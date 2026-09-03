@@ -30,6 +30,14 @@ const mockLocalStorage = {
 
 setCustomStorage(mockLocalStorage);
 
+test.beforeEach(() => {
+  setCustomStorage(mockLocalStorage);
+});
+
+test.after(() => {
+  setCustomStorage(null);
+});
+
 test("parseBoolean correctly parses booleans or returns default", () => {
   assert.equal(parseBoolean("true", false), true);
   assert.equal(parseBoolean("false", true), false);

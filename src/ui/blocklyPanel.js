@@ -6,6 +6,7 @@ import {
   renderProjectStartWorkspaceCallout
 } from "./projectSignifiers.js";
 import { getCurrentLevel } from "../core/levels.js";
+import { isLocalStorageAvailable } from "../platform/safeStorage.js";
 
 function escapeHtml(value) {
   return `${value || ""}`
@@ -60,6 +61,12 @@ export function renderBlocklyPanel(app) {
 
   if (!title || !tabs || !summary) {
     return;
+  }
+
+  const storageStatus = document.getElementById("storage-status");
+  if (storageStatus) {
+    const shouldShow = !isLocalStorageAvailable() && !app.state.storageNoticeDismissed;
+    storageStatus.hidden = !shouldShow;
   }
 
   if (importStatus) {

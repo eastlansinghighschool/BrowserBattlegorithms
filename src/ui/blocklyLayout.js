@@ -1,3 +1,5 @@
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
+
 const BLOCKLY_PANEL_SIZE_STORAGE_KEY = "bba:blockly-panel-size";
 const BLOCKLY_PANEL_SIZES = {
   compact: 340,
@@ -6,10 +8,7 @@ const BLOCKLY_PANEL_SIZES = {
 };
 
 function getStoredBlocklyPanelSize() {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return "standard";
-  }
-  const storedValue = window.localStorage.getItem(BLOCKLY_PANEL_SIZE_STORAGE_KEY);
+  const storedValue = readLocalStorage(BLOCKLY_PANEL_SIZE_STORAGE_KEY);
   return Object.hasOwn(BLOCKLY_PANEL_SIZES, storedValue) ? storedValue : "standard";
 }
 
@@ -42,8 +41,6 @@ export function initializeBlocklyPanelSize(app) {
 export function setBlocklyPanelSize(app, size) {
   const nextSize = Object.hasOwn(BLOCKLY_PANEL_SIZES, size) ? size : "standard";
   app.state.blocklyPanelSize = nextSize;
-  if (typeof window !== "undefined" && window.localStorage) {
-    window.localStorage.setItem(BLOCKLY_PANEL_SIZE_STORAGE_KEY, nextSize);
-  }
+  writeLocalStorage(BLOCKLY_PANEL_SIZE_STORAGE_KEY, nextSize);
   applyBlocklyPanelSize(app);
 }

@@ -29,6 +29,7 @@ Browser Battlegorithms is a browser-first, static Vite app for a Blockly-driven 
 - DOM and UI state: `src/ui/`
 - Blockly workspace and block behavior: `src/ai/blockly/`
 - NPC / CPU logic: `src/ai/npc/`
+- Platform adapters and environment resilience: `src/platform/`
 - Usage tracking and admin analysis: `src/usage/` and `src/admin/`
 - Local-only workbench tools: `src/workbench/`
 - Owner-run Google Apps Script probes and future integration source: `integrations/google-apps-script/` (outside the Vite build graph; never imported by `src/`)

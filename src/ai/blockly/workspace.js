@@ -31,6 +31,7 @@ import { setAllowedMoveTowardTargets, setAllowedSensorOptions } from "./blocks.j
 import { applyBlocklyPanelSize } from "../../ui/blocklyLayout.js";
 import { getActiveProgramLabel } from "../../ui/programContext.js";
 import { clearAllTraceClasses } from "./traceRenderer.js";
+import { readLocalStorage, writeLocalStorage, isLocalStorageAvailable } from "../../platform/safeStorage.js";
 
 const IGNORED_BLOCK_REASON = "bba_ignored_block";
 const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
@@ -38,6 +39,13 @@ const GUIDED_WORKSPACE_STORAGE_PREFIX = "bba:guided-workspace:";
 // Key shape: bba:guided-workspace-version:{levelId}
 const GUIDED_WORKSPACE_VERSION_KEY_PREFIX = "bba:guided-workspace-version:";
 const FREE_PLAY_WORKSPACE_STORAGE_KEY = "bba:free-play-workspace";
+
+// Plan 118: in-memory workspace fallback for guided levels when storage is blocked/unavailable.
+const guidedInMemoryWorkspaces = new Map();
+
+export function _clearGuidedInMemoryWorkspacesForTesting() {
+  guidedInMemoryWorkspaces.clear();
+}
 const FREE_PLAY_PVP_WORKSPACE_STORAGE_PREFIX = "bba:free-play-pvp-team:";
 const { KeyboardNavigation } = keyboardNavigationPkg;
 let keyboardNavigationRegistered = false;
@@ -941,12 +949,19 @@ export function getSensorRelationLabels() {
 }
 
 export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXml = "") {
-  if (typeof window === "undefined" || !window.localStorage) {
+  const storageKey = getWorkspaceStorageKey(app, overrideTeamId);
+
+  if (!isLocalStorageAvailable()) {
+    if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
+      // In-memory fallback for guided levels (including project levels).
+      // Note: Starter-version check is intentionally skipped in the memory-only path
+      // because there is no persisted version key to compare against.
+      return guidedInMemoryWorkspaces.get(storageKey) || fallbackXml;
+    }
     return getCachedWorkspaceXml(app, overrideTeamId) || fallbackXml;
   }
 
-  const storageKey = getWorkspaceStorageKey(app, overrideTeamId);
-  const storedXml = window.localStorage.getItem(storageKey);
+  const storedXml = readLocalStorage(storageKey);
 
   // ── Plan 45: starter versioning for guided non-project levels ───────────────
   // Only run the version check for the guided non-project workspace class.
@@ -956,14 +971,14 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
     const currentLevel = getCurrentLevel(app);
     const currentVersion = currentLevel?.starterXmlVersion ?? null;
     const versionKey = `${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`;
-    const storedVersion = window.localStorage.getItem(versionKey);
+    const storedVersion = readLocalStorage(versionKey);
 
     if (storedVersion === null) {
       // Decision 5 — grace stamp: stored workspace pre-dates this packet.
       // Stamp the current version so the next author edit will trigger replace,
       // but let this student keep their in-flight work.
       if (currentVersion) {
-        window.localStorage.setItem(versionKey, currentVersion);
+        writeLocalStorage(versionKey, currentVersion);
       }
       return storedXml;
     }
@@ -978,9 +993,9 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
     // overwrite the workspace key so a follow-up save doesn't restore stale
     // content (Requirement 4 constraint).
     if (currentVersion) {
-      window.localStorage.setItem(versionKey, currentVersion);
+      writeLocalStorage(versionKey, currentVersion);
     }
-    window.localStorage.setItem(storageKey, fallbackXml);
+    writeLocalStorage(storageKey, fallbackXml);
     if (import.meta.env?.DEV) {
       console.debug(`[BBA] Stale workspace replaced for level "${levelId}": stored=${storedVersion} current=${currentVersion}`);
     }
@@ -996,12 +1011,21 @@ export function getStoredWorkspaceXmlText(app, overrideTeamId = null, fallbackXm
 }
 
 export function saveWorkspaceToLocalStorage(app, overrideTeamId = null) {
-  if (!app.blocklyWorkspace || typeof window === "undefined" || !window.localStorage) {
+  if (!app.blocklyWorkspace) {
     return;
   }
   const xmlText = getWorkspaceXmlText(app);
   cacheWorkspaceXml(app, xmlText, overrideTeamId);
-  window.localStorage.setItem(getWorkspaceStorageKey(app, overrideTeamId), xmlText);
+  const storageKey = getWorkspaceStorageKey(app, overrideTeamId);
+
+  if (!isLocalStorageAvailable()) {
+    if (app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS) {
+      guidedInMemoryWorkspaces.set(storageKey, xmlText);
+    }
+    return;
+  }
+
+  writeLocalStorage(storageKey, xmlText);
 
   // Plan 45: stamp the sibling version key for guided non-project levels so
   // future loads can detect whether the authored starter has changed.
@@ -1011,7 +1035,7 @@ export function saveWorkspaceToLocalStorage(app, overrideTeamId = null) {
     const currentLevel = getCurrentLevel(app);
     const currentVersion = currentLevel?.starterXmlVersion ?? null;
     if (levelId && currentVersion) {
-      window.localStorage.setItem(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
+      writeLocalStorage(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
     }
   }
 }
@@ -1069,12 +1093,15 @@ export function resetWorkspaceToCurrentStarter(app) {
   const starterXml = currentLevel.initialBlocklyXml;
   const levelId = app.state.currentLevelId;
 
-  if (typeof window !== "undefined" && window.localStorage && levelId) {
-    window.localStorage.setItem(`${GUIDED_WORKSPACE_STORAGE_PREFIX}${levelId}`, starterXml);
+  if (isLocalStorageAvailable() && levelId) {
+    writeLocalStorage(`${GUIDED_WORKSPACE_STORAGE_PREFIX}${levelId}`, starterXml);
     const currentVersion = currentLevel.starterXmlVersion;
     if (currentVersion) {
-      window.localStorage.setItem(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
+      writeLocalStorage(`${GUIDED_WORKSPACE_VERSION_KEY_PREFIX}${levelId}`, currentVersion);
     }
+  } else if (!isLocalStorageAvailable() && levelId) {
+    const storageKey = getWorkspaceStorageKey(app);
+    guidedInMemoryWorkspaces.set(storageKey, starterXml);
   }
 
   loadWorkspaceXml(app, starterXml);

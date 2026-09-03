@@ -16,6 +16,7 @@ This refactor separates game rules from rendering, DOM wiring, and AI integratio
 - `src/admin/`: local-only admin page for teacher usage-file review (excluded from GitHub Pages build)
 - `src/workbench/`: local-only level workbench shell for readiness inspection and prompt generation (excluded from GitHub Pages build)
 - `src/crypto/`: Web Crypto helpers for private Free Play program file encryption
+- `src/platform/`: platform shims and resilience adapters (e.g. exception-safe web storage for cross-origin iframes)
 - `src/startup/`: async loading coordination for the Blockly editor and board renderer
 - `integrations/google-apps-script/`: owner-run Apps Script probes and future server-side integration source; outside the Vite build graph and never imported by `src/`
 - `tests/unit/helpers/`: small builders and fixtures for Node/browser tests

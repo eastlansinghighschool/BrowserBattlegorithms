@@ -1,3 +1,5 @@
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
+
 function escapeHtml(value) {
   return `${value || ""}`
     .replace(/&/g, "&amp;")
@@ -14,13 +16,6 @@ function getProjectMetadata(level) {
 export function getProjectStartCalloutStorageKey(level) {
   const project = getProjectMetadata(level);
   return project ? `bba:project-start-callout-seen:${project.id}` : null;
-}
-
-function getStorage() {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return null;
-  }
-  return window.localStorage;
 }
 
 export function isProjectLevel(level) {
@@ -41,24 +36,18 @@ export function getProjectDisplayName(level) {
 
 export function hasSeenProjectStartCallout(level) {
   const key = getProjectStartCalloutStorageKey(level);
-  const storage = getStorage();
-  if (!key || !storage) {
+  if (!key) {
     return false;
   }
-  return storage.getItem(key) === "true";
+  return readLocalStorage(key) === "true";
 }
 
 export function dismissProjectStartCallout(level) {
   const key = getProjectStartCalloutStorageKey(level);
-  const storage = getStorage();
-  if (!key || !storage) {
+  if (!key) {
     return;
   }
-  try {
-    storage.setItem(key, "true");
-  } catch {
-    // Ignore storage failures and keep the callout usable in-memory.
-  }
+  writeLocalStorage(key, "true");
 }
 
 export function renderProjectBadge(level) {

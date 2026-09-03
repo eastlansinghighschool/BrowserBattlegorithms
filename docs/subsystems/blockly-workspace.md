@@ -84,6 +84,15 @@ The hash function itself is the contract. Do not swap FNV-1a for a different alg
 
 **Manual reset affordance.** A "Reset Workspace to Starter" button (`#resetWorkspaceToStarterButton`) appears in `#blockly-toolbar` next to the undo/redo controls. It is visible only on guided non-project levels that have a non-empty `initialBlocklyXml`; hidden in Free Play and on project-shared-workspace levels. On click, a `window.confirm()` dialog prompts "Reset your blocks to the starter program for this level? Your current blocks will be lost." On confirm, the button uses the same internal code path as the stale-replace branch: `resetWorkspaceToCurrentStarter(app)` in `workspace.js`. This is distinct from the Play/Reset button, which preserves the workspace and only resets the game board state.
 
+## Storage resilience and in-memory fallback (Plan 118)
+
+When the app runs in an embedded environment (such as an LMS iframe or Google Sites embed) where third-party cookies or storage access is blocked by enterprise policy or tracking protection, accessing `window.localStorage` throws a `SecurityError`.
+
+- **Safe storage adapter (`src/platform/safeStorage.js`)**: All `localStorage` reads, writes, removals, and availability checks are routed through the safe storage adapter. Property access on `window.localStorage` is evaluated inside try/catch so presence checks never throw.
+- **Guided in-memory fallback**: If storage is blocked or unavailable, `workspace.js` persists guided level and project shared workspaces to a module-level `Map` (`guidedInMemoryWorkspaces`), keyed by the exact same storage keys as `localStorage`. This allows students to navigate between levels, switch tabs, reset levels, and complete project arcs within their session without losing code.
+- **Starter version compare skipped in memory fallback**: In memory-only mode, the Plan 45 starter-version compare is skipped entirely because there is no persisted version key to compare against.
+- **Free Play fallback**: Free Play continues to use its in-memory program cache (`app.state.freePlayPrograms`).
+
 ## Keyboard navigation
 
 Plan 40 integrates Blockly's official `@blockly/keyboard-navigation` plugin for the live workspace. `initBlockly()` registers the plugin's keyboard-navigation styles before `Blockly.inject(...)`, installs a navigation-deferring toolbox wrapper, and creates a `KeyboardNavigation` instance for the live workspace after injection. The app shell also provides the plugin's required `#shortcuts` host so `/` can open the keyboard-help dialog.

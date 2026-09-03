@@ -6,8 +6,12 @@ import {
   hashStarterXml,
   normalizeStarterXmlForHashing,
   getStoredWorkspaceXmlText,
-  saveWorkspaceToLocalStorage
+  getWorkspaceXmlText,
+  saveWorkspaceToLocalStorage,
+  resetWorkspaceToCurrentStarter,
+  _clearGuidedInMemoryWorkspacesForTesting
 } from "../../src/ai/blockly/workspace.js";
+import { setStorageForTesting } from "../../src/platform/safeStorage.js";
 import { registerBattleBlocklyBlocks } from "../../src/ai/blockly/blocks.js";
 import { getLevelDefinitions } from "../../src/config/levels/index.js";
 
@@ -192,6 +196,7 @@ const CURRENT_VERSION = "abc12345";
 function withWindowMock(shim, fn) {
   const originalWindow = globalThis.window;
   globalThis.window = { localStorage: shim };
+  setStorageForTesting(undefined);
   try {
     return fn();
   } finally {
@@ -200,6 +205,7 @@ function withWindowMock(shim, fn) {
     } else {
       globalThis.window = originalWindow;
     }
+    setStorageForTesting(undefined);
   }
 }
 
@@ -371,4 +377,145 @@ test("saveWorkspaceToLocalStorage does NOT write version key for free play", () 
   assert.equal(shim.getItem(VERSION_KEY), null, "version key should NOT be written for free play");
 
   workspace.dispose();
+});
+
+// ─── Plan 118: Blocked storage resilience & guided in-memory fallback ────────
+
+test("saveWorkspaceToLocalStorage does not throw when window.localStorage getter throws SecurityError (Regression Proof)", () => {
+  registerBattleBlocklyBlocks();
+  const originalWindow = globalThis.window;
+  const throwingWindow = {
+    get localStorage() {
+      const err = new Error("SecurityError: access denied");
+      err.name = "SecurityError";
+      throw err;
+    }
+  };
+  globalThis.window = throwingWindow;
+  setStorageForTesting(undefined);
+
+  const workspace = new Blockly.Workspace();
+  const xmlText = `<xml xmlns="https://developers.google.com/blockly/xml"><block type="battlegorithms_on_each_turn" x="24" y="24"></block></xml>`;
+  const domXml = Blockly.utils.xml.textToDom(xmlText);
+  Blockly.Xml.domToWorkspace(domXml, workspace);
+
+  const app = makeGuidedApp(LEVEL_ID, STARTER_XML, CURRENT_VERSION);
+  app.blocklyWorkspace = workspace;
+  app.syncUi = () => {};
+
+  try {
+    assert.doesNotThrow(() => {
+      saveWorkspaceToLocalStorage(app);
+    }, "saveWorkspaceToLocalStorage must never throw even under throwing localStorage getter");
+
+    assert.doesNotThrow(() => {
+      const readBack = getStoredWorkspaceXmlText(app, null, STARTER_XML);
+      assert.equal(readBack, getWorkspaceXmlText(app), "Guided in-memory fallback should return the saved XML");
+    });
+  } finally {
+    if (typeof originalWindow === "undefined") {
+      delete globalThis.window;
+    } else {
+      globalThis.window = originalWindow;
+    }
+    setStorageForTesting(undefined);
+    workspace.dispose();
+    _clearGuidedInMemoryWorkspacesForTesting();
+  }
+});
+
+test("guided fallback round-trips in memory when storage unavailable, but uses storage when available", () => {
+  registerBattleBlocklyBlocks();
+  _clearGuidedInMemoryWorkspacesForTesting();
+
+  const workspace = new Blockly.Workspace();
+  const editedXml = `<xml xmlns="https://developers.google.com/blockly/xml"><block type="battlegorithms_on_each_turn" x="10" y="10"></block></xml>`;
+  const domXml = Blockly.utils.xml.textToDom(editedXml);
+  Blockly.Xml.domToWorkspace(domXml, workspace);
+
+  const app = makeGuidedApp("guided-level-1", STARTER_XML, CURRENT_VERSION);
+  app.blocklyWorkspace = workspace;
+  app.syncUi = () => {};
+
+  // Scenario A: Storage blocked / unavailable
+  setStorageForTesting(null);
+  saveWorkspaceToLocalStorage(app);
+
+  const expectedXml = getWorkspaceXmlText(app);
+
+  // Reading back returns the edited XML from in-memory fallback
+  const loadedWhenBlocked = getStoredWorkspaceXmlText(app, null, STARTER_XML);
+  assert.equal(loadedWhenBlocked, expectedXml, "In-memory map should preserve guided XML when storage is blocked");
+
+  // Scenario B: Storage works
+  _clearGuidedInMemoryWorkspacesForTesting();
+  const workingShim = makeLocalStorageShim();
+  setStorageForTesting(workingShim);
+
+  saveWorkspaceToLocalStorage(app);
+  assert.equal(workingShim.getItem(`bba:guided-workspace:guided-level-1`), expectedXml, "Saved to real storage");
+
+  // In-memory map should stay inert when storage is available
+  setStorageForTesting(null);
+  const fromMemory = getStoredWorkspaceXmlText(app, null, STARTER_XML);
+  assert.equal(fromMemory, STARTER_XML, "In-memory map remained inert while storage was available");
+
+  setStorageForTesting(undefined);
+  workspace.dispose();
+  _clearGuidedInMemoryWorkspacesForTesting();
+});
+
+test("project level shared workspaces use common key in memory fallback", () => {
+  registerBattleBlocklyBlocks();
+  _clearGuidedInMemoryWorkspacesForTesting();
+  setStorageForTesting(null);
+
+  const workspace = new Blockly.Workspace();
+  const projectXml = `<xml xmlns="https://developers.google.com/blockly/xml"><block type="battlegorithms_on_each_turn" x="50" y="50"></block></xml>`;
+  const domXml = Blockly.utils.xml.textToDom(projectXml);
+  Blockly.Xml.domToWorkspace(domXml, workspace);
+
+  // Level 1 in project 'proj-1'
+  const appL1 = makeGuidedApp("project-level-1", STARTER_XML, CURRENT_VERSION, /* isProject= */ true);
+  appL1.blocklyWorkspace = workspace;
+  appL1.syncUi = () => {};
+
+  saveWorkspaceToLocalStorage(appL1);
+  const expectedProjectXml = getWorkspaceXmlText(appL1);
+
+  // Level 2 in same project 'proj-1'
+  const appL2 = makeGuidedApp("project-level-2", STARTER_XML, CURRENT_VERSION, /* isProject= */ true);
+  const loadedL2 = getStoredWorkspaceXmlText(appL2, null, STARTER_XML);
+  assert.equal(loadedL2, expectedProjectXml, "Project shared workspace should be shared across levels in memory");
+
+  setStorageForTesting(undefined);
+  workspace.dispose();
+  _clearGuidedInMemoryWorkspacesForTesting();
+});
+
+test("resetWorkspaceToCurrentStarter updates in-memory map when storage unavailable", () => {
+  registerBattleBlocklyBlocks();
+  _clearGuidedInMemoryWorkspacesForTesting();
+  setStorageForTesting(null);
+
+  const workspace = new Blockly.Workspace();
+  const editedXml = `<xml xmlns="https://developers.google.com/blockly/xml"><block type="battlegorithms_on_each_turn" x="99" y="99"></block></xml>`;
+  Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(editedXml), workspace);
+
+  const app = makeGuidedApp(LEVEL_ID, STARTER_XML, CURRENT_VERSION);
+  app.blocklyWorkspace = workspace;
+  app.syncUi = () => {};
+
+  saveWorkspaceToLocalStorage(app);
+  assert.equal(getStoredWorkspaceXmlText(app, null, STARTER_XML), getWorkspaceXmlText(app));
+
+  // Now call resetWorkspaceToCurrentStarter
+  resetWorkspaceToCurrentStarter(app);
+
+  // In-memory map now holds starterXml
+  assert.equal(getStoredWorkspaceXmlText(app, null, STARTER_XML), STARTER_XML);
+
+  setStorageForTesting(undefined);
+  workspace.dispose();
+  _clearGuidedInMemoryWorkspacesForTesting();
 });

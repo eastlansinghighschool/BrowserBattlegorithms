@@ -8,6 +8,7 @@ import {
   LEVEL_RESULT,
   LEVEL_STATUS
 } from "../config/constants.js";
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
 import {
   getBlockDisplayLabel,
   getMoveTowardTargetLabel,
@@ -101,10 +102,7 @@ function renderCompactControlRows(rows = []) {
 }
 
 function getStoredLessonPanelCollapsed() {
-  if (typeof window === "undefined" || !window.localStorage) {
-    return false;
-  }
-  return window.localStorage.getItem(LESSON_PANEL_COLLAPSED_STORAGE_KEY) === "true";
+  return readLocalStorage(LESSON_PANEL_COLLAPSED_STORAGE_KEY) === "true";
 }
 
 function shouldUseCollapsedLessonPanel(app) {
@@ -492,9 +490,7 @@ export function bindLevelPanel(app) {
       enterFreePlay(app);
     } else if (target.dataset.action === "toggle-panel-collapse") {
       app.ui.isLessonPanelCollapsed = !app.ui.isLessonPanelCollapsed;
-      if (typeof window !== "undefined" && window.localStorage) {
-        window.localStorage.setItem(LESSON_PANEL_COLLAPSED_STORAGE_KEY, String(app.ui.isLessonPanelCollapsed));
-      }
+      writeLocalStorage(LESSON_PANEL_COLLAPSED_STORAGE_KEY, String(app.ui.isLessonPanelCollapsed));
     } else if (target.dataset.action === "enter-guided") {
       enterGuidedMode(app);
     } else if (target.dataset.action === "set-human-auto-skip") {

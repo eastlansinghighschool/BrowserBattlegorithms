@@ -122,6 +122,15 @@ These signals are driven by project metadata and local storage. They are not Blo
 - Persistence is handled globally using `localStorage` with a `bba:settings:*` prefix.
 - Keyboard accessibility is maintained with focus trap, ESC closing, and returning focus to the gear button upon dismissal.
 
+## Storage blocked status notice (Plan 118)
+
+When the app runs under an environment that blocks storage access (such as a restricted iframe), a persistent, non-blocking warning banner is shown in the Blockly panel above the toolbar:
+- Element `#storage-status` with `role="status"` and warning styling.
+- Student-facing message: *"This browser is blocking saving. You can keep playing, but your program will be lost if you reload or close this tab."*
+- Non-blocking: does not steal focus, does not interrupt gameplay or lesson progression.
+- Dismissible: clicking or activating the "Got it" button (`#storageStatusDismiss`) hides the notice and marks `app.state.storageNoticeDismissed = true` for the remainder of the tab session.
+- Coexists with transient action notices (`#workspace-import-status`, `#usage-export-status`) as a separate sibling DOM element.
+
 ## Common traps
 
 - **Reading only `currentModeView`** will miss PvP vs PvCPU distinctions. Always check `freePlayMode` when the behavior differs between free-play sub-modes.

@@ -11,6 +11,9 @@ import {
   deriveGuidedProgress,
   formatGuidedProgressLabel
 } from "../../src/usage/guidedProgress.js";
+import { initializeLevelState, completeLevel } from "../../src/core/levels.js";
+import { LEVEL_STATUS, LEVEL_RESULT } from "../../src/config/constants.js";
+import { setStorageForTesting } from "../../src/platform/safeStorage.js";
 
 const GUIDED_LEVEL_CATALOG = buildGuidedLevelProgressCatalog(getLevelDefinitions());
 
@@ -158,4 +161,77 @@ test("unknown level ids are preserved and trigger a review signal", () => {
   assert.equal(progress.needsReview, true);
   assert.ok(progress.reviewSignals.some((signal) => signal.type === "unknown_level_ids"));
   assert.ok(progress.guidedLevelProgress.some((entry) => entry.isUnknown && entry.levelId === "mystery-level"));
+});
+
+test("guided progression under throwing storage returns default locked state and writing does not throw", () => {
+  const throwingStorage = {
+    getItem() {
+      const err = new Error("Blocked by policy");
+      err.name = "SecurityError";
+      throw err;
+    },
+    setItem() {
+      const err = new Error("Blocked by policy");
+      err.name = "SecurityError";
+      throw err;
+    },
+    removeItem() {
+      const err = new Error("Blocked by policy");
+      err.name = "SecurityError";
+      throw err;
+    }
+  };
+
+  setStorageForTesting(throwingStorage);
+
+  try {
+    const app = {
+      state: {},
+      ui: {},
+      hooks: {}
+    };
+
+    // Initialize level state with throwing storage
+    assert.doesNotThrow(() => {
+      initializeLevelState(app);
+    });
+
+    // Verify initial unlock state is default locked state
+    assert.equal(app.state.levels.length > 0, true);
+    const firstLevelId = app.state.levels[0].id;
+    assert.equal(app.state.levelProgress[firstLevelId], LEVEL_STATUS.AVAILABLE);
+
+    for (let i = 1; i < app.state.levels.length; i++) {
+      const levelId = app.state.levels[i].id;
+      assert.equal(
+        app.state.levelProgress[levelId],
+        LEVEL_STATUS.LOCKED,
+        `Level "${levelId}" must remain LOCKED by default; no unlocks fabricated under blocked storage`
+      );
+    }
+
+    // Now complete the first level to trigger savePersistedGuidedProgression
+    assert.doesNotThrow(() => {
+      completeLevel(app, LEVEL_RESULT.PASSED, "win_condition_met");
+    });
+
+    // In-memory state advances next level in current session
+    const secondLevelId = app.state.levels[1].id;
+    assert.equal(app.state.levelProgress[secondLevelId], LEVEL_STATUS.AVAILABLE);
+
+    // But persistent storage was throwing, so re-initializing a new app state returns the clean default
+    const freshApp = {
+      state: {},
+      ui: {},
+      hooks: {}
+    };
+    initializeLevelState(freshApp);
+    assert.equal(
+      freshApp.state.levelProgress[secondLevelId],
+      LEVEL_STATUS.LOCKED,
+      "Fresh session must return default locked state; write did not persist to blocked storage"
+    );
+  } finally {
+    setStorageForTesting(undefined);
+  }
 });

@@ -33,6 +33,34 @@ body {
   color: #842029;
 }
 
+.workspace-import-status-warning {
+  background: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.storage-status-dismiss {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.storage-status-dismiss:hover,
+.storage-status-dismiss:focus-visible {
+  background: rgba(102, 77, 3, 0.12);
+}
+
 .app-header {
   width: 100%;
   background: rgba(24, 55, 68, 0.92);

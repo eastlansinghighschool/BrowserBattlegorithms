@@ -1,3 +1,5 @@
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
+
 export const PREF_KEYS = {
   SOUND_ENABLED: "bba:settings:sound-enabled",
   TURN_LOG_VISIBLE: "bba:settings:narration-visible-strip",
@@ -27,14 +29,6 @@ export function setCustomStorage(storage) {
   customStorage = storage;
 }
 
-function getStorage() {
-  if (customStorage) return customStorage;
-  if (typeof window !== "undefined" && window.localStorage) {
-    return window.localStorage;
-  }
-  return null;
-}
-
 export function parseBoolean(value, defaultValue) {
   if (value === "true") return true;
   if (value === "false") return false;
@@ -51,18 +45,18 @@ export function parseString(value) {
 }
 
 export function loadPreference(key, defaultValue, parser) {
-  const storage = getStorage();
-  if (!storage) {
-    return defaultValue;
-  }
   try {
-    let raw = storage.getItem(key);
+    let raw = customStorage ? customStorage.getItem(key) : readLocalStorage(key);
     if (raw === null) {
       const legacyKey = LEGACY_KEYS[key];
       if (legacyKey) {
-        raw = storage.getItem(legacyKey);
+        raw = customStorage ? customStorage.getItem(legacyKey) : readLocalStorage(legacyKey);
         if (raw !== null) {
-          storage.setItem(key, raw);
+          if (customStorage) {
+            customStorage.setItem(key, raw);
+          } else {
+            writeLocalStorage(key, raw);
+          }
         }
       }
     }
@@ -77,12 +71,12 @@ export function loadPreference(key, defaultValue, parser) {
 }
 
 export function savePreference(key, value) {
-  const storage = getStorage();
-  if (!storage) {
-    return;
-  }
   try {
-    storage.setItem(key, String(value));
+    if (customStorage) {
+      customStorage.setItem(key, String(value));
+    } else {
+      writeLocalStorage(key, String(value));
+    }
   } catch (err) {
     console.warn(`Failed to write to localStorage:`, err);
   }

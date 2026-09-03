@@ -137,6 +137,7 @@ export function bindControls(app) {
   const undoWorkspaceButton = document.getElementById("undoWorkspaceButton");
   const redoWorkspaceButton = document.getElementById("redoWorkspaceButton");
   const resetWorkspaceToStarterButton = document.getElementById("resetWorkspaceToStarterButton");
+  const storageStatusDismiss = document.getElementById("storageStatusDismiss");
   const programExportModal = document.getElementById("programExportModal");
   const privateExportCheckbox = document.getElementById("privateExportCheckbox");
   const privateExportFields = document.getElementById("privateExportFields");
@@ -482,6 +483,16 @@ export function bindControls(app) {
       );
       if (confirmed) {
         app.hooks.resetWorkspaceToCurrentStarter?.();
+      }
+    });
+  }
+
+  if (storageStatusDismiss) {
+    storageStatusDismiss.addEventListener("click", () => {
+      app.state.storageNoticeDismissed = true;
+      const storageStatus = document.getElementById("storage-status");
+      if (storageStatus) {
+        storageStatus.hidden = true;
       }
     });
   }

@@ -21,20 +21,13 @@ import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
 import { emit, finalizeTurnEventLog } from "./events.js";
 import { evaluateLevelStars } from "./starEvaluation.js";
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
 
 const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
 
-function hasBrowserLocalStorage() {
-  return typeof window !== "undefined" && Boolean(window.localStorage);
-}
-
 function loadPersistedGuidedProgression() {
-  if (!hasBrowserLocalStorage()) {
-    return null;
-  }
-
   try {
-    const raw = window.localStorage.getItem(GUIDED_PROGRESS_STORAGE_KEY);
+    const raw = readLocalStorage(GUIDED_PROGRESS_STORAGE_KEY);
     if (!raw) {
       return null;
     }
@@ -55,15 +48,12 @@ function savePersistedGuidedProgression(state) {
   if (state.suppressProgressPersistence) {
     return;
   }
-  if (!hasBrowserLocalStorage()) {
-    return;
-  }
 
   try {
     const passedLevelIds = state.levels
       .filter((level) => state.levelProgress[level.id] === LEVEL_STATUS.PASSED)
       .map((level) => level.id);
-    window.localStorage.setItem(GUIDED_PROGRESS_STORAGE_KEY, JSON.stringify({
+    writeLocalStorage(GUIDED_PROGRESS_STORAGE_KEY, JSON.stringify({
       schemaVersion: 1,
       updatedAt: new Date().toISOString(),
       passedLevelIds

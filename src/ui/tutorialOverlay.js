@@ -1,3 +1,5 @@
+import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
+
 const STORAGE_KEY = "bba_tutorial_seen_v1";
 let tutorialBlocklyModulePromise = null;
 
@@ -10,7 +12,7 @@ function getTutorialBlocklyModule() {
 
 function getStoredTutorialSeen() {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = readLocalStorage(STORAGE_KEY);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -18,11 +20,7 @@ function getStoredTutorialSeen() {
 }
 
 function saveStoredTutorialSeen(seen) {
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seen));
-  } catch {
-    // Ignore storage failures and keep the tutorial usable in-memory.
-  }
+  writeLocalStorage(STORAGE_KEY, JSON.stringify(seen));
 }
 
 function resolveTargetElement(selector) {
