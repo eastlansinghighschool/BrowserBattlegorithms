@@ -1,11 +1,9 @@
 ---
 id: plan-116
 title: "Collision And Waste Event Tracking"
-status: ready
+status: in-progress
 depends_on: [plan-113]
-gate: "before mutation: owner approval of the exact counter definitions (what counts as a collision and as a wasted resource use), presented with event-log evidence"
-superseded_by: null
-resolution: null
+gate: "CLEARED 2026-09-01. Four counters, not two: runner-collision bounces and map-blockage bounces split on the existing runner.blockedOrBounced reason field; resource-unavailable attempts from resource.unavailable; and ineffective-freeze uses where affectedRunners is empty. Unused-barrier waste explicitly excluded. See the Gate section."
 summary: >-
   Build per-level-attempt collision and wasted-resource counters derived from the Plan 35 event log, exposed on the end-of-level details path, so later packets can author honest no-collision and no-wasted-resource star-3 criteria. Tracking only — no criteria, no UI, no export changes.
 ---
@@ -20,7 +18,7 @@ summary: >-
 - Date: 2026-08-10
 - Packet type: implementation
 - Mutation level: source-code, tests, docs (subsystem note)
-- Approval gate: before mutation — owner approves the exact counter definitions (what counts as a collision; what counts as a wasted resource use), presented with event-log evidence in the preflight plan.
+- Approval gate: **cleared 2026-09-01** — counter definitions resolved with event-log evidence (see Gate section). The implementer restates them in the preflight plan and proceeds.
 - Depends on: plan-113 (which dropped `no-collision`/`no-wasted-resource` for lack of this data)
 - Blocks: the star-3 criteria expansion authoring packet (follow-on)
 - Expected artifacts:
@@ -50,6 +48,46 @@ Blocks:
 
 Why this packet exists:
 Plan-113's gate audit proved that no collision or resource-waste data exists at level end, so every scrimmage/resource level went 2-star max and star 3 currently exists only on Phase 6 multi-ally levels. The owner ratified that shape and deferred this tracking to the backlog (decision log 2026-08-05). This packet builds the missing instrumentation from the Plan 35 event log (`state.eventLog` already records `runner.actionResolved`, `runner.blockedOrBounced`, and collision/freeze outcomes), keeping the star layer's honesty standard: criteria must measure something real.
+
+## Gate (before mutation) — CLEARED 2026-09-01
+
+Resolved with the owner against the actual event taxonomy in `src/core/events.js`. **Four counters,
+not two.** The governing principle: this packet is tracking-only, so it records distinguishable
+things distinguishably and does not pre-aggregate. A later criteria packet chooses what to reward;
+collapsing a dimension here would foreclose that choice and require another tracking packet.
+
+### Collision counters — two, split on the existing `reason`
+
+`runner.blockedOrBounced` already carries a `reason` that distinguishes its two emission sites:
+map blockage (`turnEngine.js:530`) and runner collision (`turnEngine.js:546`). Split on it:
+
+| Counter | Source | Why separate |
+| --- | --- | --- |
+| runner-collision bounces | `runner.blockedOrBounced`, runner-collision reason | The enemy-sensing curriculum's concept: avoiding a Guard or Charger requires using the sensors the level teaches |
+| map-blockage bounces | `runner.blockedOrBounced`, map-blockage reason | A different lesson — movement helpers and pathing. Any working solution mostly avoids walls, so mixing it in adds noise, not signal |
+
+A single combined counter was rejected: "no collisions" would then mean "never bumped anything,"
+which on a living board with a Charger may be near-impossible, making any criterion built on it
+non-discriminating and in violation of the plan-113 discriminating-power standard.
+
+### Waste counters — two
+
+| Counter | Source | Notes |
+| --- | --- | --- |
+| resource-unavailable attempts | `resource.unavailable` | Already emitted at three sites (`turnEngine.js:290` jump exhausted, `:294` barrier unavailable, `:494` freeze cooldown). Maps exactly to the existing `resource_no_readiness_guard` learning moment in `src/usage/learningLedger.js` — the "didn't check readiness" mistake |
+| ineffective-freeze uses | Area Freeze resolving with an empty affected set | The engine **already computes** `affectedRunners` (`turnEngine.js:156`) but does not emit its size. Emitting that is the one new piece of instrumentation this packet needs. This is the "spent a ready ability on nothing" mistake |
+
+**Unused-barrier waste is explicitly excluded.** A barrier that nothing ever passed did nothing
+measurable, yet may have been good strategy — it may have deterred an enemy that consequently never
+came. That definition is contestable, and a contested definition must not be baked into a counter
+that a later criterion will treat as fact. If it is wanted, it needs its own design conversation.
+
+### What this gate does not decide
+
+Per the packet's non-goals, nothing here assigns mastery criteria, adds ledger or export fields,
+changes star metadata, or touches the evaluator. Persistence decisions ride the follow-on
+authoring packet. These counters are computed per level attempt and exposed on the end-of-level
+`details` path only.
 
 ## Authority And Contracts
 

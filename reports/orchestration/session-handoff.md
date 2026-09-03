@@ -107,43 +107,21 @@ should update durable files rather than depend on this thread's conversational c
 Four packets convert the gate-independent part of Stage 1 into work orders. Commits `516323c`,
 `6dd18b4`, `8713af4`, `293bdfc`, `eff56b8`.
 
-**Board as of 2026-09-01:** `plan-120` is **complete** after four review rounds, at probe build
-`plan-120-v2`. Its handshake was silently broken on every run until `2cc0c5f`; `repair-02`
-then restored version-as-provenance. Any `plan-120-v1` result block is invalid. The owner must
-re-paste and redeploy **both** Apps Script projects before rerunning — a shell copied before
-the fix fails with no visible error.
+**Board as of 2026-09-01:** **Stage 0 is complete.** `plan-118`, `plan-119`, `plan-120`, and
+`plan-121` are all `complete`. `plan-116` (collision/waste tracking) is `in-progress` with its
+counter-definition gate cleared — four counters, not two; see the decision log. It is the last
+packet on the board; after it come the star-3 criteria expansion authoring packet and film review
+(charter S7), neither written.
 
-**Concurrency caution learned here:** disjoint *write* scopes do not give disjoint
-*validation*. `npm test` reads the whole worktree, so one packet's in-flight edits surface as
-failures in another packet's full-suite run. `plan-120` reported "3 unrelated existing
-`preferences` failures" that were actually `plan-118` mid-edit on `src/ui/preferences.js`;
-the suite returned to green once `plan-118` landed. Targeted tests are a packet's authoritative
-validation; attribute any full-suite failure by file with `git status` before calling it
-"existing." `plan-118` and `plan-119` are **complete**; `plan-121`
-is the sole live packet. `src/platform/safeStorage.js` is the only module in `src/` that touches
-`window.localStorage` — keep it that way.
+The two latent defects the GAS review found in existing code are both fixed and tested: unguarded
+storage access (`plan-118`) and the destructive starter replacement (`plan-119`). Both stand on
+their own merits if GAS is never built.
 
-**`plan-116` still cannot start, now for a different reason.** It was blocked by `plan-118` on
-`src/core/levels.js`; that cleared, but it overlaps `plan-121` on **`src/usage/usageTracker.js`**
-and **`docs/subsystems/usage-and-admin.md`**. Wait for `plan-121` to complete. After that,
-`plan-116` is the next dispatch and needs only its counter-definition gate answered.
-
-**`plan-116` is now unblocked** — `plan-118` completed and released `src/core/levels.js`. It remains `ready` and held pending its counter-definition gate. The earlier caution read: It lands counters in `src/core/levels.js`'s
-end-of-level path, and `plan-118` is migrating storage calls in that same file. Different
-functions, same file, so under commit discipline they serialize.
-
-**`package.json` is serialized between the two live packets.** They are otherwise disjoint, but
-both would add test files to the single `test:unit` line. Rule applied: first-started owns the
-shared file. `plan-118` keeps it; `plan-121` names its new test files in its progress report and
-the orchestrator registers them and runs the full suite at review. `plan-121`'s own `npm test`
-will not include its new file, by design — that is not a validation failure. Reuse this pattern
-whenever two packets are disjoint except for a registration line.
-
-**Completion semantics, corrected.** An earlier revision of this file said `plan-120` would reach
-`complete` only once the owner had run the probes. That was wrong and would have misused the
-lifecycle: running the probes is explicitly outside the packet's scope, and Gate 1 / Gate 2 are
-tracked separately in `docs/open-questions.md`. A packet completes when its declared artifacts are
-delivered and verified, not when an out-of-scope owner action happens.
+**Gate 1 and Gate 2 remain the only things blocking Stage 1 proper.** They are owner-run
+measurements, not packets. `plan-120` delivered the kit at probe build `plan-120-v2`; the run sheet
+is `reports/development/plan-120-gas-probe-kit-and-integration-surface/directions.md`. Re-paste both
+Apps Script projects before running — a shell copied before the handshake fix fails with no visible
+error.
 
 **Pattern worth reusing, from the plan-120 revision:** when a measurement must leave the device but
 the raw reading is sensitive, export a *comparison* rather than a *value*. The probe reports origin

@@ -1,7 +1,8 @@
 ---
 id: plan-121
 title: "Cloud Evidence Builder And Analyzer Identity Parity"
-status: in-progress
+status: complete
+resolution: "Cloud evidence builder and analyzer identity parity delivered and orchestrator-verified. src/usage/cloudEvidence.js builds a pure identity-stripped schema-v2 payload that verifies under the unmodified verifyUsageExport; studentName is removed from the top level and recursively from all event data, proven by a whole-payload sentinel search with a mirrored positive assertion that direct mode still contains it. Direct-mode byte-identity is pinned against a fixture captured from pre-packet code and committed separately at 315a776 before any source change. computeBrowserSha256Hex was moved to usageFormat.js with no copy left behind, so the integrity contract has one definition of its own hash. Blank-name handling repaired identically in both analyzers with submitter identity as the discriminator: submission-N never satisfies distinctness, same-typed-name groups stay suppressed as resubmissions, and the three owner-approved wordings are exact, including the third that says separate submissions rather than claiming distinct submitters. Entry API trimmed to one wording field; parity pinned by a deep-equality test across diverse inputs. 595/595 unit tests, clean build, 21/21 browser tooling. Subsystem note and data dictionary updated."
 depends_on: []
 gate: "CLEARED 2026-09-01. Direct-mode boundary confirmed unchanged; blank-name handling resolved as Option 1 — the similarity discriminator becomes submitter identity (file identity, which later carries account attribution), not the typed name, and a group whose submitters cannot be distinguished says so explicitly. See the Gate section; nothing remains to stop for."
 summary: >-
