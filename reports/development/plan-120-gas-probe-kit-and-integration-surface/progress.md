@@ -162,4 +162,22 @@ this rule; its six human-observed capability passes are useful context only and 
 Repair 02 is committed as `b3a98ae`. The implementation still has unrelated working
 tree changes from other work outside this packet; they were not modified or staged by this repair.
 
+## Repair 03 — handshake banner race
+
+The orchestrator confirmed that the preliminary v2 run completed the shell/child handshake even
+though the parent banner reverted to its waiting text when the iframe `load` event arrived after
+the message event. The shell now resets and tracks `handshakeReceived`, and its `load` handler
+cannot overwrite the accepted-handshake status. This is display-only: the protocol, measurements,
+classifications, result fields, and `plan-120-v2` provenance remain unchanged. The optional child
+acknowledgment was not added, so no protocol version bump is required.
+
+The nested-frame README and durable directions identify the child's `Parent origin from message
+event.origin` row as the authoritative handshake indicator and preserve `sandbox=unknown`; the
+browser warning is not recorded as a finding. The earlier stale-banner readings remain valid.
+No additional advisor consultation was warranted for this narrowly scoped repair because the
+orchestrator supplied the independently verified diagnosis and explicit acceptance boundary.
+
+Repair 03 is committed as `5aae19f`. The implementation still has unrelated working
+tree changes from other work outside this packet; they were not modified or staged by this repair.
+
 Ready for orchestrator review: yes
