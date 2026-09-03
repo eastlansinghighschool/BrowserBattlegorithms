@@ -89,6 +89,9 @@ test("probe reports are explicitly deidentified and storage pairing is receipt-g
   assert.match(child, /raw_origins_sentinels_and_identifiers=excluded/);
   assert.doesNotMatch(child, /id="copy-json"|id="json-output"/);
   assert.match(shell, /EXPECTED_CHILD_PATH/);
+  assert.match(shell, /let handshakeReceived = false;/);
+  assert.match(shell, /if \(loadedUrl && !handshakeReceived\)/);
+  assert.match(shell, /handshakeReceived = true;/);
   assert.match(shell, /event\.origin === 'null'/);
   assert.match(shell, /event\.origin !== expectedChildOrigin/);
   assert.match(identity, /intended-viewer-match/);

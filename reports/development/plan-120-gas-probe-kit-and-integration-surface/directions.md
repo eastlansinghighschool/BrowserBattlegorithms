@@ -35,7 +35,10 @@ measurement on their own device/account and return only the generated result blo
 2. Open the deployed GAS shell. Enter the exact GitHub Pages child URL and select **Load child in
    frame**. The shell accepts only HTTPS URLs ending in
    `/integration-probe/nested-frame-child.html`.
-3. Wait for the successful handshake. A timeout, rejected origin, rejected path, or version
+3. Wait for the successful handshake. Use the child's **Parent origin from message event.origin**
+   row as the authoritative handshake indicator. If it is **pass**, the round trip succeeded even
+   if an older deployed shell leaves its banner saying it is still waiting; the current shell
+   guards against that display-only race. A timeout, rejected origin, rejected path, or version
    mismatch is a failed/incomplete run. Do not interpret an empty frame as a capability pass.
 
 ### Required same-device storage sequence

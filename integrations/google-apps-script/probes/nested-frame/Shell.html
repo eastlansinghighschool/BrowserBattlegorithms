@@ -46,6 +46,7 @@
       const EXPECTED_CHILD_PATH = '/integration-probe/nested-frame-child.html';
       let handshakeTimer;
       let loadedUrl = '';
+      let handshakeReceived = false;
 
       function setStatus(message) {
         frameStatus.textContent = message;
@@ -65,6 +66,7 @@
 
         clearTimeout(handshakeTimer);
         loadedUrl = url.href;
+        handshakeReceived = false;
         frame.hidden = false;
         frame.src = loadedUrl;
         setStatus('Loading child; waiting for its local handshake…');
@@ -74,7 +76,7 @@
       });
 
       frame.addEventListener('load', () => {
-        if (loadedUrl) setStatus('Frame load event received; waiting for the child diagnostic handshake…');
+        if (loadedUrl && !handshakeReceived) setStatus('Frame load event received; waiting for the child diagnostic handshake…');
       });
       frame.addEventListener('error', () => {
         clearTimeout(handshakeTimer);
@@ -95,6 +97,7 @@
           setStatus(`Child handshake rejected: expected probe version ${SHELL_VERSION}.`);
           return;
         }
+        handshakeReceived = true;
         clearTimeout(handshakeTimer);
         const sandboxTokens = frame.sandbox && typeof frame.sandbox[Symbol.iterator] === 'function' ? Array.from(frame.sandbox) : [];
         const context = {

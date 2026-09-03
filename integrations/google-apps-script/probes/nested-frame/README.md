@@ -15,9 +15,13 @@ HTML file and does not need a p5.js surface.
 2. Open the deployed shell in the browser where the probe will be measured.
 3. Paste the exact public URL of the deployed child page into the shell and choose **Load child in
    frame**. Do not add a query parameter containing an identity or deployment id.
-4. Wait for the child handshake. If the shell reports no handshake after 15 seconds, record the
-   child-load result as **fail** and investigate the URL/deployment separately; do not infer that
-   browser APIs passed from an empty frame.
+4. Wait for the child handshake. The child's **Parent origin from message event.origin** row is
+   the authoritative indicator that the shell/child round trip completed. If that row is **pass**,
+   the run is valid even if the shell banner still says it is waiting; that banner was repaired to
+   preserve the accepted state, but an older deployed shell may have overwritten it after the
+   handshake. If the shell reports no handshake after 15 seconds and the child message-origin row
+   is not **pass**, record the child-load result as **fail** and investigate the URL/deployment
+   separately; do not infer that browser APIs passed from an empty frame.
 5. Run **Direct top-level storage control** on the child URL itself before loading that exact URL
    in the shell. It writes random sentinels to localStorage and IndexedDB, then displays a short
    direct-control receipt. Copy that receipt, load the same URL in the shell, paste it into the
@@ -52,8 +56,9 @@ work.
 
 The shell reports its directly readable child-iframe `sandbox` attribute. The child reports only
 what it can introspect; the inherited GAS HtmlService effective token set is explicitly unknown
-when the browser does not expose it. Individual capability observations are authoritative. A
-failure or need to weaken origin checks falsifies the proposed frame shape.
+when the browser does not expose it. Do not turn the browser's sandbox warning into a finding.
+Individual capability observations and the child's message-origin handshake row are authoritative.
+A failure or need to weaken origin checks falsifies the proposed frame shape.
 
 The child measures direct-click and delayed blob-download attempts separately, `confirm()`,
 `prompt()`, speech synthesis, keyboard tab-in/tab-out, and usable inner viewport dimensions.
