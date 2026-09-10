@@ -55,9 +55,10 @@ export default {
   initialBlocklyXml: STARTER_EVENT_XML,
   winCondition: { type: "team_scores_point", teamId: 1, runnerId: "runner_1_AI_AllyP1" },
   failureCondition: { type: "turn_limit_exceeded", maxTurns: 56 },
-  // 2-star max: live scrimmage synthesis capstone.
+  // 3-star level: turnPar 41 + masteryCriterionId no-wasted-resource (Plan 124).
   starCriteria: {
-    turnPar: 41
+    turnPar: 41,
+    masteryCriterionId: "no-wasted-resource"
   },
   tutorialSteps: [
     {

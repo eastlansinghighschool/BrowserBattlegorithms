@@ -100,6 +100,25 @@ registerCriterionEvaluator("both-allies-active", (context) => {
   });
 });
 
+/**
+ * no-wasted-resource: Mechanically checks whether resource actions were executed
+ * without waste (no resource unavailable attempts and no ineffective freeze uses),
+ * as recorded in details.resourceUnavailableAttempts and details.ineffectiveFreezeUses (Plan 124).
+ * Absent or non-numeric counters fail closed (return false).
+ */
+registerCriterionEvaluator("no-wasted-resource", (context) => {
+  const { details } = context || {};
+  if (
+    typeof details?.resourceUnavailableAttempts !== "number" ||
+    !Number.isFinite(details.resourceUnavailableAttempts) ||
+    typeof details?.ineffectiveFreezeUses !== "number" ||
+    !Number.isFinite(details.ineffectiveFreezeUses)
+  ) {
+    return false;
+  }
+  return details.resourceUnavailableAttempts === 0 && details.ineffectiveFreezeUses === 0;
+});
+
 // ── Pure Star Evaluator ──────────────────────────────────────────────────────
 
 /**
