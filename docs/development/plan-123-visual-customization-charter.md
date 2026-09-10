@@ -1,11 +1,10 @@
 ---
 id: plan-123
 title: "Student Visual Customization Charter"
-status: ready
+status: complete
+resolution: "Charter settled and orchestrator-verified. Thirteen positions V1-V13, all five owner rulings recorded, and the P1-P5 downstream slate defined. The governing rule is V1: base glyph carries identity, overlay carries state, which collapses an alternate set from twelve slots to six. Two findings from the codebase read are load-bearing for everything downstream: V7, that no canvas palette exists at all -- roughly 29 inline p.fill/p.stroke sites across four render files -- making palette extraction a decision-independent prerequisite; and V8, that light/dark is three separate systems, with Blockly having no theme configured at all, which is why the difficulty ordering is counterintuitive (glyph sets easy, light/dark hardest). V13 was added from the owner's contact-sheet proposal with four constraints: render at CELL_SIZE 50, render on the target platform, authoring-time not runtime, and the model flags while a human decides. Docs-only; no code touched. 608/608 unit tests and a clean build recorded as baseline. P1-P4 are authorized to be written; P5 (sprites) remains gated."
 depends_on: []
 gate: "CLEARED 2026-09-10. All five items ruled on by the owner; V1-V12 are accepted as settled positions. A thirteenth position, V13 (contact-sheet legibility audit), was added from the owner's ruling on item 4. Downstream packets P1-P4 are authorized to be written; P5 remains gated."
-superseded_by: null
-resolution: null
 summary: >-
   Settle the contract for per-student visual customization — alternate icon sets, board palettes, animation options, and a light/dark theme — before any of it is built. The governing rule is that base glyph carries identity and overlays carry state, which lets an alternate set supply six slots instead of twelve. Records that the codebase already provides four of the five needed pieces, that the difficulty ordering is counterintuitive (glyph sets easy, light/dark hardest, sprites deferred), and that extracting a canvas palette is a decision-independent prerequisite.
 ---

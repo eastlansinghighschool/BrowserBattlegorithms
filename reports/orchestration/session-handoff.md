@@ -1,9 +1,9 @@
 # Orchestration Session Handoff
 
-**Date:** 2026-09-01 (machine date)
-**Latest commit before this handoff update:** `0b16c7e` — `Update handoff for the Codex pre-implementation review pass`
-**Immediate purpose of this revision:** record the Codex pre-implementation review disposition
-before the owner returns the Stage 0 slate to the Claude orchestrator for implementation oversight.
+**Date:** 2026-09-10 (machine date)
+**Immediate purpose of this revision:** record the current board (`plan-124` live, `plan-125`
+written and gated, `plan-123` complete) and open a named channel for inbound proposals from sibling
+course repositories, the first of which produced `plan-125`.
 
 This is the one living orchestrator pointer for the next thread. It intentionally does not
 repeat packet status, implementation details, validation logs, or project contracts already
@@ -127,11 +127,24 @@ in isolation. The implementer's stop condition caught it. Both the reasoning err
 noise-dominated measurement are recorded in the decision log; the standing rule is to size each arm
 against the flake rate before attributing a failure to a condition.
 
-**Board state 2026-09-10: no implementation packet is live.** `plan-116` completed, which was the
-last item carried over from the pre-GAS board. `plan-123` (student visual customization charter) is
-`draft` and docs-only, waiting on five owner rulings before it can spawn anything. The two named
-follow-ons that now have their data are the star-3 criteria expansion authoring packet — `plan-116`
-built the counters it was blocked on — and film review (charter S7). Neither is written.
+**Board state 2026-09-10 (late): `plan-124` is live; `plan-125` is written and gated.**
+`plan-116` completed, which was the last item carried over from the pre-GAS board. `plan-123`
+(student visual customization charter) is `complete` — thirteen settled positions, all five owner
+rulings recorded, and a P1-P5 downstream slate of which **nothing is written**; P1 (canvas palette
+extraction) is the decision-independent first candidate. `plan-124` (star-3 criteria expansion
+authoring) had its three gate items ruled on by the owner and is `in-progress`. `plan-125`
+(worksheet checkpoint querystring parameter, from an incoming CourseVGD proposal) is `ready` behind
+one owner gate on the prompt shape and is **not dispatched** — `plan-124` holds the implementer
+slot. Film review (charter S7) remains unwritten with no date claimed on it.
+
+**One caution about `plan-124` for whoever reviews it.** The packet's whole difficulty is that the
+easy version of it is worthless: on a board with no live enemies `no-collision` is free, every
+passing run earns it, and awarding star 3 for it is a lie told to a student. The packet therefore
+requires a *falsifiable pair* per authored level — reference solution earns the criterion, a
+deliberately degraded variant still passes but fails it — and states outright that **most of the 26
+candidates are expected to be rejected.** A delivery that authors criteria on a large majority is a
+signal the test was applied too loosely, not a triumph. Review the rejections, not just the
+acceptances.
 
 **Gate 1 is under way.** The first live run confirmed the shell/child handshake works and produced
 the first observed HtmlService parent origin, a per-something opaque
@@ -248,6 +261,32 @@ or opaque secret ids are perfectly introspectable; and `plan-121` keeps the iden
 builder plus analyzer repair but defers the exact teacher-download filename grammar to the later
 canonical Stage 1 protocol/teacher-extraction surface. It also resolves `plan-119` recovery as
 unavailable in memory-only mode and clarifies `plan-118`'s quota-error classification.
+
+### Inbound proposals from sibling course repositories (new channel, 2026-09-10)
+
+`plan-125` arrived as a written proposal from the CourseVGD repository rather than as an owner
+request, and the channel worked well enough to be worth naming. The requester wrote to
+`C:/AI/CourseVGD/reports/orchestration/outgoing-proposal-*.md`, explicitly declined to write
+into BB's packet space, and asked BB to verify its findings rather than trust them. The response
+lives at `reports/orchestration/coursevgd-worksheet-checkpoint-response.md`. Keep the shape: a flat
+response file in `reports/orchestration/`, a `## Provenance` section in the resulting packet naming
+both documents, and an explicit "what you can rely on / cannot rely on yet" list so the sibling
+repository does not build against a gated decision.
+
+**The generalizable finding, worth more than the feature.** Two of the proposal's three findings
+held; the one that failed is the instructive one. It said the querystring mechanism already existed
+and could be extended — but the existing reader is inside `if (import.meta.env.DEV)`, so it does
+not exist in production at all, and the existing reader *also falls back to `location.hash`*, which
+would be a genuine defect here because the GAS Stage 1 design has already reserved the URL fragment
+for a channel nonce. **"Follow the established shape" was the wrong instruction, and only a
+verification pass against source caught it.** A sibling repository reading BB read-only cannot see
+dev gating or ratified-but-unbuilt design decisions, so verify inbound findings against source
+every time — including, and especially, the ones that make the work sound cheaper.
+
+Also recorded in the decision log: worksheet targeting is **assignment configuration, not student
+preference**, which is why the checkpoint list is not persisted; and the real GAS coupling is
+generic child-facing parameter forwarding through the shell, now an open question with an
+allowlist constraint attached.
 
 ## Thread-only caution
 

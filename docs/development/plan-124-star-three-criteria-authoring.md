@@ -1,11 +1,9 @@
 ---
 id: plan-124
 title: "Star-3 Criteria Expansion Authoring"
-status: ready
+status: in-progress
 depends_on: [plan-116]
-gate: "before mutation: owner approves the exact counter-to-criterion mappings for no-collision and no-wasted-resource, and confirms that existing both-allies-active levels are out of scope"
-superseded_by: null
-resolution: null
+gate: "CLEARED 2026-09-10. Owner accepted all three recommendations: no-collision reads runnerCollisionBounces === 0 and only that; no-wasted-resource reads resourceUnavailableAttempts === 0 && ineffectiveFreezeUses === 0; the nine both-allies-active levels are out of scope. See the Gate section."
 summary: >-
   Author no-collision and no-wasted-resource mastery criteria on the guided levels where they genuinely discriminate, using the four per-attempt counters plan-116 delivered. Closes the plan-113 deferral that left star 3 existing only on Phase 6 multi-ally levels. Every assignment must carry a falsifiable discriminating-power pair; levels where no honest criterion exists stay 2-star max and are documented as such.
 ---
@@ -69,27 +67,28 @@ This is deliberately parallel to the S8 degenerate-solution standard, and the sy
 
 **The evidence method already exists and was just validated.** `plan-116`'s test file drives deliberate collisions, deliberate resource exhaustion, and a deliberately engineered ineffective freeze through `runGuidedLevelWithSolution` — including computing Manhattan distance 5 against `AREA_FREEZE_RADIUS` 2 to guarantee zero affected runners. Use that file as the pattern; it is the reference for how to construct a degraded-but-passing variant.
 
-## Gate (before mutation)
+## Gate — CLEARED 2026-09-10
 
-Present to the owner and stop.
+The owner accepted all three recommendations as written. They are now requirements, not proposals.
+The reasoning is retained below because it is the reasoning an implementer needs while authoring.
 
-### 1. What counts as `no-collision`?
+### 1. What counts as `no-collision`? — RULED
 
-Recommendation: **`runnerCollisionBounces === 0`, and only that.**
+**`runnerCollisionBounces === 0`, and only that.**
 
 The owner's 2026-09-01 four-counter ruling split runner collisions from map blockage precisely so a criteria author could choose. Runner collision is the enemy-sensing concept the living-board levels teach; walking into a wall is a pathing slip from a different lesson, and on most boards it is trivially avoidable and therefore non-discriminating. Folding map blockage back in would undo the split the same week it was made.
 
-### 2. What counts as `no-wasted-resource`?
+### 2. What counts as `no-wasted-resource`? — RULED
 
-Recommendation: **`resourceUnavailableAttempts === 0 && ineffectiveFreezeUses === 0`.**
+**`resourceUnavailableAttempts === 0 && ineffectiveFreezeUses === 0`.**
 
 Both are genuinely waste, and they are the two mistakes students actually make with resources: using what you do not have (the missing readiness guard, which already has a learning-moment analogue in `resource_no_readiness_guard`), and using what you do have on nothing. A student who avoids both has demonstrated the resource discipline the phase teaches.
 
 The alternative — splitting these into two criteria — is available but not recommended: a level rarely offers both failure modes, so two ids would mostly be two ways to say the same thing on any given board.
 
-### 3. Are the nine `both-allies-active` levels in scope?
+### 3. Are the nine `both-allies-active` levels in scope? — RULED
 
-Recommendation: **no.** `masteryCriterionId` is a single string in the level schema, so giving a Phase 6 level a new criterion means *removing* `both-allies-active` from it. That is a re-authoring decision about levels that already work, with no evidence it is wanted. Out of scope; revisit only if the Phase 6 criterion is later found weak.
+**No.** `masteryCriterionId` is a single string in the level schema, so giving a Phase 6 level a new criterion means *removing* `both-allies-active` from it. That is a re-authoring decision about levels that already work, with no evidence it is wanted. Out of scope; revisit only if the Phase 6 criterion is later found weak.
 
 ### Note on the closed vocabulary
 
