@@ -127,6 +127,12 @@ in isolation. The implementer's stop condition caught it. Both the reasoning err
 noise-dominated measurement are recorded in the decision log; the standing rule is to size each arm
 against the flake rate before attributing a failure to a condition.
 
+**Board state 2026-09-10: no implementation packet is live.** `plan-116` completed, which was the
+last item carried over from the pre-GAS board. `plan-123` (student visual customization charter) is
+`draft` and docs-only, waiting on five owner rulings before it can spawn anything. The two named
+follow-ons that now have their data are the star-3 criteria expansion authoring packet — `plan-116`
+built the counters it was blocked on — and film review (charter S7). Neither is written.
+
 **Gate 1 is under way.** The first live run confirmed the shell/child handshake works and produced
 the first observed HtmlService parent origin, a per-something opaque
 `n-<token>-1lu-script.googleusercontent.com` subdomain corroborated by both `document.referrer` and

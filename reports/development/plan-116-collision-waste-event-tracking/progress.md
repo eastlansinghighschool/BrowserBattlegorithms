@@ -71,7 +71,7 @@ Implemented Plan 116 (Collision and Wasted-Resource Event Tracking), creating a 
 - [x] Scoping ignores events from human and NPC runners (`runnerRole !== "ally"`).
 - [x] Ineffective freeze counts only when Area Freeze resolves with `outcome === "freeze_applied"` and `affectedCount === 0`.
 - [x] End-of-level `details` payload contains all four counters without mutating other fields.
-- [x] Existing event payloads (`turn.started`, `runner.actionChosen`, `runner.actionResolved`, `runner.blockedOrBounced`, `resource.unavailable`) retain exact shape contracts, preserving 100% pass on `narration-event-log.test.js`.
+- [x] Existing event payloads (`turn.started`, `runner.actionChosen`, `runner.blockedOrBounced`, `resource.unavailable`) retain exact shape contracts, and `narration-event-log.test.js` passes 100%. *(Orchestrator correction at review, 2026-09-10: `runner.actionResolved` is the one exception — it now carries an additional `affectedCount` field, spread from `details` in `emitActionResolved`, present only when an Area Freeze resolves. That addition is necessary for `ineffectiveFreezeUses` and is correctly documented in `docs/subsystems/turn-engine.md`, which is the authoritative contract. `runnerRole` was considered for the payload and deliberately not added — the counter resolves it from `state.allRunners` by `runnerId` instead, which is why the narration contract survived. Corrected because an event-payload contract is something later packets read and rely on.)*
 - [x] All 608 tests pass in full test suite.
 - [x] Production build passes cleanly.
 - [x] Subsystem documentation updated in `turn-engine.md` and `usage-and-admin.md`.
