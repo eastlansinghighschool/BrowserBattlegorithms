@@ -89,6 +89,84 @@ changes star metadata, or touches the evaluator. Persistence decisions ride the 
 authoring packet. These counters are computed per level attempt and exposed on the end-of-level
 `details` path only.
 
+## Preflight review corrections (added 2026-09-09)
+
+Three corrections to the implementer's preflight plan. The plan is otherwise approved, including
+the `attemptCounters.js` module shape, derivation inside `emit()`, and the additive exposure on the
+end-of-level `details` path.
+
+### C1 — Do not read `affectedCount` from `state.areaFreezeEffect`
+
+The plan proposes `state.areaFreezeEffect?.affectedRunners?.length ?? 0`. **Do not.**
+
+`applyAreaFreeze` (`src/core/turnEngine.js:148-158`) computes `affectedRunners` locally as part of
+*actually applying* the freeze — it calls `candidate.setFrozen(...)` on each. That local array is the
+authoritative game-state fact. It is then packaged into an **effect object** by
+`buildAreaFreezeEffect`, which carries `startedAtMs`, `durationMs`, and a projected copy of the
+runners, and which `src/core/setup.js` nulls in three separate places.
+
+Coupling a measurement to that object means a cleared or not-yet-assigned effect reads as
+`0` — **indistinguishable from a genuinely ineffective freeze, which is precisely the thing being
+measured.** A presentation/animation object's lifetime must never be able to manufacture the
+measurement's positive case.
+
+Instead, pass `affectedRunners.length` **directly** from `applyAreaFreeze` to the emit site. The
+value is in scope at the moment of application; nothing needs to round-trip through state.
+
+This is the same failure class as `plan-119`'s transient-assertion problem: do not measure a value
+off an object whose lifetime is driven by presentation.
+
+### C2 — `runnerTeam === 1` is the wrong guard, and the human/program distinction may matter
+
+Two separate problems.
+
+**The guard.** Team number is not a reliable proxy for "the student." The codebase already carries
+`runnerRole` (human / ally / enemy), which is the semantically correct discriminator. Use it.
+
+**The distinction.** A bounce by a human-driven runner is the student steering with the keyboard.
+A bounce by an ally is the student's *program* being careless. Those are different skills, and the
+criteria this packet exists to enable (`no-collision`, `no-wasted-resource`) are about **program
+quality**. Merging them would let a criteria author reward or penalise the wrong thing with no way
+to tell afterwards — exactly what the ratified principle behind this packet's four-counter shape
+forbids: *record distinguishable things distinguishably; do not pre-aggregate on behalf of a
+decision you are not making.*
+
+**Required first step — a cheap empirical check.** Determine whether human-controlled runners
+actually occur in the scrimmage and resource levels these criteria target. Then:
+
+- If human-controlled runners **do** occur there: record the counters split by control
+  (program-controlled vs. human-driven), keeping one flat additive object.
+- If they **never** occur there: scope all four counters to program-controlled runners, state that
+  finding and the evidence for it in the progress report, and do not add dead fields.
+- If the answer is **ambiguous** — for example it varies by level or by free-play mode — **stop and
+  report** rather than choosing.
+
+Record the check and its result in the progress report either way. This extends the owner's
+four-counter gate, so the reasoning must be visible and easy to reverse.
+
+### C3 — Deriving inside `emit()` is approved; verify one reachability case
+
+Calling `recordEventInAttemptCounters` from `emit()` is the right call, and it has a merit the plan
+does not claim: **counters derived at emit time cannot be silently undercounted by the event log's
+bounded-window eviction**, which a scan-the-log-at-level-end approach would be vulnerable to. State
+that advantage in the progress report; it is the reason to prefer this shape.
+
+One check before relying on it: `emit` now mutates game state, so confirm it is not reached in any
+context where counters must not accrue. The unit harness (`tests/unit/helpers/testHarness.js`)
+drives the real `processTurnActions`, which is correct and desirable — that is a real run.
+**Verify trace playback** (`src/ai/blockly/traceRenderer.js`, `tests/browser/blockly-trace-playback.spec.js`)
+does not re-drive the engine in a way that would accrue counters while a student merely *reviews* a
+past run. If it does, counter accrual must be suppressed during playback.
+
+### C4 — Define "attempt" precisely, and test the reset boundary
+
+The plan resets in `initializeMatch` and `initializeDisplayState` and preserves across
+`resetRound`. That is probably right, but "per level attempt" needs a crisp definition tied to what
+the star evaluator actually consumes — particularly for a Free Play match that scores multiple
+points, where `resetRound` fires per point. State the definition in the subsystem note and cover
+the boundary with a test: counters must survive an intra-attempt round reset and must be zero at
+the start of a fresh attempt.
+
 ## Authority And Contracts
 
 Required reading:
