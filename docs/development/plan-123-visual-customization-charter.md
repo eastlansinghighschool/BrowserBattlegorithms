@@ -1,9 +1,9 @@
 ---
 id: plan-123
 title: "Student Visual Customization Charter"
-status: draft
+status: ready
 depends_on: []
-gate: "before acceptance: owner rules on the five gate items in 'Owner Decisions Required'. This charter settles nothing on its own — it is a decision document, and no downstream packet is authorized until it is accepted."
+gate: "CLEARED 2026-09-10. All five items ruled on by the owner; V1-V12 are accepted as settled positions. A thirteenth position, V13 (contact-sheet legibility audit), was added from the owner's ruling on item 4. Downstream packets P1-P4 are authorized to be written; P5 remains gated."
 superseded_by: null
 resolution: null
 summary: >-
@@ -20,7 +20,7 @@ summary: >-
 - Date: 2026-09-09
 - Packet type: other (decision charter)
 - Mutation level: docs-only
-- Approval gate: before acceptance — the owner rules on the five items in *Owner Decisions Required*. **No source changes are authorized by this document.**
+- Approval gate: **cleared 2026-09-10** — all five items ruled on; see *Owner Decisions Required*, now resolved. **No source changes are authorized by this document**; it authorizes the writing of downstream packets.
 - Depends on: nothing
 - Blocks: every downstream visual-customization packet (`P1`–`P5` in the slate below)
 - Expected artifacts: this charter, accepted or amended; a decision-log entry recording the rulings
@@ -134,9 +134,61 @@ Low-motion, runner movement, runner jumping, frozen badges, and index badges alr
 
 Three test files assert on literal glyphs today: `tests/browser/key-capture-passthrough.spec.js`, `tests/unit/cell-inspector.test.js`, and `tests/unit/display-and-controls.test.js`. When glyphs become configurable, these must either assert on semantic role or explicitly pin the default skin. This is a named requirement in the downstream packet, not a discovery during it.
 
-## Owner Decisions Required
+## Owner Decisions — Resolved 2026-09-10
 
-The charter cannot be accepted until these five are ruled on.
+All five ruled on. Items 1–4 accepted the recommendation; item 5 was decided against the
+recommendation's neutral framing. V1–V12 are settled positions from this date.
+
+1. **Mix-and-match granularity: slot-level across curated sets.** As recommended (V3).
+2. **Guided-mode floor: the V2 lint suffices.** No separate pinned subset. This puts real weight on
+   the lint — see V13, which is now the mechanism that has to earn that trust.
+3. **Default skin: "people running" stays the default**, alternates opt-in. No change for existing
+   students, no screenshot churn in the guides.
+4. **V1 library scope: three sets plus the existing default**, sized so every slot can be checked by
+   hand — **plus a new mechanism the owner proposed, recorded as V13 below.**
+5. **Portability: skin choice rides GAS Stage 2 portable state.** Note the interaction with V5: this
+   does **not** make it evidence. It is carried as resume convenience alongside workspaces and
+   progress, and must not enter the usage export, the fingerprint, or any analyzer path. Stage 2's
+   portable-state codec adds it as a presentation field; the evidence artifact never sees it.
+
+### V13 — Contact-sheet legibility audit (owner proposal, 2026-09-10)
+
+Render every slot of every curated set into a single icon sheet, then use image recognition over
+that sheet to check silhouette distinctness and size consistency.
+
+**This is a good fit, and it matches an established pattern in this repository** rather than being a
+new kind of thing. Plans 73, 74, 86, and 95 all follow the same shape: generate a durable artifact,
+commit it, and review it — dossiers, behaviour evidence, the copy digest. A contact sheet is that
+shape applied to glyphs, and even with no model in the loop it is independently valuable, because a
+human can see a silhouette collision instantly on a contact sheet and cannot see it by reading a
+table of code points.
+
+Four constraints that decide whether it works:
+
+- **Render at target size.** `CELL_SIZE` is 50, so board glyphs render at roughly 50px.
+  Distinctness at 128px proves nothing about distinctness at 50px, and the whole V2 rule is about
+  what a student can tell apart at a glance on a projector. The sheet renders at board size, and
+  may include a deliberately smaller row to model projector distance.
+- **Render on the target platform, which turns the owner's caveat into a method.** The owner
+  correctly noted this does not generalise across OS and emoji implementations. That argues for
+  generating the sheet *on the deployment target* rather than against the technique: the classroom
+  target is managed Chromebooks with one known renderer. This is the same discipline the GAS probe
+  work just established — measure on a student-OU device, not the authoring machine. A sheet
+  generated on Windows is evidence about Windows.
+- **Authoring-time, not runtime.** The runtime lint checks cheap structural rules — no glyph reused
+  across slots, required slots present, set completeness. The visual pass is slower, runs at
+  authoring time, and its *output* is the committed artifact.
+- **The model flags; a human decides.** The audit produces a reviewable list of suspect pairs with
+  the sheet beside it. It must not become an unfalsifiable gate — a vision model asserting "these
+  are distinct" is not proof, and the failure mode to avoid is exactly the one this project has
+  already been bitten by: a plausible claim recorded as a finding.
+
+V13 is a **P2 deliverable**, not a prerequisite. If it proves awkward, the fallback is the same
+sheet reviewed by eye, which is still better than the status quo.
+
+## Owner Decisions Required (original framing, retained for the record)
+
+The charter could not be accepted until these five were ruled on.
 
 1. **Mix-and-match granularity.** Slot-level across curated sets (recommended, per V3), or whole-set selection only? Slot-level is more expressive and is what was asked for; whole-set is trivially safe and needs no compatibility check.
 2. **Guided-mode floor.** Does the V2 lint suffice on its own (recommended), or should guided mode additionally pin a known-safe subset?
