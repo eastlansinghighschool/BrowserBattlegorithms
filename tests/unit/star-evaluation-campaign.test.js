@@ -175,10 +175,42 @@ test('Plan 114: advanced-scrimmage discriminating power - idled support allies c
     'utf8'
   );
 
-  const { app } = runGuidedLevelWithSolution('advanced-scrimmage', idledSupportXml);
+  const warnings = [];
+  const origWarn = console.warn;
+  console.warn = (...args) => {
+    warnings.push(args.join(' '));
+    origWarn(...args);
+  };
+
+  let runResult;
+  try {
+    runResult = runGuidedLevelWithSolution('advanced-scrimmage', idledSupportXml);
+  } finally {
+    console.warn = origWarn;
+  }
+
+  assert.deepEqual(warnings, [], 'Loading advanced-scrimmage fixture must emit no Blockly warnings');
+
+  const { app } = runResult;
   assert.equal(
     app.state.activeLevelResult,
     LEVEL_RESULT.FAILED,
     'Idling support allies in advanced-scrimmage must fail the level, proving both-allies-active discriminating power'
   );
+
+  const ally2History = app.state.runnerActionHistory['runner_1_AI_AllyP1_2'];
+  const ally3History = app.state.runnerActionHistory['runner_1_AI_AllyP1_3'];
+
+  assert.ok(Array.isArray(ally2History) && ally2History.length > 0, 'Support ally 2 must have acted');
+  assert.ok(
+    ally2History.every((action) => action === 'STAY_STILL'),
+    'Support ally 2 action history must contain STAY_STILL and nothing else'
+  );
+
+  assert.ok(Array.isArray(ally3History) && ally3History.length > 0, 'Support ally 3 must have acted');
+  assert.ok(
+    ally3History.every((action) => action === 'STAY_STILL'),
+    'Support ally 3 action history must contain STAY_STILL and nothing else'
+  );
 });
+

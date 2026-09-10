@@ -43,14 +43,14 @@
             <value name="BOOL">
               <block type="battlegorithms_value_compare">
                 <field name="OPERATOR">EQ</field>
-                <field name="LEFT">
+                <value name="LEFT">
                   <block type="battlegorithms_value_runner_index"></block>
-                </field>
-                <field name="RIGHT">
+                </value>
+                <value name="RIGHT">
                   <block type="battlegorithms_value_number">
                     <field name="VALUE">0</field>
                   </block>
-                </field>
+                </value>
               </block>
             </value>
             <statement name="DO">
