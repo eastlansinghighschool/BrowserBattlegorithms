@@ -78,12 +78,13 @@ function emitActionChosen(state, runner, actionType, source) {
   });
 }
 
-function emitActionResolved(state, runner, actionType, outcome) {
+function emitActionResolved(state, runner, actionType, outcome, details = {}) {
   emit(state, "runner.actionResolved", {
     runnerId: runner.id,
     runnerTeam: runner.team,
     actionType,
-    outcome
+    outcome,
+    ...details
   });
 }
 
@@ -142,7 +143,7 @@ function recordRunnerAction(state, runner, actionType) {
 
 function applyAreaFreeze(state, actionRunner) {
   if (!isAreaFreezeReady(state, actionRunner.team)) {
-    return null;
+    return { effect: null, affectedCount: 0 };
   }
 
   const affectedRunners = [];
@@ -158,7 +159,7 @@ function applyAreaFreeze(state, actionRunner) {
   }
 
   markAreaFreezeUsed(state, actionRunner.team);
-  return buildAreaFreezeEffect(
+  const effect = buildAreaFreezeEffect(
     {
       currentTurnNumber: state.currentTurnNumber,
       startedAtMs: Date.now()
@@ -166,6 +167,10 @@ function applyAreaFreeze(state, actionRunner) {
     actionRunner,
     affectedRunners
   );
+  return {
+    effect,
+    affectedCount: affectedRunners.length
+  };
 }
 
 function createJumpLandingDustEffect(state, runner) {
@@ -475,6 +480,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
   let actionCompletedImmediately = false;
   let performRegularMoveOrJump = false;
   let actionOutcome = "illegal_noop";
+  let resolvedActionDetails = {};
 
   switch (actionType) {
     case "MOVE":
@@ -525,7 +531,9 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
         actionCompletedImmediately = true;
         break;
       }
-      state.areaFreezeEffect = applyAreaFreeze(state, actionRunner);
+      const freezeResult = applyAreaFreeze(state, actionRunner);
+      state.areaFreezeEffect = freezeResult?.effect ?? null;
+      resolvedActionDetails = { affectedCount: freezeResult?.affectedCount ?? 0 };
       playSound(state, "freeze");
       actionOutcome = "freeze_applied";
       actionCompletedImmediately = true;
@@ -650,7 +658,7 @@ function executeQueuedAction(app, actionRunner, queuedAction) {
 
   state.queuedActionForCurrentRunner = null;
   queueRecentMovementOutcome(actionRunner, actionType, actionOutcome);
-  emitActionResolved(state, actionRunner, actionType, actionOutcome);
+  emitActionResolved(state, actionRunner, actionType, actionOutcome, resolvedActionDetails);
   if (actionCompletedImmediately) {
     handleActionCompletion(app, actionRunner);
   } else if (actionResolvedAndAnimating) {

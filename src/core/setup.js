@@ -5,6 +5,7 @@ import {
   TURN_STATES
 } from "../config/constants.js";
 import { resetAreaFreezeState } from "./areaFreeze.js";
+import { resetAttemptCounters } from "./attemptCounters.js";
 import { clearGameplayPauseState } from "./gameplayPause.js";
 import { resetRecentMovementState } from "./recentMovement.js";
 import { Flag } from "../entities/Flag.js";
@@ -211,6 +212,7 @@ export function initializeMatch(app) {
   state.currentTurnNumber = 1;
   state.freePlayRoundStartTurn = 1;
   resetAreaFreezeState(state);
+  resetAttemptCounters(state);
   state.currentTurnState = TURN_STATES.AWAITING_INPUT;
   state.queuedActionForCurrentRunner = null;
   state.goalBurstEffect = null;
@@ -245,6 +247,7 @@ export function initializeDisplayState(app) {
   state.currentTurnNumber = 1;
   state.freePlayRoundStartTurn = 1;
   resetAreaFreezeState(state);
+  resetAttemptCounters(state);
   state.activeRunnerIndex = 0;
   state.currentTurnState = TURN_STATES.SETUP_DISPLAY;
   state.mainGameState = MAIN_GAME_STATES.SETUP;

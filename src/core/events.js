@@ -11,6 +11,8 @@
 // - resource.unavailable -> src/core/turnEngine.js:290 (jump resource exhausted fallback); 294 (barrier resource unavailable fallback); 494 (freeze cooldown guard)
 // - level.result -> src/core/levels.js:323
 
+import { recordEventInAttemptCounters } from "./attemptCounters.js";
+
 function ensureTurnEventLogState(state) {
   if (!state || typeof state !== "object") {
     return false;
@@ -39,6 +41,7 @@ export function emit(state, kind, payload = {}) {
     payload: eventPayload
   };
   state.currentTurnEventLog.push(event);
+  recordEventInAttemptCounters(state, kind, eventPayload);
   return event;
 }
 

@@ -14,6 +14,7 @@ import {
   TURN_STATES
 } from "../config/constants.js";
 import { loadPreference, parseBoolean, PREF_KEYS } from "../ui/preferences.js";
+import { createAttemptCounters } from "./attemptCounters.js";
 
 export function createInitialState() {
   return {
@@ -21,6 +22,7 @@ export function createInitialState() {
     allRunners: [],
     gameFlags: {},
     barriers: [],
+    attemptCounters: createAttemptCounters(),
     currentTurnEventLog: [],
     lastTurnEventLog: [],
     lastTurnNarrationText: "",

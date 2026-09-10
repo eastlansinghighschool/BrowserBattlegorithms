@@ -28,6 +28,7 @@ This note does NOT own:
 | `src/core/levels.js` | Guided level completion, pass/fail resolution, and the `GAME_OVER` level-result safety net. |
 | `src/core/collisions.js` | Winner/loser resolution, freeze application, flag drop. |
 | `src/core/flagReconciliation.js` | Post-collision flag-home occupancy reconciliation: opposing-runner pickup and same-team deterministic displacement. |
+| `src/core/attemptCounters.js` | Per-attempt collision and wasted-resource counter tracking; passively derived from event emission. |
 | `src/core/events.js` | Per-turn event log for narration consumers; passive observer, does not change resolution order. |
 | `src/core/invariants.js` | Post-resolution state validation: duplicate positions, invalid flag state, team direction. |
 
@@ -97,6 +98,21 @@ Blockly readiness blocks, the freeze action itself, and free-play CPU logic all 
 When a freeze succeeds, the turn engine also records a transient `state.areaFreezeEffect` snapshot with the caster cell, affected runner cells, radius, and effect timing. Render code reads that snapshot for the board pulse and affected-runner flash; it does not decide who was frozen.
 
 When a jump lands successfully, the turn engine also records a transient `state.activeJumpLandingDust` snapshot with the landing cell and effect timing. Render code reads that snapshot for the landing dust ring; it does not decide that the jump succeeded.
+
+## Attempt counters (Plan 116)
+
+Per-attempt collision and wasted-resource tracking derives four distinct counters passively during event emission (`src/core/events.js` calling `src/core/attemptCounters.js`):
+
+- `runnerCollisionBounces`: `runner.blockedOrBounced` with reason `"runner_collision_bounce"`
+- `mapBlockageBounces`: `runner.blockedOrBounced` with map blockage reasons (`"wall"`, `"barrier"`, `"out_of_bounds"`)
+- `resourceUnavailableAttempts`: `resource.unavailable` (jump exhausted, barrier exhausted/active, freeze on cooldown)
+- `ineffectiveFreezeUses`: `runner.actionResolved` for Area Freeze with outcome `"freeze_applied"` and `affectedCount === 0`
+
+Key behavioral invariants:
+- **Scoping**: strictly scoped to program-controlled ally runners (`runnerRole === "ally"`). Human-controlled runners and NPC/CPU opponents do not increment these counters.
+- **Attempt boundary (C4)**: An attempt spans across intra-attempt round resets (`resetRound()`). Attempt counters are preserved during round resets within a match. Fresh attempts or setup resets (`initializeMatch()` and `initializeDisplayState()`) reset all four counters to zero.
+- **Authoritative freeze resolution (C1)**: `applyAreaFreeze()` determines `affectedRunners.length` during execution and passes `affectedCount` directly to `emitActionResolved()`, completely decoupled from the transient `state.areaFreezeEffect` animation object (which is nulled across resets).
+- **Passive derivation (C3)**: Updating counters directly on `emit()` ensures counters cannot be undercounted due to bounded-window event log eviction, and trace playback does not re-drive turn actions or emit duplicate events.
 
 ## Runner recent movement state
 

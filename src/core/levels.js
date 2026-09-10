@@ -21,6 +21,7 @@ import { getRunnerAtCell, isCellBlockedForRunner } from "./movement.js";
 import { playSound } from "../ui/sound.js";
 import { emit, finalizeTurnEventLog } from "./events.js";
 import { evaluateLevelStars } from "./starEvaluation.js";
+import { getAttemptCounters } from "./attemptCounters.js";
 import { readLocalStorage, writeLocalStorage } from "../platform/safeStorage.js";
 
 const GUIDED_PROGRESS_STORAGE_KEY = "bba:guided-level-progress";
@@ -479,6 +480,8 @@ export function completeLevel(app, result, reason, options = {}) {
     });
   }
 
+  const attemptCounters = getAttemptCounters(state);
+
   if (result === LEVEL_RESULT.PASSED) {
     const startTurn = state.currentLevelStartTurnNumber ?? 1;
     const turnsSpent = Math.max(1, (state.currentTurnNumber ?? 1) - startTurn + 1);
@@ -487,7 +490,8 @@ export function completeLevel(app, result, reason, options = {}) {
       ...evaluateLevelStars(currentLvl, result, {
         turnsSpent,
         runnerActionHistory: state.runnerActionHistory,
-        appState: state
+        appState: state,
+        ...attemptCounters
       }),
       turnsSpent
     };
@@ -513,7 +517,8 @@ export function completeLevel(app, result, reason, options = {}) {
   app.usageTracker?.recordLevelEnded?.(getCurrentLevel(app), result, reason, {
     modeView: state.currentModeView,
     turnNumber: state.currentTurnNumber,
-    startTurnNumber: state.currentLevelStartTurnNumber
+    startTurnNumber: state.currentLevelStartTurnNumber,
+    ...attemptCounters
   });
   state.currentLevelStartTurnNumber = null;
   if (typeof app.hooks.onLevelEnded === "function") {
