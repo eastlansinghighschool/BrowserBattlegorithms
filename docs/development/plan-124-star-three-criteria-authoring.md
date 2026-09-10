@@ -98,6 +98,31 @@ The 2026-08-05 decision says expanding the closed criterion vocabulary is a char
 
 `mapBlockageBounces` will be populated and unused by this packet. That is intended. Giving it a criterion would be a genuine vocabulary expansion with no pre-authorization, and no level has yet been shown where it discriminates. Leave the data available and say so in the progress report; a future charter conversation can spend it.
 
+## Amendment 01 (2026-09-10) — `no-collision` is not registered
+
+Preflight verification established that `runner_collision_bounce` is emitted only when the target
+cell holds a runner that is **on the same team or already frozen**
+(`src/core/turnEngine.js:592-605`); live enemy contact goes to `resolveCollision` and produces no
+bounce event at all. So `runnerCollisionBounces` counts bumping into your own teammate or into an
+enemy you have already frozen — not enemy contact.
+
+Two consequences:
+
+- **The gate's rationale for admitting runner collision was wrong.** It said runner collision "is
+  the enemy-sensing concept the living-board levels teach." It is not. The ruling to exclude
+  `mapBlockageBounces` stands and is separately vindicated: the reference solution for the one
+  authorable level reads `mapBlockageBounces: 1`, so folding map blockage in would have made that
+  solution fail its own criterion.
+- **`no-collision` is a misleading name for what the counter measures, and no level discriminates
+  on it.** Registering it would put a wrong promise into the closed vocabulary for no consumer. It
+  is therefore **not registered**. `no-wasted-resource` is the only criterion this packet adds.
+
+Both counters remain populated and available. If a future level ever discriminates on the ally
+route, the criterion should be named for what it measures, and that naming is a charter
+conversation — the same posture this packet already takes toward `mapBlockageBounces`.
+
+Full direction: `reports/development/plan-124-star-three-criteria-authoring/preflight-review.md`.
+
 ## Authority And Contracts
 
 Required reading:
