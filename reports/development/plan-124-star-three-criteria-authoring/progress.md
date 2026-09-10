@@ -132,4 +132,19 @@ Every candidate level from `plan-124` was evaluated. The discriminating test req
 - `bughunt-28` reference solution freeze waste remains open as a curriculum question for the owner.
 - `runnerCollisionBounces` remains unspent and untested in full engine context; any future charter conversation considering an ally-obstruction criterion should write dedicated engine-driven tests.
 
-**Ready for orchestrator review:** YES
+---
+
+## 8. Repair 01: Extracted Fixture Restoration & Assertion Strengthening
+
+- **Defect & Mechanism**: During the R4 extraction of `tests/unit/fixtures/guided-naive-solutions/advanced-scrimmage.xml`, four `<value name="LEFT">`/`<value name="RIGHT">` tags on `battlegorithms_value_compare` became `<field name="LEFT">`/`<field name="RIGHT">`. Blockly silently discarded the non-existent field tags, which removed the `runner_index === 0` conditional branch. Instead of support allies 2 and 3 idling via `STAY_STILL`, all three allies executed the primary attacker logic and jammed into each other (86 bounces). Both versions failed the level, allowing the test to remain green while its stated premise was false.
+- **Fixture Restoration (Requirement 1)**: Recovered the exact pre-extraction XML from `git show 3ef2e56:tests/unit/star-evaluation-campaign.test.js`. Diffs confirmed byte-identity modulo surrounding whitespace, restoring only the four `<value>` tags. Verified that loading the restored fixture emits zero Blockly warnings.
+- **Premise Assertion Strengthening (Requirement 2)**: Strengthened the Plan 114 test in `tests/unit/star-evaluation-campaign.test.js` to assert its own premise directly from `runnerActionHistory`:
+  1. Loading the fixture emits zero Blockly warnings (`assert.deepEqual(warnings, [])`).
+  2. The level failed (`app.state.activeLevelResult === LEVEL_RESULT.FAILED`).
+  3. Support allies 2 and 3 acted (`Array.isArray(history) && history.length > 0`).
+  4. Support allies 2 and 3 executed `STAY_STILL` and nothing else (`history.every(action => action === 'STAY_STILL')`).
+- **Falsification Check**: Executed the strengthened assertions against the corrupted fixture from commit `f79c591`. The run failed loudly with `AssertionError: Support ally 2 action history must contain STAY_STILL and nothing else` (as ally 2 took actions `['MOVE_UP_SCREEN', 'MOVE_FORWARD', 'MOVE_DOWN_SCREEN']`), verifying the test's discriminative power.
+- **Corpus-Wide Fixture Warning Survey**: Audited all 68 standard XML fixtures across `tests/unit/fixtures/` (`guided-naive-solutions`, `guided-project-solutions`, `guided-reference-solutions`). Verified that zero existing fixtures emit Blockly `Ignoring non-existent field` warnings.
+
+**Ready for orchestrator review / delivery:** YES
+
