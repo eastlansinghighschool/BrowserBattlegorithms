@@ -92,7 +92,7 @@ Guided levels teach enemy discrimination. Every allowed combination must preserv
 
 ### V7 — Extracting a canvas palette is a prerequisite, and is worth doing regardless
 
-**There is no palette abstraction on the canvas today.** `src/render/drawBoard.js` renders all five cell types with inline RGB literals — `p.fill(245, 245, 245)` for floor, `p.fill(100, 100, 100)` for wall, `p.fill(200, 200, 200)` for jail, and tinted fills for the two team bases. Across `drawBoard.js`, `drawEntities.js`, `effects.js`, and `p5App.js` there are roughly **29 inline `p.fill(` / `p.stroke(` call sites**.
+**There is no palette abstraction on the canvas today.** `src/render/drawBoard.js` renders all five cell types with inline RGB literals — `p.fill(245, 245, 245)` for floor, `p.fill(100, 100, 100)` for wall, `p.fill(200, 200, 200)` for jail, and tinted fills for the two team bases. Across `drawBoard.js`, `drawEntities.js`, `effects.js`, and `p5App.js` there are roughly **29 inline `p.fill(` / `p.stroke(` call sites**. *(Note added 2026-09-10 by Plan 126: A mechanical survey re-deriving all canvas colour call sites found 34 sites across 7 files, not ~29 across 4 render files — the charter counted `src/render/` files and missed the three entity files `src/entities/Runner.js`, `Flag.js`, and `Barrier.js` which also perform canvas text fills. The extraction in Plan 126 covers all 34 sites.)*
 
 Team colours are the exception and the precedent: `getTeamGlowColors(state, team)` in `src/core/teams.js` already resolves colour at runtime from state. Board tiles have no equivalent.
 

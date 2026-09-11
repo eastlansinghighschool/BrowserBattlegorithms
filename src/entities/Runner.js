@@ -13,6 +13,7 @@ import {
   prefersReducedMotion
 } from "../render/effects.js";
 import { resolveRunnerDisplayEmoji, shouldMirrorRunnerEmoji } from "../render/runnerVisuals.js";
+import { CANVAS_PALETTE } from "../render/canvasPalette.js";
 
 export class Runner {
   constructor(x, y, team, isHumanControlled = false, idSuffix = "", isNPC = false) {
@@ -92,7 +93,7 @@ export class Runner {
     drawJumpDropShadow(p, this, jumpProgress, state);
     drawJumpTakeoffLines(p, this, jumpProgress, state);
     drawAreaFreezeRunnerFlash(p, this, freezeEffect, state);
-    p.fill(0);
+    p.fill(...CANVAS_PALETTE.runnerGlyphText);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(CELL_SIZE * 0.7);
     if (this.shouldMirrorEmojiDisplay()) {
@@ -106,7 +107,7 @@ export class Runner {
 
     if (this.hasEnemyFlag) {
       p.push();
-      p.fill(0);
+      p.fill(...CANVAS_PALETTE.runnerCarriedFlagText);
       p.textAlign(p.CENTER, p.CENTER);
       p.textSize(CELL_SIZE * 0.3);
       p.text(

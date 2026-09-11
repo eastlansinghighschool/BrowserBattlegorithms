@@ -1,4 +1,5 @@
-import { CELL_SIZE, GAME_MODES, GAME_VIEW_MODES, POINTS_TO_WIN, TEAM_GLOW_COLORS } from "../config/constants.js";
+import { CELL_SIZE, GAME_MODES, GAME_VIEW_MODES, POINTS_TO_WIN } from "../config/constants.js";
+import { CANVAS_PALETTE } from "./canvasPalette.js";
 
 export function drawFlags(p, state) {
   for (const teamId of Object.keys(state.gameFlags)) {
@@ -44,9 +45,9 @@ export function drawHumanPlayerLabels(p, state) {
       continue;
     }
     const label = runner.team === 1 ? "P1" : "P2";
-    const color = TEAM_GLOW_COLORS[runner.team].stroke;
+    const color = CANVAS_PALETTE.teamGlow[runner.team].stroke;
     p.push();
-    p.fill(color[0], color[1], color[2]);
+    p.fill(...color);
     p.noStroke();
     p.textAlign(p.LEFT, p.TOP);
     p.textSize(11);
@@ -64,9 +65,9 @@ export function drawGameOverOverlay(p, state) {
   ) {
     return;
   }
-  p.fill(0, 0, 0, 180);
+  p.fill(...CANVAS_PALETTE.gameOverBackdrop);
   p.rect(0, 0, p.width, p.height);
-  p.fill(255);
+  p.fill(...CANVAS_PALETTE.gameOverText);
   p.textAlign(p.CENTER, p.CENTER);
   p.textSize(32);
   const winner = state.teamScores[1] >= POINTS_TO_WIN ? 1 : (state.teamScores[2] >= POINTS_TO_WIN ? 2 : 0);

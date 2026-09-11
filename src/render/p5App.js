@@ -6,6 +6,7 @@ import { drawGrid, drawMapElements } from "./drawBoard.js";
 import { drawBarriers, drawFlags, drawGameOverOverlay, drawHumanPlayerLabels, drawRunners } from "./drawEntities.js";
 import { drawActiveRunnerGlow, drawAreaFreezePulse, drawJumpLandingDust } from "./effects.js";
 import { handleKeyInput } from "../ui/controls.js";
+import { CANVAS_PALETTE } from "./canvasPalette.js";
 
 function isBlocklyKeyboardFocusActive() {
   if (typeof document === "undefined") {
@@ -33,7 +34,7 @@ function drawLevelGoal(p, app) {
 
   p.push();
   p.noFill();
-  p.stroke(0, 140, 255);
+  p.stroke(...CANVAS_PALETTE.levelGoalHighlight);
   p.strokeWeight(4);
   p.rect(goalCell.x * CELL_SIZE + 4, goalCell.y * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8, 10);
   p.strokeWeight(2);
@@ -50,7 +51,7 @@ export function initializeP5App(app) {
     };
 
     p.draw = () => {
-      p.background(220);
+      p.background(...CANVAS_PALETTE.canvasBackground);
       if (app.state.mainGameState === MAIN_GAME_STATES.RUNNING && app.state.currentTurnState !== TURN_STATES.GAME_OVER) {
         processTurnActions(app, p);
       }

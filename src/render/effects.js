@@ -10,11 +10,7 @@ import {
 } from "../config/constants.js";
 import { getTeamGlowColors } from "../core/teams.js";
 import { getJumpTakeoffLineOpacity } from "./animation.js";
-
-const AREA_FREEZE_PULSE_COLOR = [220, 245, 255];
-const AREA_FREEZE_FLASH_COLOR = [190, 230, 255];
-const JUMP_DUST_COLOR = [170, 180, 190];
-const JUMP_TAKEOFF_COLOR = [150, 160, 170];
+import { CANVAS_PALETTE } from "./canvasPalette.js";
 
 export function prefersReducedMotion(state = null) {
   if (state && state.lowMotionOverride) {
@@ -103,16 +99,16 @@ export function drawAreaFreezePulse(p, app) {
 
   p.push();
   p.noStroke();
-  p.fill(AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], pulseAlpha);
+  p.fill(...CANVAS_PALETTE.areaFreezePulseBase, pulseAlpha);
   drawDiamond(p, centerX, centerY, pulseRadius);
 
   p.noFill();
-  p.stroke(AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], reducedMotion ? 180 : Math.max(0, 220 - Math.round(progress * 180)));
+  p.stroke(...CANVAS_PALETTE.areaFreezePulseBase, reducedMotion ? 180 : Math.max(0, 220 - Math.round(progress * 180)));
   p.strokeWeight(reducedMotion ? 2 : 3);
   drawDiamond(p, centerX, centerY, pulseRadius);
 
   if (!reducedMotion) {
-    p.stroke(AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], Math.max(0, 120 - Math.round(progress * 120)));
+    p.stroke(...CANVAS_PALETTE.areaFreezePulseBase, Math.max(0, 120 - Math.round(progress * 120)));
     p.strokeWeight(1);
     drawDiamond(p, centerX, centerY, pulseRadius * 0.6);
   }
@@ -139,11 +135,10 @@ export function drawAreaFreezeRunnerFlash(p, runner, effect, state = null) {
   const pulse = reducedMotion ? 1 : Math.sin(progress * Math.PI);
   const flashInset = reducedMotion ? 4 : 2;
   const flashAlpha = reducedMotion ? 90 : Math.max(0, 70 + Math.round(pulse * 110));
-  const [r, g, b] = AREA_FREEZE_FLASH_COLOR;
 
   p.push();
   p.noFill();
-  p.stroke(r, g, b, flashAlpha);
+  p.stroke(...CANVAS_PALETTE.areaFreezeFlashBase, flashAlpha);
   p.strokeWeight(reducedMotion ? 2 : 3);
   p.rect(
     runner.pixelX + flashInset,
@@ -154,7 +149,7 @@ export function drawAreaFreezeRunnerFlash(p, runner, effect, state = null) {
   );
 
   if (!reducedMotion) {
-    p.stroke(r, g, b, Math.max(0, 60 + Math.round((1 - pulse) * 80)));
+    p.stroke(...CANVAS_PALETTE.areaFreezeFlashBase, Math.max(0, 60 + Math.round((1 - pulse) * 80)));
     p.strokeWeight(1);
     p.line(
       runner.pixelX + 6,
@@ -184,7 +179,7 @@ export function drawJumpDropShadow(p, runner, jumpProgress, state = null) {
 
   p.push();
   p.noStroke();
-  p.fill(40, 48, 60, shadowAlpha);
+  p.fill(...CANVAS_PALETTE.jumpDropShadowBase, shadowAlpha);
   p.ellipse(
     groundPixelX + CELL_SIZE / 2,
     groundPixelY + CELL_SIZE - 8,
@@ -216,7 +211,7 @@ export function drawJumpTakeoffLines(p, runner, jumpProgress, state = null) {
   const lineAlpha = Math.round(170 * opacity);
 
   p.push();
-  p.stroke(JUMP_TAKEOFF_COLOR[0], JUMP_TAKEOFF_COLOR[1], JUMP_TAKEOFF_COLOR[2], lineAlpha);
+  p.stroke(...CANVAS_PALETTE.jumpTakeoffLineBase, lineAlpha);
   p.strokeWeight(strokeWeight);
   p.noFill();
 
@@ -255,7 +250,7 @@ export function drawJumpLandingDust(p, cellX, cellY, ringProgress, state = null)
 
   p.push();
   p.noFill();
-  p.stroke(JUMP_DUST_COLOR[0], JUMP_DUST_COLOR[1], JUMP_DUST_COLOR[2], alpha);
+  p.stroke(...CANVAS_PALETTE.jumpLandingDustBase, alpha);
   p.strokeWeight(weight);
   p.circle(cellX * CELL_SIZE + CELL_SIZE / 2, cellY * CELL_SIZE + CELL_SIZE / 2, radius);
   p.pop();
@@ -288,13 +283,13 @@ export function drawFrozenCountdownBadge(p, runner, state = null) {
   p.textSize(textSize);
   p.textStyle(p.BOLD);
   p.noStroke();
-  p.fill(34, 58, 92, 210);
+  p.fill(...CANVAS_PALETTE.frozenBadgeBackground);
   p.rect(badgeX, badgeY, badgeWidth, badgeHeight, 6);
-  p.stroke(210, 240, 255, 210);
+  p.stroke(...CANVAS_PALETTE.frozenBadgeBorder);
   p.strokeWeight(1);
   p.noFill();
   p.rect(badgeX, badgeY, badgeWidth, badgeHeight, 6);
-  p.fill(255);
+  p.fill(...CANVAS_PALETTE.frozenBadgeText);
   p.noStroke();
   p.textAlign(p.LEFT, p.CENTER);
   p.text(badgeText, badgeX + 4, badgeY + badgeHeight / 2 + 0.5);
@@ -312,17 +307,17 @@ export function drawIndexLabel(p, x, y, side, index, colors) {
 
   // Background: team-tinted color at ~50% opacity
   p.noStroke();
-  p.fill(colors[0], colors[1], colors[2], 128);
+  p.fill(colors[0], colors[1], colors[2], CANVAS_PALETTE.runnerIndexBadgeBackgroundAlpha);
   p.rect(x, y, badgeWidth, badgeHeight, 4);
 
   // Border: thin 0.75px white at ~50% opacity
-  p.stroke(255, 255, 255, 128);
+  p.stroke(...CANVAS_PALETTE.runnerIndexBadgeBorder);
   p.strokeWeight(0.75);
   p.noFill();
   p.rect(x, y, badgeWidth, badgeHeight, 4);
 
   // Label: white at ~85% opacity, centered
-  p.fill(255, 255, 255, 217);
+  p.fill(...CANVAS_PALETTE.runnerIndexBadgeText);
   p.noStroke();
   p.textAlign(p.CENTER, p.CENTER);
   p.text(String(index), x + badgeWidth / 2, y + badgeHeight / 2 + 0.5);

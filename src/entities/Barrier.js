@@ -1,4 +1,5 @@
 import { BARRIER_EMOJI, CELL_SIZE } from "../config/constants.js";
+import { CANVAS_PALETTE } from "../render/canvasPalette.js";
 
 export class Barrier {
   constructor(gridX, gridY, ownerRunnerId) {
@@ -10,7 +11,7 @@ export class Barrier {
   }
 
   display(p) {
-    p.fill(0);
+    p.fill(...CANVAS_PALETTE.barrierGlyphText);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(CELL_SIZE * 0.6);
     p.text(this.emojiChar, this.gridX * CELL_SIZE + CELL_SIZE / 2, this.gridY * CELL_SIZE + CELL_SIZE / 2);

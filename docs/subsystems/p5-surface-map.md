@@ -19,6 +19,7 @@ This note does NOT own:
 | File | Role |
 |---|---|
 | `src/render/p5App.js` | Boots the p5 instance, owns the frame loop, routes keyboard input, calls render functions. |
+| `src/render/canvasPalette.js` | Canonical home for all named canvas colour tokens; pure, frozen palette data. |
 | `src/render/drawBoard.js` | Draws the grid, territory zones, barriers, target cells, and the game-over overlay. |
 | `src/render/effects.js` | Draws active-runner glow, transient Area Freeze pulse / flash, jump shadow / takeoff / landing effects, and runner index badges. |
 | `src/render/drawEntities.js` | Draws runners, flags, and frozen/active state visuals using p5 text/glyph calls. |
@@ -99,6 +100,23 @@ The failed-jump reversal path is separate from `startBounceAnimation()`. Failed 
 There is a minimum jump-duration floor so the arc cannot collapse into a near-instant hop at very high animation speeds.
 
 Reduced motion keeps the jump distinct without extra flourish: the arc amplitude is smaller, the shadow stays static, the takeoff lines render as a single-frame cue, and the landing dust becomes a single-frame circle.
+
+## Canvas colour palette convention (Plan 126)
+
+All canvas colour values have exactly one named home: `src/render/canvasPalette.js`.
+
+### The rules:
+
+1. **Single Home**: No inline colour literals (`p.fill(245, 245, 245)`, `p.stroke(180)`, `p.background(220)`, etc.) may enter the canvas render path. All colour values must be referenced from `CANVAS_PALETTE` in `src/render/canvasPalette.js`.
+2. **Role-based naming**: Tokens are named for their functional role (e.g. `boardCellFloor`, `boardCellWall`, `territoryTeam1Base`), never for hue or appearance (`lightGrey`, `paleBlue`). This allows future theme changes (P3) to remap values without renaming tokens.
+3. **Bundled alpha**: Where a colour carries static alpha (e.g. `territoryTeam1Base`, `frozenBadgeBackground`), alpha is bundled with the token array, not applied as a magic number at the call site.
+4. **Dynamic animation sites**: Where a colour has dynamic animation alpha or pulse (e.g. `areaFreezePulseBase`, `areaFreezeFlashBase`, `jumpDropShadowBase`), the fixed base colour is tokenized in the palette while the progress-derived alpha remains computed at the call site.
+5. **Pure data, no behaviour**: The palette module contains only pure data and immutable structures (`Object.freeze`). It does not read state, check reduced motion, or contain theme-switching logic (which belongs to P3).
+
+### Disposition of pre-existing named constants:
+
+- **`AREA_FREEZE_PULSE_COLOR`**, **`AREA_FREEZE_FLASH_COLOR`**, **`JUMP_TAKEOFF_COLOR`**, and **`JUMP_DUST_COLOR`**: These were previously defined as local constants in `src/render/effects.js`. They have been removed from `effects.js` and migrated into `src/render/canvasPalette.js` as canonical role tokens (`areaFreezePulseBase`, `areaFreezeFlashBase`, `jumpTakeoffLineBase`, `jumpLandingDustBase`).
+- **`TEAM_GLOW_COLORS`**: Defined in `src/config/constants.js`. It is retained in `constants.js` because `src/core/teams.js` uses it to initialize match team state defaults without violating architectural boundaries (core engine modules must never depend on the render layer). In the render layer, `CANVAS_PALETTE` exposes `team1GlowFill`, `team1GlowStroke`, `team2GlowFill`, `team2GlowStroke`, and `teamGlow`, mirroring these values so that canvas render callers (`drawEntities.js`, `effects.js`) source their colours from the canvas palette or runtime team state (`getTeamGlowColors`), not by importing `TEAM_GLOW_COLORS` from config directly.
 
 ## Game-over overlay
 

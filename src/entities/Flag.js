@@ -1,4 +1,5 @@
 import { CELL_SIZE } from "../config/constants.js";
+import { CANVAS_PALETTE } from "../render/canvasPalette.js";
 
 export class Flag {
   constructor(x, y, teamId, emojiChar) {
@@ -13,7 +14,7 @@ export class Flag {
   }
 
   display(p) {
-    p.fill(0);
+    p.fill(...CANVAS_PALETTE.flagGlyphText);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(CELL_SIZE * 0.6);
     p.text(this.emojiChar, this.gridX * CELL_SIZE + CELL_SIZE / 2, this.gridY * CELL_SIZE + CELL_SIZE / 2);
