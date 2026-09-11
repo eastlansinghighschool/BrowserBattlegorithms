@@ -1,0 +1,609 @@
+{
+  "meta": {
+    "capturedAt": "2026-09-10T22:53:00.000Z",
+    "generator": "scripts/dev/extract-canvas-palette-baseline.js",
+    "totalSites": 34,
+    "staticSites": 21,
+    "dynamicSites": 13,
+    "targetFiles": [
+      "src/render/drawBoard.js",
+      "src/render/p5App.js",
+      "src/render/drawEntities.js",
+      "src/entities/Runner.js",
+      "src/entities/Flag.js",
+      "src/entities/Barrier.js",
+      "src/render/effects.js"
+    ]
+  },
+  "sites": [
+    {
+      "id": "site_1",
+      "file": "src/render/drawBoard.js",
+      "line": 4,
+      "call": "p.stroke",
+      "rawArgs": "180",
+      "token": "boardGridLine",
+      "nature": "static",
+      "resolvedColor": [
+        180
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Grid lines separating board cells"
+    },
+    {
+      "id": "site_2",
+      "file": "src/render/drawBoard.js",
+      "line": 23,
+      "call": "p.fill",
+      "rawArgs": "245, 245, 245",
+      "token": "boardCellFloor",
+      "nature": "static",
+      "resolvedColor": [
+        245,
+        245,
+        245
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Floor / empty cell background"
+    },
+    {
+      "id": "site_3",
+      "file": "src/render/drawBoard.js",
+      "line": 27,
+      "call": "p.fill",
+      "rawArgs": "100, 100, 100",
+      "token": "boardCellWall",
+      "nature": "static",
+      "resolvedColor": [
+        100,
+        100,
+        100
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Wall / barrier cell background"
+    },
+    {
+      "id": "site_4",
+      "file": "src/render/drawBoard.js",
+      "line": 31,
+      "call": "p.fill",
+      "rawArgs": "200, 200, 200",
+      "token": "boardCellJail",
+      "nature": "static",
+      "resolvedColor": [
+        200,
+        200,
+        200
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Jail cell background"
+    },
+    {
+      "id": "site_5",
+      "file": "src/render/drawBoard.js",
+      "line": 32,
+      "call": "p.stroke",
+      "rawArgs": "50",
+      "token": "boardCellJailBorder",
+      "nature": "static",
+      "resolvedColor": [
+        50
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Jail cell stroke border"
+    },
+    {
+      "id": "site_6",
+      "file": "src/render/drawBoard.js",
+      "line": 36,
+      "call": "p.fill",
+      "rawArgs": "173, 216, 230, 150",
+      "token": "territoryTeam1Base",
+      "nature": "static",
+      "resolvedColor": [
+        173,
+        216,
+        230,
+        150
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Team 1 base territory fill with alpha"
+    },
+    {
+      "id": "site_7",
+      "file": "src/render/drawBoard.js",
+      "line": 40,
+      "call": "p.fill",
+      "rawArgs": "255, 165, 0, 150",
+      "token": "territoryTeam2Base",
+      "nature": "static",
+      "resolvedColor": [
+        255,
+        165,
+        0,
+        150
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Team 2 base territory fill with alpha"
+    },
+    {
+      "id": "site_8",
+      "file": "src/render/drawBoard.js",
+      "line": 44,
+      "call": "p.fill",
+      "rawArgs": "255",
+      "token": "boardCellFallback",
+      "nature": "static",
+      "resolvedColor": [
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Fallback cell background"
+    },
+    {
+      "id": "site_9",
+      "file": "src/render/p5App.js",
+      "line": 36,
+      "call": "p.stroke",
+      "rawArgs": "0, 140, 255",
+      "token": "levelGoalHighlight",
+      "nature": "static",
+      "resolvedColor": [
+        0,
+        140,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Guided level goal highlight stroke"
+    },
+    {
+      "id": "site_10",
+      "file": "src/render/p5App.js",
+      "line": 53,
+      "call": "p.background",
+      "rawArgs": "220",
+      "token": "canvasBackground",
+      "nature": "static",
+      "resolvedColor": [
+        220
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Canvas clear background color"
+    },
+    {
+      "id": "site_11",
+      "file": "src/render/drawEntities.js",
+      "line": 49,
+      "call": "p.fill",
+      "rawArgs": "color[0], color[1], color[2]",
+      "token": "humanPlayerLabelColor",
+      "nature": "dynamic",
+      "resolvedColor": null,
+      "baseTokens": {
+        "team1": [
+          100,
+          149,
+          237
+        ],
+        "team2": [
+          255,
+          165,
+          0
+        ]
+      },
+      "baseAlpha": null,
+      "description": "Human player label (P1/P2) text color resolved from team glow stroke"
+    },
+    {
+      "id": "site_12",
+      "file": "src/render/drawEntities.js",
+      "line": 67,
+      "call": "p.fill",
+      "rawArgs": "0, 0, 0, 180",
+      "token": "gameOverBackdrop",
+      "nature": "static",
+      "resolvedColor": [
+        0,
+        0,
+        0,
+        180
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Game-over overlay backdrop fill with alpha"
+    },
+    {
+      "id": "site_13",
+      "file": "src/render/drawEntities.js",
+      "line": 69,
+      "call": "p.fill",
+      "rawArgs": "255",
+      "token": "gameOverText",
+      "nature": "static",
+      "resolvedColor": [
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Game-over overlay text fill"
+    },
+    {
+      "id": "site_14",
+      "file": "src/entities/Runner.js",
+      "line": 95,
+      "call": "p.fill",
+      "rawArgs": "0",
+      "token": "runnerGlyphText",
+      "nature": "static",
+      "resolvedColor": [
+        0
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Runner emoji glyph text fill"
+    },
+    {
+      "id": "site_15",
+      "file": "src/entities/Runner.js",
+      "line": 109,
+      "call": "p.fill",
+      "rawArgs": "0",
+      "token": "runnerCarriedFlagText",
+      "nature": "static",
+      "resolvedColor": [
+        0
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Carried flag badge emoji text fill"
+    },
+    {
+      "id": "site_16",
+      "file": "src/entities/Flag.js",
+      "line": 16,
+      "call": "p.fill",
+      "rawArgs": "0",
+      "token": "flagGlyphText",
+      "nature": "static",
+      "resolvedColor": [
+        0
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Board flag emoji text fill"
+    },
+    {
+      "id": "site_17",
+      "file": "src/entities/Barrier.js",
+      "line": 13,
+      "call": "p.fill",
+      "rawArgs": "0",
+      "token": "barrierGlyphText",
+      "nature": "static",
+      "resolvedColor": [
+        0
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Placed barrier emoji text fill"
+    },
+    {
+      "id": "site_18",
+      "file": "src/render/effects.js",
+      "line": 76,
+      "call": "p.fill",
+      "rawArgs": "r, g, b, pulseAlpha",
+      "token": "activeRunnerGlowFill",
+      "nature": "dynamic",
+      "resolvedColor": null,
+      "baseTokens": {
+        "team1": [
+          173,
+          216,
+          230
+        ],
+        "team2": [
+          255,
+          200,
+          100
+        ]
+      },
+      "baseAlpha": null,
+      "description": "Active runner pulsing glow fill; base RGB from team glow fill, alpha computed via sin/frameCount"
+    },
+    {
+      "id": "site_19",
+      "file": "src/render/effects.js",
+      "line": 78,
+      "call": "p.fill",
+      "rawArgs": "r, g, b, alpha",
+      "token": "activeRunnerGlowFill",
+      "nature": "dynamic",
+      "resolvedColor": null,
+      "baseTokens": {
+        "team1": [
+          173,
+          216,
+          230
+        ],
+        "team2": [
+          255,
+          200,
+          100
+        ]
+      },
+      "baseAlpha": null,
+      "description": "Active runner solid glow fill; base RGB from team glow fill, alpha from turn state constant"
+    },
+    {
+      "id": "site_20",
+      "file": "src/render/effects.js",
+      "line": 80,
+      "call": "p.stroke",
+      "rawArgs": "strokeR, strokeG, strokeB",
+      "token": "activeRunnerGlowStroke",
+      "nature": "dynamic",
+      "resolvedColor": null,
+      "baseTokens": {
+        "team1": [
+          100,
+          149,
+          237
+        ],
+        "team2": [
+          255,
+          165,
+          0
+        ]
+      },
+      "baseAlpha": null,
+      "description": "Active runner glow stroke; resolved from team glow stroke"
+    },
+    {
+      "id": "site_21",
+      "file": "src/render/effects.js",
+      "line": 106,
+      "call": "p.fill",
+      "rawArgs": "AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], pulseAlpha",
+      "token": "areaFreezePulseBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        220,
+        245,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Area Freeze inner diamond fill; base RGB is areaFreezePulseBase, alpha computed from elapsed animation progress"
+    },
+    {
+      "id": "site_22",
+      "file": "src/render/effects.js",
+      "line": 110,
+      "call": "p.stroke",
+      "rawArgs": "AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], reducedMotion ? 180 : Math.max(0, 220 - Math.round(progress * 180",
+      "token": "areaFreezePulseBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        220,
+        245,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Area Freeze outer diamond stroke; base RGB is areaFreezePulseBase, alpha computed from progress / reduced motion"
+    },
+    {
+      "id": "site_23",
+      "file": "src/render/effects.js",
+      "line": 115,
+      "call": "p.stroke",
+      "rawArgs": "AREA_FREEZE_PULSE_COLOR[0], AREA_FREEZE_PULSE_COLOR[1], AREA_FREEZE_PULSE_COLOR[2], Math.max(0, 120 - Math.round(progress * 120",
+      "token": "areaFreezePulseBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        220,
+        245,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Area Freeze secondary diamond stroke; base RGB is areaFreezePulseBase, alpha computed from progress"
+    },
+    {
+      "id": "site_24",
+      "file": "src/render/effects.js",
+      "line": 146,
+      "call": "p.stroke",
+      "rawArgs": "r, g, b, flashAlpha",
+      "token": "areaFreezeFlashBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        190,
+        230,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Area Freeze affected runner flash outer rect stroke; base RGB is areaFreezeFlashBase, alpha computed from pulse"
+    },
+    {
+      "id": "site_25",
+      "file": "src/render/effects.js",
+      "line": 157,
+      "call": "p.stroke",
+      "rawArgs": "r, g, b, Math.max(0, 60 + Math.round((1 - pulse",
+      "token": "areaFreezeFlashBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        190,
+        230,
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Area Freeze affected runner flash midline stroke; base RGB is areaFreezeFlashBase, alpha computed from pulse"
+    },
+    {
+      "id": "site_26",
+      "file": "src/render/effects.js",
+      "line": 187,
+      "call": "p.fill",
+      "rawArgs": "40, 48, 60, shadowAlpha",
+      "token": "jumpDropShadowBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        40,
+        48,
+        60
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Jump drop shadow fill; base RGB is jumpDropShadowBase, alpha computed from runner heightRatio"
+    },
+    {
+      "id": "site_27",
+      "file": "src/render/effects.js",
+      "line": 219,
+      "call": "p.stroke",
+      "rawArgs": "JUMP_TAKEOFF_COLOR[0], JUMP_TAKEOFF_COLOR[1], JUMP_TAKEOFF_COLOR[2], lineAlpha",
+      "token": "jumpTakeoffLineBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        150,
+        160,
+        170
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Jump takeoff lines stroke; base RGB is jumpTakeoffLineBase, alpha computed from takeoff opacity"
+    },
+    {
+      "id": "site_28",
+      "file": "src/render/effects.js",
+      "line": 258,
+      "call": "p.stroke",
+      "rawArgs": "JUMP_DUST_COLOR[0], JUMP_DUST_COLOR[1], JUMP_DUST_COLOR[2], alpha",
+      "token": "jumpLandingDustBase",
+      "nature": "dynamic",
+      "resolvedColor": [
+        170,
+        180,
+        190
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Jump landing dust ring stroke; base RGB is jumpLandingDustBase, alpha computed from ringProgress"
+    },
+    {
+      "id": "site_29",
+      "file": "src/render/effects.js",
+      "line": 291,
+      "call": "p.fill",
+      "rawArgs": "34, 58, 92, 210",
+      "token": "frozenBadgeBackground",
+      "nature": "static",
+      "resolvedColor": [
+        34,
+        58,
+        92,
+        210
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Frozen countdown badge background fill with alpha"
+    },
+    {
+      "id": "site_30",
+      "file": "src/render/effects.js",
+      "line": 293,
+      "call": "p.stroke",
+      "rawArgs": "210, 240, 255, 210",
+      "token": "frozenBadgeBorder",
+      "nature": "static",
+      "resolvedColor": [
+        210,
+        240,
+        255,
+        210
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Frozen countdown badge border stroke with alpha"
+    },
+    {
+      "id": "site_31",
+      "file": "src/render/effects.js",
+      "line": 297,
+      "call": "p.fill",
+      "rawArgs": "255",
+      "token": "frozenBadgeText",
+      "nature": "static",
+      "resolvedColor": [
+        255
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Frozen countdown badge text fill"
+    },
+    {
+      "id": "site_32",
+      "file": "src/render/effects.js",
+      "line": 315,
+      "call": "p.fill",
+      "rawArgs": "colors[0], colors[1], colors[2], 128",
+      "token": "runnerIndexBadgeBackground",
+      "nature": "dynamic",
+      "resolvedColor": null,
+      "baseTokens": null,
+      "baseAlpha": 128,
+      "description": "Runner index badge background fill; base RGB from team glow stroke (or fallback [128, 128, 128]), alpha fixed at 128"
+    },
+    {
+      "id": "site_33",
+      "file": "src/render/effects.js",
+      "line": 319,
+      "call": "p.stroke",
+      "rawArgs": "255, 255, 255, 128",
+      "token": "runnerIndexBadgeBorder",
+      "nature": "static",
+      "resolvedColor": [
+        255,
+        255,
+        255,
+        128
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Runner index badge border stroke with alpha"
+    },
+    {
+      "id": "site_34",
+      "file": "src/render/effects.js",
+      "line": 325,
+      "call": "p.fill",
+      "rawArgs": "255, 255, 255, 217",
+      "token": "runnerIndexBadgeText",
+      "nature": "static",
+      "resolvedColor": [
+        255,
+        255,
+        255,
+        217
+      ],
+      "baseTokens": null,
+      "baseAlpha": null,
+      "description": "Runner index badge text fill with alpha"
+    }
+  ]
+}
