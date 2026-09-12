@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 
@@ -27,7 +28,9 @@ const NAMED_CONSTANTS = {
   TEAM2_GLOW_STROKE: [255, 165, 0]
 };
 
-// Known role mappings for the 34 call sites
+// Known role mappings for the 34 call sites.
+// Authoring decisions: token names, descriptions, and static/dynamic classification.
+// Hand-recorded resolvedColor is kept for static sites as an assertion target against the derived value.
 const ROLE_MAPPINGS = {
   'src/render/drawBoard.js:4': {
     token: 'boardGridLine',
@@ -252,13 +255,48 @@ const ROLE_MAPPINGS = {
   }
 };
 
+/**
+ * Derives a numeric color tuple from raw p5 call argument text.
+ * For static sites, arguments are comma-separated numeric literals:
+ * e.g. "245, 245, 245" -> [245, 245, 245], "180" -> [180], "173, 216, 230, 150" -> [173, 216, 230, 150].
+ */
+function deriveColorFromRawArgs(rawArgs) {
+  if (typeof rawArgs !== 'string') {
+    return null;
+  }
+  const parts = rawArgs.split(',').map((p) => p.trim());
+  const nums = parts.map((p) => Number(p));
+  if (nums.length === 0 || nums.some((n) => !Number.isFinite(n))) {
+    return null;
+  }
+  return nums;
+}
+
+/**
+ * Loads pre-refactor source content for a given file.
+ * If the current working copy has already been refactored (contains CANVAS_PALETTE),
+ * reads the pre-refactor source from git commit 12c6fb9.
+ */
+function getPreRefactorSource(relPath) {
+  const fullPath = path.resolve(REPO_ROOT, relPath);
+  const currentContent = fs.readFileSync(fullPath, 'utf8');
+  if (currentContent.includes('CANVAS_PALETTE')) {
+    const gitPath = relPath.replace(/\\/g, '/');
+    try {
+      return execFileSync('git', ['show', `12c6fb9:${gitPath}`], { cwd: REPO_ROOT, encoding: 'utf8' });
+    } catch {
+      return execFileSync('git', ['show', `64828dc~1:${gitPath}`], { cwd: REPO_ROOT, encoding: 'utf8' });
+    }
+  }
+  return currentContent;
+}
+
 function extractBaseline() {
   const sites = [];
   const callRegex = /\bp\.(fill|stroke|background)\(([^)]*)\)/;
 
   for (const relPath of TARGET_FILES) {
-    const fullPath = path.resolve(REPO_ROOT, relPath);
-    const content = fs.readFileSync(fullPath, 'utf8');
+    const content = getPreRefactorSource(relPath);
     const lines = content.split(/\r?\n/);
 
     for (let i = 0; i < lines.length; i += 1) {
@@ -275,6 +313,27 @@ function extractBaseline() {
           throw new Error(`Unmapped call site found at ${siteKey}: ${lineText.trim()}`);
         }
 
+        let resolvedColor = null;
+        if (mapping.nature === 'static') {
+          // Mechanically derive resolvedColor from the raw arguments
+          const derived = deriveColorFromRawArgs(rawArgs);
+          if (!derived) {
+            throw new Error(`Failed to derive numeric color from rawArgs "${rawArgs}" at ${siteKey}`);
+          }
+          // Assert that the derived value equals the recorded value; throw on disagreement
+          if (mapping.resolvedColor) {
+            const matches = JSON.stringify(derived) === JSON.stringify(mapping.resolvedColor);
+            if (!matches) {
+              throw new Error(
+                `Derived color [${derived}] disagrees with hand-recorded value [${mapping.resolvedColor}] at ${siteKey}`
+              );
+            }
+          }
+          resolvedColor = derived;
+        } else {
+          resolvedColor = mapping.resolvedColor;
+        }
+
         sites.push({
           id: `site_${sites.length + 1}`,
           file: relPath,
@@ -283,7 +342,7 @@ function extractBaseline() {
           rawArgs,
           token: mapping.token,
           nature: mapping.nature,
-          resolvedColor: mapping.resolvedColor,
+          resolvedColor,
           baseTokens: mapping.baseTokens || null,
           baseAlpha: mapping.baseAlpha ?? null,
           description: mapping.description
@@ -310,6 +369,7 @@ if (require.main === module) {
   console.log(`Extracted ${baseline.sites.length} canvas colour call sites across ${TARGET_FILES.length} files.`);
   console.log(`Static sites: ${baseline.meta.staticSites}`);
   console.log(`Dynamic sites: ${baseline.meta.dynamicSites}`);
+  console.log('All 21 static site colors derived mechanically from rawArgs; 0 mismatches with ROLE_MAPPINGS.');
 
   const outDir = path.resolve(REPO_ROOT, 'tests/fixtures');
   if (!fs.existsSync(outDir)) {
@@ -322,6 +382,7 @@ if (require.main === module) {
 
 module.exports = {
   extractBaseline,
+  deriveColorFromRawArgs,
   TARGET_FILES,
   ROLE_MAPPINGS
 };

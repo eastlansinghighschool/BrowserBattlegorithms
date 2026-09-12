@@ -106,3 +106,94 @@ test("Canvas Palette — no raw colour literals remain in surveyed render files"
     }
   }
 });
+
+test("Canvas Palette — call-site token wiring matches baseline by per-file ordinal", () => {
+  // Wholly computed dynamic sites where the call does not reference CANVAS_PALETTE directly.
+  // These must be explicitly listed and accounted for rather than silently passed.
+  const WHOLLY_COMPUTED_SKIPS = new Set([
+    "src/render/drawEntities.js:0", // humanPlayerLabelColor: p.fill(...color) computed from team glow stroke
+    "src/render/effects.js:0", // activeRunnerGlowFill: p.fill(r, g, b, pulseAlpha) from team glow
+    "src/render/effects.js:1", // activeRunnerGlowFill: p.fill(r, g, b, alpha) from team glow
+    "src/render/effects.js:2" // activeRunnerGlowStroke: p.stroke(strokeR, strokeG, strokeB) from team glow
+  ]);
+
+  const encounteredSkips = [];
+
+  for (const relPath of baseline.meta.targetFiles) {
+    const fullPath = path.resolve(REPO_ROOT, relPath);
+    const content = fs.readFileSync(fullPath, "utf8");
+    const lines = content.split(/\r?\n/);
+
+    const fileBaseline = baseline.sites.filter((s) => s.file === relPath);
+    const currentCalls = [];
+
+    lines.forEach((line, idx) => {
+      const match = line.match(/\bp\.(fill|stroke|background)\((.*)\)/);
+      if (match) {
+        currentCalls.push({ line: idx + 1, call: match[0], raw: match[2] });
+      }
+    });
+
+    assert.equal(
+      currentCalls.length,
+      fileBaseline.length,
+      `Call count mismatch in ${relPath}: expected ${fileBaseline.length}, found ${currentCalls.length}`
+    );
+
+    currentCalls.forEach((currentCall, ordinal) => {
+      const siteKey = `${relPath}:${ordinal}`;
+      const baseEntry = fileBaseline[ordinal];
+
+      if (WHOLLY_COMPUTED_SKIPS.has(siteKey)) {
+        encounteredSkips.push(siteKey);
+        assert.equal(baseEntry.nature, "dynamic", `Wholly-computed site ${siteKey} must be dynamic in baseline`);
+        assert.equal(baseEntry.resolvedColor, null, `Wholly-computed site ${siteKey} must have null resolvedColor`);
+        return;
+      }
+
+      const tokenMatch = currentCall.raw.match(/CANVAS_PALETTE\.([a-zA-Z0-9_]+)/);
+      assert.ok(
+        tokenMatch,
+        `Call site at ${relPath} ordinal ${ordinal} (line ${currentCall.line}) must reference CANVAS_PALETTE: ${currentCall.call}`
+      );
+      const extractedToken = tokenMatch[1];
+
+      if (baseEntry.token === "runnerIndexBadgeBackground") {
+        assert.equal(
+          extractedToken,
+          "runnerIndexBadgeBackgroundAlpha",
+          `Runner badge background call site at line ${currentCall.line} must reference runnerIndexBadgeBackgroundAlpha`
+        );
+        assert.equal(
+          CANVAS_PALETTE[extractedToken],
+          baseEntry.baseAlpha,
+          `Resolved alpha for ${extractedToken} must equal baseAlpha (${baseEntry.baseAlpha})`
+        );
+        return;
+      }
+
+      const resolvedTuple = Array.isArray(CANVAS_PALETTE[extractedToken])
+        ? [...CANVAS_PALETTE[extractedToken]]
+        : CANVAS_PALETTE[extractedToken];
+
+      assert.deepEqual(
+        resolvedTuple,
+        baseEntry.resolvedColor,
+        `Call site colour mismatch at ${relPath} ordinal ${ordinal} (line ${currentCall.line}, token "${extractedToken}"): expected ${JSON.stringify(baseEntry.resolvedColor)}, got ${JSON.stringify(resolvedTuple)}`
+      );
+
+      assert.equal(
+        extractedToken,
+        baseEntry.token,
+        `Call site token mismatch at ${relPath} ordinal ${ordinal} (line ${currentCall.line}): expected token "${baseEntry.token}", got "${extractedToken}"`
+      );
+    });
+  }
+
+  assert.equal(
+    encounteredSkips.length,
+    WHOLLY_COMPUTED_SKIPS.size,
+    `Expected exactly ${WHOLLY_COMPUTED_SKIPS.size} wholly-computed dynamic skips, but found ${encounteredSkips.length}`
+  );
+});
+
