@@ -1,11 +1,9 @@
 ---
 id: plan-125
 title: "Worksheet Checkpoint Querystring Parameter"
-status: ready
+status: in-progress
 depends_on: []
-gate: "before mutation: owner approves the prompt shape (non-blocking marker on the level-result surface plus a per-level dismissible reminder), the parameter name, and the teacher-facing failure surface for unknown ids. See the Gate section."
-superseded_by: null
-resolution: null
+gate: "CLEARED 2026-09-11. Owner accepted all three recommendations: non-blocking marker on the level-result surface plus a dismissible per-level reminder, tab-session scoped; the parameter is worksheetAt; the unknown-id notice names the ids verbatim and attributes the problem to the link. See the Gate section."
 summary: >-
   Add a querystring parameter that marks guided levels where the app should tell the student to look at their paper worksheet. Accepted from an incoming CourseVGD proposal, with three corrections: this is the first production querystring parameter in the app rather than an extension of an existing one, the reader must consume location.search only because the GAS Stage 1 design reserves the URL fragment for a channel nonce, and unknown ids must fail loudly to the teacher without becoming a student-facing failure. BB never learns what the worksheet says.
 ---
@@ -203,14 +201,14 @@ every future parameter; the second is an injection surface into the child URL.
 Stage 1 proper is unwritten and blocked on Gates 1 and 2, so there is no packet to amend.
 Recording the requirement now is the whole of the action available.
 
-## Gate (before mutation)
+## Gate — CLEARED 2026-09-11
 
-Present to the owner and stop. All three are cheap to answer and expensive to get wrong once paper
-is printed.
+The owner accepted all three recommendations as written. They are requirements now, not proposals.
+The reasoning is retained because it is what an implementer needs while building the surface.
 
-### 1. The prompt shape
+### 1. The prompt shape — RULED
 
-Recommendation: **a non-blocking marker appended to the existing `.level-result success` banner,
+**A non-blocking marker appended to the existing `.level-result success` banner,
 plus a dismissible per-level reminder that persists until dismissed or the student leaves the
 level.**
 
@@ -224,14 +222,14 @@ Both patterns already exist in this codebase — `plan-118`'s `#storage-status` 
 "Got it" control, and the persistent project indicator in `src/ui/projectSignifiers.js`. Reuse them
 rather than inventing a third notice idiom.
 
-### 2. The parameter name
+### 2. The parameter name — RULED
 
-Recommendation: **`worksheetAt`**, as proposed. Comma-separated level ids. It is descriptive,
+**`worksheetAt`**, as proposed. Comma-separated level ids. It is descriptive,
 matches the existing camelCase `devGuidedLevel`, and does not claim more than it does.
 
-### 3. The unknown-id notice wording
+### 3. The unknown-id notice wording — RULED
 
-D2 fixes the mechanics; the copy is an owner call because a student may read it. Recommendation:
+D2 fixes the mechanics; the copy was an owner call because a student may read it. Ruled:
 name the ids verbatim and attribute the problem to the link, not the student — something in the
 shape of *"This link lists worksheet checkpoints that do not match any level: <ids>. The other
 checkpoints still work."*

@@ -6,7 +6,7 @@ Refreshed 2026-09-10 (second pass). The `star-evaluation-campaign.test.js` degen
 
 ## Awaiting an owner decision
 
-- **`plan-125` prompt shape.** How should the worksheet-checkpoint prompt appear: the marker on the level-result surface, whether the per-level reminder is dismissible, the parameter name, and the copy for the unknown-id notice. The packet recommends all four and is gate-blocked until they are ruled on. Cheap to answer and expensive to get wrong once a worksheet is printed on paper.
+- None currently. `plan-125`'s prompt-shape gate was cleared 2026-09-11.
 
 ## Awaiting a measurement
 
