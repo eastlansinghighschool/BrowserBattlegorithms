@@ -176,7 +176,7 @@ export function renderWorksheetUnknownIdBanner(app) {
     return "";
   }
 
-  const badIdsText = unknownIds.map(escapeHtml).join(", ");
+  const badIdsText = unknownIds.join(", ");
   const hasResolved = app.state.worksheetCheckpoints.resolvedLevelIds?.size > 0;
   const copy = hasResolved
     ? `This link lists worksheet checkpoints that do not match any level: ${badIdsText}. The other checkpoints still work.`

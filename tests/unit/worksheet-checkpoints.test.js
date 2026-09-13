@@ -167,6 +167,39 @@ test("Unknown-ID notice: names bad IDs verbatim, attributes problem to the link,
   assert.equal(renderWorksheetUnknownIdBanner(app), "");
 });
 
+test("Unknown-ID notice: escapes once (not twice) on characters &, <, and \"", () => {
+  const app = createApp();
+  app.state.levels = [{ id: "move-to-target" }];
+  // Use percent-encoded query to deliver &, <, and " into the parameter
+  initializeWorksheetCheckpoints(app, {
+    locationLike: { search: "?worksheetAt=move-to-target,Tom%20%26%20Jerry,a%3Cb,q%22z" }
+  });
+
+  const bannerHtml = renderWorksheetUnknownIdBanner(app);
+
+  // Must render the once-encoded entity forms so the browser displays verbatim characters
+  assert.equal(bannerHtml.includes("Tom &amp; Jerry, a&lt;b, q&quot;z"), true);
+
+  // Must NOT be double-escaped
+  assert.equal(bannerHtml.includes("&amp;amp;"), false);
+  assert.equal(bannerHtml.includes("&amp;lt;"), false);
+  assert.equal(bannerHtml.includes("&amp;quot;"), false);
+});
+
+test("Unknown-ID notice: markup in an unknown ID is sanitized and cannot produce live tags", () => {
+  const app = createApp();
+  app.state.levels = [{ id: "move-to-target" }];
+  initializeWorksheetCheckpoints(app, {
+    locationLike: { search: "?worksheetAt=%3Cimg%20src=x%20onerror=alert(1)%3E" }
+  });
+
+  const bannerHtml = renderWorksheetUnknownIdBanner(app);
+
+  // Must not produce a live <img tag
+  assert.equal(bannerHtml.includes("<img"), false);
+  assert.equal(bannerHtml.includes("&lt;img src=x onerror=alert(1)&gt;"), true);
+});
+
 test("Free Play disposition (D3): unknown-ID notice is suppressed in Free Play", () => {
   const app = createApp();
   app.state.levels = [{ id: "move-to-target" }];
