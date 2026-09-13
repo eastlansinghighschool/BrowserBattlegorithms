@@ -131,6 +131,21 @@ When the app runs under an environment that blocks storage access (such as a res
 - Dismissible: clicking or activating the "Got it" button (`#storageStatusDismiss`) hides the notice and marks `app.state.storageNoticeDismissed = true` for the remainder of the tab session.
 - Coexists with transient action notices (`#workspace-import-status`, `#usage-export-status`) as a separate sibling DOM element.
 
+## Worksheet checkpoints (Plan 125)
+
+Teachers may compose a URL containing the `worksheetAt` querystring parameter (comma-separated guided level IDs) to prompt students to check their worksheet upon completing specific levels:
+
+- **Querystring parameter**: `?worksheetAt=level-id-1,level-id-2`. Read from `location.search` ONLY. `location.hash` is strictly ignored because the URL fragment is reserved for the GAS Stage 1 per-page channel nonce.
+- **Non-persistence (D1)**: Checkpoints are strictly session-scoped in memory (`app.state.worksheetCheckpoints`). They are never persisted to `localStorage` or carried across sessions. Rationale: assignment configuration belongs to the teacher in the URL, avoiding stale assignment states displacing current work (Plan 119) and avoiding runtime exceptions in restricted storage environments (Plan 118). Consequence: navigating away and returning via a bare bookmark drops the prompts until the composed link is used again.
+- **Unknown-ID notice (D2)**: When the parameter contains IDs not found in `app.state.levels` (including nested tutorial or challenge step IDs such as `bughunt-22-trace`), a persistent, non-blocking warning banner (`#worksheet-unknown-status`) is mounted in `#blockly-region`. It names bad IDs verbatim and attributes the issue to the link (*"This link lists worksheet checkpoints that do not match any level: <ids>. The other checkpoints still work."*). Partial matching is guaranteed: invalid IDs never suppress valid checkpoints. Dismissing the notice via "Got it" hides it for the tab session.
+- **Free Play disposition (D3)**: In alignment with D3 ("The parameter has no meaning in Free Play and must not alter it"), the unknown-ID notice in `#blockly-region` is displayed only when in Guided Levels (`currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS`). When switching to Free Play, the notice is suppressed.
+- **Completion marker & per-level reminder (R1)**:
+  - **Banner marker**: Appended non-blockingly to `.level-result.success` when a checkpoint level is passed: `<span class="worksheet-checkpoint-marker">Check your worksheet!</span>`.
+  - **Per-level reminder**: A persistent, dismissible card (`.lesson-worksheet-reminder`) in the student lesson card below the result banner. Gated on "this level has been passed at least once in this tab session" (`worksheetCheckpointsReached`), it survives subsequent resets and re-attempts for additional stars, and can be dismissed for that level in the active tab session via "Got it" (`worksheetReminderDismissedLevels`).
+- **Zero cost when absent**: Absence of `worksheetAt` costs nothing — no banner, no marker, and no reserved DOM.
+- **Data collection**: Collects nothing. No usage event, export field, or telemetry is emitted.
+- **GAS Stage 1 forwarding gap**: Under Google Apps Script parent `/exec` embedding, parent URL query parameters do not reach the child iframe unless forwarded by the shell. Forwarding of allowlisted parameters is deferred to GAS Stage 1.
+
 ## Common traps
 
 - **Reading only `currentModeView`** will miss PvP vs PvCPU distinctions. Always check `freePlayMode` when the behavior differs between free-play sub-modes.

@@ -75,6 +75,14 @@ export function createInitialState() {
     currentLevelStartTurnNumber: null,
     lastLevelResultReason: null,
     predictionForCurrentLevel: null,
+    worksheetCheckpoints: {
+      isPresent: false,
+      resolvedLevelIds: new Set(),
+      unknownIds: []
+    },
+    worksheetCheckpointsReached: new Set(),
+    worksheetReminderDismissedLevels: new Set(),
+    worksheetUnknownNoticeDismissed: false,
     currentToolboxBlockTypes: [],
     currentSensorObjectTypes: [],
     currentSensorRelationTypes: [],

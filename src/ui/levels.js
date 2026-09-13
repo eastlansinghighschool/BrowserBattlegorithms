@@ -23,6 +23,11 @@ import {
   renderProjectStateNote
 } from "./projectSignifiers.js";
 import {
+  isWorksheetCheckpointLevel,
+  renderWorksheetReminder,
+  renderWorksheetResultMarker
+} from "./worksheetCheckpoints.js";
+import {
   configureFreePlay,
   enterFreePlay,
   enterGuidedMode,
@@ -486,6 +491,17 @@ export function bindLevelPanel(app) {
     }
     event.stopPropagation();
 
+    if (target.dataset.worksheetAction === "dismiss-reminder") {
+      if (!app.state.worksheetReminderDismissedLevels) {
+        app.state.worksheetReminderDismissedLevels = new Set();
+      }
+      if (app.state.currentLevelId) {
+        app.state.worksheetReminderDismissedLevels.add(app.state.currentLevelId);
+      }
+      app.syncUi();
+      return;
+    }
+
     if (target.dataset.action === "enter-free-play") {
       enterFreePlay(app);
     } else if (target.dataset.action === "toggle-panel-collapse") {
@@ -600,8 +616,9 @@ export function renderResultBannerMessage(app, currentLevel, resultReason) {
     ? `Scoring a point completed the challenge.${reasonText ? ` ${reasonText}` : ""}`
     : reasonText;
   const fullText = reasonSuffix ? `${bannerText} ${reasonSuffix}` : bannerText;
+  const worksheetMarker = renderWorksheetResultMarker(app, currentLevel);
 
-  return `<p class="level-result success">${escapeHtml(fullText)}</p>`;
+  return `<p class="level-result success">${escapeHtml(fullText)}${worksheetMarker}</p>`;
 }
 
 export function renderLevelPanel(app) {
@@ -624,6 +641,14 @@ export function renderLevelPanel(app) {
   }
 
   const inGuided = app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS;
+  if (app.state.activeLevelResult === LEVEL_RESULT.PASSED && currentLevel?.id) {
+    if (isWorksheetCheckpointLevel(app, currentLevel.id)) {
+      if (!app.state.worksheetCheckpointsReached) {
+        app.state.worksheetCheckpointsReached = new Set();
+      }
+      app.state.worksheetCheckpointsReached.add(currentLevel.id);
+    }
+  }
   const canCollapse = typeof window !== "undefined" && window.innerWidth >= 1280;
   const panelCollapsed = syncLessonPanelShell(app);
   const resultReason = humanizeResultReason(app.state.lastLevelResultReason);
@@ -675,6 +700,7 @@ export function renderLevelPanel(app) {
           </div>
         ` : ""}
         ${resultMessage}
+        ${renderWorksheetReminder(app, currentLevel)}
         ${(currentLevel.tips || []).length ? `
           <details class="lesson-disclosure">
             <summary>Hints</summary>

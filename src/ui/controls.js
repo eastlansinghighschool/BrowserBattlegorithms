@@ -520,6 +520,17 @@ export function bindControls(app) {
     });
   }
 
+  document.addEventListener("click", (event) => {
+    if (event.target && event.target.id === "worksheetUnknownStatusDismiss") {
+      app.state.worksheetUnknownNoticeDismissed = true;
+      const worksheetStatus = document.getElementById("worksheet-unknown-status");
+      if (worksheetStatus) {
+        worksheetStatus.remove();
+      }
+      app.syncUi();
+    }
+  });
+
   if (exportUsageButton) {
     exportUsageButton.addEventListener("click", async () => {
       const studentName = window.prompt("Enter the student name for this usage file:", "");

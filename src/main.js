@@ -23,6 +23,7 @@ import {
 } from "./core/levels.js";
 import { bindLevelPanel, renderLevelPanel } from "./ui/levels.js";
 import { renderBlocklyPanel } from "./ui/blocklyPanel.js";
+import { initializeWorksheetCheckpoints } from "./ui/worksheetCheckpoints.js";
 import { processTurnActions } from "./core/turnEngine.js";
 import { initializeUsageTracking } from "./usage/usageTracker.js";
 import {
@@ -214,6 +215,7 @@ app.syncUi = () => {
 };
 
 initializeLevelState(app);
+initializeWorksheetCheckpoints(app, { locationLike: typeof window !== "undefined" ? window.location : null });
 if (import.meta.env.DEV) {
   const { applyDevGuidedLevelShortcut } = await import("./ui/devGuidedLevelLink.js");
   applyDevGuidedLevelShortcut(app, { isDev: true });

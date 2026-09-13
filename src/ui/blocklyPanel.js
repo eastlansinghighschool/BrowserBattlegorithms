@@ -7,6 +7,7 @@ import {
 } from "./projectSignifiers.js";
 import { getCurrentLevel } from "../core/levels.js";
 import { isLocalStorageAvailable } from "../platform/safeStorage.js";
+import { renderWorksheetUnknownIdBanner } from "./worksheetCheckpoints.js";
 
 function escapeHtml(value) {
   return `${value || ""}`
@@ -61,6 +62,31 @@ export function renderBlocklyPanel(app) {
 
   if (!title || !tabs || !summary) {
     return;
+  }
+
+  const worksheetStatus = document.getElementById("worksheet-unknown-status");
+  const isGuided = app.state.currentModeView === GAME_VIEW_MODES.GUIDED_LEVELS;
+  const shouldShowWorksheetUnknown =
+    isGuided &&
+    Boolean(app.state.worksheetCheckpoints?.unknownIds?.length > 0) &&
+    !app.state.worksheetUnknownNoticeDismissed;
+
+  if (shouldShowWorksheetUnknown) {
+    if (!worksheetStatus) {
+      const bannerHtml = renderWorksheetUnknownIdBanner(app);
+      if (bannerHtml) {
+        const storageStatus = document.getElementById("storage-status");
+        if (storageStatus) {
+          storageStatus.insertAdjacentHTML("beforebegin", bannerHtml);
+        } else if (blocklyToolbar) {
+          blocklyToolbar.insertAdjacentHTML("beforebegin", bannerHtml);
+        }
+      }
+    } else {
+      worksheetStatus.hidden = false;
+    }
+  } else if (worksheetStatus) {
+    worksheetStatus.remove();
   }
 
   const storageStatus = document.getElementById("storage-status");
