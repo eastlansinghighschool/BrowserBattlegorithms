@@ -79,10 +79,20 @@ All three owner recommendations approved at the 2026-09-11 gate, along with the 
    ```
    - **Result**: Passed (`RUNNABLE: plan-125 is ready to implement`; `lint: OK (no violations)`).
 
+## Repair 01: Single-Escape Resolution for Unknown IDs
+
+- **Defect**: In `src/ui/worksheetCheckpoints.js`, `renderWorksheetUnknownIdBanner` escaped IDs twice: first via `unknownIds.map(escapeHtml).join(", ")`, and subsequently at interpolation `<span class="storage-status-text">${escapeHtml(copy)}</span>`. On IDs containing `&`, `<`, or `"`, this showed doubled entity text (`Tom &amp; Jerry`, `a&lt;b`) to teachers instead of verbatim characters, violating D2.
+- **Resolution**: Kept raw IDs in `copy` and escaped once at interpolation `${escapeHtml(copy)}`.
+- **Tests Added**:
+  1. Verified single-escape entity rendering for `&`, `<`, and `"` (`Tom &amp; Jerry, a&lt;b, q&quot;z` without doubled entities `&amp;amp;`, `&amp;lt;`, `&amp;quot;`).
+  2. Verified XSS safety: `<img src=x onerror=alert(1)>` never renders a live `<img` element and is sanitized to `&lt;img ...&gt;`.
+- **Validation**: 639/639 tests passing (19 in `tests/unit/worksheet-checkpoints.test.js`). No existing tests broken.
+
 ## Remaining Risks & Follow-ups
 
 - **GAS URL Forwarding Gap**: Under Google Apps Script parent `/exec` shell deployments, query parameters on the parent page do not reach the embedded iframe until parameter forwarding is added to `Shell.html`. This is documented in `docs/subsystems/ui-mode-contract.md` and tracked as a Stage 1 protocol requirement in `docs/open-questions.md`.
 
 ## Ready for Orchestrator Review
 
-Yes. All requirements from Plan 125, the owner gate ruling, and the preflight review are implemented, validated, and documented.
+Yes. All requirements from Plan 125, the owner gate ruling, the preflight review, and Repair 01 are implemented, validated, and documented.
+
