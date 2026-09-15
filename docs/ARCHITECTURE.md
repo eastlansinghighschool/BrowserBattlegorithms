@@ -63,6 +63,7 @@ Each subsystem note is the single authoritative doc for its runtime contract. AR
 | [usage-and-admin](./subsystems/usage-and-admin.md) | Event taxonomy, tracker → IndexedDB → export ladder, analyzer signal-vs-noise philosophy, admin app surface, regression artifacts are generated not committed. |
 | [npc-and-cpu](./subsystems/npc-and-cpu.md) | Teaching NPC vs free-play CPU split, what is deterministic, where randomness is allowed, shared pathing helper, `state.randomFn` test hook. |
 | [p5-surface-map](./subsystems/p5-surface-map.md) | `draw()` is part tick part paint, canvas-adjacent DOM overlays are not p5 features, who owns the canvas surface vs DOM layout. |
+| [dom-style-system](./subsystems/dom-style-system.md) | DOM `:root` channel primitives, alpha-at-call-site convention, CSS/canvas separation, long-tail scope, and untouched runtime animation properties. |
 
 ## Boundaries
 

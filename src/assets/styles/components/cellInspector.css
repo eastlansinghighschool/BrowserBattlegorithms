@@ -6,7 +6,7 @@
   border: 1px solid hsla(217, 16%, 30%, 0.6);
   border-radius: 8px;
   padding: 8px 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 20px rgb(var(--c-black) / 0.45);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 12px;
   line-height: 1.4;

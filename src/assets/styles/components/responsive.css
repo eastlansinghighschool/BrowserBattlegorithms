@@ -58,7 +58,7 @@
   #game-container.lesson-panel-collapsed #level-panel {
     padding: 0;
     border: none;
-    background: transparent;
+    background: rgb(var(--c-black) / 0);
   }
 
   #game-container.guided-dev-blockly-assist {

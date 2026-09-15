@@ -1,0 +1,30 @@
+/*
+ * Cross-file channel primitives for the DOM color layer.
+ *
+ * These are RGB channel triples, not semantic roles. Keep opacity at each
+ * declaration so the source value remains visible and P3 can assign roles
+ * without having to undo this structural seam.
+ */
+:root {
+  --c-slate: 36 64 74;
+  --c-white: 255 255 255;
+  --c-black: 0 0 0;
+  --c-ocean: 59 111 144;
+  --c-charcoal: 30 43 51;
+  --c-amber: 245 158 11;
+  --c-muted: 76 90 99;
+  --c-rust: 140 61 34;
+  --c-forest: 47 122 77;
+  --c-blue-gray: 64 81 90;
+  --c-red: 132 32 41;
+  --c-mint: 233 245 236;
+  --c-mist: 237 243 246;
+  --c-deep-teal: 24 55 68;
+  --c-ice: 247 251 255;
+  --c-blush: 253 236 236;
+  --c-cream: 255 253 247;
+  --c-deep-forest: 31 93 52;
+  --c-ink: 36 54 63;
+  --c-steel: 47 92 121;
+  --c-sky: 58 111 144;
+}

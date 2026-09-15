@@ -4,7 +4,7 @@
   border-radius: 12px;
   text-align: left;
   background: linear-gradient(180deg, #fbf9ef, #eef6fa);
-  border: 1px solid rgba(36, 64, 74, 0.14);
+  border: 1px solid rgb(var(--c-slate) / 0.14);
 }
 
 .level-panel-header {
@@ -36,7 +36,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  background: #3b6f90;
+  background: rgb(var(--c-ocean));
   text-align: left;
 }
 
@@ -53,9 +53,9 @@
   z-index: 40;
   padding: 10px;
   border-radius: 14px;
-  background: #fffdf7;
-  border: 1px solid rgba(36, 64, 74, 0.18);
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.14);
+  background: rgb(var(--c-cream));
+  border: 1px solid rgb(var(--c-slate) / 0.18);
+  box-shadow: 0 14px 28px rgb(var(--c-black) / 0.14);
 }
 
 .level-picker-item {
@@ -66,7 +66,7 @@
   align-items: start;
   margin-bottom: 8px;
   border-radius: 12px;
-  background: #2f7a4d;
+  background: rgb(var(--c-forest));
   text-align: left;
 }
 
@@ -95,7 +95,7 @@
 .level-picker-stars {
   font-weight: 700;
   letter-spacing: 1px;
-  color: #f59e0b;
+  color: rgb(var(--c-amber));
 }
 
 .level-picker-item-description {
@@ -164,7 +164,7 @@
   border-radius: 12px;
   border: 1px solid rgba(61, 108, 156, 0.18);
   background: rgba(232, 242, 250, 0.82);
-  color: #24404a;
+  color: rgb(var(--c-slate));
 }
 
 .lesson-project-indicator-label,
@@ -195,7 +195,7 @@
 }
 
 .lesson-project-state-note-label {
-  color: #8c3d22;
+  color: rgb(var(--c-rust));
 }
 
 .blockly-program-summary-project {
@@ -212,7 +212,7 @@
   border-radius: 12px;
   border: 1px solid rgba(61, 108, 156, 0.18);
   background: linear-gradient(180deg, rgba(243, 248, 253, 0.98), rgba(229, 239, 248, 0.95));
-  color: #24404a;
+  color: rgb(var(--c-slate));
 }
 
 .blockly-project-callout-copy {
@@ -247,13 +247,13 @@
   padding: 6px 10px;
   border: none;
   border-radius: 999px;
-  background: #3b6f90;
-  color: white;
+  background: rgb(var(--c-ocean));
+  color: rgb(var(--c-white));
   cursor: pointer;
 }
 
 .blockly-project-callout-dismiss:hover {
-  background: #2f5c79;
+  background: rgb(var(--c-steel));
 }
 
 .lesson-challenge-callout-label,
@@ -287,8 +287,8 @@
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(59, 111, 144, 0.12);
-  color: #24404a;
+  background: rgb(var(--c-ocean) / 0.12);
+  color: rgb(var(--c-slate));
   font-size: 0.9rem;
 }
 
@@ -311,7 +311,7 @@
 .lesson-legend-title {
   margin: 0;
   font-size: 0.95rem;
-  color: #40515a;
+  color: rgb(var(--c-blue-gray));
 }
 
 .lesson-legend-grid {
@@ -326,8 +326,8 @@
   align-items: start;
   padding: 10px 12px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(36, 64, 74, 0.1);
+  background: rgb(var(--c-white) / 0.78);
+  border: 1px solid rgb(var(--c-slate) / 0.1);
 }
 
 .lesson-legend-emoji {
@@ -353,7 +353,7 @@
 }
 
 .lesson-target-icon circle {
-  fill: transparent;
+  fill: rgb(var(--c-black) / 0);
 }
 
 .lesson-legend-label {
@@ -377,8 +377,8 @@
 
 .lesson-disclosure {
   border-radius: 12px;
-  border: 1px solid rgba(36, 64, 74, 0.12);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgb(var(--c-slate) / 0.12);
+  background: rgb(var(--c-white) / 0.7);
   padding: 0 12px;
 }
 
@@ -394,11 +394,11 @@
 
 .lesson-inline-list {
   margin: 0;
-  color: #40515a;
+  color: rgb(var(--c-blue-gray));
 }
 
 .lesson-inline-list strong {
-  color: #1e2b33;
+  color: rgb(var(--c-charcoal));
 }
 
 .lesson-detail-list {
@@ -412,7 +412,7 @@
 
 .lesson-support-note {
   margin: 0;
-  color: #4c5a63;
+  color: rgb(var(--c-muted));
   font-size: 0.94rem;
 }
 
@@ -441,13 +441,13 @@
 }
 
 .level-result.success {
-  background: rgba(47, 122, 77, 0.12);
+  background: rgb(var(--c-forest) / 0.12);
   color: #1e6b3d;
 }
 
 .level-result.failure {
   background: rgba(184, 95, 60, 0.12);
-  color: #8c3d22;
+  color: rgb(var(--c-rust));
 }
 
 .blockly-area-read-only {
@@ -472,7 +472,7 @@
   border-radius: 12px;
   border: 1px solid rgba(61, 108, 156, 0.22);
   background: rgba(232, 242, 250, 0.9);
-  color: #24404a;
+  color: rgb(var(--c-slate));
   display: flex;
   align-items: flex-start;
   justify-content: space-between;

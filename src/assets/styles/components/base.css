@@ -4,7 +4,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at top, #fff5d6 0%, #f4ecd7 35%, #d9e4ec 100%);
-  color: #1e2b33;
+  color: rgb(var(--c-charcoal));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,13 +24,13 @@ body {
 }
 
 .workspace-import-status-success {
-  background: #e9f5ec;
-  color: #1f5d34;
+  background: rgb(var(--c-mint));
+  color: rgb(var(--c-deep-forest));
 }
 
 .workspace-import-status-error {
-  background: #fdecec;
-  color: #842029;
+  background: rgb(var(--c-blush));
+  color: rgb(var(--c-red));
 }
 
 .workspace-import-status-warning {
@@ -63,7 +63,7 @@ body {
   border-radius: 6px;
   border: 1px solid #084298;
   background: #084298;
-  color: #ffffff;
+  color: rgb(var(--c-white));
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
@@ -81,7 +81,7 @@ body {
   padding: 3px 8px;
   border-radius: 999px;
   border: 1px solid currentColor;
-  background: transparent;
+  background: rgb(var(--c-black) / 0);
   color: inherit;
   font-size: 0.8rem;
   font-weight: 600;
@@ -96,9 +96,9 @@ body {
 
 .app-header {
   width: 100%;
-  background: rgba(24, 55, 68, 0.92);
-  color: white;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  background: rgb(var(--c-deep-teal) / 0.92);
+  color: rgb(var(--c-white));
+  box-shadow: 0 8px 18px rgb(var(--c-black) / 0.12);
 }
 
 .app-header-inner {
@@ -131,16 +131,16 @@ body {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  color: white;
+  border: 1px solid rgb(var(--c-white) / 0.24);
+  color: rgb(var(--c-white));
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgb(var(--c-white) / 0.08);
   font-weight: 700;
   font-size: 1rem;
 }
 
 .app-help-link:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgb(var(--c-white) / 0.16);
 }
 
 .app-header-icon-button {
@@ -151,15 +151,15 @@ body {
   min-width: 54px;
   height: 34px;
   padding: 0 10px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgb(var(--c-white) / 0.24);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
+  background: rgb(var(--c-white) / 0.08);
+  color: rgb(var(--c-white));
   cursor: pointer;
 }
 
 .app-header-icon-button:hover {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgb(var(--c-white) / 0.16);
 }
 
 .app-header-icon {

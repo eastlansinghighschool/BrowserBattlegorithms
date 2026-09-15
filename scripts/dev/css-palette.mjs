@@ -1,6 +1,7 @@
 const HEX_COLOR_PATTERN = /#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})\b/gi;
 const FUNCTION_COLOR_PATTERN = /(?:rgba?|hsla?)\((?:[^()]|\([^()]*\))*\)/gi;
 const KEYWORD_COLOR_PATTERN = /(?<![\w-])(?:transparent|white)(?![\w-])/gi;
+const CSS_NUMBER_PATTERN = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
 
 export const CSS_PALETTE_FILES = [
   "src/assets/styles/style.css",
@@ -17,32 +18,57 @@ export const CSS_PALETTE_FILES = [
 ];
 
 function normalizeAlpha(value) {
-  const alpha = value.endsWith("%") ? Number.parseFloat(value) / 100 : Number.parseFloat(value);
+  const isPercentage = value.endsWith("%");
+  const numericValue = isPercentage ? value.slice(0, -1) : value;
+  if (!CSS_NUMBER_PATTERN.test(numericValue)) {
+    throw new Error(`Invalid CSS alpha component: ${value}`);
+  }
+  const alpha = isPercentage ? Number(numericValue) / 100 : Number(numericValue);
   if (!Number.isFinite(alpha) || alpha < 0 || alpha > 1) {
     throw new Error(`Invalid CSS alpha component: ${value}`);
   }
-  return Number(alpha.toFixed(10));
+  const canonical = Number(alpha.toFixed(10));
+  if (canonical !== alpha) {
+    throw new Error(`CSS alpha component exceeds canonical precision: ${value}`);
+  }
+  return canonical;
 }
 
 function normalizeRgbComponent(value) {
-  const component = value.endsWith("%")
-    ? (Number.parseFloat(value) * 255) / 100
-    : Number.parseFloat(value);
+  const isPercentage = value.endsWith("%");
+  const numericValue = isPercentage ? value.slice(0, -1) : value;
+  if (!CSS_NUMBER_PATTERN.test(numericValue)) {
+    throw new Error(`Invalid CSS RGB component: ${value}`);
+  }
+  const component = isPercentage
+    ? (Number(numericValue) * 255) / 100
+    : Number(numericValue);
   if (!Number.isFinite(component) || component < 0 || component > 255) {
     throw new Error(`Invalid CSS RGB component: ${value}`);
   }
-  return Math.round(component);
+  if (!Number.isInteger(component)) {
+    throw new Error(`Fractional CSS RGB component cannot be represented exactly: ${value}`);
+  }
+  return component;
 }
 
 function normalizePercentage(value, label) {
   if (!value.endsWith("%")) {
     throw new Error(`Invalid CSS ${label} component: ${value}`);
   }
-  const percentage = Number.parseFloat(value);
+  const numericValue = value.slice(0, -1);
+  if (!CSS_NUMBER_PATTERN.test(numericValue)) {
+    throw new Error(`Invalid CSS ${label} component: ${value}`);
+  }
+  const percentage = Number(numericValue);
   if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
     throw new Error(`Invalid CSS ${label} component: ${value}`);
   }
-  return Number(percentage.toFixed(10));
+  const canonical = Number(percentage.toFixed(10));
+  if (canonical !== percentage) {
+    throw new Error(`CSS ${label} component exceeds canonical precision: ${value}`);
+  }
+  return canonical;
 }
 
 function toHex(component) {
@@ -68,7 +94,7 @@ export function canonicalizeCssColor(value) {
     return "rgba(0,0,0,0)";
   }
   if (lower.startsWith("#")) {
-    if (!/^#[0-9a-f]{3,4}$|^#[0-9a-f]{6}$|^#[0-9a-f]{8}$/i.test(raw)) {
+    if (!/^(?:#[0-9a-f]{3,4}|#[0-9a-f]{6}|#[0-9a-f]{8})$/i.test(raw)) {
       throw new Error(`Invalid CSS hex color: ${value}`);
     }
     const digits = raw.slice(1).toLowerCase();
@@ -78,7 +104,10 @@ export function canonicalizeCssColor(value) {
     const red = Number.parseInt(expanded.slice(0, 2), 16);
     const green = Number.parseInt(expanded.slice(2, 4), 16);
     const blue = Number.parseInt(expanded.slice(4, 6), 16);
-    const alpha = expanded.length === 8 ? Number.parseInt(expanded.slice(6, 8), 16) / 255 : 1;
+    if (expanded.length === 8) {
+      throw new Error(`Alpha-bearing hex colors are not supported by exact canonicalization: ${value}`);
+    }
+    const alpha = 1;
     return alpha === 1
       ? `#${toHex(red)}${toHex(green)}${toHex(blue)}`
       : `rgba(${red},${green},${blue},${Number(alpha.toFixed(10))})`;
@@ -99,13 +128,15 @@ export function canonicalizeCssColor(value) {
     throw new Error(`Unsupported CSS color function: ${value}`);
   }
   if (colorMatch[1].startsWith("hsl")) {
-    const hue = Number.parseFloat(components[0]);
-    if (!Number.isFinite(hue)) throw new Error(`Invalid CSS hue component: ${components[0]}`);
+    if (!CSS_NUMBER_PATTERN.test(components[0])) throw new Error(`Invalid CSS hue component: ${components[0]}`);
+    const hue = Number(components[0]);
+    const canonicalHue = Number(hue.toFixed(10));
+    if (canonicalHue !== hue) throw new Error(`CSS hue component exceeds canonical precision: ${components[0]}`);
     const saturation = normalizePercentage(components[1], "saturation");
     const lightness = normalizePercentage(components[2], "lightness");
     const alpha = components.length === 4 ? normalizeAlpha(components[3]) : 1;
     const functionName = alpha === 1 ? "hsl" : "hsla";
-    return `${functionName}(${Number(hue.toFixed(10))},${saturation}%,${lightness}%${alpha === 1 ? "" : `,${alpha}`})`;
+    return `${functionName}(${canonicalHue},${saturation}%,${lightness}%${alpha === 1 ? "" : `,${alpha}`})`;
   }
   const [red, green, blue] = components.slice(0, 3).map(normalizeRgbComponent);
   const alpha = components.length === 4 ? normalizeAlpha(components[3]) : 1;
@@ -178,6 +209,7 @@ function scanCssStatements(content) {
       value,
       selector: blocks[blocks.length - 1].selector.trim(),
       start: offset,
+      valueStart: offset,
       end,
       ordinal: statements.length
     });
@@ -250,6 +282,7 @@ export function extractCssColorOccurrences(content, { includeTokenLayer = true, 
         property: declaration.property,
         selector: declaration.selector,
         line: lineNumber(content, declaration.start),
+        offset: declaration.valueStart + color.start,
         declarationOrdinal: declaration.ordinal,
         occurrenceInDeclaration
       });
@@ -271,6 +304,7 @@ export function extractHtmlInlineColorOccurrences(content, { includeDynamic = fa
       const property = declarationText.slice(0, colon).trim();
       const value = declarationText.slice(colon + 1);
       const valueOffset = declarationText.indexOf(value, colon + 1);
+      const declarationOffset = styleText.indexOf(declarationText, 0);
       const colors = colorMatches(value, { includeDynamic });
       colors.forEach((color, occurrenceInDeclaration) => {
         occurrences.push({
@@ -278,6 +312,7 @@ export function extractHtmlInlineColorOccurrences(content, { includeDynamic = fa
           property,
           selector: "inline-style",
           line: lineNumber(content, styleOffset + valueOffset),
+          offset: styleOffset + declarationOffset + colon + 1 + color.start,
           declarationOrdinal: occurrences.length,
           occurrenceInDeclaration
         });
@@ -287,19 +322,48 @@ export function extractHtmlInlineColorOccurrences(content, { includeDynamic = fa
   return occurrences;
 }
 
-export function extractDomTokenReferences(content) {
+export function extractHtmlInlineChannelTokenReferences(content) {
+  const references = [];
+  const styleAttributePattern = /\bstyle\s*=\s*(["'])([\s\S]*?)\1/gi;
+  let attributeMatch;
+  while ((attributeMatch = styleAttributePattern.exec(content)) !== null) {
+    const styleText = attributeMatch[2];
+    const styleOffset = attributeMatch.index + attributeMatch[0].indexOf(styleText);
+    const pattern = /rgb\(\s*var\(\s*(--c-[\w-]+)\s*\)(?:\s*\/\s*([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?%?))?\s*\)/gi;
+    let match;
+    while ((match = pattern.exec(styleText)) !== null) {
+      references.push({
+        token: match[1],
+        raw: match[0],
+        alpha: match[2]?.trim() ?? null,
+        property: "inline-style",
+        selector: "inline-style",
+        line: lineNumber(content, styleOffset + match.index),
+        offset: styleOffset + match.index,
+        declarationOrdinal: 0,
+        occurrenceInDeclaration: references.length
+      });
+    }
+  }
+  return references;
+}
+
+export function extractChannelTokenReferences(content) {
   const references = [];
   for (const declaration of scanCssStatements(content)) {
     if (declaration.selector === ":root" && declaration.property.startsWith("--")) continue;
-    const pattern = /var\((--c-[\w-]+)\)/g;
+    const pattern = /rgb\(\s*var\(\s*(--c-[\w-]+)\s*\)(?:\s*\/\s*([^)]*?))?\s*\)/gi;
     let match;
     let occurrenceInDeclaration = 0;
     while ((match = pattern.exec(declaration.value)) !== null) {
       references.push({
         token: match[1],
+        raw: match[0],
+        alpha: match[2]?.trim() ?? null,
         property: declaration.property,
         selector: declaration.selector,
         line: lineNumber(content, declaration.start),
+        offset: declaration.valueStart + match.index,
         declarationOrdinal: declaration.ordinal,
         occurrenceInDeclaration
       });
@@ -308,6 +372,8 @@ export function extractDomTokenReferences(content) {
   }
   return references;
 }
+
+export const extractDomTokenReferences = extractChannelTokenReferences;
 
 export function extractCssDeclarations(content) {
   return scanCssStatements(content);

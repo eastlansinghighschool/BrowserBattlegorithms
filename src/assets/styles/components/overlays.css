@@ -169,9 +169,9 @@
   width: min(380px, calc(100vw - 32px));
   padding: 18px;
   border-radius: 16px;
-  background: #fffdf7;
+  background: rgb(var(--c-cream));
   color: #1f2a30;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 16px 36px rgb(var(--c-black) / 0.28);
   z-index: 1002;
 }
 
@@ -205,7 +205,7 @@
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(247, 243, 230, 0.9);
-  border: 1px solid rgba(36, 64, 74, 0.1);
+  border: 1px solid rgb(var(--c-slate) / 0.1);
 }
 
 .tutorial-visual-emoji {
@@ -220,7 +220,7 @@
 .tutorial-visual-description {
   display: block;
   margin-top: 2px;
-  color: #4c5a63;
+  color: rgb(var(--c-muted));
   font-size: 0.92rem;
 }
 
@@ -242,7 +242,7 @@
   padding: 12px;
   border-radius: 12px;
   background: #f7f3e6;
-  border: 1px solid rgba(36, 64, 74, 0.14);
+  border: 1px solid rgb(var(--c-slate) / 0.14);
 }
 
 .tutorial-demo-title,
@@ -258,14 +258,14 @@
 .tutorial-demo-caption {
   margin-top: 8px;
   font-size: 0.92rem;
-  color: #4c5a63;
+  color: rgb(var(--c-muted));
 }
 
 .tutorial-demo-blockly {
   height: 220px;
   border-radius: 10px;
   overflow: hidden;
-  background: #fff;
+  background: rgb(var(--c-white));
 }
 
 .tutorial-actions-stacked {
@@ -278,7 +278,7 @@
 }
 
 .tutorial-mode-chooser-note {
-  color: #4c5a63;
+  color: rgb(var(--c-muted));
 }
 
 .tutorial-mode-chooser-strip {

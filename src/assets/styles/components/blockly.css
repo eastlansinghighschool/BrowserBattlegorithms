@@ -28,20 +28,20 @@
   align-items: center;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(59, 111, 144, 0.12);
+  background: rgb(var(--c-ocean) / 0.12);
 }
 
 #blockly-history-controls button {
   min-width: 34px;
-  background: transparent;
-  color: #24404a;
-  border: 1px solid transparent;
+  background: rgb(var(--c-black) / 0);
+  color: rgb(var(--c-slate));
+  border: 1px solid rgb(var(--c-black) / 0);
 }
 
 #blockly-history-controls button:disabled {
   opacity: 1;
-  background: #3b6f90;
-  color: white;
+  background: rgb(var(--c-ocean));
+  color: rgb(var(--c-white));
 }
 
 /* Plan 45: Reset Workspace to Starter — visually distinct from undo/redo to
@@ -65,8 +65,8 @@
   border: none;
   border-radius: 999px;
   cursor: pointer;
-  background: #3b6f90;
-  color: white;
+  background: rgb(var(--c-ocean));
+  color: rgb(var(--c-white));
 }
 
 .program-file-controls {
@@ -74,7 +74,7 @@
   gap: 6px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(59, 111, 144, 0.12);
+  background: rgb(var(--c-ocean) / 0.12);
 }
 
 .program-file-controls button {
@@ -84,13 +84,13 @@
   width: 34px;
   height: 34px;
   padding: 0;
-  background: transparent;
-  color: #24404a;
-  border: 1px solid transparent;
+  background: rgb(var(--c-black) / 0);
+  color: rgb(var(--c-slate));
+  border: 1px solid rgb(var(--c-black) / 0);
 }
 
 .program-file-controls button:hover {
-  background: rgba(59, 111, 144, 0.12);
+  background: rgb(var(--c-ocean) / 0.12);
 }
 
 .program-file-controls .app-header-icon {
@@ -118,11 +118,11 @@
   position: relative;
   z-index: 1;
   width: min(420px, 100%);
-  background: #ffffff;
-  color: #1e2b33;
+  background: rgb(var(--c-white));
+  color: rgb(var(--c-charcoal));
   border-radius: 12px;
-  border: 1px solid rgba(36, 64, 74, 0.18);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+  border: 1px solid rgb(var(--c-slate) / 0.18);
+  box-shadow: 0 18px 40px rgb(var(--c-black) / 0.24);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -171,7 +171,7 @@
 .program-modal-card input {
   font: inherit;
   padding: 8px 10px;
-  border: 1px solid rgba(36, 64, 74, 0.24);
+  border: 1px solid rgb(var(--c-slate) / 0.24);
   border-radius: 10px;
 }
 
@@ -186,13 +186,13 @@
   padding: 8px 14px;
   border: none;
   border-radius: 999px;
-  background: #3b6f90;
-  color: white;
+  background: rgb(var(--c-ocean));
+  color: rgb(var(--c-white));
   cursor: pointer;
 }
 
 .program-modal-actions button:hover {
-  background: #2f5c79;
+  background: rgb(var(--c-steel));
 }
 
 .program-modal-message {
@@ -202,13 +202,13 @@
 }
 
 .program-modal-message-success {
-  background: #e9f5ec;
-  color: #1f5d34;
+  background: rgb(var(--c-mint));
+  color: rgb(var(--c-deep-forest));
 }
 
 .program-modal-message-error {
-  background: #fdecec;
-  color: #842029;
+  background: rgb(var(--c-blush));
+  color: rgb(var(--c-red));
 }
 
 #blockly-size-controls {
@@ -216,19 +216,19 @@
   gap: 6px;
   padding: 4px;
   border-radius: 999px;
-  background: rgba(59, 111, 144, 0.12);
+  background: rgb(var(--c-ocean) / 0.12);
 }
 
 #blockly-size-controls button {
-  background: transparent;
-  color: #24404a;
-  border: 1px solid transparent;
+  background: rgb(var(--c-black) / 0);
+  color: rgb(var(--c-slate));
+  border: 1px solid rgb(var(--c-black) / 0);
 }
 
 #blockly-size-controls button:disabled {
   opacity: 1;
-  background: #3b6f90;
-  color: white;
+  background: rgb(var(--c-ocean));
+  color: rgb(var(--c-white));
 }
 
 #blockly-workspace-shell {
@@ -249,26 +249,26 @@
   max-width: min(330px, calc(100% - 20px));
   padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid rgba(36, 64, 74, 0.18);
-  background: rgba(255, 255, 255, 0.96);
-  color: #24404a;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgb(var(--c-slate) / 0.18);
+  background: rgb(var(--c-white) / 0.96);
+  color: rgb(var(--c-slate));
+  box-shadow: 0 10px 22px rgb(var(--c-black) / 0.12);
   font-size: 0.92rem;
   line-height: 1.35;
   pointer-events: none;
 }
 
 #blocklyDiv .bba-trace-current .blocklyPath {
-  stroke: #f59e0b !important;
+  stroke: rgb(var(--c-amber)) !important;
   stroke-width: 4px !important;
   stroke-opacity: 1 !important;
-  filter: brightness(1.15) saturate(1.2) drop-shadow(0 0 3px rgba(245, 158, 11, 0.35)) !important;
+  filter: brightness(1.15) saturate(1.2) drop-shadow(0 0 3px rgb(var(--c-amber) / 0.35)) !important;
 }
 
 #blocklyDiv .bba-trace-selected-action .blocklyPath {
-  stroke: #3b6f90 !important;
+  stroke: rgb(var(--c-ocean)) !important;
   stroke-width: 4px !important;
-  filter: drop-shadow(0 0 3px rgba(59, 111, 144, 0.32));
+  filter: drop-shadow(0 0 3px rgb(var(--c-ocean) / 0.32));
 }
 
 #blocklyDiv .bba-trace-result-true .blocklyPath {
@@ -286,7 +286,7 @@
 #blocklyDiv .bba-trace-result-true-bg,
 #blocklyDiv .bba-trace-result-false-bg,
 #blocklyDiv .bba-trace-overflow-badge-bg {
-  stroke: rgba(255, 255, 255, 0.92);
+  stroke: rgb(var(--c-white) / 0.92);
   stroke-width: 1.25px;
 }
 
@@ -299,17 +299,17 @@
 }
 
 #blocklyDiv .bba-trace-overflow-badge {
-  color: #f59e0b;
+  color: rgb(var(--c-amber));
 }
 
 #blocklyDiv .bba-trace-overflow-badge-bg {
-  fill: #f59e0b;
+  fill: rgb(var(--c-amber));
 }
 
 #blocklyDiv .bba-trace-result-true-mark,
 #blocklyDiv .bba-trace-result-false-mark,
 #blocklyDiv .bba-trace-overflow-badge-mark {
-  fill: white;
+  fill: rgb(var(--c-white));
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   font-weight: 900;
@@ -357,7 +357,7 @@
   align-items: center;
   gap: 2px;
   pointer-events: none;
-  color: rgba(36, 64, 74, 0.58);
+  color: rgb(var(--c-slate) / 0.58);
   z-index: 2;
 }
 
@@ -388,7 +388,7 @@
 
   #blocklyDiv .bba-trace-current.bba-trace-result-true .blocklyPath,
   #blocklyDiv .bba-trace-current.bba-trace-result-false .blocklyPath {
-    stroke: #f59e0b !important;
+    stroke: rgb(var(--c-amber)) !important;
     stroke-width: 4px !important;
     stroke-opacity: 1 !important;
   }
@@ -410,7 +410,7 @@
 
 .settings-separator {
   border: 0;
-  border-top: 1px solid rgba(36, 64, 74, 0.12);
+  border-top: 1px solid rgb(var(--c-slate) / 0.12);
   margin: 4px 0;
 }
 
