@@ -114,6 +114,23 @@ export function canonicalizeCssColor(value) {
     : `rgba(${red},${green},${blue},${alpha})`;
 }
 
+export function rgbTripleFromCanonical(canonical) {
+  if (canonical.startsWith("#")) {
+    return [
+      Number.parseInt(canonical.slice(1, 3), 16),
+      Number.parseInt(canonical.slice(3, 5), 16),
+      Number.parseInt(canonical.slice(5, 7), 16)
+    ];
+  }
+  const rgbaMatch = canonical.match(/^rgba\((\d+),(\d+),(\d+),[0-9.]+\)$/);
+  return rgbaMatch ? rgbaMatch.slice(1, 4).map(Number) : null;
+}
+
+export function rgbTripleForCssColor(value) {
+  const canonical = canonicalizeCssColor(value);
+  return canonical === null ? null : rgbTripleFromCanonical(canonical);
+}
+
 function stripComments(text) {
   return text.replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\r\n]/g, " "));
 }
@@ -193,7 +210,7 @@ function scanCssStatements(content) {
   return statements;
 }
 
-function colorMatches(value) {
+function colorMatches(value, { includeDynamic = false } = {}) {
   const matches = [];
   for (const pattern of [HEX_COLOR_PATTERN, FUNCTION_COLOR_PATTERN, KEYWORD_COLOR_PATTERN]) {
     pattern.lastIndex = 0;
@@ -201,8 +218,15 @@ function colorMatches(value) {
     while ((match = pattern.exec(value)) !== null) {
       const raw = match[0];
       const canonical = canonicalizeCssColor(raw);
-      if (canonical !== null) {
-        matches.push({ start: match.index, end: match.index + raw.length, raw, canonical });
+      if (canonical !== null || includeDynamic) {
+        matches.push({
+          start: match.index,
+          end: match.index + raw.length,
+          raw,
+          canonical,
+          rgbTriple: canonical === null ? null : rgbTripleFromCanonical(canonical),
+          nature: canonical === null ? "dynamic" : "static"
+        });
       }
     }
   }
@@ -213,13 +237,13 @@ function lineNumber(content, offset) {
   return content.slice(0, offset).split(/\r?\n/).length;
 }
 
-export function extractCssColorOccurrences(content, { includeTokenLayer = true } = {}) {
+export function extractCssColorOccurrences(content, { includeTokenLayer = true, includeDynamic = false } = {}) {
   const occurrences = [];
   for (const declaration of scanCssStatements(content)) {
     if (!includeTokenLayer && declaration.selector === ":root" && declaration.property.startsWith("--")) {
       continue;
     }
-    const declarationColors = colorMatches(declaration.value);
+    const declarationColors = colorMatches(declaration.value, { includeDynamic });
     declarationColors.forEach((color, occurrenceInDeclaration) => {
       occurrences.push({
         ...color,
@@ -234,11 +258,40 @@ export function extractCssColorOccurrences(content, { includeTokenLayer = true }
   return occurrences;
 }
 
+export function extractHtmlInlineColorOccurrences(content, { includeDynamic = false } = {}) {
+  const occurrences = [];
+  const styleAttributePattern = /\bstyle\s*=\s*(["'])([\s\S]*?)\1/gi;
+  let attributeMatch;
+  while ((attributeMatch = styleAttributePattern.exec(content)) !== null) {
+    const styleText = attributeMatch[2];
+    const styleOffset = attributeMatch.index + attributeMatch[0].indexOf(styleText);
+    for (const declarationText of styleText.split(";")) {
+      const colon = declarationText.indexOf(":");
+      if (colon === -1) continue;
+      const property = declarationText.slice(0, colon).trim();
+      const value = declarationText.slice(colon + 1);
+      const valueOffset = declarationText.indexOf(value, colon + 1);
+      const colors = colorMatches(value, { includeDynamic });
+      colors.forEach((color, occurrenceInDeclaration) => {
+        occurrences.push({
+          ...color,
+          property,
+          selector: "inline-style",
+          line: lineNumber(content, styleOffset + valueOffset),
+          declarationOrdinal: occurrences.length,
+          occurrenceInDeclaration
+        });
+      });
+    }
+  }
+  return occurrences;
+}
+
 export function extractDomTokenReferences(content) {
   const references = [];
   for (const declaration of scanCssStatements(content)) {
     if (declaration.selector === ":root" && declaration.property.startsWith("--")) continue;
-    const pattern = /var\((--dom-[\w-]+)\)/g;
+    const pattern = /var\((--c-[\w-]+)\)/g;
     let match;
     let occurrenceInDeclaration = 0;
     while ((match = pattern.exec(declaration.value)) !== null) {

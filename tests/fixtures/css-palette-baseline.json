@@ -1,0 +1,4842 @@
+{
+  "meta": {
+    "version": 2,
+    "targetFiles": [
+      "src/assets/styles/style.css",
+      "src/assets/styles/help.css",
+      "src/assets/styles/components/base.css",
+      "src/assets/styles/components/blockly.css",
+      "src/assets/styles/components/cellInspector.css",
+      "src/assets/styles/components/controls.css",
+      "src/assets/styles/components/layout.css",
+      "src/assets/styles/components/lesson-panel.css",
+      "src/assets/styles/components/loading.css",
+      "src/assets/styles/components/overlays.css",
+      "src/assets/styles/components/responsive.css",
+      "index.html"
+    ],
+    "cssTargetFiles": [
+      "src/assets/styles/style.css",
+      "src/assets/styles/help.css",
+      "src/assets/styles/components/base.css",
+      "src/assets/styles/components/blockly.css",
+      "src/assets/styles/components/cellInspector.css",
+      "src/assets/styles/components/controls.css",
+      "src/assets/styles/components/layout.css",
+      "src/assets/styles/components/lesson-panel.css",
+      "src/assets/styles/components/loading.css",
+      "src/assets/styles/components/overlays.css",
+      "src/assets/styles/components/responsive.css"
+    ],
+    "totalSites": 285,
+    "staticSites": 277,
+    "dynamicSites": 8,
+    "distinctCanonicalValues": 159,
+    "distinctRgbTriples": 100,
+    "recurringRgbTriples": 21,
+    "recurringRgbTripleScope": "CSS files only; index.html is included as a site when its triple is already recurring in CSS"
+  },
+  "sites": [
+    {
+      "id": "src/assets/styles/help.css:0",
+      "file": "src/assets/styles/help.css",
+      "line": 4,
+      "selector": "body",
+      "property": "color",
+      "declarationOrdinal": 2,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1e2b33",
+      "canonical": "#1e2b33",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:1",
+      "file": "src/assets/styles/help.css",
+      "line": 5,
+      "selector": "body",
+      "property": "background",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fbf6e5",
+      "canonical": "#fbf6e5",
+      "rgbTriple": [
+        251,
+        246,
+        229
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:2",
+      "file": "src/assets/styles/help.css",
+      "line": 5,
+      "selector": "body",
+      "property": "background",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 1,
+      "raw": "#eef4f8",
+      "canonical": "#eef4f8",
+      "rgbTriple": [
+        238,
+        244,
+        248
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:3",
+      "file": "src/assets/styles/help.css",
+      "line": 21,
+      "selector": ".help-sidebar",
+      "property": "background",
+      "declarationOrdinal": 13,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(24, 55, 68, 0.96)",
+      "canonical": "rgba(24,55,68,0.96)",
+      "rgbTriple": [
+        24,
+        55,
+        68
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:4",
+      "file": "src/assets/styles/help.css",
+      "line": 22,
+      "selector": ".help-sidebar",
+      "property": "color",
+      "declarationOrdinal": 14,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:5",
+      "file": "src/assets/styles/help.css",
+      "line": 33,
+      "selector": ".help-sidebar p",
+      "property": "color",
+      "declarationOrdinal": 19,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.86)",
+      "canonical": "rgba(255,255,255,0.86)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:6",
+      "file": "src/assets/styles/help.css",
+      "line": 50,
+      "selector": ".help-nav-group a",
+      "property": "color",
+      "declarationOrdinal": 27,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:7",
+      "file": "src/assets/styles/help.css",
+      "line": 66,
+      "selector": ".help-hero,\n.help-section,\n.block-group",
+      "property": "background",
+      "declarationOrdinal": 32,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.94)",
+      "canonical": "rgba(255,255,255,0.94)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:8",
+      "file": "src/assets/styles/help.css",
+      "line": 67,
+      "selector": ".help-hero,\n.help-section,\n.block-group",
+      "property": "border",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.12)",
+      "canonical": "rgba(36,64,74,0.12)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:9",
+      "file": "src/assets/styles/help.css",
+      "line": 69,
+      "selector": ".help-hero,\n.help-section,\n.block-group",
+      "property": "box-shadow",
+      "declarationOrdinal": 35,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.07)",
+      "canonical": "rgba(0,0,0,0.07)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:10",
+      "file": "src/assets/styles/help.css",
+      "line": 97,
+      "selector": ".glossary-card,\n.strategy-card,\n.block-card",
+      "property": "background",
+      "declarationOrdinal": 46,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(246, 249, 251, 0.95)",
+      "canonical": "rgba(246,249,251,0.95)",
+      "rgbTriple": [
+        246,
+        249,
+        251
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:11",
+      "file": "src/assets/styles/help.css",
+      "line": 98,
+      "selector": ".glossary-card,\n.strategy-card,\n.block-card",
+      "property": "border",
+      "declarationOrdinal": 47,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.08)",
+      "canonical": "rgba(36,64,74,0.08)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:12",
+      "file": "src/assets/styles/help.css",
+      "line": 113,
+      "selector": ".visual-chip",
+      "property": "background",
+      "declarationOrdinal": 56,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:13",
+      "file": "src/assets/styles/help.css",
+      "line": 130,
+      "selector": ".keycap",
+      "property": "border",
+      "declarationOrdinal": 67,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.24)",
+      "canonical": "rgba(36,64,74,0.24)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:14",
+      "file": "src/assets/styles/help.css",
+      "line": 131,
+      "selector": ".keycap",
+      "property": "background",
+      "declarationOrdinal": 68,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffffff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:15",
+      "file": "src/assets/styles/help.css",
+      "line": 131,
+      "selector": ".keycap",
+      "property": "background",
+      "declarationOrdinal": 68,
+      "occurrenceInDeclaration": 1,
+      "raw": "#edf3f6",
+      "canonical": "#edf3f6",
+      "rgbTriple": [
+        237,
+        243,
+        246
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:16",
+      "file": "src/assets/styles/help.css",
+      "line": 132,
+      "selector": ".keycap",
+      "property": "box-shadow",
+      "declarationOrdinal": 69,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(30, 43, 51, 0.1)",
+      "canonical": "rgba(30,43,51,0.1)",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:17",
+      "file": "src/assets/styles/help.css",
+      "line": 141,
+      "selector": ".block-pill",
+      "property": "background",
+      "declarationOrdinal": 75,
+      "occurrenceInDeclaration": 0,
+      "raw": "#6e80c8",
+      "canonical": "#6e80c8",
+      "rgbTriple": [
+        110,
+        128,
+        200
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:18",
+      "file": "src/assets/styles/help.css",
+      "line": 142,
+      "selector": ".block-pill",
+      "property": "color",
+      "declarationOrdinal": 76,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:19",
+      "file": "src/assets/styles/help.css",
+      "line": 148,
+      "selector": ".block-pill.event",
+      "property": "background",
+      "declarationOrdinal": 79,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ad8750",
+      "canonical": "#ad8750",
+      "rgbTriple": [
+        173,
+        135,
+        80
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:20",
+      "file": "src/assets/styles/help.css",
+      "line": 152,
+      "selector": ".block-pill.condition",
+      "property": "background",
+      "declarationOrdinal": 80,
+      "occurrenceInDeclaration": 0,
+      "raw": "#5e8ab0",
+      "canonical": "#5e8ab0",
+      "rgbTriple": [
+        94,
+        138,
+        176
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/help.css:21",
+      "file": "src/assets/styles/help.css",
+      "line": 156,
+      "selector": ".block-pill.advanced",
+      "property": "background",
+      "declarationOrdinal": 81,
+      "occurrenceInDeclaration": 0,
+      "raw": "#4c6aa0",
+      "canonical": "#4c6aa0",
+      "rgbTriple": [
+        76,
+        106,
+        160
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:22",
+      "file": "src/assets/styles/components/base.css",
+      "line": 6,
+      "selector": "body",
+      "property": "background",
+      "declarationOrdinal": 2,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fff5d6",
+      "canonical": "#fff5d6",
+      "rgbTriple": [
+        255,
+        245,
+        214
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:23",
+      "file": "src/assets/styles/components/base.css",
+      "line": 6,
+      "selector": "body",
+      "property": "background",
+      "declarationOrdinal": 2,
+      "occurrenceInDeclaration": 1,
+      "raw": "#f4ecd7",
+      "canonical": "#f4ecd7",
+      "rgbTriple": [
+        244,
+        236,
+        215
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:24",
+      "file": "src/assets/styles/components/base.css",
+      "line": 6,
+      "selector": "body",
+      "property": "background",
+      "declarationOrdinal": 2,
+      "occurrenceInDeclaration": 2,
+      "raw": "#d9e4ec",
+      "canonical": "#d9e4ec",
+      "rgbTriple": [
+        217,
+        228,
+        236
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:25",
+      "file": "src/assets/styles/components/base.css",
+      "line": 7,
+      "selector": "body",
+      "property": "color",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1e2b33",
+      "canonical": "#1e2b33",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:26",
+      "file": "src/assets/styles/components/base.css",
+      "line": 27,
+      "selector": ".workspace-import-status-success",
+      "property": "background",
+      "declarationOrdinal": 14,
+      "occurrenceInDeclaration": 0,
+      "raw": "#e9f5ec",
+      "canonical": "#e9f5ec",
+      "rgbTriple": [
+        233,
+        245,
+        236
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:27",
+      "file": "src/assets/styles/components/base.css",
+      "line": 28,
+      "selector": ".workspace-import-status-success",
+      "property": "color",
+      "declarationOrdinal": 15,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1f5d34",
+      "canonical": "#1f5d34",
+      "rgbTriple": [
+        31,
+        93,
+        52
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:28",
+      "file": "src/assets/styles/components/base.css",
+      "line": 32,
+      "selector": ".workspace-import-status-error",
+      "property": "background",
+      "declarationOrdinal": 16,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fdecec",
+      "canonical": "#fdecec",
+      "rgbTriple": [
+        253,
+        236,
+        236
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:29",
+      "file": "src/assets/styles/components/base.css",
+      "line": 33,
+      "selector": ".workspace-import-status-error",
+      "property": "color",
+      "declarationOrdinal": 17,
+      "occurrenceInDeclaration": 0,
+      "raw": "#842029",
+      "canonical": "#842029",
+      "rgbTriple": [
+        132,
+        32,
+        41
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:30",
+      "file": "src/assets/styles/components/base.css",
+      "line": 37,
+      "selector": ".workspace-import-status-warning",
+      "property": "background",
+      "declarationOrdinal": 18,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fff3cd",
+      "canonical": "#fff3cd",
+      "rgbTriple": [
+        255,
+        243,
+        205
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:31",
+      "file": "src/assets/styles/components/base.css",
+      "line": 38,
+      "selector": ".workspace-import-status-warning",
+      "property": "color",
+      "declarationOrdinal": 19,
+      "occurrenceInDeclaration": 0,
+      "raw": "#664d03",
+      "canonical": "#664d03",
+      "rgbTriple": [
+        102,
+        77,
+        3
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:32",
+      "file": "src/assets/styles/components/base.css",
+      "line": 39,
+      "selector": ".workspace-import-status-warning",
+      "property": "border",
+      "declarationOrdinal": 20,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffecb5",
+      "canonical": "#ffecb5",
+      "rgbTriple": [
+        255,
+        236,
+        181
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:33",
+      "file": "src/assets/styles/components/base.css",
+      "line": 47,
+      "selector": ".workspace-import-status-info",
+      "property": "background",
+      "declarationOrdinal": 25,
+      "occurrenceInDeclaration": 0,
+      "raw": "#e7f1ff",
+      "canonical": "#e7f1ff",
+      "rgbTriple": [
+        231,
+        241,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:34",
+      "file": "src/assets/styles/components/base.css",
+      "line": 48,
+      "selector": ".workspace-import-status-info",
+      "property": "color",
+      "declarationOrdinal": 26,
+      "occurrenceInDeclaration": 0,
+      "raw": "#084298",
+      "canonical": "#084298",
+      "rgbTriple": [
+        8,
+        66,
+        152
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:35",
+      "file": "src/assets/styles/components/base.css",
+      "line": 49,
+      "selector": ".workspace-import-status-info",
+      "property": "border",
+      "declarationOrdinal": 27,
+      "occurrenceInDeclaration": 0,
+      "raw": "#b6d4fe",
+      "canonical": "#b6d4fe",
+      "rgbTriple": [
+        182,
+        212,
+        254
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:36",
+      "file": "src/assets/styles/components/base.css",
+      "line": 64,
+      "selector": ".displaced-workspace-restore-button",
+      "property": "border",
+      "declarationOrdinal": 36,
+      "occurrenceInDeclaration": 0,
+      "raw": "#084298",
+      "canonical": "#084298",
+      "rgbTriple": [
+        8,
+        66,
+        152
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:37",
+      "file": "src/assets/styles/components/base.css",
+      "line": 65,
+      "selector": ".displaced-workspace-restore-button",
+      "property": "background",
+      "declarationOrdinal": 37,
+      "occurrenceInDeclaration": 0,
+      "raw": "#084298",
+      "canonical": "#084298",
+      "rgbTriple": [
+        8,
+        66,
+        152
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:38",
+      "file": "src/assets/styles/components/base.css",
+      "line": 66,
+      "selector": ".displaced-workspace-restore-button",
+      "property": "color",
+      "declarationOrdinal": 38,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffffff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:39",
+      "file": "src/assets/styles/components/base.css",
+      "line": 75,
+      "selector": ".displaced-workspace-restore-button:hover,\r\n.displaced-workspace-restore-button:focus-visible",
+      "property": "background",
+      "declarationOrdinal": 43,
+      "occurrenceInDeclaration": 0,
+      "raw": "#06357a",
+      "canonical": "#06357a",
+      "rgbTriple": [
+        6,
+        53,
+        122
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:40",
+      "file": "src/assets/styles/components/base.css",
+      "line": 76,
+      "selector": ".displaced-workspace-restore-button:hover,\r\n.displaced-workspace-restore-button:focus-visible",
+      "property": "border-color",
+      "declarationOrdinal": 44,
+      "occurrenceInDeclaration": 0,
+      "raw": "#06357a",
+      "canonical": "#06357a",
+      "rgbTriple": [
+        6,
+        53,
+        122
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:41",
+      "file": "src/assets/styles/components/base.css",
+      "line": 84,
+      "selector": ".storage-status-dismiss",
+      "property": "background",
+      "declarationOrdinal": 49,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:42",
+      "file": "src/assets/styles/components/base.css",
+      "line": 94,
+      "selector": ".storage-status-dismiss:hover,\r\n.storage-status-dismiss:focus-visible",
+      "property": "background",
+      "declarationOrdinal": 55,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(102, 77, 3, 0.12)",
+      "canonical": "rgba(102,77,3,0.12)",
+      "rgbTriple": [
+        102,
+        77,
+        3
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:43",
+      "file": "src/assets/styles/components/base.css",
+      "line": 99,
+      "selector": ".app-header",
+      "property": "background",
+      "declarationOrdinal": 57,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(24, 55, 68, 0.92)",
+      "canonical": "rgba(24,55,68,0.92)",
+      "rgbTriple": [
+        24,
+        55,
+        68
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:44",
+      "file": "src/assets/styles/components/base.css",
+      "line": 100,
+      "selector": ".app-header",
+      "property": "color",
+      "declarationOrdinal": 58,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:45",
+      "file": "src/assets/styles/components/base.css",
+      "line": 101,
+      "selector": ".app-header",
+      "property": "box-shadow",
+      "declarationOrdinal": 59,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.12)",
+      "canonical": "rgba(0,0,0,0.12)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:46",
+      "file": "src/assets/styles/components/base.css",
+      "line": 134,
+      "selector": ".app-help-link",
+      "property": "border",
+      "declarationOrdinal": 80,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.24)",
+      "canonical": "rgba(255,255,255,0.24)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:47",
+      "file": "src/assets/styles/components/base.css",
+      "line": 135,
+      "selector": ".app-help-link",
+      "property": "color",
+      "declarationOrdinal": 81,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:48",
+      "file": "src/assets/styles/components/base.css",
+      "line": 137,
+      "selector": ".app-help-link",
+      "property": "background",
+      "declarationOrdinal": 83,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.08)",
+      "canonical": "rgba(255,255,255,0.08)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:49",
+      "file": "src/assets/styles/components/base.css",
+      "line": 143,
+      "selector": ".app-help-link:hover",
+      "property": "background",
+      "declarationOrdinal": 86,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.16)",
+      "canonical": "rgba(255,255,255,0.16)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:50",
+      "file": "src/assets/styles/components/base.css",
+      "line": 154,
+      "selector": ".app-header-icon-button",
+      "property": "border",
+      "declarationOrdinal": 94,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.24)",
+      "canonical": "rgba(255,255,255,0.24)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:51",
+      "file": "src/assets/styles/components/base.css",
+      "line": 156,
+      "selector": ".app-header-icon-button",
+      "property": "background",
+      "declarationOrdinal": 96,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.08)",
+      "canonical": "rgba(255,255,255,0.08)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:52",
+      "file": "src/assets/styles/components/base.css",
+      "line": 157,
+      "selector": ".app-header-icon-button",
+      "property": "color",
+      "declarationOrdinal": 97,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/base.css:53",
+      "file": "src/assets/styles/components/base.css",
+      "line": 162,
+      "selector": ".app-header-icon-button:hover",
+      "property": "background",
+      "declarationOrdinal": 99,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.16)",
+      "canonical": "rgba(255,255,255,0.16)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:54",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 31,
+      "selector": "#blockly-history-controls",
+      "property": "background",
+      "declarationOrdinal": 16,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:55",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 36,
+      "selector": "#blockly-history-controls button",
+      "property": "background",
+      "declarationOrdinal": 18,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:56",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 37,
+      "selector": "#blockly-history-controls button",
+      "property": "color",
+      "declarationOrdinal": 19,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:57",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 38,
+      "selector": "#blockly-history-controls button",
+      "property": "border",
+      "declarationOrdinal": 20,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:58",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 43,
+      "selector": "#blockly-history-controls button:disabled",
+      "property": "background",
+      "declarationOrdinal": 22,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:59",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 44,
+      "selector": "#blockly-history-controls button:disabled",
+      "property": "color",
+      "declarationOrdinal": 23,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:60",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 50,
+      "selector": "#resetWorkspaceToStarterButton",
+      "property": "color",
+      "declarationOrdinal": 24,
+      "occurrenceInDeclaration": 0,
+      "raw": "#7c5a0c",
+      "canonical": "#7c5a0c",
+      "rgbTriple": [
+        124,
+        90,
+        12
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:61",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 51,
+      "selector": "#resetWorkspaceToStarterButton",
+      "property": "border-color",
+      "declarationOrdinal": 25,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(124, 90, 12, 0.28)",
+      "canonical": "rgba(124,90,12,0.28)",
+      "rgbTriple": [
+        124,
+        90,
+        12
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:62",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 55,
+      "selector": "#resetWorkspaceToStarterButton:hover:not(:disabled)",
+      "property": "background",
+      "declarationOrdinal": 26,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(124, 90, 12, 0.12)",
+      "canonical": "rgba(124,90,12,0.12)",
+      "rgbTriple": [
+        124,
+        90,
+        12
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:63",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 56,
+      "selector": "#resetWorkspaceToStarterButton:hover:not(:disabled)",
+      "property": "border-color",
+      "declarationOrdinal": 27,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(124, 90, 12, 0.48)",
+      "canonical": "rgba(124,90,12,0.48)",
+      "rgbTriple": [
+        124,
+        90,
+        12
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:64",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 68,
+      "selector": "#blockly-toolbar button",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:65",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 69,
+      "selector": "#blockly-toolbar button",
+      "property": "color",
+      "declarationOrdinal": 34,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:66",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 77,
+      "selector": ".program-file-controls",
+      "property": "background",
+      "declarationOrdinal": 39,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:67",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 87,
+      "selector": ".program-file-controls button",
+      "property": "background",
+      "declarationOrdinal": 46,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:68",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 88,
+      "selector": ".program-file-controls button",
+      "property": "color",
+      "declarationOrdinal": 47,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:69",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 89,
+      "selector": ".program-file-controls button",
+      "property": "border",
+      "declarationOrdinal": 48,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:70",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 93,
+      "selector": ".program-file-controls button:hover",
+      "property": "background",
+      "declarationOrdinal": 49,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:71",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 114,
+      "selector": ".program-modal-backdrop",
+      "property": "background",
+      "declarationOrdinal": 61,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(18, 28, 34, 0.42)",
+      "canonical": "rgba(18,28,34,0.42)",
+      "rgbTriple": [
+        18,
+        28,
+        34
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:72",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 121,
+      "selector": ".program-modal-card",
+      "property": "background",
+      "declarationOrdinal": 65,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffffff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:73",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 122,
+      "selector": ".program-modal-card",
+      "property": "color",
+      "declarationOrdinal": 66,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1e2b33",
+      "canonical": "#1e2b33",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:74",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 124,
+      "selector": ".program-modal-card",
+      "property": "border",
+      "declarationOrdinal": 68,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.18)",
+      "canonical": "rgba(36,64,74,0.18)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:75",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 125,
+      "selector": ".program-modal-card",
+      "property": "box-shadow",
+      "declarationOrdinal": 69,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.24)",
+      "canonical": "rgba(0,0,0,0.24)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:76",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 146,
+      "selector": ".program-modal-note",
+      "property": "color",
+      "declarationOrdinal": 79,
+      "occurrenceInDeclaration": 0,
+      "raw": "#5b4b15",
+      "canonical": "#5b4b15",
+      "rgbTriple": [
+        91,
+        75,
+        21
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:77",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 174,
+      "selector": ".program-modal-fields input,\r\n.program-modal-card input",
+      "property": "border",
+      "declarationOrdinal": 93,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.24)",
+      "canonical": "rgba(36,64,74,0.24)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:78",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 189,
+      "selector": ".program-modal-actions button",
+      "property": "background",
+      "declarationOrdinal": 102,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:79",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 190,
+      "selector": ".program-modal-actions button",
+      "property": "color",
+      "declarationOrdinal": 103,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:80",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 195,
+      "selector": ".program-modal-actions button:hover",
+      "property": "background",
+      "declarationOrdinal": 105,
+      "occurrenceInDeclaration": 0,
+      "raw": "#2f5c79",
+      "canonical": "#2f5c79",
+      "rgbTriple": [
+        47,
+        92,
+        121
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:81",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 201,
+      "selector": ".program-modal-message",
+      "property": "background",
+      "declarationOrdinal": 108,
+      "occurrenceInDeclaration": 0,
+      "raw": "#eef4fa",
+      "canonical": "#eef4fa",
+      "rgbTriple": [
+        238,
+        244,
+        250
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:82",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 205,
+      "selector": ".program-modal-message-success",
+      "property": "background",
+      "declarationOrdinal": 109,
+      "occurrenceInDeclaration": 0,
+      "raw": "#e9f5ec",
+      "canonical": "#e9f5ec",
+      "rgbTriple": [
+        233,
+        245,
+        236
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:83",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 206,
+      "selector": ".program-modal-message-success",
+      "property": "color",
+      "declarationOrdinal": 110,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1f5d34",
+      "canonical": "#1f5d34",
+      "rgbTriple": [
+        31,
+        93,
+        52
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:84",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 210,
+      "selector": ".program-modal-message-error",
+      "property": "background",
+      "declarationOrdinal": 111,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fdecec",
+      "canonical": "#fdecec",
+      "rgbTriple": [
+        253,
+        236,
+        236
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:85",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 211,
+      "selector": ".program-modal-message-error",
+      "property": "color",
+      "declarationOrdinal": 112,
+      "occurrenceInDeclaration": 0,
+      "raw": "#842029",
+      "canonical": "#842029",
+      "rgbTriple": [
+        132,
+        32,
+        41
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:86",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 219,
+      "selector": "#blockly-size-controls",
+      "property": "background",
+      "declarationOrdinal": 117,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:87",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 223,
+      "selector": "#blockly-size-controls button",
+      "property": "background",
+      "declarationOrdinal": 118,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:88",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 224,
+      "selector": "#blockly-size-controls button",
+      "property": "color",
+      "declarationOrdinal": 119,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:89",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 225,
+      "selector": "#blockly-size-controls button",
+      "property": "border",
+      "declarationOrdinal": 120,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:90",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 230,
+      "selector": "#blockly-size-controls button:disabled",
+      "property": "background",
+      "declarationOrdinal": 122,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:91",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 231,
+      "selector": "#blockly-size-controls button:disabled",
+      "property": "color",
+      "declarationOrdinal": 123,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:92",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 252,
+      "selector": "#blockly-workspace-shell .bba-trace-empty-hint",
+      "property": "border",
+      "declarationOrdinal": 135,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.18)",
+      "canonical": "rgba(36,64,74,0.18)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:93",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 253,
+      "selector": "#blockly-workspace-shell .bba-trace-empty-hint",
+      "property": "background",
+      "declarationOrdinal": 136,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.96)",
+      "canonical": "rgba(255,255,255,0.96)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:94",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 254,
+      "selector": "#blockly-workspace-shell .bba-trace-empty-hint",
+      "property": "color",
+      "declarationOrdinal": 137,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:95",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 255,
+      "selector": "#blockly-workspace-shell .bba-trace-empty-hint",
+      "property": "box-shadow",
+      "declarationOrdinal": 138,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.12)",
+      "canonical": "rgba(0,0,0,0.12)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:96",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 262,
+      "selector": "#blocklyDiv .bba-trace-current .blocklyPath",
+      "property": "stroke",
+      "declarationOrdinal": 142,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f59e0b",
+      "canonical": "#f59e0b",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:97",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 265,
+      "selector": "#blocklyDiv .bba-trace-current .blocklyPath",
+      "property": "filter",
+      "declarationOrdinal": 145,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(245, 158, 11, 0.35)",
+      "canonical": "rgba(245,158,11,0.35)",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:98",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 269,
+      "selector": "#blocklyDiv .bba-trace-selected-action .blocklyPath",
+      "property": "stroke",
+      "declarationOrdinal": 146,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:99",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 271,
+      "selector": "#blocklyDiv .bba-trace-selected-action .blocklyPath",
+      "property": "filter",
+      "declarationOrdinal": 148,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.32)",
+      "canonical": "rgba(59,111,144,0.32)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:100",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 275,
+      "selector": "#blocklyDiv .bba-trace-result-true .blocklyPath",
+      "property": "stroke",
+      "declarationOrdinal": 149,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1f7a4b",
+      "canonical": "#1f7a4b",
+      "rgbTriple": [
+        31,
+        122,
+        75
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:101",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 281,
+      "selector": "#blocklyDiv .bba-trace-result-false .blocklyPath",
+      "property": "stroke",
+      "declarationOrdinal": 152,
+      "occurrenceInDeclaration": 0,
+      "raw": "#b42318",
+      "canonical": "#b42318",
+      "rgbTriple": [
+        180,
+        35,
+        24
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:102",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 289,
+      "selector": "#blocklyDiv .bba-trace-result-true-bg,\r\n#blocklyDiv .bba-trace-result-false-bg,\r\n#blocklyDiv .bba-trace-overflow-badge-bg",
+      "property": "stroke",
+      "declarationOrdinal": 155,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.92)",
+      "canonical": "rgba(255,255,255,0.92)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:103",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 294,
+      "selector": "#blocklyDiv .bba-trace-result-true-bg",
+      "property": "fill",
+      "declarationOrdinal": 157,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1f7a4b",
+      "canonical": "#1f7a4b",
+      "rgbTriple": [
+        31,
+        122,
+        75
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:104",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 298,
+      "selector": "#blocklyDiv .bba-trace-result-false-bg",
+      "property": "fill",
+      "declarationOrdinal": 158,
+      "occurrenceInDeclaration": 0,
+      "raw": "#b42318",
+      "canonical": "#b42318",
+      "rgbTriple": [
+        180,
+        35,
+        24
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:105",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 302,
+      "selector": "#blocklyDiv .bba-trace-overflow-badge",
+      "property": "color",
+      "declarationOrdinal": 159,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f59e0b",
+      "canonical": "#f59e0b",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:106",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 306,
+      "selector": "#blocklyDiv .bba-trace-overflow-badge-bg",
+      "property": "fill",
+      "declarationOrdinal": 160,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f59e0b",
+      "canonical": "#f59e0b",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:107",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 312,
+      "selector": "#blocklyDiv .bba-trace-result-true-mark,\r\n#blocklyDiv .bba-trace-result-false-mark,\r\n#blocklyDiv .bba-trace-overflow-badge-mark",
+      "property": "fill",
+      "declarationOrdinal": 161,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:108",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 327,
+      "selector": "0%",
+      "property": "filter",
+      "declarationOrdinal": 169,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(31, 122, 75, 0.32)",
+      "canonical": "rgba(31,122,75,0.32)",
+      "rgbTriple": [
+        31,
+        122,
+        75
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:109",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 332,
+      "selector": "100%",
+      "property": "filter",
+      "declarationOrdinal": 171,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(31, 122, 75, 0)",
+      "canonical": "rgba(31,122,75,0)",
+      "rgbTriple": [
+        31,
+        122,
+        75
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:110",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 339,
+      "selector": "0%",
+      "property": "filter",
+      "declarationOrdinal": 173,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(180, 35, 24, 0.32)",
+      "canonical": "rgba(180,35,24,0.32)",
+      "rgbTriple": [
+        180,
+        35,
+        24
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:111",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 344,
+      "selector": "100%",
+      "property": "filter",
+      "declarationOrdinal": 175,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(180, 35, 24, 0)",
+      "canonical": "rgba(180,35,24,0)",
+      "rgbTriple": [
+        180,
+        35,
+        24
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:112",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 360,
+      "selector": ".bba-speed-threshold-marker",
+      "property": "color",
+      "declarationOrdinal": 184,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.58)",
+      "canonical": "rgba(36,64,74,0.58)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:113",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 391,
+      "selector": "#blocklyDiv .bba-trace-current.bba-trace-result-true .blocklyPath,\r\n  #blocklyDiv .bba-trace-current.bba-trace-result-false .blocklyPath",
+      "property": "stroke",
+      "declarationOrdinal": 197,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f59e0b",
+      "canonical": "#f59e0b",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:114",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 413,
+      "selector": ".settings-separator",
+      "property": "border-top",
+      "declarationOrdinal": 208,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.12)",
+      "canonical": "rgba(36,64,74,0.12)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/blockly.css:115",
+      "file": "src/assets/styles/components/blockly.css",
+      "line": 419,
+      "selector": ".settings-modal-note",
+      "property": "color",
+      "declarationOrdinal": 211,
+      "occurrenceInDeclaration": 0,
+      "raw": "#666",
+      "canonical": "#666666",
+      "rgbTriple": [
+        102,
+        102,
+        102
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:116",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 4,
+      "selector": "#cell-inspector-tooltip",
+      "property": "background-color",
+      "declarationOrdinal": 2,
+      "occurrenceInDeclaration": 0,
+      "raw": "hsla(222, 25%, 10%, 0.95)",
+      "canonical": "hsla(222,25%,10%,0.95)",
+      "rgbTriple": null,
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:117",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 5,
+      "selector": "#cell-inspector-tooltip",
+      "property": "color",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f8fafc",
+      "canonical": "#f8fafc",
+      "rgbTriple": [
+        248,
+        250,
+        252
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:118",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 6,
+      "selector": "#cell-inspector-tooltip",
+      "property": "border",
+      "declarationOrdinal": 4,
+      "occurrenceInDeclaration": 0,
+      "raw": "hsla(217, 16%, 30%, 0.6)",
+      "canonical": "hsla(217,16%,30%,0.6)",
+      "rgbTriple": null,
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:119",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 9,
+      "selector": "#cell-inspector-tooltip",
+      "property": "box-shadow",
+      "declarationOrdinal": 7,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.45)",
+      "canonical": "rgba(0,0,0,0.45)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:120",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 30,
+      "selector": ".cell-inspector-line",
+      "property": "color",
+      "declarationOrdinal": 22,
+      "occurrenceInDeclaration": 0,
+      "raw": "#38bdf8",
+      "canonical": "#38bdf8",
+      "rgbTriple": [
+        56,
+        189,
+        248
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:121",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 36,
+      "selector": ".cell-inspector-line:not(:first-child)",
+      "property": "border-top",
+      "declarationOrdinal": 25,
+      "occurrenceInDeclaration": 0,
+      "raw": "hsla(217, 16%, 30%, 0.4)",
+      "canonical": "hsla(217,16%,30%,0.4)",
+      "rgbTriple": null,
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/cellInspector.css:122",
+      "file": "src/assets/styles/components/cellInspector.css",
+      "line": 42,
+      "selector": ".cell-inspector-subline",
+      "property": "color",
+      "declarationOrdinal": 28,
+      "occurrenceInDeclaration": 0,
+      "raw": "#e2e8f0",
+      "canonical": "#e2e8f0",
+      "rgbTriple": [
+        226,
+        232,
+        240
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:123",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 21,
+      "selector": ".app-keycap",
+      "property": "border",
+      "declarationOrdinal": 11,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.24)",
+      "canonical": "rgba(36,64,74,0.24)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:124",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 22,
+      "selector": ".app-keycap",
+      "property": "background",
+      "declarationOrdinal": 12,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffffff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:125",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 22,
+      "selector": ".app-keycap",
+      "property": "background",
+      "declarationOrdinal": 12,
+      "occurrenceInDeclaration": 1,
+      "raw": "#edf3f6",
+      "canonical": "#edf3f6",
+      "rgbTriple": [
+        237,
+        243,
+        246
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:126",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 23,
+      "selector": ".app-keycap",
+      "property": "box-shadow",
+      "declarationOrdinal": 13,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(30, 43, 51, 0.1)",
+      "canonical": "rgba(30,43,51,0.1)",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:127",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 43,
+      "selector": ".control-chip-label",
+      "property": "color",
+      "declarationOrdinal": 24,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:128",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 47,
+      "selector": ".control-chip-description",
+      "property": "color",
+      "declarationOrdinal": 25,
+      "occurrenceInDeclaration": 0,
+      "raw": "#40515a",
+      "canonical": "#40515a",
+      "rgbTriple": [
+        64,
+        81,
+        90
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:129",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 65,
+      "selector": ".control-keylabel",
+      "property": "color",
+      "declarationOrdinal": 34,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:130",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 74,
+      "selector": ".control-keycaps-pill",
+      "property": "border",
+      "declarationOrdinal": 40,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.16)",
+      "canonical": "rgba(36,64,74,0.16)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:131",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 75,
+      "selector": ".control-keycaps-pill",
+      "property": "background",
+      "declarationOrdinal": 41,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f8fbff",
+      "canonical": "#f8fbff",
+      "rgbTriple": [
+        248,
+        251,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:132",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 76,
+      "selector": ".control-keycaps-pill",
+      "property": "box-shadow",
+      "declarationOrdinal": 42,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(30, 43, 51, 0.08)",
+      "canonical": "rgba(30,43,51,0.08)",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:133",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 103,
+      "selector": ".lesson-panel-collapse-button",
+      "property": "background",
+      "declarationOrdinal": 57,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:134",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 104,
+      "selector": ".lesson-panel-collapse-button",
+      "property": "color",
+      "declarationOrdinal": 58,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:135",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 112,
+      "selector": ".lesson-panel-collapse-button:hover",
+      "property": "background",
+      "declarationOrdinal": 63,
+      "occurrenceInDeclaration": 0,
+      "raw": "#315d79",
+      "canonical": "#315d79",
+      "rgbTriple": [
+        49,
+        93,
+        121
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:136",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 143,
+      "selector": ".lesson-prediction",
+      "property": "background",
+      "declarationOrdinal": 79,
+      "occurrenceInDeclaration": 0,
+      "raw": "#eef7ff",
+      "canonical": "#eef7ff",
+      "rgbTriple": [
+        238,
+        247,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:137",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 143,
+      "selector": ".lesson-prediction",
+      "property": "background",
+      "declarationOrdinal": 79,
+      "occurrenceInDeclaration": 1,
+      "raw": "#f7fbff",
+      "canonical": "#f7fbff",
+      "rgbTriple": [
+        247,
+        251,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:138",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 144,
+      "selector": ".lesson-prediction",
+      "property": "border",
+      "declarationOrdinal": 80,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(58, 111, 144, 0.18)",
+      "canonical": "rgba(58,111,144,0.18)",
+      "rgbTriple": [
+        58,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:139",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 148,
+      "selector": ".lesson-prediction-result",
+      "property": "background",
+      "declarationOrdinal": 81,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f2fbf3",
+      "canonical": "#f2fbf3",
+      "rgbTriple": [
+        242,
+        251,
+        243
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:140",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 148,
+      "selector": ".lesson-prediction-result",
+      "property": "background",
+      "declarationOrdinal": 81,
+      "occurrenceInDeclaration": 1,
+      "raw": "#edf8ef",
+      "canonical": "#edf8ef",
+      "rgbTriple": [
+        237,
+        248,
+        239
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:141",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 149,
+      "selector": ".lesson-prediction-result",
+      "property": "border-color",
+      "declarationOrdinal": 82,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(52, 124, 78, 0.2)",
+      "canonical": "rgba(52,124,78,0.2)",
+      "rgbTriple": [
+        52,
+        124,
+        78
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:142",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 155,
+      "selector": ".lesson-prediction-label",
+      "property": "color",
+      "declarationOrdinal": 85,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:143",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 164,
+      "selector": ".lesson-prediction-affordance",
+      "property": "color",
+      "declarationOrdinal": 91,
+      "occurrenceInDeclaration": 0,
+      "raw": "#2f6f90",
+      "canonical": "#2f6f90",
+      "rgbTriple": [
+        47,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:144",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 170,
+      "selector": ".lesson-prediction-prompt",
+      "property": "color",
+      "declarationOrdinal": 94,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24363f",
+      "canonical": "#24363f",
+      "rgbTriple": [
+        36,
+        54,
+        63
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:145",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 184,
+      "selector": ".lesson-prediction-choice",
+      "property": "background",
+      "declarationOrdinal": 102,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.82)",
+      "canonical": "rgba(255,255,255,0.82)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:146",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 185,
+      "selector": ".lesson-prediction-choice",
+      "property": "border",
+      "declarationOrdinal": 103,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.12)",
+      "canonical": "rgba(36,64,74,0.12)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:147",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 194,
+      "selector": ".lesson-prediction-choice:focus-within",
+      "property": "outline",
+      "declarationOrdinal": 106,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:148",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 201,
+      "selector": ".lesson-prediction-note,\n.lesson-prediction-feedback",
+      "property": "color",
+      "declarationOrdinal": 109,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/controls.css:149",
+      "file": "src/assets/styles/components/controls.css",
+      "line": 211,
+      "selector": ".turn-log-toggle",
+      "property": "color",
+      "declarationOrdinal": 116,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:150",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 27,
+      "selector": "#canvas-container",
+      "property": "border",
+      "declarationOrdinal": 12,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:151",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 29,
+      "selector": "#canvas-container",
+      "property": "box-shadow",
+      "declarationOrdinal": 14,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.16)",
+      "canonical": "rgba(0,0,0,0.16)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:152",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 32,
+      "selector": "#canvas-container",
+      "property": "background",
+      "declarationOrdinal": 17,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:153",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 41,
+      "selector": "#instructions,\r\n#lesson-region,\r\n#blockly-region",
+      "property": "background",
+      "declarationOrdinal": 21,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.92)",
+      "canonical": "rgba(255,255,255,0.92)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:154",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 42,
+      "selector": "#instructions,\r\n#lesson-region,\r\n#blockly-region",
+      "property": "border",
+      "declarationOrdinal": 22,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.15)",
+      "canonical": "rgba(36,64,74,0.15)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:155",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 44,
+      "selector": "#instructions,\r\n#lesson-region,\r\n#blockly-region",
+      "property": "box-shadow",
+      "declarationOrdinal": 24,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.08)",
+      "canonical": "rgba(0,0,0,0.08)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:156",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 85,
+      "selector": ".board-narration-strip",
+      "property": "background",
+      "declarationOrdinal": 50,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f7fbff",
+      "canonical": "#f7fbff",
+      "rgbTriple": [
+        247,
+        251,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:157",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 85,
+      "selector": ".board-narration-strip",
+      "property": "background",
+      "declarationOrdinal": 50,
+      "occurrenceInDeclaration": 1,
+      "raw": "#edf5f8",
+      "canonical": "#edf5f8",
+      "rgbTriple": [
+        237,
+        245,
+        248
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:158",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 86,
+      "selector": ".board-narration-strip",
+      "property": "border",
+      "declarationOrdinal": 51,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.14)",
+      "canonical": "rgba(36,64,74,0.14)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:159",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 87,
+      "selector": ".board-narration-strip",
+      "property": "color",
+      "declarationOrdinal": 52,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24363f",
+      "canonical": "#24363f",
+      "rgbTriple": [
+        36,
+        54,
+        63
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:160",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 117,
+      "selector": ".area-freeze-status-chip",
+      "property": "border",
+      "declarationOrdinal": 70,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(58, 111, 144, 0.22)",
+      "canonical": "rgba(58,111,144,0.22)",
+      "rgbTriple": [
+        58,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:161",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 118,
+      "selector": ".area-freeze-status-chip",
+      "property": "background",
+      "declarationOrdinal": 71,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f5fbff",
+      "canonical": "#f5fbff",
+      "rgbTriple": [
+        245,
+        251,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:162",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 118,
+      "selector": ".area-freeze-status-chip",
+      "property": "background",
+      "declarationOrdinal": 71,
+      "occurrenceInDeclaration": 1,
+      "raw": "#e9f4fb",
+      "canonical": "#e9f4fb",
+      "rgbTriple": [
+        233,
+        244,
+        251
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:163",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 119,
+      "selector": ".area-freeze-status-chip",
+      "property": "color",
+      "declarationOrdinal": 72,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:164",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 120,
+      "selector": ".area-freeze-status-chip",
+      "property": "box-shadow",
+      "declarationOrdinal": 73,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(29, 47, 58, 0.08)",
+      "canonical": "rgba(29,47,58,0.08)",
+      "rgbTriple": [
+        29,
+        47,
+        58
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:165",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 141,
+      "selector": ".board-coaching-strip",
+      "property": "background",
+      "declarationOrdinal": 88,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fffbf0",
+      "canonical": "#fffbf0",
+      "rgbTriple": [
+        255,
+        251,
+        240
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:166",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 141,
+      "selector": ".board-coaching-strip",
+      "property": "background",
+      "declarationOrdinal": 88,
+      "occurrenceInDeclaration": 1,
+      "raw": "#fdf3d8",
+      "canonical": "#fdf3d8",
+      "rgbTriple": [
+        253,
+        243,
+        216
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:167",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 142,
+      "selector": ".board-coaching-strip",
+      "property": "border",
+      "declarationOrdinal": 89,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(160, 100, 0, 0.18)",
+      "canonical": "rgba(160,100,0,0.18)",
+      "rgbTriple": [
+        160,
+        100,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:168",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 143,
+      "selector": ".board-coaching-strip",
+      "property": "color",
+      "declarationOrdinal": 90,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3d2800",
+      "canonical": "#3d2800",
+      "rgbTriple": [
+        61,
+        40,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:169",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 166,
+      "selector": ".voice-controls-label",
+      "property": "color",
+      "declarationOrdinal": 104,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:170",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 172,
+      "selector": ".voice-controls select",
+      "property": "border",
+      "declarationOrdinal": 107,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.24)",
+      "canonical": "rgba(36,64,74,0.24)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:171",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 173,
+      "selector": ".voice-controls select",
+      "property": "background",
+      "declarationOrdinal": 108,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:172",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 209,
+      "selector": "#instructions button,\n.level-panel-header button,\n.level-mode-toggle button,\n.level-list button,\n.level-actions button",
+      "property": "background",
+      "declarationOrdinal": 128,
+      "occurrenceInDeclaration": 0,
+      "raw": "#2f7a4d",
+      "canonical": "#2f7a4d",
+      "rgbTriple": [
+        47,
+        122,
+        77
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:173",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 210,
+      "selector": "#instructions button,\n.level-panel-header button,\n.level-mode-toggle button,\n.level-list button,\n.level-actions button",
+      "property": "color",
+      "declarationOrdinal": 129,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/layout.css:174",
+      "file": "src/assets/styles/components/layout.css",
+      "line": 220,
+      "selector": "#instructions button:hover,\r\n.level-panel-header button:hover,\r\n.level-mode-toggle button:hover,\r\n.level-list button:hover,\r\n.level-actions button:hover",
+      "property": "background",
+      "declarationOrdinal": 132,
+      "occurrenceInDeclaration": 0,
+      "raw": "#25663f",
+      "canonical": "#25663f",
+      "rgbTriple": [
+        37,
+        102,
+        63
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:175",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 6,
+      "selector": "#level-panel",
+      "property": "background",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fbf9ef",
+      "canonical": "#fbf9ef",
+      "rgbTriple": [
+        251,
+        249,
+        239
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:176",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 6,
+      "selector": "#level-panel",
+      "property": "background",
+      "declarationOrdinal": 3,
+      "occurrenceInDeclaration": 1,
+      "raw": "#eef6fa",
+      "canonical": "#eef6fa",
+      "rgbTriple": [
+        238,
+        246,
+        250
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:177",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 7,
+      "selector": "#level-panel",
+      "property": "border",
+      "declarationOrdinal": 4,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.14)",
+      "canonical": "rgba(36,64,74,0.14)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:178",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 39,
+      "selector": ".level-picker-trigger",
+      "property": "background",
+      "declarationOrdinal": 20,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:179",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 56,
+      "selector": ".level-picker-popover",
+      "property": "background",
+      "declarationOrdinal": 30,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fffdf7",
+      "canonical": "#fffdf7",
+      "rgbTriple": [
+        255,
+        253,
+        247
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:180",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 57,
+      "selector": ".level-picker-popover",
+      "property": "border",
+      "declarationOrdinal": 31,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.18)",
+      "canonical": "rgba(36,64,74,0.18)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:181",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 58,
+      "selector": ".level-picker-popover",
+      "property": "box-shadow",
+      "declarationOrdinal": 32,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.14)",
+      "canonical": "rgba(0,0,0,0.14)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:182",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 69,
+      "selector": ".level-picker-item",
+      "property": "background",
+      "declarationOrdinal": 40,
+      "occurrenceInDeclaration": 0,
+      "raw": "#2f7a4d",
+      "canonical": "#2f7a4d",
+      "rgbTriple": [
+        47,
+        122,
+        77
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:183",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 78,
+      "selector": ".level-picker-item-current",
+      "property": "background",
+      "declarationOrdinal": 43,
+      "occurrenceInDeclaration": 0,
+      "raw": "#b85f3c",
+      "canonical": "#b85f3c",
+      "rgbTriple": [
+        184,
+        95,
+        60
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:184",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 98,
+      "selector": ".level-picker-stars",
+      "property": "color",
+      "declarationOrdinal": 54,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f59e0b",
+      "canonical": "#f59e0b",
+      "rgbTriple": [
+        245,
+        158,
+        11
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:185",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 119,
+      "selector": ".level-intro",
+      "property": "background",
+      "declarationOrdinal": 63,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(58, 125, 99, 0.1)",
+      "canonical": "rgba(58,125,99,0.1)",
+      "rgbTriple": [
+        58,
+        125,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:186",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 136,
+      "selector": ".level-kind-badge",
+      "property": "border",
+      "declarationOrdinal": 74,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(173, 124, 13, 0.3)",
+      "canonical": "rgba(173,124,13,0.3)",
+      "rgbTriple": [
+        173,
+        124,
+        13
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:187",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 137,
+      "selector": ".level-kind-badge",
+      "property": "background",
+      "declarationOrdinal": 75,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(247, 225, 176, 0.9)",
+      "canonical": "rgba(247,225,176,0.9)",
+      "rgbTriple": [
+        247,
+        225,
+        176
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:188",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 138,
+      "selector": ".level-kind-badge",
+      "property": "color",
+      "declarationOrdinal": 76,
+      "occurrenceInDeclaration": 0,
+      "raw": "#6c4c08",
+      "canonical": "#6c4c08",
+      "rgbTriple": [
+        108,
+        76,
+        8
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:189",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 147,
+      "selector": ".level-kind-badge-project",
+      "property": "border-color",
+      "declarationOrdinal": 82,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(61, 108, 156, 0.3)",
+      "canonical": "rgba(61,108,156,0.3)",
+      "rgbTriple": [
+        61,
+        108,
+        156
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:190",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 148,
+      "selector": ".level-kind-badge-project",
+      "property": "background",
+      "declarationOrdinal": 83,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(213, 231, 246, 0.95)",
+      "canonical": "rgba(213,231,246,0.95)",
+      "rgbTriple": [
+        213,
+        231,
+        246
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:191",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 149,
+      "selector": ".level-kind-badge-project",
+      "property": "color",
+      "declarationOrdinal": 84,
+      "occurrenceInDeclaration": 0,
+      "raw": "#244c70",
+      "canonical": "#244c70",
+      "rgbTriple": [
+        36,
+        76,
+        112
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:192",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 155,
+      "selector": ".lesson-challenge-callout",
+      "property": "background",
+      "declarationOrdinal": 87,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(250, 236, 193, 0.95)",
+      "canonical": "rgba(250,236,193,0.95)",
+      "rgbTriple": [
+        250,
+        236,
+        193
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:193",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 155,
+      "selector": ".lesson-challenge-callout",
+      "property": "background",
+      "declarationOrdinal": 87,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(244, 228, 171, 0.92)",
+      "canonical": "rgba(244,228,171,0.92)",
+      "rgbTriple": [
+        244,
+        228,
+        171
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:194",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 156,
+      "selector": ".lesson-challenge-callout",
+      "property": "border",
+      "declarationOrdinal": 88,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(173, 124, 13, 0.24)",
+      "canonical": "rgba(173,124,13,0.24)",
+      "rgbTriple": [
+        173,
+        124,
+        13
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:195",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 157,
+      "selector": ".lesson-challenge-callout",
+      "property": "color",
+      "declarationOrdinal": 89,
+      "occurrenceInDeclaration": 0,
+      "raw": "#5d480f",
+      "canonical": "#5d480f",
+      "rgbTriple": [
+        93,
+        72,
+        15
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:196",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 165,
+      "selector": ".lesson-project-indicator,\r\n.lesson-project-start-callout,\r\n.lesson-project-state-note",
+      "property": "border",
+      "declarationOrdinal": 92,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(61, 108, 156, 0.18)",
+      "canonical": "rgba(61,108,156,0.18)",
+      "rgbTriple": [
+        61,
+        108,
+        156
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:197",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 166,
+      "selector": ".lesson-project-indicator,\r\n.lesson-project-start-callout,\r\n.lesson-project-state-note",
+      "property": "background",
+      "declarationOrdinal": 93,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(232, 242, 250, 0.82)",
+      "canonical": "rgba(232,242,250,0.82)",
+      "rgbTriple": [
+        232,
+        242,
+        250
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:198",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 167,
+      "selector": ".lesson-project-indicator,\r\n.lesson-project-start-callout,\r\n.lesson-project-state-note",
+      "property": "color",
+      "declarationOrdinal": 94,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:199",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 184,
+      "selector": ".lesson-project-indicator-label,\r\n.lesson-project-start-callout-label,\r\n.lesson-project-state-note-label",
+      "property": "color",
+      "declarationOrdinal": 98,
+      "occurrenceInDeclaration": 0,
+      "raw": "#214b6c",
+      "canonical": "#214b6c",
+      "rgbTriple": [
+        33,
+        75,
+        108
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:200",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 188,
+      "selector": ".lesson-project-start-callout",
+      "property": "background",
+      "declarationOrdinal": 99,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(241, 248, 254, 0.98)",
+      "canonical": "rgba(241,248,254,0.98)",
+      "rgbTriple": [
+        241,
+        248,
+        254
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:201",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 188,
+      "selector": ".lesson-project-start-callout",
+      "property": "background",
+      "declarationOrdinal": 99,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(223, 237, 249, 0.94)",
+      "canonical": "rgba(223,237,249,0.94)",
+      "rgbTriple": [
+        223,
+        237,
+        249
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:202",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 192,
+      "selector": ".lesson-project-state-note",
+      "property": "border-color",
+      "declarationOrdinal": 100,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(184, 95, 60, 0.18)",
+      "canonical": "rgba(184,95,60,0.18)",
+      "rgbTriple": [
+        184,
+        95,
+        60
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:203",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 193,
+      "selector": ".lesson-project-state-note",
+      "property": "background",
+      "declarationOrdinal": 101,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(253, 239, 225, 0.78)",
+      "canonical": "rgba(253,239,225,0.78)",
+      "rgbTriple": [
+        253,
+        239,
+        225
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:204",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 194,
+      "selector": ".lesson-project-state-note",
+      "property": "color",
+      "declarationOrdinal": 102,
+      "occurrenceInDeclaration": 0,
+      "raw": "#63311d",
+      "canonical": "#63311d",
+      "rgbTriple": [
+        99,
+        49,
+        29
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:205",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 198,
+      "selector": ".lesson-project-state-note-label",
+      "property": "color",
+      "declarationOrdinal": 103,
+      "occurrenceInDeclaration": 0,
+      "raw": "#8c3d22",
+      "canonical": "#8c3d22",
+      "rgbTriple": [
+        140,
+        61,
+        34
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:206",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 213,
+      "selector": ".blockly-project-callout",
+      "property": "border",
+      "declarationOrdinal": 112,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(61, 108, 156, 0.18)",
+      "canonical": "rgba(61,108,156,0.18)",
+      "rgbTriple": [
+        61,
+        108,
+        156
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:207",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 214,
+      "selector": ".blockly-project-callout",
+      "property": "background",
+      "declarationOrdinal": 113,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(243, 248, 253, 0.98)",
+      "canonical": "rgba(243,248,253,0.98)",
+      "rgbTriple": [
+        243,
+        248,
+        253
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:208",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 214,
+      "selector": ".blockly-project-callout",
+      "property": "background",
+      "declarationOrdinal": 113,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(229, 239, 248, 0.95)",
+      "canonical": "rgba(229,239,248,0.95)",
+      "rgbTriple": [
+        229,
+        239,
+        248
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:209",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 215,
+      "selector": ".blockly-project-callout",
+      "property": "color",
+      "declarationOrdinal": 114,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:210",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 231,
+      "selector": ".blockly-project-callout-badge",
+      "property": "background",
+      "declarationOrdinal": 124,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(213, 231, 246, 0.95)",
+      "canonical": "rgba(213,231,246,0.95)",
+      "rgbTriple": [
+        213,
+        231,
+        246
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:211",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 232,
+      "selector": ".blockly-project-callout-badge",
+      "property": "color",
+      "declarationOrdinal": 125,
+      "occurrenceInDeclaration": 0,
+      "raw": "#244c70",
+      "canonical": "#244c70",
+      "rgbTriple": [
+        36,
+        76,
+        112
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:212",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 250,
+      "selector": ".blockly-project-callout-dismiss",
+      "property": "background",
+      "declarationOrdinal": 137,
+      "occurrenceInDeclaration": 0,
+      "raw": "#3b6f90",
+      "canonical": "#3b6f90",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:213",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 251,
+      "selector": ".blockly-project-callout-dismiss",
+      "property": "color",
+      "declarationOrdinal": 138,
+      "occurrenceInDeclaration": 0,
+      "raw": "white",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:214",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 256,
+      "selector": ".blockly-project-callout-dismiss:hover",
+      "property": "background",
+      "declarationOrdinal": 140,
+      "occurrenceInDeclaration": 0,
+      "raw": "#2f5c79",
+      "canonical": "#2f5c79",
+      "rgbTriple": [
+        47,
+        92,
+        121
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:215",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 290,
+      "selector": ".lesson-status-pill,\r\n.lesson-mode-pill",
+      "property": "background",
+      "declarationOrdinal": 157,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(59, 111, 144, 0.12)",
+      "canonical": "rgba(59,111,144,0.12)",
+      "rgbTriple": [
+        59,
+        111,
+        144
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:216",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 291,
+      "selector": ".lesson-status-pill,\r\n.lesson-mode-pill",
+      "property": "color",
+      "declarationOrdinal": 158,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:217",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 314,
+      "selector": ".lesson-legend-title",
+      "property": "color",
+      "declarationOrdinal": 169,
+      "occurrenceInDeclaration": 0,
+      "raw": "#40515a",
+      "canonical": "#40515a",
+      "rgbTriple": [
+        64,
+        81,
+        90
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:218",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 329,
+      "selector": ".lesson-legend-item",
+      "property": "background",
+      "declarationOrdinal": 178,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.78)",
+      "canonical": "rgba(255,255,255,0.78)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:219",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 330,
+      "selector": ".lesson-legend-item",
+      "property": "border",
+      "declarationOrdinal": 179,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.1)",
+      "canonical": "rgba(36,64,74,0.1)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:220",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 341,
+      "selector": ".lesson-target-icon",
+      "property": "color",
+      "declarationOrdinal": 184,
+      "occurrenceInDeclaration": 0,
+      "raw": "#008cff",
+      "canonical": "#008cff",
+      "rgbTriple": [
+        0,
+        140,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:221",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 352,
+      "selector": ".lesson-target-icon rect",
+      "property": "fill",
+      "declarationOrdinal": 188,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 140, 255, 0.08)",
+      "canonical": "rgba(0,140,255,0.08)",
+      "rgbTriple": [
+        0,
+        140,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:222",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 356,
+      "selector": ".lesson-target-icon circle",
+      "property": "fill",
+      "declarationOrdinal": 189,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:223",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 366,
+      "selector": ".lesson-legend-description",
+      "property": "color",
+      "declarationOrdinal": 193,
+      "occurrenceInDeclaration": 0,
+      "raw": "#485963",
+      "canonical": "#485963",
+      "rgbTriple": [
+        72,
+        89,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:224",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 373,
+      "selector": ".lesson-alert",
+      "property": "background",
+      "declarationOrdinal": 197,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(184, 95, 60, 0.09)",
+      "canonical": "rgba(184,95,60,0.09)",
+      "rgbTriple": [
+        184,
+        95,
+        60
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:225",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 374,
+      "selector": ".lesson-alert",
+      "property": "border",
+      "declarationOrdinal": 198,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(184, 95, 60, 0.16)",
+      "canonical": "rgba(184,95,60,0.16)",
+      "rgbTriple": [
+        184,
+        95,
+        60
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:226",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 375,
+      "selector": ".lesson-alert",
+      "property": "color",
+      "declarationOrdinal": 199,
+      "occurrenceInDeclaration": 0,
+      "raw": "#63311d",
+      "canonical": "#63311d",
+      "rgbTriple": [
+        99,
+        49,
+        29
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:227",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 380,
+      "selector": ".lesson-disclosure",
+      "property": "border",
+      "declarationOrdinal": 201,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.12)",
+      "canonical": "rgba(36,64,74,0.12)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:228",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 381,
+      "selector": ".lesson-disclosure",
+      "property": "background",
+      "declarationOrdinal": 202,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(255, 255, 255, 0.7)",
+      "canonical": "rgba(255,255,255,0.7)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:229",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 397,
+      "selector": ".lesson-inline-list",
+      "property": "color",
+      "declarationOrdinal": 209,
+      "occurrenceInDeclaration": 0,
+      "raw": "#40515a",
+      "canonical": "#40515a",
+      "rgbTriple": [
+        64,
+        81,
+        90
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:230",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 401,
+      "selector": ".lesson-inline-list strong",
+      "property": "color",
+      "declarationOrdinal": 210,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1e2b33",
+      "canonical": "#1e2b33",
+      "rgbTriple": [
+        30,
+        43,
+        51
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:231",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 415,
+      "selector": ".lesson-support-note",
+      "property": "color",
+      "declarationOrdinal": 215,
+      "occurrenceInDeclaration": 0,
+      "raw": "#4c5a63",
+      "canonical": "#4c5a63",
+      "rgbTriple": [
+        76,
+        90,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:232",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 444,
+      "selector": ".level-result.success",
+      "property": "background",
+      "declarationOrdinal": 229,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(47, 122, 77, 0.12)",
+      "canonical": "rgba(47,122,77,0.12)",
+      "rgbTriple": [
+        47,
+        122,
+        77
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:233",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 445,
+      "selector": ".level-result.success",
+      "property": "color",
+      "declarationOrdinal": 230,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1e6b3d",
+      "canonical": "#1e6b3d",
+      "rgbTriple": [
+        30,
+        107,
+        61
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:234",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 449,
+      "selector": ".level-result.failure",
+      "property": "background",
+      "declarationOrdinal": 231,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(184, 95, 60, 0.12)",
+      "canonical": "rgba(184,95,60,0.12)",
+      "rgbTriple": [
+        184,
+        95,
+        60
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:235",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 450,
+      "selector": ".level-result.failure",
+      "property": "color",
+      "declarationOrdinal": 232,
+      "occurrenceInDeclaration": 0,
+      "raw": "#8c3d22",
+      "canonical": "#8c3d22",
+      "rgbTriple": [
+        140,
+        61,
+        34
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:236",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 463,
+      "selector": ".worksheet-checkpoint-marker",
+      "property": "background",
+      "declarationOrdinal": 239,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(30, 107, 61, 0.16)",
+      "canonical": "rgba(30,107,61,0.16)",
+      "rgbTriple": [
+        30,
+        107,
+        61
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:237",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 473,
+      "selector": ".lesson-worksheet-reminder",
+      "property": "border",
+      "declarationOrdinal": 246,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(61, 108, 156, 0.22)",
+      "canonical": "rgba(61,108,156,0.22)",
+      "rgbTriple": [
+        61,
+        108,
+        156
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:238",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 474,
+      "selector": ".lesson-worksheet-reminder",
+      "property": "background",
+      "declarationOrdinal": 247,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(232, 242, 250, 0.9)",
+      "canonical": "rgba(232,242,250,0.9)",
+      "rgbTriple": [
+        232,
+        242,
+        250
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:239",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 475,
+      "selector": ".lesson-worksheet-reminder",
+      "property": "color",
+      "declarationOrdinal": 248,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/lesson-panel.css:240",
+      "file": "src/assets/styles/components/lesson-panel.css",
+      "line": 489,
+      "selector": ".lesson-worksheet-reminder-label",
+      "property": "color",
+      "declarationOrdinal": 256,
+      "occurrenceInDeclaration": 0,
+      "raw": "#214b6c",
+      "canonical": "#214b6c",
+      "rgbTriple": [
+        33,
+        75,
+        108
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:241",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 13,
+      "selector": ".panel-loading-card",
+      "property": "background",
+      "declarationOrdinal": 9,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(241, 247, 251, 0.95)",
+      "canonical": "rgba(241,247,251,0.95)",
+      "rgbTriple": [
+        241,
+        247,
+        251
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:242",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 13,
+      "selector": ".panel-loading-card",
+      "property": "background",
+      "declarationOrdinal": 9,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(255, 250, 239, 0.95)",
+      "canonical": "rgba(255,250,239,0.95)",
+      "rgbTriple": [
+        255,
+        250,
+        239
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:243",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 14,
+      "selector": ".panel-loading-card",
+      "property": "color",
+      "declarationOrdinal": 10,
+      "occurrenceInDeclaration": 0,
+      "raw": "#24404a",
+      "canonical": "#24404a",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:244",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 22,
+      "selector": ".panel-loading-card::after",
+      "property": "background",
+      "declarationOrdinal": 15,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:245",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 22,
+      "selector": ".panel-loading-card::after",
+      "property": "background",
+      "declarationOrdinal": 15,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(255, 255, 255, 0.32)",
+      "canonical": "rgba(255,255,255,0.32)",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:246",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 22,
+      "selector": ".panel-loading-card::after",
+      "property": "background",
+      "declarationOrdinal": 15,
+      "occurrenceInDeclaration": 2,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:247",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 36,
+      "selector": ".panel-loading-card-program",
+      "property": "border",
+      "declarationOrdinal": 22,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.12)",
+      "canonical": "rgba(36,64,74,0.12)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:248",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 47,
+      "selector": ".panel-loading-error",
+      "property": "color",
+      "declarationOrdinal": 27,
+      "occurrenceInDeclaration": 0,
+      "raw": "#8c3d22",
+      "canonical": "#8c3d22",
+      "rgbTriple": [
+        140,
+        61,
+        34
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:249",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.08)",
+      "canonical": "rgba(36,64,74,0.08)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:250",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 1,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:251",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 2,
+      "raw": "rgba(36, 64, 74, 0.08)",
+      "canonical": "rgba(36,64,74,0.08)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:252",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 3,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:253",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 4,
+      "raw": "rgba(151, 196, 224, 0.24)",
+      "canonical": "rgba(151,196,224,0.24)",
+      "rgbTriple": [
+        151,
+        196,
+        224
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:254",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 57,
+      "selector": ".panel-loading-grid",
+      "property": "background",
+      "declarationOrdinal": 33,
+      "occurrenceInDeclaration": 5,
+      "raw": "rgba(255, 203, 92, 0.18)",
+      "canonical": "rgba(255,203,92,0.18)",
+      "rgbTriple": [
+        255,
+        203,
+        92
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:255",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 61,
+      "selector": ".panel-loading-grid",
+      "property": "box-shadow",
+      "declarationOrdinal": 35,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.08)",
+      "canonical": "rgba(36,64,74,0.08)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:256",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 74,
+      "selector": ".panel-loading-block",
+      "property": "background",
+      "declarationOrdinal": 42,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(96, 124, 197, 0.72)",
+      "canonical": "rgba(96,124,197,0.72)",
+      "rgbTriple": [
+        96,
+        124,
+        197
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:257",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 74,
+      "selector": ".panel-loading-block",
+      "property": "background",
+      "declarationOrdinal": 42,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(135, 161, 221, 0.92)",
+      "canonical": "rgba(135,161,221,0.92)",
+      "rgbTriple": [
+        135,
+        161,
+        221
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/loading.css:258",
+      "file": "src/assets/styles/components/loading.css",
+      "line": 75,
+      "selector": ".panel-loading-block",
+      "property": "box-shadow",
+      "declarationOrdinal": 43,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(58, 83, 132, 0.14)",
+      "canonical": "rgba(58,83,132,0.14)",
+      "rgbTriple": [
+        58,
+        83,
+        132
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:259",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 35,
+      "selector": ".goal-burst-halo",
+      "property": "background",
+      "declarationOrdinal": 18,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.7)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:260",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 35,
+      "selector": ".goal-burst-halo",
+      "property": "background",
+      "declarationOrdinal": 18,
+      "occurrenceInDeclaration": 1,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.32)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:261",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 35,
+      "selector": ".goal-burst-halo",
+      "property": "background",
+      "declarationOrdinal": 18,
+      "occurrenceInDeclaration": 2,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:262",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 46,
+      "selector": ".goal-burst-ring",
+      "property": "border",
+      "declarationOrdinal": 21,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-stroke-r), var(--burst-stroke-g), var(--burst-stroke-b), 0.95)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:263",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 47,
+      "selector": ".goal-burst-ring",
+      "property": "box-shadow",
+      "declarationOrdinal": 22,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.42)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:264",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 72,
+      "selector": ".goal-burst-particle",
+      "property": "background",
+      "declarationOrdinal": 35,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.96)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:265",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 73,
+      "selector": ".goal-burst-particle",
+      "property": "border",
+      "declarationOrdinal": 36,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-stroke-r), var(--burst-stroke-g), var(--burst-stroke-b), 0.95)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:266",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 74,
+      "selector": ".goal-burst-particle",
+      "property": "box-shadow",
+      "declarationOrdinal": 37,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(var(--burst-fill-r), var(--burst-fill-g), var(--burst-fill-b), 0.65)",
+      "canonical": null,
+      "rgbTriple": null,
+      "nature": "dynamic"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:267",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 152,
+      "selector": ".tutorial-scrim",
+      "property": "background",
+      "declarationOrdinal": 63,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(12, 20, 28, 0.64)",
+      "canonical": "rgba(12,20,28,0.64)",
+      "rgbTriple": [
+        12,
+        20,
+        28
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:268",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 159,
+      "selector": ".tutorial-spotlight",
+      "property": "border",
+      "declarationOrdinal": 67,
+      "occurrenceInDeclaration": 0,
+      "raw": "#ffe48c",
+      "canonical": "#ffe48c",
+      "rgbTriple": [
+        255,
+        228,
+        140
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:269",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 161,
+      "selector": ".tutorial-spotlight",
+      "property": "box-shadow",
+      "declarationOrdinal": 69,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(12, 20, 28, 0.28)",
+      "canonical": "rgba(12,20,28,0.28)",
+      "rgbTriple": [
+        12,
+        20,
+        28
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:270",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 172,
+      "selector": ".tutorial-card",
+      "property": "background",
+      "declarationOrdinal": 77,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fffdf7",
+      "canonical": "#fffdf7",
+      "rgbTriple": [
+        255,
+        253,
+        247
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:271",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 173,
+      "selector": ".tutorial-card",
+      "property": "color",
+      "declarationOrdinal": 78,
+      "occurrenceInDeclaration": 0,
+      "raw": "#1f2a30",
+      "canonical": "#1f2a30",
+      "rgbTriple": [
+        31,
+        42,
+        48
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:272",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 174,
+      "selector": ".tutorial-card",
+      "property": "box-shadow",
+      "declarationOrdinal": 79,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(0, 0, 0, 0.28)",
+      "canonical": "rgba(0,0,0,0.28)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:273",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 207,
+      "selector": ".tutorial-visual-item",
+      "property": "background",
+      "declarationOrdinal": 97,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(247, 243, 230, 0.9)",
+      "canonical": "rgba(247,243,230,0.9)",
+      "rgbTriple": [
+        247,
+        243,
+        230
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:274",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 208,
+      "selector": ".tutorial-visual-item",
+      "property": "border",
+      "declarationOrdinal": 98,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.1)",
+      "canonical": "rgba(36,64,74,0.1)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:275",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 223,
+      "selector": ".tutorial-visual-description",
+      "property": "color",
+      "declarationOrdinal": 104,
+      "occurrenceInDeclaration": 0,
+      "raw": "#4c5a63",
+      "canonical": "#4c5a63",
+      "rgbTriple": [
+        76,
+        90,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:276",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 230,
+      "selector": ".tutorial-step-count",
+      "property": "color",
+      "declarationOrdinal": 108,
+      "occurrenceInDeclaration": 0,
+      "raw": "#51606b",
+      "canonical": "#51606b",
+      "rgbTriple": [
+        81,
+        96,
+        107
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:277",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 244,
+      "selector": ".tutorial-demo",
+      "property": "background",
+      "declarationOrdinal": 116,
+      "occurrenceInDeclaration": 0,
+      "raw": "#f7f3e6",
+      "canonical": "#f7f3e6",
+      "rgbTriple": [
+        247,
+        243,
+        230
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:278",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 245,
+      "selector": ".tutorial-demo",
+      "property": "border",
+      "declarationOrdinal": 117,
+      "occurrenceInDeclaration": 0,
+      "raw": "rgba(36, 64, 74, 0.14)",
+      "canonical": "rgba(36,64,74,0.14)",
+      "rgbTriple": [
+        36,
+        64,
+        74
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:279",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 261,
+      "selector": ".tutorial-demo-caption",
+      "property": "color",
+      "declarationOrdinal": 123,
+      "occurrenceInDeclaration": 0,
+      "raw": "#4c5a63",
+      "canonical": "#4c5a63",
+      "rgbTriple": [
+        76,
+        90,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:280",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 268,
+      "selector": ".tutorial-demo-blockly",
+      "property": "background",
+      "declarationOrdinal": 127,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:281",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 281,
+      "selector": ".tutorial-mode-chooser-note",
+      "property": "color",
+      "declarationOrdinal": 131,
+      "occurrenceInDeclaration": 0,
+      "raw": "#4c5a63",
+      "canonical": "#4c5a63",
+      "rgbTriple": [
+        76,
+        90,
+        99
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/overlays.css:282",
+      "file": "src/assets/styles/components/overlays.css",
+      "line": 311,
+      "selector": ".tutorial-demo-loading",
+      "property": "color",
+      "declarationOrdinal": 149,
+      "occurrenceInDeclaration": 0,
+      "raw": "#51606b",
+      "canonical": "#51606b",
+      "rgbTriple": [
+        81,
+        96,
+        107
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "src/assets/styles/components/responsive.css:283",
+      "file": "src/assets/styles/components/responsive.css",
+      "line": 61,
+      "selector": "#game-container.lesson-panel-collapsed #level-panel",
+      "property": "background",
+      "declarationOrdinal": 20,
+      "occurrenceInDeclaration": 0,
+      "raw": "transparent",
+      "canonical": "rgba(0,0,0,0)",
+      "rgbTriple": [
+        0,
+        0,
+        0
+      ],
+      "nature": "static"
+    },
+    {
+      "id": "index.html:284",
+      "file": "index.html",
+      "line": 75,
+      "selector": "inline-style",
+      "property": "background-color",
+      "declarationOrdinal": 0,
+      "occurrenceInDeclaration": 0,
+      "raw": "#fff",
+      "canonical": "#ffffff",
+      "rgbTriple": [
+        255,
+        255,
+        255
+      ],
+      "nature": "static"
+    }
+  ]
+}
