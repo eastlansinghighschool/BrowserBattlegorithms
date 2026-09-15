@@ -1,5 +1,6 @@
 {
   "version": 3,
+  "notes": "Matching guidance for all entries (added 2026-09-15): advisor capability is a property of the provider's tool surface — can this thread launch a higher-tier read-only subagent? — not of the harness's current display name. Read every entry below as naming its capability evidence alongside its environment label. A thread that can no longer name-match because its harness renamed itself should declare its capability evidence rather than defaulting to a Branch C degraded mode.",
   "providers": [
     {
       "id": "claude-code",
@@ -17,7 +18,7 @@
       "advisorCapable": true,
       "spawnMechanism": "call-site tier override on an existing read-only role (e.g. agent_type: \"reviewer\", a requested higher-tier model)",
       "structuralReadOnlyVerifiable": false,
-      "notes": "Plan-19 Codex arm: effective sandbox reported workspace-write despite a read-only request. Treat as instruction-read-only with mandatory compensating controls (see the advisor-consultation block), never as structurally enforced. Self-identification is also tier-generic on this provider (does not discriminate the requested tier) — this is the concrete case behind the implementer variant's fail-closed self-identification rule.",
+      "notes": "Plan-19 Codex arm: effective sandbox reported workspace-write despite a read-only request. Treat as instruction-read-only with mandatory compensating controls (see the advisor-consultation block), never as structurally enforced. Self-identification is also tier-generic on this provider (does not discriminate the requested tier) — this is the concrete case behind the implementer variant's fail-closed self-identification rule. Identity drift (accepted 2026-09-15 from an ExcelTutoring reverse-flow proposal): this provider's desktop host has rebranded at least once — the ChatGPT Desktop app hosting Codex agents changed its reported name relative to the recorded sandbox entry — and threads key their self-match on the harness's displayed identity, which manufactured false Branch C (orchestrator-gate-only) degradations on threads that could in fact launch advisors. A thread hosted in a renamed harness must NOT fail closed on a name mismatch alone: if a callable subagent/agent tool is present in the surface, treat the thread as advisor-capable and declare that evidence (\"a subagent tool is present and callable in this surface\") instead of pattern-matching its own name. Harness renames are expected and, alone, are not evidence of capability loss.",
       "sourcePacket": "plan-19"
     },
     {

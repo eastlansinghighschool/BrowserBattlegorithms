@@ -55,7 +55,7 @@
     {
       "capability": "advisor-consultation",
       "state": "adopted",
-      "capabilityVersion": "1.0.2"
+      "capabilityVersion": "1.0.3"
     },
     {
       "capability": "commit-discipline",
