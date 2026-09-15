@@ -28,4 +28,4 @@ Refreshed 2026-09-10 (second pass). The `star-evaluation-campaign.test.js` degen
 
 ## Sequencing not yet chosen
 
-- **The `plan-123` downstream slate after P1.** P1 is written and dispatched as `plan-126`. P2 (skin registry and the V13 contact sheet), P3 (light/dark), and P4 (animation options) are unwritten, and their order against `plan-125` and the Stage 1 work is not settled. P3 depends on P1. P5 (sprites) remains gated by the charter.
+- **The `plan-123` downstream slate after the structural half.** P1 shipped as `plan-126`, and `plan-127` is now doing the same job for the DOM, so both decision-independent halves of P3's groundwork will be done. What remains needs owner input rather than sequencing: **P2** (skin registry plus the V13 contact sheet) needs the three curated sets chosen — which animals, which robots, which symbols — before it can be written; **P3** (light/dark proper) needs a dark palette to review and Blockly's theme to be specified, and it is the charter's hardest item; **P4** (animation options) is small and independent. P5 (sprites) remains gated by the charter.
