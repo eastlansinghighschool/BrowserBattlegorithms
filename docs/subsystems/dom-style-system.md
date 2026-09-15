@@ -51,6 +51,13 @@ naming is the narrower Amendment 01 exception.
 - The runtime-injected `--burst-*` and `--particle-*` properties are animation parameters, not
   palette tokens. They remain JavaScript-provided and unchanged.
 - `currentColor` remains an inheritance reference and is not replaced by a channel primitive.
+- **Any stylesheet that references a channel primitive must be reachable only from an entry point
+  that imports `channel-tokens.css`.** This is a failure mode the token layer introduces and the
+  literals did not have: an unresolved `var()` makes the whole declaration invalid at computed-value
+  time, so the property silently falls back to inherited or initial rather than to the intended
+  colour. Today `index.html` gets it through `style.css` and `help.html` through `help.css`, while
+  `admin.html` and `workbench.html` load fully independent stylesheets that reference no primitives.
+  A new entry point, or a new stylesheet pulled into an existing one, must preserve that property.
 
 The baseline and wiring test in `tests/fixtures/css-palette-baseline.json` and
 `tests/unit/css-palette.test.js` are the evidence surface for preserving the original value at
