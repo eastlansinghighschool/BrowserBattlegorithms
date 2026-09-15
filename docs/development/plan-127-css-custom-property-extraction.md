@@ -126,6 +126,91 @@ shift.
 revert, and quote the failure message in the report. A test not demonstrated to fail on the defect
 it exists to catch has not been shown to work.
 
+## Amendment 01 (2026-09-15) — the token model, after the survey gate
+
+**The stop was correct and the stop condition worked as designed.** The survey is accepted as
+delivered: 276 static occurrences, 159 distinct canonical values, 17 near-duplicate pairs, none
+merged, the 8 runtime `rgba(var(--burst-*))` expressions correctly excluded, and three `hsla()`
+values in `cellInspector.css` that the orchestrator's own survey had missed. The figures reconcile
+exactly with the orchestrator's original count — 252 was 244 static plus the 8 dynamic — so the
+method is sound.
+
+**But 159 is the wrong number to have stopped on, and that is the orchestrator's error, not the
+implementer's.** This packet defined canonicalisation to treat alpha as part of colour identity —
+correct, and necessary for the zero-visual-change rule — and then used the resulting count as a
+proxy for *palette size*. Those are different quantities. Re-measuring the same data by RGB triple:
+
+| Measure | Count |
+|---|---|
+| Static occurrences | 276 |
+| Distinct canonical values (alpha significant) | 159 |
+| **Distinct RGB triples (alpha ignored)** | **100** |
+| **RGB triples used in 2 or more files** | **21** |
+| RGB triples occurring exactly once | 60 |
+| Non-RGB distinct values (3 `hsla()`) | 3 |
+
+The inflation is almost entirely one brand colour appearing at many opacities:
+
+| Colour | Occurrences | Distinct alphas | Files |
+|---|---|---|---|
+| `#24404a` | 41 | **10** | 7 |
+| `#ffffff` | 36 | **12** | 8 |
+| `#000000` | 22 | 9 | 9 |
+| `#3b6f90` | 16 | 3 | 4 |
+| `#1e2b33` | 7 | 3 | 5 |
+
+Those five account for **122 of 276 occurrences**. The top 20 RGB triples cover 63%.
+
+So there is a coherent small palette here after all; it was hidden because `rgba(36,64,74,0.12)`
+and `rgba(36,64,74,0.24)` counted as two unrelated colours when they are one colour at two
+opacities — which is exactly how the stylesheets already treat them.
+
+### The revised model
+
+**1. Base tokens are channel triples, not colours.** Declare the cross-file RGB triples as
+space-separated channels so alpha composes at the call site:
+
+```css
+:root { --c-slate: 36 64 74; }
+/* rgba(36,64,74,.12)  ->  rgb(var(--c-slate) / .12) */
+/* #24404a             ->  rgb(var(--c-slate))       */
+```
+
+One token replaces `#24404a` and its ten alpha variants, and the alpha stays visible at the call
+site where the author put it. Scope the base layer to the **21 triples used in two or more files**.
+That is a legible layer, and it is the right 21: a colour used across files is precisely the kind
+that has to flip for a dark theme, which is what this seam exists for.
+
+**2. The long tail is left alone, deliberately.** Sixty triples occur exactly once, and 130 of the
+159 canonical values live in a single file. They have no cross-cutting role, naming them by role
+would mean inventing roles, and tokenising them is what would produce the illegible layer the stop
+condition exists to prevent. Record them in the report as explicitly out of scope with this reason.
+A later packet can tokenise file-locally if P3 turns out to need it.
+
+**3. The three `hsla()` values stay `hsla()`.** Converting to RGB rounds, and rounding is a visual
+change. Record and leave.
+
+### What this changes in the requirements above
+
+- The **role-not-appearance** rule (`plan-126` R1) is **relaxed for the base layer only**: a channel
+  triple is a primitive, not a role, and `--c-slate` is an honest name for it. Do not invent
+  semantic roles for primitives. Assigning roles — which token is "panel surface", which is "body
+  text" — is an authoring decision that belongs with P3, where there is a design to assign roles
+  *to*. This packet supplies the primitives and nothing more.
+- The **near-duplicate rule is unchanged and still binding.** Two different RGB triples never share
+  a token no matter how close. Alpha variants of the *same* triple are not near-duplicates; they are
+  the same colour, and composing them from one token is not a merge.
+- The **baseline-before-refactor** and **prove-the-wiring** standards are unchanged and still the
+  acceptance criteria. Note that `rgb(var(--c) / .12)` is a syntax change as well as a
+  substitution, so the wiring test must compare **resolved colour values**, not text.
+
+### Verification this amendment adds
+
+`rgb(r g b / a)` slash-alpha syntax must be confirmed equivalent to `rgba(r,g,b,a)` on the target
+browser before the substitution is trusted. It is standard and widely supported, but the target is a
+specific managed-Chromebook Chrome and this packet's entire claim is that nothing changes. Confirm
+it, in the browser tier if that is where it can be confirmed, and say so.
+
 ## Authority And Contracts
 
 Required reading:
