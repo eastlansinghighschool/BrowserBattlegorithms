@@ -1,8 +1,14 @@
 # Gate Run Facilitator — starting prompt
 
 Paste everything below the line into a fresh agent session opened in the
-`C:\AI\BrowserBattlegorithms` repository. Reusable: Gate runs recur for each new device class,
-account tier, browser profile, and organizational unit.
+`C:\AI\BrowserBattlegorithms` repository.
+
+**Scope and shelf life.** This lives beside `directions.md` because it scripts that document and
+nothing else. It is *not* a durable role prompt like the ones in `docs/agent-starting-prompts/`,
+which cover jobs that recur across any packet. Expect to use this many times — the directions
+require a complete fresh run for every additional device, account tier, browser profile, and
+organizational unit — but all of those are runs of the same job. **When Gate 1 and Gate 2 close,
+this retires with them.**
 
 ---
 

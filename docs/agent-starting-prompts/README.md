@@ -8,4 +8,3 @@ Canonical starting prompts live in this folder. The `docs/development/00-*` file
 - [Design Review / Grilling Prompt](design-review-prompt.md)
 - [Plan Status Scan Prompt](plan-scan-prompt.md)
 - [Test Coverage Scan Prompt](test-coverage-scan-prompt.md)
-- [Gate Run Facilitator Prompt](gate-run-facilitator-prompt.md)
