@@ -27,7 +27,7 @@ or `unknown`. Exact origins may remain in the operator's local browser view for 
 
 | Reading condition | Origin comparison status | Child-origin observation status | Parent-origin observation status | What this observation would have falsified | Notes |
 | --- | --- | --- | --- | --- | --- |
-| Reload of same deployment | baseline | pass | pass | Falsified nothing yet; establishes the approved baseline for subsequent comparison. | Baseline run (run_id: un-1323078584-1327889834). Handshake and parent origin verified via referrer and message event.origin. |
+| Reload of same deployment | same-as-baseline | pass | pass | Falsifies the hypothesis that parent origin is unstable or ephemeral across reloads of the same deployment. | run_id: un-2074483103-2267613245. Matches approved baseline exactly (baseline established in run_id: un-1323078584-1327889834). |
 | Second signed-in user |  |  |  | User-dependent origin assumption |  |
 | New version of same deployment |  |  |  | Version-dependent origin assumption |  |
 | New deployment |  |  |  | Deployment-dependent origin assumption |  |
@@ -117,3 +117,39 @@ localStorage_cleanup=unknown
 indexedDB_cleanup=unknown
 raw_origins_sentinels_and_identifiers=excluded
 ```
+
+### Run 2: Gate 1 reload of same deployment (2026-09-16)
+
+```text
+PLAN120_RESULT
+gate=1
+probe_version=plan-120-v2
+run_id=un-2074483103-2267613245
+condition=same-deployment-reload
+device_class=personal-windows-device
+ou_class=unknown-ou
+storage_context=different-context
+origin_comparison=same-as-baseline
+browser_family=Chrome
+browser_major=153
+os_class=Windows
+child_origin_observed=pass
+parent_referrer_observation=pass
+parent_message_observation=pass
+sandbox_observation=observed
+effective_inherited_sandbox=unknown
+blob_direct=unknown
+blob_timeout=unknown
+confirm=unknown
+prompt=unknown
+speech=unknown
+keyboard=unknown
+viewport_width=1066
+viewport_height=620
+localStorage=unknown
+indexedDB=unknown
+localStorage_cleanup=unknown
+indexedDB_cleanup=unknown
+raw_origins_sentinels_and_identifiers=excluded
+```
+
