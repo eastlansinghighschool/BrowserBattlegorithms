@@ -30,7 +30,7 @@ or `unknown`. Exact origins may remain in the operator's local browser view for 
 | Reload of same deployment | same-as-baseline | pass | pass | Falsifies the hypothesis that parent origin is unstable or ephemeral across reloads of the same deployment. | run_id: un-2074483103-2267613245. Matches approved baseline exactly (baseline established in run_id: un-1323078584-1327889834). |
 | Second signed-in user |  |  |  | User-dependent origin assumption |  |
 | New version of same deployment | same-as-baseline | pass | pass | Falsifies the version-dependent origin assumption. Redeploying code to a new version preserves the parent origin. | run_id: run-1297068534-234488356. Matches approved baseline exactly. |
-| New deployment |  |  |  | Deployment-dependent origin assumption |  |
+| New deployment | same-as-baseline | pass | pass | Falsifies the deployment-dependent origin assumption. Creating a brand-new deployment in the project preserves the parent origin. | run_id: un-3144961179-3083904724. Matches approved baseline exactly. |
 
 ## Gate 1 measurements
 
@@ -187,5 +187,41 @@ localStorage_cleanup=unknown
 indexedDB_cleanup=unknown
 raw_origins_sentinels_and_identifiers=excluded
 ```
+
+### Run 4: Gate 1 new deployment (2026-09-16)
+
+```text
+PLAN120_RESULT
+gate=1
+probe_version=plan-120-v2
+run_id=un-3144961179-3083904724
+condition=new-deployment
+device_class=personal-windows-device
+ou_class=unknown-ou
+storage_context=different-context
+origin_comparison=same-as-baseline
+browser_family=Chrome
+browser_major=153
+os_class=Windows
+child_origin_observed=pass
+parent_referrer_observation=pass
+parent_message_observation=pass
+sandbox_observation=observed
+effective_inherited_sandbox=unknown
+blob_direct=unknown
+blob_timeout=unknown
+confirm=unknown
+prompt=unknown
+speech=unknown
+keyboard=unknown
+viewport_width=1066
+viewport_height=620
+localStorage=unknown
+indexedDB=unknown
+localStorage_cleanup=unknown
+indexedDB_cleanup=unknown
+raw_origins_sentinels_and_identifiers=excluded
+```
+
 
 
