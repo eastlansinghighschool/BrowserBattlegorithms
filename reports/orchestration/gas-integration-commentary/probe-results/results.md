@@ -74,12 +74,12 @@ an empty bucket. Each API must have a successful direct top-level control before
 | Tier/condition | Observed value | Pass/fail/unknown | What this observation would have falsified | Notes |
 | --- | --- | --- | --- | --- |
 | A: non-teacher active identity nonblank/correct/domain |  |  | Account-attributed cloud mode entirely | Do not record email |
-| A: teacher/deployer active identity nonblank/correct/domain |  |  | Teacher-side operation | Do not record email |
+| A: teacher/deployer active identity nonblank/correct/domain | nonblank: pass, read: pass, viewer: pass, domain: pass, rel: same | pass | Teacher-side operation under execute-as-deployer in this tenant | run_id: run-3049367899-2414041455. Teacher identity is nonblank, readable, matches viewer and expected domain. |
 | B: two accounts in one browser report active account |  |  | Shared-computer attribution story | Do not record email |
 | B: account switch mid-session |  |  | Shared-computer attribution story | Do not record email |
 | C: renamed account |  |  | Graceful rename degradation only; non-blocking | Provisioned test account only |
 | C: disabled account |  |  | Graceful disabled-account degradation only; non-blocking | Provisioned test account only |
-| Deployment settings echo |  |  | Intended execute-as/access configuration | Controlled labels only; no raw settings |
+| Deployment settings echo | execute_as: deploying-user, access: workspace-domain | pass | Intended execute-as/access configuration | Controlled labels echoed correctly |
 
 ## Intake log
 
@@ -222,6 +222,33 @@ localStorage_cleanup=unknown
 indexedDB_cleanup=unknown
 raw_origins_sentinels_and_identifiers=excluded
 ```
+
+### Run 5: Gate 2 Tier A teacher/deployer identity (2026-09-30)
+
+```text
+PLAN120_RESULT
+gate=2
+probe_version=plan-120-v2
+run_id=run-3049367899-2414041455
+account_role=teacher-deployer
+condition=tier-a-teacher
+device_class=personal-windows-device
+ou_class=unknown-ou
+active_identity_nonblank=pass
+active_identity_read=pass
+intended_viewer_match=pass
+expected_domain_match=pass
+effective_identity_nonblank=pass
+effective_identity_read=pass
+active_effective_relationship=same
+browser_family=Chrome
+browser_major=154
+os_class=Windows
+execute_as=deploying-user
+access=workspace-domain
+raw_identity_domain_settings_and_identifiers=excluded
+```
+
 
 
 
